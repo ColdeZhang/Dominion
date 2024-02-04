@@ -1,0 +1,42 @@
+name: Java CI-CD with Maven
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Pull & Checkout"
+        uses: https://ssl.lunadeer.cn:14446/actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: "Set up Maven"
+        uses: https://ssl.lunadeer.cn:14446/actions/setup-maven@v4
+      - name: "Set up JDK 17"
+        uses: https://ssl.lunadeer.cn:14446/actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: maven
+      - name: "Build with Maven"
+        run: mvn -B package --file pom.xml
+      - name: "Copy jar to staging"
+        run: mkdir staging && cp target/*.jar staging
+      - name: "Build & test"
+        run: |
+          echo "done!"
+      - name: "setup go for release script"
+        run: |
+          wget --no-check-certificate https://go.dev/dl/go1.21.6.linux-amd64.tar.gz 
+          rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
+          ln -s /usr/local/go/bin/go /usr/bin/go
+          go version
+      - name: "Release"
+        uses: https://ssl.lunadeer.cn:14446/actions/release-action@main
+        with:
+          files: |-
+            staging/*.jar
+          api_key: '${{secrets.RELEASE_TOKEN}}'
