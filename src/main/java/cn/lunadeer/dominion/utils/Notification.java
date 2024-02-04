@@ -11,7 +11,7 @@ public class Notification {
     private static final Style w_style = Style.style(TextColor.color(255, 185, 69));
     private static final Style e_style = Style.style(TextColor.color(255, 96, 72));
 
-    private static final String prefix = "[MiniPlayerTitle] ";
+    private static final String prefix = "[Dominion] ";
 
     public static void info(Player player, String msg) {
         player.sendMessage(Component.text(prefix + msg, i_style));

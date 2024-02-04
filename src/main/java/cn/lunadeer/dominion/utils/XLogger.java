@@ -9,7 +9,7 @@ public class XLogger {
     private static final Dominion _plugin = Dominion.instance;
     private static final Logger _logger = _plugin.getLogger();
 
-    private static final String prefix = "[MiniPlayerTitle] ";
+    private static final String prefix = "[Dominion] ";
 
     public static void info(Player player, String message) {
         Notification.info(player, prefix + "I | " + message);

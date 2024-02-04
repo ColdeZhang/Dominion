@@ -21,7 +21,7 @@ public class DPlayer {
         return re;
     }
 
-    public DPlayer join() {
+    public DPlayer onJoin() {
         return update(this);
     }
 
