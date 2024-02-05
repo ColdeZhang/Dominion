@@ -81,14 +81,46 @@ public class DominionDTO {
         return query(sql);
     }
 
-    public static List<DominionDTO> search(String name){
+    public static List<DominionDTO> selectAll(String world) {
+        String sql = "SELECT * FROM dominion WHERE world = '" + world + "'";
+        return query(sql);
+    }
+
+    public static List<DominionDTO> search(String name) {
         String sql = "SELECT * FROM dominion WHERE name LIKE '%" + name + "%'";
         return query(sql);
     }
 
-    public static List<DominionDTO> select(UUID owner) {
+    public static List<DominionDTO> selectAll(UUID owner) {
         String sql = "SELECT * FROM dominion WHERE owner = '" + owner.toString() + "'";
         return query(sql);
+    }
+
+    public static DominionDTO select(Integer id) {
+        String sql = "SELECT * FROM dominion WHERE id = " + id;
+        List<DominionDTO> dominions = query(sql);
+        if (dominions.size() == 0) return null;
+        return dominions.get(0);
+    }
+
+    public static List<DominionDTO> selectByParentId(Integer parentId) {
+        String sql = "SELECT * FROM dominion WHERE parent_dom_id = " + parentId;
+        return query(sql);
+    }
+
+    public static List<DominionDTO> selectByLocation(String world, Integer x, Integer y, Integer z) {
+        String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND " +
+                "x1 <= " + x + " AND x2 >= " + x + " AND " +
+                "y1 <= " + y + " AND y2 >= " + y + " AND " +
+                "z1 <= " + z + " AND z2 >= " + z;
+        return query(sql);
+    }
+
+    public static DominionDTO select(String name) {
+        String sql = "SELECT * FROM dominion WHERE name = '" + name + "'";
+        List<DominionDTO> dominions = query(sql);
+        if (dominions.size() == 0) return null;
+        return dominions.get(0);
     }
 
     public static DominionDTO insert(DominionDTO dominion) {
@@ -110,7 +142,7 @@ public class DominionDTO {
         return dominions.get(0);
     }
 
-    public static void delete(DominionDTO dominion){
+    public static void delete(DominionDTO dominion) {
         String sql = "DELETE FROM dominion WHERE id = " + dominion.getId();
         query(sql);
     }
@@ -749,4 +781,13 @@ public class DominionDTO {
         return update(this);
     }
 
+    public DominionDTO setXYZ(Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.z1 = z1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.z2 = z2;
+        return update(this);
+    }
 }
