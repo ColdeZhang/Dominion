@@ -77,34 +77,41 @@ public class DominionDTO {
     }
 
     public static List<DominionDTO> selectAll() {
-        String sql = "SELECT * FROM dominion";
+        String sql = "SELECT * FROM dominion WHERE id > 0";
         return query(sql);
     }
 
     public static List<DominionDTO> selectAll(String world) {
-        String sql = "SELECT * FROM dominion WHERE world = '" + world + "'";
+        String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND id > 0";
         return query(sql);
     }
 
     public static List<DominionDTO> search(String name) {
-        String sql = "SELECT * FROM dominion WHERE name LIKE '%" + name + "%'";
+        String sql = "SELECT * FROM dominion WHERE name LIKE '%" + name + "%' AND id > 0";
         return query(sql);
     }
 
     public static List<DominionDTO> selectAll(UUID owner) {
-        String sql = "SELECT * FROM dominion WHERE owner = '" + owner.toString() + "'";
+        String sql = "SELECT * FROM dominion WHERE owner = '" + owner.toString() + "' AND id > 0";
         return query(sql);
     }
 
     public static DominionDTO select(Integer id) {
+        if (id == -1) {
+            return new DominionDTO(-1,
+                    UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    "根领地", "all",
+                    -2147483648, -2147483648, -2147483648,
+                    2147483647, 2147483647, 2147483647, -1);
+        }
         String sql = "SELECT * FROM dominion WHERE id = " + id;
         List<DominionDTO> dominions = query(sql);
         if (dominions.size() == 0) return null;
         return dominions.get(0);
     }
 
-    public static List<DominionDTO> selectByParentId(Integer parentId) {
-        String sql = "SELECT * FROM dominion WHERE parent_dom_id = " + parentId;
+    public static List<DominionDTO> selectByParentId(String world, Integer parentId) {
+        String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND parent_dom_id = " + parentId + " AND id > 0";
         return query(sql);
     }
 
@@ -112,12 +119,12 @@ public class DominionDTO {
         String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND " +
                 "x1 <= " + x + " AND x2 >= " + x + " AND " +
                 "y1 <= " + y + " AND y2 >= " + y + " AND " +
-                "z1 <= " + z + " AND z2 >= " + z;
+                "z1 <= " + z + " AND z2 >= " + z + " AND " + "id > 0";
         return query(sql);
     }
 
     public static DominionDTO select(String name) {
-        String sql = "SELECT * FROM dominion WHERE name = '" + name + "'";
+        String sql = "SELECT * FROM dominion WHERE name = '" + name + "' AND id > 0";
         List<DominionDTO> dominions = query(sql);
         if (dominions.size() == 0) return null;
         return dominions.get(0);
