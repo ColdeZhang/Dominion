@@ -66,7 +66,6 @@ public class Database {
                 " anchor BOOLEAN NOT NULL DEFAULT FALSE," +
                 " animal_killing BOOLEAN NOT NULL DEFAULT FALSE," +
                 " anvil BOOLEAN NOT NULL DEFAULT FALSE," +
-                " anvil_break BOOLEAN NOT NULL DEFAULT FALSE," +
                 " beacon BOOLEAN NOT NULL DEFAULT FALSE," +
                 " bed BOOLEAN NOT NULL DEFAULT FALSE," +
                 " brew BOOLEAN NOT NULL DEFAULT FALSE," +
@@ -111,12 +110,11 @@ public class Database {
                 " id          SERIAL PRIMARY KEY," +
                 " name        TEXT NOT NULL," +
                 " creator     VARCHAR(36) NOT NULL," +
-                " is_group    BOOLEAN NOT NULL DEFAULT TRUE," +
+                " group       BOOLEAN NOT NULL DEFAULT TRUE," +
 
                 " anchor BOOLEAN NOT NULL DEFAULT FALSE," +
                 " animal_killing BOOLEAN NOT NULL DEFAULT FALSE," +
                 " anvil BOOLEAN NOT NULL DEFAULT FALSE," +
-                " anvil_break BOOLEAN NOT NULL DEFAULT FALSE," +
                 " beacon BOOLEAN NOT NULL DEFAULT FALSE," +
                 " bed BOOLEAN NOT NULL DEFAULT FALSE," +
                 " brew BOOLEAN NOT NULL DEFAULT FALSE," +
@@ -144,20 +142,21 @@ public class Database {
                 " shoot BOOLEAN NOT NULL DEFAULT FALSE," +
                 " trade BOOLEAN NOT NULL DEFAULT FALSE," +
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
-                " harvest BOOLEAN NOT NULL DEFAULT FALSE" +
+                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
+                " FOREIGN KEY (creator) REFERENCES player_name(uuid)" +
                 ")";
 
         // player dominion privilege
         sql += "CREATE TABLE IF NOT EXISTS player_dom_privilege (" +
                 " id          SERIAL PRIMARY KEY," +
                 " player_uuid VARCHAR(36) NOT NULL," +
+                " admin       BOOLEAN NOT NULL DEFAULT FALSE," +
                 " dom_id      INT NOT NULL," +
                 " privilege_template_id INT NOT NULL," +
                 " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid)," +
-                " FOREIGN KEY (dom_id) REFERENCES dominion(id)" +
+                " FOREIGN KEY (dom_id) REFERENCES dominion(id)," +
+                " FOREIGN KEY (privilege_template_id) REFERENCES privilege_template(id)" +
                 ")";
-
-
 
         query(sql);
     }

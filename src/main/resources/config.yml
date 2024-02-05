@@ -1,0 +1,8 @@
+Database:
+  Host: localhost
+  Port: 5432
+  Name: dominion
+  User: dominion
+  Pass: dominion
+
+Debug: false

@@ -17,7 +17,7 @@ public class ConfigManager {
         _debug = _file.getBoolean("Debug", false);
         _db_host = _file.getString("Database.Host", "localhost");
         _db_port = _file.getString("Database.Port", "5432");
-        _db_name = _file.getString("Database.Name", "miniplayertitle");
+        _db_name = _file.getString("Database.Name", "dominion");
         _db_user = _file.getString("Database.User", "postgres");
         _db_pass = _file.getString("Database.Pass", "postgres");
     }
