@@ -1,8 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.Time;
 import cn.lunadeer.dominion.utils.XLogger;
@@ -11,7 +9,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
+
+import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
+import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class DominionController {
 
@@ -67,7 +67,7 @@ public class DominionController {
             return null;
         }
         // 是否是父领地的拥有者
-        if (!isOwner(owner, parent_dominion) && parent_dominion.getId() != -1) {
+        if (notOwner(owner, parent_dominion) && parent_dominion.getId() != -1) {
             return null;
         }
         // 如果parent_dominion不为-1 检查是否在同一世界
@@ -80,7 +80,7 @@ public class DominionController {
             Notification.error(owner, "超出父领地 " + parent_dominion_name + " 范围");
             return null;
         }
-        // 获取此父领地的所有子领地
+        // 获取此领地的所有同级领地
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), parent_dominion.getId());
         // 检查是否与其他子领地冲突
         for (DominionDTO sub_dominion : sub_dominions) {
@@ -107,14 +107,11 @@ public class DominionController {
      * @return 扩展后的领地
      */
     public static DominionDTO expand(Player operator, Integer size) {
-        Location location = operator.getLocation();
-        List<DominionDTO> dominions = DominionDTO.selectByLocation(location.getWorld().getName(),
-                (int) location.getX(), (int) location.getY(), (int) location.getZ());
-        if (dominions.size() != 1) {
-            Notification.error(operator, "你不在一个领地内或在一个子领地内，无法确定你要操作的领地，请手动指定要操作的领地名称");
+        DominionDTO dominion = getPlayerCurrentDominion(operator);
+        if (dominion == null) {
             return null;
         }
-        return expand(operator, size, dominions.get(0).getName());
+        return expand(operator, size, dominion.getName());
     }
 
     /**
@@ -133,7 +130,7 @@ public class DominionController {
             Notification.error(operator, "领地 " + dominion_name + " 不存在");
             return null;
         }
-        if (!isOwner(operator, dominion)) {
+        if (notOwner(operator, dominion)) {
             return null;
         }
         if (!location.getWorld().getName().equals(dominion.getWorld())) {
@@ -202,14 +199,11 @@ public class DominionController {
      * @return 缩小后的领地
      */
     public static DominionDTO contract(Player operator, Integer size) {
-        Location location = operator.getLocation();
-        List<DominionDTO> dominions = DominionDTO.selectByLocation(location.getWorld().getName(),
-                (int) location.getX(), (int) location.getY(), (int) location.getZ());
-        if (dominions.size() != 1) {
-            Notification.error(operator, "你不在一个领地内或在子领地内，无法确定你要操作的领地，请手动指定要操作的领地名称");
+        DominionDTO dominion = getPlayerCurrentDominion(operator);
+        if (dominion == null) {
             return null;
         }
-        return contract(operator, size, dominions.get(0).getName());
+        return contract(operator, size, dominion.getName());
     }
 
     /**
@@ -228,7 +222,7 @@ public class DominionController {
             Notification.error(operator, "领地 " + dominion_name + " 不存在");
             return null;
         }
-        if (!isOwner(operator, dominion)) {
+        if (notOwner(operator, dominion)) {
             return null;
         }
         if (!location.getWorld().getName().equals(dominion.getWorld())) {
@@ -280,6 +274,105 @@ public class DominionController {
         return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
     }
 
+    /**
+     * 删除领地 会同时删除其所有子领地
+     *
+     * @param operator      操作者
+     * @param dominion_name 领地名称
+     * @param force         是否强制删除
+     */
+    public static void delete(Player operator, String dominion_name, boolean force) {
+        DominionDTO dominion = DominionDTO.select(dominion_name);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + dominion_name + " 不存在");
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            return;
+        }
+        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
+        if (!force) {
+            Notification.warn(operator, "删除领地 " + dominion_name + " 会同时删除其所有子领地，是否继续？");
+            String sub_names = "";
+            for (DominionDTO sub_dominion : sub_dominions) {
+                sub_names = sub_dominion.getName() + ", ";
+            }
+            if (sub_dominions.size() > 0) {
+                sub_names = sub_names.substring(0, sub_names.length() - 2);
+                Notification.warn(operator, "当前子领地（不包含子领地的子领地等）：" + sub_names);
+            }
+            Notification.warn(operator, "输入 /dominion force_delete " + dominion_name + " 确认删除");
+            return;
+        }
+        DominionDTO.delete(dominion);
+        Notification.info(operator, "领地 " + dominion_name + " 及其所有子领地已删除");
+    }
+
+    /**
+     * 设置领地的进入消息
+     *
+     * @param operator 操作者
+     * @param message  消息
+     */
+    public static void setJoinMessage(Player operator, String message) {
+        DominionDTO dominion = getPlayerCurrentDominion(operator);
+        if (dominion == null) {
+            return;
+        }
+        setJoinMessage(operator, dominion.getName(), message);
+    }
+
+    /**
+     * 设置进入领地的消息
+     *
+     * @param operator      操作者
+     * @param dominion_name 领地名称
+     * @param message       消息
+     */
+    public static void setJoinMessage(Player operator, String dominion_name, String message) {
+        DominionDTO dominion = DominionDTO.select(dominion_name);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + dominion_name + " 不存在");
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            return;
+        }
+        dominion.setJoinMessage(message);
+    }
+
+    /**
+     * 设置领地的离开消息
+     *
+     * @param operator 操作者
+     * @param message  消息
+     */
+    public static void setLeaveMessage(Player operator, String message) {
+        DominionDTO dominion = getPlayerCurrentDominion(operator);
+        if (dominion == null) {
+            return;
+        }
+        setLeaveMessage(operator, dominion.getName(), message);
+    }
+
+    /**
+     * 设置离开领地的消息
+     *
+     * @param operator      操作者
+     * @param dominion_name 领地名称
+     * @param message       消息
+     */
+    public static void setLeaveMessage(Player operator, String dominion_name, String message) {
+        DominionDTO dominion = DominionDTO.select(dominion_name);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + dominion_name + " 不存在");
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            return;
+        }
+        dominion.setLeaveMessage(message);
+    }
 
     /**
      * 判断两个领地是否相交
@@ -316,12 +409,4 @@ public class DominionController {
                 sub.getY1() >= y1 && sub.getY2() <= y2 &&
                 sub.getZ1() >= z1 && sub.getZ2() <= z2;
     }
-
-    public static boolean isOwner(Player player, DominionDTO dominion) {
-        if (dominion.getOwner().equals(player.getUniqueId())) return true;
-        Notification.error(player, "你不是领地 " + dominion.getName() + " 的拥有者，无法执行此操作");
-        return false;
-    }
-
-
 }

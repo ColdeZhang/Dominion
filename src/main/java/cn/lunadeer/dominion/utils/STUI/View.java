@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.STUI.ViewStyles.*;
+import static cn.lunadeer.dominion.utils.STUI.ViewStyles.main_color;
 
 public class View {
     protected TextComponent title_decorate = Component.text("━", main_color);

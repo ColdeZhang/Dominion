@@ -6,7 +6,8 @@ import net.kyori.adventure.text.TextComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.STUI.ViewStyles.*;
+import static cn.lunadeer.dominion.utils.STUI.ViewStyles.main_color;
+import static cn.lunadeer.dominion.utils.STUI.ViewStyles.sub_color;
 
 
 public class Pagination {

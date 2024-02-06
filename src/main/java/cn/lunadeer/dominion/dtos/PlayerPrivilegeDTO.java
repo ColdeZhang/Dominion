@@ -22,11 +22,10 @@ public class PlayerPrivilegeDTO {
         return players.get(0);
     }
 
-    public static PlayerPrivilegeDTO select(UUID playerUUID) {
-        String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + playerUUID + "'";
-        List<PlayerPrivilegeDTO> players = query(sql);
-        if (players.size() == 0) return null;
-        return players.get(0);
+    public static List<PlayerPrivilegeDTO> select(UUID playerUUID, Integer dom_id) {
+        String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + playerUUID + "' " +
+                "AND dom_id = " + dom_id;
+        return query(sql);
     }
 
     public static PlayerPrivilegeDTO select(Integer dom_id) {
@@ -36,15 +35,15 @@ public class PlayerPrivilegeDTO {
         return players.get(0);
     }
 
-    public static PlayerPrivilegeDTO select(Integer dom_id, UUID playerUUID) {
-        String sql = "SELECT * FROM player_privilege WHERE dom_id = " + dom_id + " AND player_uuid = '" + playerUUID + "'";
-        List<PlayerPrivilegeDTO> players = query(sql);
-        if (players.size() == 0) return null;
-        return players.get(0);
+    public static void delete(UUID player, Integer domID, Integer privilegeTemplateID) {
+        String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "' " +
+                "AND dom_id = " + domID + " " +
+                "AND privilege_template_id = " + privilegeTemplateID;
+        query(sql);
     }
 
-    public static void delete(PlayerPrivilegeDTO player) {
-        String sql = "DELETE FROM player_privilege WHERE id = " + player.getId();
+    public static void delete(UUID player) {
+        String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "'";
         query(sql);
     }
 
@@ -79,9 +78,9 @@ public class PlayerPrivilegeDTO {
         return privilegeTemplateID;
     }
 
-    public void setAdmin(Boolean admin) {
+    public PlayerPrivilegeDTO setAdmin(Boolean admin) {
         this.admin = admin;
-        update(this);
+        return update(this);
     }
 
     private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Integer privilegeTemplateID) {

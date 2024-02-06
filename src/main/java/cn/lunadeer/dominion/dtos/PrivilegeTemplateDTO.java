@@ -28,6 +28,30 @@ public class PrivilegeTemplateDTO {
         return query(sql);
     }
 
+    public static List<PrivilegeTemplateDTO> searchGroup(String name){
+        String sql = "SELECT * FROM privilege_template WHERE name LIKE '%" + name + "%' AND group = true";
+        return query(sql);
+    }
+
+    public static List<PrivilegeTemplateDTO> searchGroup(UUID creator){
+        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND group = true";
+        return query(sql);
+    }
+
+    public static PrivilegeTemplateDTO select(Integer id) {
+        String sql = "SELECT * FROM privilege_template WHERE id = " + id;
+        List<PrivilegeTemplateDTO> templates = query(sql);
+        if (templates.size() == 0) return null;
+        return templates.get(0);
+    }
+
+    public static PrivilegeTemplateDTO select(UUID creator, String name) {
+        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND name = '" + name + "'";
+        List<PrivilegeTemplateDTO> templates = query(sql);
+        if (templates.size() == 0) return null;
+        return templates.get(0);
+    }
+
     public static List<PrivilegeTemplateDTO> search(String name) {
         String sql = "SELECT * FROM privilege_template WHERE name LIKE '%" + name + "%'";
         return query(sql);
@@ -40,6 +64,11 @@ public class PrivilegeTemplateDTO {
 
     public static void delete(PrivilegeTemplateDTO privilege) {
         String sql = "DELETE FROM privilege_template WHERE id = " + privilege.getId();
+        query(sql);
+    }
+
+    public static void delete(UUID creator, String name) {
+        String sql = "DELETE FROM privilege_template WHERE creator = '" + creator.toString() + "' AND name = '" + name + "'";
         query(sql);
     }
 

@@ -143,6 +143,7 @@ public class Database {
                 " trade BOOLEAN NOT NULL DEFAULT FALSE," +
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
                 " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
+                " UNIQUE (name, creator)," +
                 " FOREIGN KEY (creator) REFERENCES player_name(uuid)" +
                 ")";
 
