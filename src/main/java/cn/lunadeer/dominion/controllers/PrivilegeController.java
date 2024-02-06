@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.dominion.utils.Notification;
@@ -19,38 +20,42 @@ public class PrivilegeController {
     /**
      * 清空玩家特权
      *
-     * @param operator 操作者
-     * @param player   玩家
+     * @param operator    操作者
+     * @param player_name 玩家
      * @return 是否清空成功
      */
-    public static boolean clearPrivilege(Player operator, UUID player) {
+    public static boolean clearPrivilege(Player operator, String player_name) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
         if (dominion == null) return false;
-        return clearPrivilege(operator, player, dominion.getName());
+        return clearPrivilege(operator, player_name, dominion.getName());
     }
 
     /**
      * 清空玩家特权
      *
      * @param operator     操作者
-     * @param player       玩家
+     * @param player_name  玩家
      * @param dominionName 领地名称
      * @return 是否清空成功
      */
-    public static boolean clearPrivilege(Player operator, UUID player, String dominionName) {
+    public static boolean clearPrivilege(Player operator, String player_name, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
             Notification.error(operator, "领地 " + dominionName + " 不存在");
             return false;
         }
         if (noAuthToChangeFlags(operator, dominion)) return false;
-        List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(player, dominion.getId());
-        List<PrivilegeTemplateDTO> templates = getPlayerPrivilegeTemplates(player, dominion.getId());
+        PlayerDTO player = PlayerController.getPlayerDTO(player_name);
+        if (player == null) {
+            Notification.error(operator, "玩家 " + player_name + " 不存在或没有登录过");
+            return false;
+        }
+        List<PrivilegeTemplateDTO> templates = getPlayerPrivilegeTemplates(player.getUuid(), dominion.getId());
         if (templates.size() < 1) {
             return true;
         }
         for (PrivilegeTemplateDTO template : templates) {
-            PlayerPrivilegeDTO.delete(player, dominion.getId(), template.getId());
+            PlayerPrivilegeDTO.delete(player.getUuid(), dominion.getId(), template.getId());
         }
         return true;
     }
@@ -58,38 +63,43 @@ public class PrivilegeController {
     /**
      * 设置玩家特权
      *
-     * @param operator 操作者
-     * @param player   玩家
-     * @param flag     权限名称
-     * @param value    权限值
+     * @param operator    操作者
+     * @param player_name 玩家
+     * @param flag        权限名称
+     * @param value       权限值
      * @return 是否设置成功
      */
-    public static boolean setPrivilege(Player operator, UUID player, String flag, boolean value) {
+    public static boolean setPrivilege(Player operator, String player_name, String flag, boolean value) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
         if (dominion == null) return false;
-        return setPrivilege(operator, player, flag, value, dominion.getName());
+        return setPrivilege(operator, player_name, flag, value, dominion.getName());
     }
 
     /**
      * 设置玩家特权
      *
      * @param operator     操作者
-     * @param player       玩家
+     * @param player_name  玩家
      * @param flag         权限名称
      * @param value        权限值
      * @param dominionName 领地名称
      * @return 是否设置成功
      */
-    public static boolean setPrivilege(Player operator, UUID player, String flag, boolean value, String dominionName) {
+    public static boolean setPrivilege(Player operator, String player_name, String flag, boolean value, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
             Notification.error(operator, "领地 " + dominionName + " 不存在");
             return false;
         }
         if (noAuthToChangeFlags(operator, dominion)) return false;
-        List<PrivilegeTemplateDTO> templates = getPlayerPrivilegeTemplates(player, dominion.getId());
+        PlayerDTO player = PlayerController.getPlayerDTO(player_name);
+        if (player == null) {
+            Notification.error(operator, "玩家 " + player_name + " 不存在或没有登录过");
+            return false;
+        }
+        List<PrivilegeTemplateDTO> templates = getPlayerPrivilegeTemplates(player.getUuid(), dominion.getId());
         if (templates.size() < 1) {
-            PrivilegeTemplateDTO template = createPlayerPrivilege(operator, player, dominion.getId());
+            PrivilegeTemplateDTO template = createPlayerPrivilege(operator, player.getUuid(), dominion.getId());
             if (template == null) return false;
             templates.add(template);
         }
@@ -103,7 +113,7 @@ public class PrivilegeController {
         }
         PrivilegeTemplateDTO privilege = templates.get(0);
         if (Objects.equals(flag, "admin")) {
-            List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(player, dominion.getId());
+            List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
             for (PlayerPrivilegeDTO p : privileges) {
                 if (p.getPrivilegeTemplateID().equals(privilege.getId())) {
                     p = p.setAdmin(value);
@@ -117,7 +127,7 @@ public class PrivilegeController {
             Notification.error(operator, "没有找到玩家权限关联数据");
             return false;
         }
-        if (!Apis.updateTemplateFlag(privilege, flag, value)){
+        if (!Apis.updateTemplateFlag(privilege, flag, value)) {
             Notification.error(operator, "未知的领地权限 " + flag);
             return false;
         }

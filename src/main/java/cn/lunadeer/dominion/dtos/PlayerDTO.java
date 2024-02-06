@@ -20,12 +20,13 @@ public class PlayerDTO {
         return re;
     }
 
-    public PlayerDTO onJoin() {
-        return update(this);
+    public static List<PlayerDTO> all() {
+        String sql = "SELECT * FROM player_name";
+        return query(sql);
     }
 
-    public static List<PlayerDTO> search(String name) {
-        return select(name);
+    public PlayerDTO onJoin() {
+        return update(this);
     }
 
     private static List<PlayerDTO> query(String sql) {
@@ -54,7 +55,14 @@ public class PlayerDTO {
         return players.get(0);
     }
 
-    private static List<PlayerDTO> select(String name) {
+    public static PlayerDTO select(String name) {
+        String sql = "SELECT * FROM player_name WHERE last_known_name = '" + name + "'";
+        List<PlayerDTO> players = query(sql);
+        if (players.size() == 0) return null;
+        return players.get(0);
+    }
+
+    public static List<PlayerDTO> search(String name) {
         // 模糊搜索
         String sql = "SELECT * FROM player_name WHERE last_known_name LIKE '%" + name + "%'";
         return query(sql);

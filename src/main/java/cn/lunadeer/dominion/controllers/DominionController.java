@@ -25,7 +25,12 @@ public class DominionController {
      * @return 创建的领地
      */
     public static DominionDTO create(Player owner, String name, Location loc1, Location loc2) {
-        return create(owner, name, loc1, loc2, "");
+        DominionDTO parent = getPlayerCurrentDominion(owner);
+        if (parent == null) {
+            return create(owner, name, loc1, loc2, "");
+        } else {
+            return create(owner, name, loc1, loc2, parent.getName());
+        }
     }
 
     /**
@@ -41,6 +46,10 @@ public class DominionController {
     public static DominionDTO create(Player owner, String name,
                                      Location loc1, Location loc2,
                                      String parent_dominion_name) {
+        if (DominionDTO.select(name) != null) {
+            Notification.error(owner, "已经存在名称为 " + name + " 的领地");
+            return null;
+        }
         if (!loc1.getWorld().equals(loc2.getWorld())) {
             Notification.error(owner, "禁止跨世界操作");
             return null;

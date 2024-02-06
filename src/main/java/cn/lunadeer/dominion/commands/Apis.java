@@ -1,9 +1,14 @@
 package cn.lunadeer.dominion.commands;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.Notification;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Apis {
     public static Player playerOnly(CommandSender sender) {
@@ -28,6 +33,17 @@ public class Apis {
         Notification.info(sender, "  体积为 " + (x2 - x1) * (y2 - y1) * (z2 - z1));
         Notification.info(sender, "  领地的世界为 " + dominionDTO.getWorld());
         Notification.info(sender, "  领地的对角点坐标为 x1=" + x1 + " y1=" + y1 + " z1=" + z1 + " x2=" + x2 + " y2=" + y2 + " z2=" + z2);
+    }
+
+    public static void autoPoints(Player player) {
+        Integer size = Dominion.config.getAutoCreateRadius();
+        Location location = player.getLocation();
+        Location location1 = new Location(location.getWorld(), location.getX() - size, location.getY() - size, location.getZ() - size);
+        Location location2 = new Location(location.getWorld(), location.getX() + size, location.getY() + size, location.getZ() + size);
+        List<Location> points = new ArrayList<>();
+        points.add(location1);
+        points.add(location2);
+        Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 
 }

@@ -20,6 +20,7 @@ public class ConfigManager {
         _db_name = _file.getString("Database.Name", "dominion");
         _db_user = _file.getString("Database.User", "postgres");
         _db_pass = _file.getString("Database.Pass", "postgres");
+        _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
     }
 
     public Boolean isDebug() {
@@ -50,7 +51,6 @@ public class ConfigManager {
         return _db_user;
     }
 
-
     public void setDbPass(String db_pass) {
         _db_pass = db_pass;
         _file.set("Database.Pass", db_pass);
@@ -64,6 +64,16 @@ public class ConfigManager {
         return _db_pass;
     }
 
+    public Integer getAutoCreateRadius() {
+        return _auto_create_radius;
+    }
+
+    public void setAutoCreateRadius(Integer radius) {
+        _auto_create_radius = radius;
+        _file.set("AutoCreateRadius", radius);
+        _plugin.saveConfig();
+    }
+
 
     private final Dominion _plugin;
     private FileConfiguration _file;
@@ -74,4 +84,6 @@ public class ConfigManager {
     private String _db_user;
     private String _db_pass;
     private String _db_name;
+
+    private Integer _auto_create_radius;
 }
