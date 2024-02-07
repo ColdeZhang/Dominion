@@ -69,6 +69,11 @@ public class View {
         return this;
     }
 
+    public View subtitle(Line line){
+        this.subtitle = line.build();
+        return this;
+    }
+
     public View subtitle(TextComponent subtitle) {
         this.subtitle = subtitle;
         return this;

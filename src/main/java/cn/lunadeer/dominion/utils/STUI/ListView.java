@@ -45,6 +45,11 @@ public class ListView {
         return this;
     }
 
+    public ListView subtitle(Line line) {
+        view.subtitle(line);
+        return this;
+    }
+
     public ListView add(Line line) {
         lines.add(line);
         return this;

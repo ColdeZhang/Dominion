@@ -81,6 +81,18 @@ public class Commands implements TabExecutor {
             case "flag_info":
                 TUIs.flagInfo(sender, args);
                 break;
+            case "group_list":
+                TUIs.groupList(sender, args);
+                break;
+            case "privilege_list":
+                TUIs.privilegeList(sender, args);
+                break;
+            case "group":
+                TUIs.group(sender, args);
+                break;
+            case "group_detail":
+                TUIs.groupDetail(sender, args);
+                break;
             case "create":
                 DominionOperate.createDominion(sender, args);
                 break;

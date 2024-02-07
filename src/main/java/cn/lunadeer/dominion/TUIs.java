@@ -1,10 +1,12 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.commands.Helper;
+import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
@@ -79,6 +81,7 @@ public class TUIs {
                 .add(Line.create().append("重置玩家权限").append("/dominion clear_privilege <玩家名称> [领地名称]"))
                 .add(Line.create().append("查看领地玩家权限").append("/dominion privilege_list <领地名称> [页码]"))
                 .add(Line.create().append("查看权限组").append("/dominion group [页码]"))
+                .add(Line.create().append("查看权限组详情").append("/dominion group_detail <权限组名称> [页码]"))
                 .add(Line.create().append("创建权限组").append("/dominion create_group <权限组名称>"))
                 .add(Line.create().append("删除权限组").append("/dominion delete_group <权限组名称>"))
                 .add(Line.create().append("设置权限组权限").append("/dominion set_group <权限组名称> <权限名称> <true/false>"))
@@ -121,7 +124,40 @@ public class TUIs {
         Player player = playerOnly(sender);
         if (player == null) return;
         int page = getPage(args);
-        // todo
+        List<PrivilegeTemplateDTO> template = GroupController.all(player);
+        if (template.isEmpty()) {
+            Notification.warn(sender, "没有任何权限组");
+            return;
+        }
+        ListView view = ListView.create(5, "/dominion group");
+        for (PrivilegeTemplateDTO dto : template) {
+            view.add(Line.create().append(dto.getName()).append(Button.create("管理", "/dominion group_detail " + dto.getName())));
+        }
+        view.showOn(player, page);
+    }
+
+    public static void groupDetail(CommandSender sender, String[] args){
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length < 2){
+            Notification.error(sender, "用法: /dominion group_detail <权限组名称> [页码]");
+            return;
+        }
+        int page = 1;
+        if (args.length == 3){
+            try {
+                page = Integer.parseInt(args[2]);
+            } catch (Exception e){
+                Notification.error(sender, "页码格式错误");
+                return;
+            }
+        }
+        PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[1]);
+        if (template == null){
+            Notification.error(sender, "权限组 " + args[1] + " 不存在");
+            return;
+        }
+        // todo group detail
     }
 
     public static void menu(CommandSender sender, String[] args) {
