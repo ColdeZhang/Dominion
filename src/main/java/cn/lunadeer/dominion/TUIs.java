@@ -25,9 +25,9 @@ import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
 public class TUIs {
     private static int getPage(String[] args) {
         int page = 1;
-        if (args.length == 3) {
+        if (args.length == 2) {
             try {
-                page = Integer.parseInt(args[2]);
+                page = Integer.parseInt(args[1]);
             } catch (Exception e) {
                 return 1;
             }
@@ -36,8 +36,8 @@ public class TUIs {
     }
 
     private static DominionDTO getDominion(Player player, String[] args) {
-        if (args.length == 3) {
-            return DominionDTO.select(args[2]);
+        if (args.length == 2) {
+            return DominionDTO.select(args[1]);
         } else {
             return getPlayerCurrentDominion(player);
         }
@@ -136,24 +136,24 @@ public class TUIs {
         view.showOn(player, page);
     }
 
-    public static void groupDetail(CommandSender sender, String[] args){
+    public static void groupDetail(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
-        if (args.length < 2){
+        if (args.length < 2) {
             Notification.error(sender, "用法: /dominion group_detail <权限组名称> [页码]");
             return;
         }
         int page = 1;
-        if (args.length == 3){
+        if (args.length == 3) {
             try {
                 page = Integer.parseInt(args[2]);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Notification.error(sender, "页码格式错误");
                 return;
             }
         }
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[1]);
-        if (template == null){
+        if (template == null) {
             Notification.error(sender, "权限组 " + args[1] + " 不存在");
             return;
         }
@@ -174,7 +174,7 @@ public class TUIs {
                 .append("查看指令帮助");
         View view = View.create();
         view.title("Dominion 领地系统")
-                .subtitle("主菜单")
+                .navigator(Line.create().append("主菜单"))
                 .addLine(list)
                 .addLine(group)
                 .addLine(help)
@@ -191,6 +191,8 @@ public class TUIs {
             Notification.warn(sender, "你没有任何领地");
             return;
         }
+        view.title("我的领地列表");
+        view.navigator(Line.create().append(Button.create("主菜单", "/dominion menu")).append("我的领地"));
         for (String dominion : dominions) {
             TextComponent manage = Button.createGreen("管理", "/dominion manage " + dominion);
             TextComponent delete = Button.createRed("删除", "/dominion delete " + dominion);
@@ -220,7 +222,11 @@ public class TUIs {
         }
         ListView view = ListView.create(6, "/dominion flag_info " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 默认权限")
-                .subtitle(Button.create("前往管理界面", "/dominion manage " + dominion.getName()));
+                .navigator(Line.create()
+                        .append(Button.create("主菜单", "/dominion menu"))
+                        .append(Button.create("我的领地", "/dominion list"))
+                        .append(Button.create("管理界面", "/dominion manage " + dominion.getName()))
+                        .append("权限列表"));
         if (dominion.getAnchor()) {
             view.add(Line.create().append("重生锚").append(Button.createRed("禁用", "/dominion set anchor false " + dominion.getName())));
         } else {
@@ -432,7 +438,10 @@ public class TUIs {
                 .append("管理玩家特权");
         View view = View.create();
         view.title("领地 " + dominion.getName() + " 管理界面")
-                .subtitle(Button.createRed("领地列表", "/dominion list"))
+                .navigator(Line.create()
+                        .append(Button.create("主菜单", "/dominion menu"))
+                        .append(Button.create("我的领地", "/dominion list"))
+                        .append(dominion.getName()))
                 .addLine(size_info)
                 .addLine(flag_info)
                 .addLine(group_info)

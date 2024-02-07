@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.utils.STUI;
 
 import cn.lunadeer.dominion.utils.Notification;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
 
@@ -76,7 +77,16 @@ public class ListView {
             }
             view.addLine(lines.get(i));
         }
-        view.actionBar(Pagination.create(page, lines.size(), this.command));
+        view.actionBar(Pagination.create(page, lines.size(), page_size, this.command));
         view.showOn(player);
+    }
+
+    public ListView navigator(Line line) {
+        Line nav = Line.create().setDivider("->").append(Component.text("导航", ViewStyles.main_color));
+        for (Component component : line.getElements()) {
+            nav.append(component);
+        }
+        view.subtitle(nav);
+        return this;
     }
 }

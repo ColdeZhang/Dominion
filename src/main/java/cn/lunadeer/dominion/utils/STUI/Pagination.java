@@ -11,9 +11,8 @@ import static cn.lunadeer.dominion.utils.STUI.ViewStyles.sub_color;
 
 
 public class Pagination {
-    public static TextComponent create(int page, int item_size, String command) {
+    public static TextComponent create(int page, int item_size, int page_size, String command) {
         // 第 x/y 页 [上一页] [下一页]
-        int page_size = 4;
         int page_count = (int) Math.ceil((double) item_size / page_size);
         if (page_count == 0) {
             page_count = 1;

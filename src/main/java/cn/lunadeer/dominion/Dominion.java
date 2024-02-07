@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.utils.ConfigManager;
 import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.XLogger;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.postgresql.core.Tuple;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.util.*;
 
@@ -19,7 +21,9 @@ public final class Dominion extends JavaPlugin {
         instance = this;
         config = new ConfigManager(this);
         dbConnection = Database.createConnection();
+        Database.migrate();
 
+        Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         XLogger.info("领地插件已启动");

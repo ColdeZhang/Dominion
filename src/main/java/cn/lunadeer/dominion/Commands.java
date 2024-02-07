@@ -69,6 +69,9 @@ public class Commands implements TabExecutor {
             case "menu":
                 TUIs.menu(sender, args);
                 break;
+            case "list":
+                TUIs.list(sender, args);
+                break;
             case "help":
                 TUIs.printHelp(sender, args);
                 break;
@@ -163,7 +166,7 @@ public class Commands implements TabExecutor {
             return Arrays.asList("menu", "help", "info", "manage", "flag_info", "group_list", "privilege_list", "group",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
                     "set_privilege", "clear_privilege", "create_group", "delete_group", "set_group", "add_player",
-                    "remove_player"
+                    "remove_player", "list"
             );
         }
         if (args.length == 2) {
@@ -177,8 +180,6 @@ public class Commands implements TabExecutor {
                 case "delete":
                 case "create_sub":
                 case "auto_create_sub":
-                case "expand":
-                case "contract":
                 case "info":
                 case "manage":
                 case "flag_info":
@@ -196,6 +197,9 @@ public class Commands implements TabExecutor {
                 case "delete_group":
                 case "set_group":
                     return playerGroups(sender);
+                case "expand":
+                case "contract":
+                    return Collections.singletonList("大小(整数)");
             }
         }
         if (args.length == 3) {
@@ -209,6 +213,9 @@ public class Commands implements TabExecutor {
                 case "add_player":
                 case "remove_player":
                     return playerGroups(sender);
+                case "expand":
+                case "contract":
+                    return playerDominions(sender);
             }
         }
         if (args.length == 4) {

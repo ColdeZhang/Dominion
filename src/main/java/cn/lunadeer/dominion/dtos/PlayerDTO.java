@@ -21,7 +21,7 @@ public class PlayerDTO {
     }
 
     public static List<PlayerDTO> all() {
-        String sql = "SELECT * FROM player_name";
+        String sql = "SELECT * FROM player_name;";
         return query(sql);
     }
 
@@ -49,14 +49,14 @@ public class PlayerDTO {
     }
 
     public static PlayerDTO select(UUID uuid) {
-        String sql = "SELECT * FROM player_name WHERE uuid = '" + uuid.toString() + "'";
+        String sql = "SELECT * FROM player_name WHERE uuid = '" + uuid.toString() + "';";
         List<PlayerDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);
     }
 
     public static PlayerDTO select(String name) {
-        String sql = "SELECT * FROM player_name WHERE last_known_name = '" + name + "'";
+        String sql = "SELECT * FROM player_name WHERE last_known_name = '" + name + "';";
         List<PlayerDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);
@@ -64,7 +64,7 @@ public class PlayerDTO {
 
     public static List<PlayerDTO> search(String name) {
         // 模糊搜索
-        String sql = "SELECT * FROM player_name WHERE last_known_name LIKE '%" + name + "%'";
+        String sql = "SELECT * FROM player_name WHERE last_known_name LIKE '%" + name + "%';";
         return query(sql);
     }
 
@@ -72,7 +72,7 @@ public class PlayerDTO {
         String sql = "INSERT INTO player_name (uuid, last_known_name, last_join_at) " +
                 "VALUES" +
                 " ('" + player.getUuid().toString() + "', '" + player.getLastKnownName() + "', CURRENT_TIMESTAMP) " +
-                "RETURNING *";
+                "RETURNING *;";
         List<PlayerDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);
@@ -83,7 +83,7 @@ public class PlayerDTO {
                 "last_known_name = '" + player.getLastKnownName() + "', " +
                 "last_join_at = CURRENT_TIMESTAMP " +
                 "WHERE uuid = '" + player.getUuid().toString() + "' " +
-                "RETURNING *";
+                "RETURNING *;";
         List<PlayerDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);

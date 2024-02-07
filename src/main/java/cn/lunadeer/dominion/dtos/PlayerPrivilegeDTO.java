@@ -16,7 +16,7 @@ public class PlayerPrivilegeDTO {
                 player.getAdmin() + ", " +
                 player.getDomID() + ", " +
                 player.getPrivilegeTemplateID() + ")" +
-                "RETURNING *";
+                "RETURNING *;";
         List<PlayerPrivilegeDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);
@@ -24,12 +24,12 @@ public class PlayerPrivilegeDTO {
 
     public static List<PlayerPrivilegeDTO> select(UUID playerUUID, Integer dom_id) {
         String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + playerUUID + "' " +
-                "AND dom_id = " + dom_id;
+                "AND dom_id = " + dom_id + ";";
         return query(sql);
     }
 
     public static PlayerPrivilegeDTO select(Integer dom_id) {
-        String sql = "SELECT * FROM player_privilege WHERE dom_id = " + dom_id;
+        String sql = "SELECT * FROM player_privilege WHERE dom_id = " + dom_id + ";";
         List<PlayerPrivilegeDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);
@@ -38,17 +38,17 @@ public class PlayerPrivilegeDTO {
     public static void delete(UUID player, Integer domID, Integer privilegeTemplateID) {
         String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "' " +
                 "AND dom_id = " + domID + " " +
-                "AND privilege_template_id = " + privilegeTemplateID;
+                "AND privilege_template_id = " + privilegeTemplateID + ";";
         query(sql);
     }
 
     public static void delete(UUID player) {
-        String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "'";
+        String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "';";
         query(sql);
     }
 
     public static List<PlayerPrivilegeDTO> selectAll() {
-        String sql = "SELECT * FROM player_privilege";
+        String sql = "SELECT * FROM player_privilege;";
         return query(sql);
     }
 
@@ -120,7 +120,7 @@ public class PlayerPrivilegeDTO {
                 "admin = " + player.getAdmin() + ", " +
                 "dom_id = " + player.getDomID() + ", " +
                 "privilege_template_id = " + player.getPrivilegeTemplateID() + " " +
-                "WHERE id = " + player.getId();
+                "WHERE id = " + player.getId() + ";";
         List<PlayerPrivilegeDTO> players = query(sql);
         if (players.size() == 0) return null;
         return players.get(0);

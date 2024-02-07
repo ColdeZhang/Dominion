@@ -12,63 +12,63 @@ import java.util.UUID;
 public class PrivilegeTemplateDTO {
 
     public static PrivilegeTemplateDTO insert(PrivilegeTemplateDTO privilege) {
-        String sql = "INSERT INTO privilege_template (name, creator, group) " +
+        String sql = "INSERT INTO privilege_template (name, creator, team) " +
                 "VALUES ('" +
                 privilege.getName() + "', '" +
                 privilege.getCreator().toString() + "', " +
                 privilege.getGroup() + ") " +
-                "RETURNING *";
+                "RETURNING *;";
         List<PrivilegeTemplateDTO> templates = query(sql);
         if (templates.size() == 0) return null;
         return templates.get(0);
     }
 
     public static List<PrivilegeTemplateDTO> selectAll() {
-        String sql = "SELECT * FROM privilege_template";
+        String sql = "SELECT * FROM privilege_template;";
         return query(sql);
     }
 
     public static List<PrivilegeTemplateDTO> searchGroup(String name){
-        String sql = "SELECT * FROM privilege_template WHERE name LIKE '%" + name + "%' AND group = true";
+        String sql = "SELECT * FROM privilege_template WHERE name LIKE '%" + name + "%' AND team = true;";
         return query(sql);
     }
 
     public static List<PrivilegeTemplateDTO> selectGroup(UUID creator){
-        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND group = true";
+        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND team = true;";
         return query(sql);
     }
 
     public static PrivilegeTemplateDTO select(Integer id) {
-        String sql = "SELECT * FROM privilege_template WHERE id = " + id;
+        String sql = "SELECT * FROM privilege_template WHERE id = " + id + ";";
         List<PrivilegeTemplateDTO> templates = query(sql);
         if (templates.size() == 0) return null;
         return templates.get(0);
     }
 
     public static PrivilegeTemplateDTO select(UUID creator, String name) {
-        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND name = '" + name + "'";
+        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND name = '" + name + "';";
         List<PrivilegeTemplateDTO> templates = query(sql);
         if (templates.size() == 0) return null;
         return templates.get(0);
     }
 
     public static List<PrivilegeTemplateDTO> search(String name) {
-        String sql = "SELECT * FROM privilege_template WHERE name LIKE '%" + name + "%'";
+        String sql = "SELECT * FROM privilege_template WHERE name LIKE '%" + name + "%';";
         return query(sql);
     }
 
     public static List<PrivilegeTemplateDTO> search(UUID creator) {
-        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "'";
+        String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "';";
         return query(sql);
     }
 
     public static void delete(PrivilegeTemplateDTO privilege) {
-        String sql = "DELETE FROM privilege_template WHERE id = " + privilege.getId();
+        String sql = "DELETE FROM privilege_template WHERE id = " + privilege.getId() + ";";
         query(sql);
     }
 
     public static void delete(UUID creator, String name) {
-        String sql = "DELETE FROM privilege_template WHERE creator = '" + creator.toString() + "' AND name = '" + name + "'";
+        String sql = "DELETE FROM privilege_template WHERE creator = '" + creator.toString() + "' AND name = '" + name + "';";
         query(sql);
     }
 
@@ -76,7 +76,7 @@ public class PrivilegeTemplateDTO {
         String sql = "UPDATE privilege_template SET " +
                 "name = '" + privilege.getName() + "', " +
                 "creator = '" + privilege.getCreator().toString() + "', " +
-                "group = " + privilege.getGroup() + ", " +
+                "team = " + privilege.getGroup() + ", " +
                 "anchor = " + privilege.getAnchor() + ", " +
                 "animal_killing = " + privilege.getAnimalKilling() + ", " +
                 "anvil = " + privilege.getAnvil() + ", " +
@@ -109,7 +109,7 @@ public class PrivilegeTemplateDTO {
                 "vehicle_destroy = " + privilege.getVehicleDestroy() + ", " +
                 "harvest = " + privilege.getHarvest() + " " +
                 "WHERE id = " + privilege.getId() + " " +
-                "RETURNING *";
+                "RETURNING *;";
         List<PrivilegeTemplateDTO> templates = query(sql);
         if (templates.size() == 0) return null;
         return templates.get(0);
@@ -118,7 +118,7 @@ public class PrivilegeTemplateDTO {
     private final Integer id;
     private String name;
     private final UUID creator;
-    private final Boolean group;
+    private final Boolean team;
     private Boolean anchor;
     private Boolean animalKilling;
     private Boolean anvil;
@@ -164,7 +164,7 @@ public class PrivilegeTemplateDTO {
     }
 
     public Boolean getGroup() {
-        return group;
+        return team;
     }
 
     public Boolean getAnchor() {
@@ -451,8 +451,8 @@ public class PrivilegeTemplateDTO {
         return update(this);
     }
 
-    public PrivilegeTemplateDTO(String name, UUID creator, Boolean group) {
-        this(null, name, creator, group,
+    public PrivilegeTemplateDTO(String name, UUID creator, Boolean team) {
+        this(null, name, creator, team,
                 false, false, false,
                 false, false, false, false, false,
                 false, false, false, false, false,
@@ -462,7 +462,7 @@ public class PrivilegeTemplateDTO {
                 false, false, false);
     }
 
-    private PrivilegeTemplateDTO(Integer id, String name, UUID creator, Boolean group,
+    private PrivilegeTemplateDTO(Integer id, String name, UUID creator, Boolean team,
                                  Boolean anchor, Boolean animalKilling, Boolean anvil,
                                  Boolean beacon, Boolean bed, Boolean brew, Boolean button, Boolean cake,
                                  Boolean container, Boolean craft, Boolean diode, Boolean door, Boolean dye,
@@ -473,7 +473,7 @@ public class PrivilegeTemplateDTO {
         this.id = id;
         this.name = name;
         this.creator = creator;
-        this.group = group;
+        this.team = team;
         this.anchor = anchor;
         this.animalKilling = animalKilling;
         this.anvil = anvil;
@@ -516,7 +516,7 @@ public class PrivilegeTemplateDTO {
                         rs.getInt("id"),
                         rs.getString("name"),
                         UUID.fromString(rs.getString("creator")),
-                        rs.getBoolean("group"),
+                        rs.getBoolean("team"),
                         rs.getBoolean("anchor"),
                         rs.getBoolean("animal_killing"),
                         rs.getBoolean("anvil"),

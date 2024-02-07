@@ -31,6 +31,7 @@ public class DominionFlag {
         } else {
             Notification.error(sender, "用法: /dominion set <权限名称> <true/false> [领地名称]");
         }
+        Notification.info(sender, "设置领地权限 " + args[1] + " 为 " + args[2]);
     }
 
 }

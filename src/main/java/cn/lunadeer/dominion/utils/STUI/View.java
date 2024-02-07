@@ -16,11 +16,11 @@ public class View {
     protected TextComponent line_decorate = Component.text("⌗ ", main_color);
     protected TextComponent action_decorate = Component.text("▸ ", main_color);
     protected TextComponent title = Component.text("       ");
-    protected TextComponent subtitle = Component.text("");
+    protected TextComponent subtitle = null;
     protected List<TextComponent> content_lines = new ArrayList<>();
-    protected TextComponent actionbar = Component.text("       ");
-    protected TextComponent edge = Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━", main_color);
-    protected TextComponent divide_line = Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━", main_color);
+    protected TextComponent actionbar = null;
+    protected TextComponent edge = Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", main_color);
+    protected TextComponent divide_line = Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", main_color);
 
     public void showOn(Player player) {
         player.sendMessage(edge);
@@ -36,7 +36,7 @@ public class View {
             builder.append(title_decorate);
         }
         player.sendMessage(builder.build());
-        if (subtitle.content().length() > 0) {
+        if (subtitle != null) {
             player.sendMessage(divide_line);
             player.sendMessage(Component.text().append(sub_title_decorate).append(subtitle).build());
         }
@@ -44,8 +44,10 @@ public class View {
         for (TextComponent content_line : content_lines) {
             player.sendMessage(Component.text().append(line_decorate).append(content_line).build());
         }
-        player.sendMessage(divide_line);
-        player.sendMessage(Component.text().append(action_decorate).append(actionbar).build());
+        if (actionbar != null) {
+            player.sendMessage(divide_line);
+            player.sendMessage(Component.text().append(action_decorate).append(actionbar).build());
+        }
         player.sendMessage(edge);
         player.sendMessage(Component.text("     "));
     }
@@ -69,9 +71,17 @@ public class View {
         return this;
     }
 
-    public View subtitle(Line line){
+    public View subtitle(Line line) {
         this.subtitle = line.build();
         return this;
+    }
+
+    public View navigator(Line line) {
+        Line nav = Line.create().setDivider("->").append(Component.text("导航", ViewStyles.main_color));
+        for (Component component : line.getElements()) {
+            nav.append(component);
+        }
+        return this.subtitle(nav);
     }
 
     public View subtitle(TextComponent subtitle) {

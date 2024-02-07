@@ -130,13 +130,11 @@ public class DominionOperate {
         }
         int size = 10;
         String name = "";
-        if (args.length == 2) {
-            try {
-                size = Integer.parseInt(args[1]);
-            } catch (Exception e) {
-                Notification.error(sender, "大小格式错误");
-                return;
-            }
+        try {
+            size = Integer.parseInt(args[1]);
+        } catch (Exception e) {
+            Notification.error(sender, "大小格式错误");
+            return;
         }
         if (args.length == 3) {
             name = args[2];
@@ -171,13 +169,11 @@ public class DominionOperate {
         }
         int size = 10;
         String name = "";
-        if (args.length == 2) {
-            try {
-                size = Integer.parseInt(args[1]);
-            } catch (Exception e) {
-                Notification.error(sender, "大小格式错误");
-                return;
-            }
+        try {
+            size = Integer.parseInt(args[1]);
+        } catch (Exception e) {
+            Notification.error(sender, "大小格式错误");
+            return;
         }
         if (args.length == 3) {
             name = args[2];

@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.controllers;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.STUI.Pagination;
 import cn.lunadeer.dominion.utils.Time;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
@@ -11,8 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
-import static cn.lunadeer.dominion.controllers.Apis.notOwner;
+import static cn.lunadeer.dominion.controllers.Apis.*;
 
 public class DominionController {
 
@@ -30,7 +30,7 @@ public class DominionController {
      * @return 创建的领地
      */
     public static DominionDTO create(Player owner, String name, Location loc1, Location loc2) {
-        DominionDTO parent = getPlayerCurrentDominion(owner);
+        DominionDTO parent = getPlayerCurrentDominion(owner,false);
         if (parent == null) {
             return create(owner, name, loc1, loc2, "");
         } else {
@@ -149,7 +149,7 @@ public class DominionController {
      */
     public static DominionDTO expand(Player operator, Integer size, String dominion_name) {
         Location location = operator.getLocation();
-        BlockFace face = operator.getFacing();
+        BlockFace face = getFace(operator);
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
             Notification.error(operator, "领地 " + dominion_name + " 不存在");
@@ -241,7 +241,7 @@ public class DominionController {
      */
     public static DominionDTO contract(Player operator, Integer size, String dominion_name) {
         Location location = operator.getLocation();
-        BlockFace face = operator.getFacing();
+        BlockFace face = getFace(operator);
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
             Notification.error(operator, "领地 " + dominion_name + " 不存在");

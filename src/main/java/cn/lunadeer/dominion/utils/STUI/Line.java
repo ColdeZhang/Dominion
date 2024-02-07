@@ -8,14 +8,14 @@ import java.util.List;
 
 
 public class Line {
+    private String d = " - ";
     private final List<Component> elements = new ArrayList<>();
-
-    private final TextComponent divider = Component.text(" - ", ViewStyles.sub_color);
 
     public Line() {
     }
 
     public TextComponent build() {
+        TextComponent divider = Component.text(d, ViewStyles.sub_color);
         TextComponent.Builder builder = Component.text();
         for (int i = 0; i < elements.size(); i++) {
             builder.append(elements.get(i));
@@ -30,8 +30,17 @@ public class Line {
         return new Line();
     }
 
+    List<Component> getElements() {
+        return elements;
+    }
+
     public Line append(TextComponent component) {
         elements.add(component);
+        return this;
+    }
+
+    public Line setDivider(String d) {
+        this.d = d;
         return this;
     }
 

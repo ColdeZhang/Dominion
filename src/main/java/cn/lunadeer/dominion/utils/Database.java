@@ -42,10 +42,10 @@ public class Database {
         // player name
         sql += "CREATE TABLE IF NOT EXISTS player_name (" +
                 " id                SERIAL PRIMARY KEY," +
-                " uuid              VARCHAR(36) NOT NULL," +
+                " uuid              VARCHAR(36) NOT NULL UNIQUE," +
                 " last_known_name   TEXT NOT NULL," +
                 " last_join_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" +
-                ")";
+                ");";
 
         // dominion table
         sql += "CREATE TABLE IF NOT EXISTS dominion (" +
@@ -103,14 +103,14 @@ public class Database {
 
                 " FOREIGN KEY (owner) REFERENCES player_name(uuid)," +
                 " FOREIGN KEY (parent_dom_id) REFERENCES dominion(id)" +
-                ")";
+                ");";
 
         // privilege template
         sql += "CREATE TABLE IF NOT EXISTS privilege_template (" +
                 " id          SERIAL PRIMARY KEY," +
                 " name        TEXT NOT NULL," +
                 " creator     VARCHAR(36) NOT NULL," +
-                " group       BOOLEAN NOT NULL DEFAULT TRUE," +
+                " team        BOOLEAN NOT NULL DEFAULT TRUE," +
 
                 " anchor BOOLEAN NOT NULL DEFAULT FALSE," +
                 " animal_killing BOOLEAN NOT NULL DEFAULT FALSE," +
@@ -145,7 +145,7 @@ public class Database {
                 " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
                 " UNIQUE (name, creator)," +
                 " FOREIGN KEY (creator) REFERENCES player_name(uuid)" +
-                ")";
+                ");";
 
         // player dominion privilege
         sql += "CREATE TABLE IF NOT EXISTS player_dom_privilege (" +
@@ -157,7 +157,22 @@ public class Database {
                 " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid)," +
                 " FOREIGN KEY (dom_id) REFERENCES dominion(id)," +
                 " FOREIGN KEY (privilege_template_id) REFERENCES privilege_template(id)" +
-                ")";
+                ");";
+
+        sql += "INSERT INTO player_name (" +
+                "id, uuid, last_known_name" +
+                ") VALUES (" +
+                "-1, '00000000-0000-0000-0000-000000000000', 'server'" +
+                ") ON CONFLICT DO NOTHING;";
+
+        sql += "INSERT INTO dominion (" +
+                "id, owner, name, world, x1, y1, z1, x2, y2, z2, parent_dom_id, join_message, leave_message" +
+                ") VALUES (" +
+                "-1, '00000000-0000-0000-0000-000000000000', '根领地', 'all', " +
+                "-2147483648, -2147483648, -2147483648, " +
+                "2147483647, 2147483647, 2147483647, -1, " +
+                "'欢迎', '再见'" +
+                ") ON CONFLICT DO NOTHING;";
 
         query(sql);
     }

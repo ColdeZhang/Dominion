@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -39,15 +40,21 @@ public class Apis {
      * @param player 玩家
      * @return 当前所在的领地
      */
-    public static DominionDTO getPlayerCurrentDominion(Player player) {
+    public static DominionDTO getPlayerCurrentDominion(Player player, boolean show_warning) {
         Location location = player.getLocation();
         List<DominionDTO> dominions = DominionDTO.selectByLocation(location.getWorld().getName(),
                 (int) location.getX(), (int) location.getY(), (int) location.getZ());
         if (dominions.size() != 1) {
-            Notification.error(player, "你不在一个领地内或在子领地内，无法确定你要操作的领地，请手动指定要操作的领地名称");
+            if (show_warning) {
+                Notification.error(player, "你不在一个领地内或在子领地内，无法确定你要操作的领地，请手动指定要操作的领地名称");
+            }
             return null;
         }
         return dominions.get(0);
+    }
+
+    public static DominionDTO getPlayerCurrentDominion(Player player) {
+        return getPlayerCurrentDominion(player, true);
     }
 
 
@@ -150,5 +157,25 @@ public class Apis {
                 return false;
         }
         return true;
+    }
+
+    public static BlockFace getFace(Player player) {
+        float yaw = player.getYaw();
+        float pitch = player.getPitch();
+        if (pitch > -45 && pitch < 45) {
+            if (yaw > -45 && yaw < 45) {
+                return BlockFace.SOUTH;
+            } else if (yaw > 135 || yaw < -135) {
+                return BlockFace.NORTH;
+            } else if (yaw > 45 && yaw < 135) {
+                return BlockFace.WEST;
+            } else {
+                return BlockFace.EAST;
+            }
+        } else if (pitch > 45) {
+            return BlockFace.UP;
+        } else {
+            return BlockFace.DOWN;
+        }
     }
 }
