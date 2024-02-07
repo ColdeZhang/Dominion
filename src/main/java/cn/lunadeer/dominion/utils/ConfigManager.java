@@ -21,6 +21,9 @@ public class ConfigManager {
         _db_user = _file.getString("Database.User", "postgres");
         _db_pass = _file.getString("Database.Pass", "postgres");
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
+        _max_x = _file.getInt("MaxX", 128);
+        _max_y = _file.getInt("MaxY", 64);
+        _max_z = _file.getInt("MaxZ", 128);
     }
 
     public Boolean isDebug() {
@@ -64,6 +67,36 @@ public class ConfigManager {
         return _db_pass;
     }
 
+    public Integer getMaxX() {
+        return _max_x;
+    }
+
+    public void setMaxX(Integer max_x) {
+        _max_x = max_x;
+        _file.set("MaxX", max_x);
+        _plugin.saveConfig();
+    }
+
+    public Integer getMaxY() {
+        return _max_y;
+    }
+
+    public void setMaxY(Integer max_y) {
+        _max_y = max_y;
+        _file.set("MaxY", max_y);
+        _plugin.saveConfig();
+    }
+
+    public Integer getMaxZ() {
+        return _max_z;
+    }
+
+    public void setMaxZ(Integer max_z) {
+        _max_z = max_z;
+        _file.set("MaxZ", max_z);
+        _plugin.saveConfig();
+    }
+
     public Integer getAutoCreateRadius() {
         return _auto_create_radius;
     }
@@ -86,4 +119,8 @@ public class ConfigManager {
     private String _db_name;
 
     private Integer _auto_create_radius;
+
+    private Integer _max_x;
+    private Integer _max_y;
+    private Integer _max_z;
 }

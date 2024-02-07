@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.Time;
@@ -15,7 +16,7 @@ import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class DominionController {
 
-    public static List<DominionDTO> all(Player owner){
+    public static List<DominionDTO> all(Player owner) {
         return DominionDTO.selectAll(owner.getUniqueId());
     }
 
@@ -60,6 +61,17 @@ public class DominionController {
         }
         if (!owner.getWorld().equals(loc1.getWorld())) {
             Notification.error(owner, "禁止跨世界操作");
+            return null;
+        }
+        int x_length = Math.abs((int) (loc1.getX() - loc2.getX()));
+        int y_length = Math.abs((int) (loc1.getY() - loc2.getY()));
+        int z_length = Math.abs((int) (loc1.getZ() - loc2.getZ()));
+        if (x_length < 4 || y_length < 4 || z_length < 4) {
+            Notification.error(owner, "领地的任意一边长度不得小于4");
+            return null;
+        }
+        if (x_length > Dominion.config.getMaxX() || y_length > Dominion.config.getMaxY() || z_length > Dominion.config.getMaxZ()) {
+            Notification.error(owner, "领地尺寸不能超过 " + Dominion.config.getMaxX() + " x " + Dominion.config.getMaxY() + " x " + Dominion.config.getMaxZ());
             return null;
         }
         DominionDTO dominion = new DominionDTO(owner.getUniqueId(), name, owner.getWorld().getName(),

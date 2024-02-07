@@ -6,5 +6,8 @@ Database:
   Pass: dominion
 
 AutoCreateRadius: 10
+MaxX: 128
+MaxY: 64
+MaxZ: 128
 
 Debug: false
