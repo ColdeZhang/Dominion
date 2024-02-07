@@ -15,6 +15,10 @@ import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class DominionController {
 
+    public static List<DominionDTO> all(Player owner){
+        return DominionDTO.selectAll(owner.getUniqueId());
+    }
+
     /**
      * 创建领地
      *
@@ -310,7 +314,7 @@ public class DominionController {
                 sub_names = sub_names.substring(0, sub_names.length() - 2);
                 Notification.warn(operator, "当前子领地（不包含子领地的子领地等）：" + sub_names);
             }
-            Notification.warn(operator, "输入 /dominion force_delete " + dominion_name + " 确认删除");
+            Notification.warn(operator, "输入 /dominion delete " + dominion_name + " force 确认删除");
             return;
         }
         DominionDTO.delete(dominion);

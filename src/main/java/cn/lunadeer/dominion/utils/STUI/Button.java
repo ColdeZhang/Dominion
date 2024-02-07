@@ -9,4 +9,14 @@ public class Button {
         return Component.text("[" + text + "]", ViewStyles.action_color)
                 .clickEvent(net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, command));
     }
+
+    public static TextComponent createRed(String text, String command) {
+        return Component.text("[" + text + "]", ViewStyles.error_color)
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, command));
+    }
+
+    public static TextComponent createGreen(String text, String command) {
+        return Component.text("[" + text + "]", ViewStyles.success_color)
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, command));
+    }
 }

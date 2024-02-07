@@ -3,15 +3,13 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.utils.ConfigManager;
 import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.XLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.postgresql.core.Tuple;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class Dominion extends JavaPlugin {
 
@@ -22,6 +20,7 @@ public final class Dominion extends JavaPlugin {
         config = new ConfigManager(this);
         dbConnection = Database.createConnection();
 
+        Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         XLogger.info("领地插件已启动");
         XLogger.info("版本：" + this.getPluginMeta().getVersion());

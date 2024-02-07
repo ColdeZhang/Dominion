@@ -11,6 +11,10 @@ public class PlayerController {
         return PlayerDTO.select(playerName);
     }
 
+    public static PlayerDTO getPlayerDTO(UUID uuid) {
+        return PlayerDTO.select(uuid);
+    }
+
     public static List<PlayerDTO> searchPlayer(String playerName) {
         return PlayerDTO.search(playerName);
     }

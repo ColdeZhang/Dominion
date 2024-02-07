@@ -33,7 +33,7 @@ public class PrivilegeTemplateDTO {
         return query(sql);
     }
 
-    public static List<PrivilegeTemplateDTO> searchGroup(UUID creator){
+    public static List<PrivilegeTemplateDTO> selectGroup(UUID creator){
         String sql = "SELECT * FROM privilege_template WHERE creator = '" + creator.toString() + "' AND group = true";
         return query(sql);
     }

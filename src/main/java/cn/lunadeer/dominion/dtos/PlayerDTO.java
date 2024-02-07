@@ -48,7 +48,7 @@ public class PlayerDTO {
         return players;
     }
 
-    private static PlayerDTO select(UUID uuid) {
+    public static PlayerDTO select(UUID uuid) {
         String sql = "SELECT * FROM player_name WHERE uuid = '" + uuid.toString() + "'";
         List<PlayerDTO> players = query(sql);
         if (players.size() == 0) return null;

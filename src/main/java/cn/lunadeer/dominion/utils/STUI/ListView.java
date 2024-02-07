@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.utils.STUI;
 
 import cn.lunadeer.dominion.utils.Notification;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class ListView {
     private String command = "";
     private final View view = View.create();
 
-    public ListView(int page_size, String command) {
+    private ListView(int page_size, String command) {
         super();
         this.page_size = page_size;
         this.command = command;
@@ -35,6 +36,11 @@ public class ListView {
     }
 
     public ListView subtitle(String subtitle) {
+        view.subtitle(subtitle);
+        return this;
+    }
+
+    public ListView subtitle(TextComponent subtitle) {
         view.subtitle(subtitle);
         return this;
     }
