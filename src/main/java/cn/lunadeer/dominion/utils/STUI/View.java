@@ -10,7 +10,6 @@ import java.util.List;
 import static cn.lunadeer.dominion.utils.STUI.ViewStyles.main_color;
 
 public class View {
-    protected TextComponent title_decorate = Component.text("━", main_color);
     protected TextComponent space = Component.text(" ");
     protected TextComponent sub_title_decorate = Component.text("-   ", main_color);
     protected TextComponent line_decorate = Component.text("⌗ ", main_color);
@@ -23,18 +22,11 @@ public class View {
     protected TextComponent divide_line = Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", main_color);
 
     public void showOn(Player player) {
-        player.sendMessage(edge);
+        // player.sendMessage(edge);
         TextComponent.Builder builder = Component.text();
-        int title_length = title.content().length();
-        int title_width = title_length * 2 + 2;
-        int decorate_count = divide_line.content().length() - title_width;
-        for (int i = 0; i < decorate_count / 2; i++) {
-            builder.append(title_decorate);
-        }
+        builder.append(Component.text("__/", main_color));
         builder.append(space).append(title).append(space);
-        for (int i = 0; i < decorate_count / 2; i++) {
-            builder.append(title_decorate);
-        }
+        builder.append(Component.text("\\__", main_color));
         player.sendMessage(builder.build());
         if (subtitle != null) {
             player.sendMessage(divide_line);

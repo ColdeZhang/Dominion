@@ -7,9 +7,7 @@ import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.postgresql.core.Tuple;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.util.*;
 

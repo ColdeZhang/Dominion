@@ -105,13 +105,13 @@ public class Database {
                 " FOREIGN KEY (parent_dom_id) REFERENCES dominion(id)" +
                 ");";
 
-        // privilege template
-        sql += "CREATE TABLE IF NOT EXISTS privilege_template (" +
+        // player privilege
+        sql += "CREATE TABLE IF NOT EXISTS player_privilege (" +
                 " id          SERIAL PRIMARY KEY," +
-                " name        TEXT NOT NULL," +
-                " creator     VARCHAR(36) NOT NULL," +
-                " team        BOOLEAN NOT NULL DEFAULT TRUE," +
+                " player_uuid VARCHAR(36) NOT NULL," +
+                " dom_id      INT NOT NULL," +
 
+                " admin BOOLEAN NOT NULL DEFAULT FALSE," +
                 " anchor BOOLEAN NOT NULL DEFAULT FALSE," +
                 " animal_killing BOOLEAN NOT NULL DEFAULT FALSE," +
                 " anvil BOOLEAN NOT NULL DEFAULT FALSE," +
@@ -143,20 +143,9 @@ public class Database {
                 " trade BOOLEAN NOT NULL DEFAULT FALSE," +
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
                 " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
-                " UNIQUE (name, creator)," +
-                " FOREIGN KEY (creator) REFERENCES player_name(uuid)" +
-                ");";
 
-        // player dominion privilege
-        sql += "CREATE TABLE IF NOT EXISTS player_dom_privilege (" +
-                " id          SERIAL PRIMARY KEY," +
-                " player_uuid VARCHAR(36) NOT NULL," +
-                " admin       BOOLEAN NOT NULL DEFAULT FALSE," +
-                " dom_id      INT NOT NULL," +
-                " privilege_template_id INT NOT NULL," +
                 " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid)," +
-                " FOREIGN KEY (dom_id) REFERENCES dominion(id)," +
-                " FOREIGN KEY (privilege_template_id) REFERENCES privilege_template(id)" +
+                " FOREIGN KEY (dom_id) REFERENCES dominion(id)" +
                 ");";
 
         sql += "INSERT INTO player_name (" +

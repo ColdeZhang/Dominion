@@ -4,16 +4,13 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.Notification;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.commands.Apis.*;
-import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
 
 public class DominionOperate {
     /**

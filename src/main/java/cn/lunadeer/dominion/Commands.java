@@ -1,22 +1,14 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.commands.*;
-import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.controllers.GroupController;
+import cn.lunadeer.dominion.commands.DominionFlag;
+import cn.lunadeer.dominion.commands.DominionOperate;
+import cn.lunadeer.dominion.commands.PlayerPrivilege;
 import cn.lunadeer.dominion.controllers.PlayerController;
-import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
-import cn.lunadeer.dominion.utils.Notification;
-import cn.lunadeer.dominion.utils.STUI.Line;
-import cn.lunadeer.dominion.utils.STUI.ListView;
-import cn.lunadeer.dominion.utils.STUI.Pagination;
-import cn.lunadeer.dominion.utils.STUI.View;
-import net.kyori.adventure.text.TextComponent;
+import cn.lunadeer.dominion.tuis.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.commands.Helper.*;
 
 public class Commands implements TabExecutor {
@@ -67,34 +58,22 @@ public class Commands implements TabExecutor {
         }
         switch (args[0]) {
             case "menu":
-                TUIs.menu(sender, args);
+                Menu.show(sender, args);
                 break;
             case "list":
-                TUIs.list(sender, args);
+                ListDominion.show(sender, args);
                 break;
             case "help":
-                TUIs.printHelp(sender, args);
+                cn.lunadeer.dominion.tuis.Apis.printHelp(sender, args);
                 break;
             case "info":
-                TUIs.sizeInfo(sender, args);
+                DominionSizeInfo.show(sender, args);
                 break;
             case "manage":
-                TUIs.manage(sender, args);
+                DominionManage.show(sender, args);
                 break;
             case "flag_info":
-                TUIs.flagInfo(sender, args);
-                break;
-            case "group_list":
-                TUIs.groupList(sender, args);
-                break;
-            case "privilege_list":
-                TUIs.privilegeList(sender, args);
-                break;
-            case "group":
-                TUIs.group(sender, args);
-                break;
-            case "group_detail":
-                TUIs.groupDetail(sender, args);
+                DominionFlagInfo.show(sender, args);
                 break;
             case "create":
                 DominionOperate.createDominion(sender, args);
@@ -126,20 +105,11 @@ public class Commands implements TabExecutor {
             case "clear_privilege":
                 PlayerPrivilege.clearPlayerPrivilege(sender, args);
                 break;
-            case "create_group":
-                PrivilegeGroup.createGroup(sender, args);
+            case "privilege_list":
+                DominionPrivilegeList.show(sender, args);
                 break;
-            case "delete_group":
-                PrivilegeGroup.deleteGroup(sender, args);
-                break;
-            case "set_group":
-                PrivilegeGroup.setDominionFlag(sender, args);
-                break;
-            case "add_player":
-                PrivilegeGroup.addPlayer(sender, args);
-                break;
-            case "remove_player":
-                PrivilegeGroup.removePlayer(sender, args);
+            case "privilege_info":
+                PrivilegeInfo.show(sender, args);
                 break;
             default:
                 return false;
@@ -165,8 +135,7 @@ public class Commands implements TabExecutor {
         if (args.length == 1) {
             return Arrays.asList("menu", "help", "info", "manage", "flag_info", "group_list", "privilege_list", "group",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
-                    "set_privilege", "clear_privilege", "create_group", "delete_group", "set_group", "add_player",
-                    "remove_player", "list"
+                    "set_privilege", "clear_privilege", "list", "privilege_info"
             );
         }
         if (args.length == 2) {
@@ -178,28 +147,23 @@ public class Commands implements TabExecutor {
                 case "auto_create":
                     return Collections.singletonList("输入领地名称");
                 case "delete":
-                case "create_sub":
-                case "auto_create_sub":
                 case "info":
                 case "manage":
                 case "flag_info":
-                case "group_list":
                 case "privilege_list":
                     return playerDominions(sender);
                 case "set":
                     return dominionFlags();
                 case "set_privilege":
                 case "clear_privilege":
-                case "add_player":
-                case "remove_player":
+                case "privilege_info":
                     return playerNames();
-                case "create_group":
-                case "delete_group":
-                case "set_group":
-                    return playerGroups(sender);
                 case "expand":
                 case "contract":
                     return Collections.singletonList("大小(整数)");
+                case "create_sub":
+                case "auto_create_sub":
+                    return Collections.singletonList("子领地名称");
             }
         }
         if (args.length == 3) {
@@ -208,25 +172,20 @@ public class Commands implements TabExecutor {
                     return boolOptions();
                 case "set_privilege":
                     return playerPrivileges();
-                case "set_group":
-                    return groupPrivileges();
-                case "add_player":
-                case "remove_player":
-                    return playerGroups(sender);
                 case "expand":
                 case "contract":
+                case "clear_privilege":
+                case "privilege_info":
+                case "auto_create_sub":
+                case "create_sub":
                     return playerDominions(sender);
             }
         }
         if (args.length == 4) {
             switch (args[0]) {
                 case "set":
-                case "set_privilege":
-                case "clear_privilege":
-                case "add_player":
-                case "remove_player":
                     return playerDominions(sender);
-                case "set_group":
+                case "set_privilege":
                     return boolOptions();
             }
         }

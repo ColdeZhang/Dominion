@@ -2,7 +2,6 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -22,15 +21,13 @@ public class Apis {
     public static boolean noAuthToChangeFlags(Player player, DominionDTO dominion) {
         if (player.isOp()) return false;
         if (!dominion.getOwner().equals(player.getUniqueId())) {
-            List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(player.getUniqueId(), dominion.getId());
-            for (PlayerPrivilegeDTO privilege : privileges) {
-                if (privilege.getAdmin()) return false;
+            PlayerPrivilegeDTO privileges = PlayerPrivilegeDTO.select(player.getUniqueId(), dominion.getId());
+            if (privileges == null || !privileges.getAdmin()) {
+                Notification.error(player, "你不是领地 " + dominion.getName() + " 的拥有者或管理员，无权修改权限");
+                return true;
             }
-            Notification.error(player, "你不是领地 " + dominion.getName() + " 的拥有者或管理员，无法执行此操作");
-            return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -55,108 +52,6 @@ public class Apis {
 
     public static DominionDTO getPlayerCurrentDominion(Player player) {
         return getPlayerCurrentDominion(player, true);
-    }
-
-
-    public static boolean updateTemplateFlag(PrivilegeTemplateDTO privilege, String flag, boolean value) {
-        switch (flag) {
-            case "anchor":
-                privilege.setAnchor(value);
-                break;
-            case "animal_killing":
-                privilege.setAnimalKilling(value);
-                break;
-            case "anvil":
-                privilege.setAnvil(value);
-                break;
-            case "beacon":
-                privilege.setBeacon(value);
-                break;
-            case "bed":
-                privilege.setBed(value);
-                break;
-            case "brew":
-                privilege.setBrew(value);
-                break;
-            case "button":
-                privilege.setButton(value);
-                break;
-            case "cake":
-                privilege.setCake(value);
-                break;
-            case "container":
-                privilege.setContainer(value);
-                break;
-            case "craft":
-                privilege.setCraft(value);
-                break;
-            case "diode":
-                privilege.setDiode(value);
-                break;
-            case "door":
-                privilege.setDoor(value);
-                break;
-            case "dye":
-                privilege.setDye(value);
-                break;
-            case "egg":
-                privilege.setEgg(value);
-                break;
-            case "enchant":
-                privilege.setEnchant(value);
-                break;
-            case "ender_pearl":
-                privilege.setEnderPearl(value);
-                break;
-            case "feed":
-                privilege.setFeed(value);
-                break;
-            case "glow":
-                privilege.setGlow(value);
-                break;
-            case "honey":
-                privilege.setHoney(value);
-                break;
-            case "hook":
-                privilege.setHook(value);
-                break;
-            case "ignite":
-                privilege.setIgnite(value);
-                break;
-            case "mob_killing":
-                privilege.setMobKilling(value);
-                break;
-            case "move":
-                privilege.setMove(value);
-                break;
-            case "place":
-                privilege.setPlace(value);
-                break;
-            case "pressure":
-                privilege.setPressure(value);
-                break;
-            case "riding":
-                privilege.setRiding(value);
-                break;
-            case "shear":
-                privilege.setShear(value);
-                break;
-            case "shoot":
-                privilege.setShoot(value);
-                break;
-            case "trade":
-                privilege.setTrade(value);
-                break;
-            case "vehicle_destroy":
-                privilege.setVehicleDestroy(value);
-                break;
-            case "harvest":
-                privilege.setHarvest(value);
-                break;
-            default:
-                return false;
-        }
-        return true;
     }
 
     public static BlockFace getFace(Player player) {

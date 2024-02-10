@@ -3,7 +3,6 @@ package cn.lunadeer.dominion.controllers;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.Notification;
-import cn.lunadeer.dominion.utils.STUI.Pagination;
 import cn.lunadeer.dominion.utils.Time;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
