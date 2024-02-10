@@ -31,7 +31,7 @@ public class DominionFlagInfo {
             } catch (Exception ignored) {
             }
         }
-        ListView view = ListView.create(6, "/dominion flag_info " + dominion.getName());
+        ListView view = ListView.create(10, "/dominion flag_info " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 默认权限")
                 .navigator(Line.create()
                         .append(Button.create("主菜单", "/dominion menu"))

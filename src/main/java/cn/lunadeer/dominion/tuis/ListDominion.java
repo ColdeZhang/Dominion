@@ -19,7 +19,7 @@ public class ListDominion {
         Player player = playerOnly(sender);
         if (player == null) return;
         int page = getPage(args);
-        ListView view = ListView.create(5, "/dominion list");
+        ListView view = ListView.create(10, "/dominion list");
         List<String> dominions = playerDominions(sender);
         if (dominions.isEmpty()) {
             Notification.warn(sender, "你没有任何领地");

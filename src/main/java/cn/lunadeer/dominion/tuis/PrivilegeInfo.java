@@ -32,7 +32,7 @@ public class PrivilegeInfo {
             Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
             return;
         }
-        ListView view = ListView.create(5, "/dominion privilege_info " + playerName + " " + dominion.getName());
+        ListView view = ListView.create(10, "/dominion privilege_info " + playerName + " " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         PlayerDTO playerDTO = PlayerDTO.select(playerName);
         if (playerDTO == null) {

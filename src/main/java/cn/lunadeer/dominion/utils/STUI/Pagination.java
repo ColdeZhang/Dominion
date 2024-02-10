@@ -25,9 +25,13 @@ public class Pagination {
         componentList.add(Component.text(" 页 ", main_color));
         if (page > 1) {
             componentList.add(Button.create("上一页", command + " " + (page - 1)));
+        } else {
+            componentList.add(Component.text("[上一页]", sub_color));
         }
         if (page < page_count) {
             componentList.add(Button.create("下一页", command + " " + (page + 1)));
+        } else {
+            componentList.add(Component.text("[下一页]", sub_color));
         }
         TextComponent.Builder builder = Component.text();
         for (Component component : componentList) {

@@ -73,6 +73,9 @@ public class ListView {
         }
         for (int i = offset; i < offset + page_size; i++) {
             if (i >= lines.size()) {
+                for (int j = 0; j < page_size - lines.size() % page_size; j++) {
+                    view.addLine(Line.create());
+                }
                 break;
             }
             view.addLine(lines.get(i));
