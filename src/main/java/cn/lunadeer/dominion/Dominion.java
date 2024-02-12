@@ -20,6 +20,7 @@ public final class Dominion extends JavaPlugin {
         config = new ConfigManager(this);
         dbConnection = Database.createConnection();
         Database.migrate();
+        Cache.instance = new Cache();
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());

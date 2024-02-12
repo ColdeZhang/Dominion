@@ -144,6 +144,7 @@ public class Database {
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
                 " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
 
+                " UNIQUE (player_uuid, dom_id)," +
                 " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid)," +
                 " FOREIGN KEY (dom_id) REFERENCES dominion(id)" +
                 ");";

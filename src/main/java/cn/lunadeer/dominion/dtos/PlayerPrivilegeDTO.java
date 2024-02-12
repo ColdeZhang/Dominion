@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.XLogger;
 
@@ -38,6 +39,11 @@ public class PlayerPrivilegeDTO {
         String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "' " +
                 "AND dom_id = " + domID + ";";
         query(sql);
+    }
+
+    public static List<PlayerPrivilegeDTO> selectAll(){
+        String sql = "SELECT * FROM player_privilege;";
+        return query(sql);
     }
 
     private final Integer id;
@@ -475,6 +481,10 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("harvest")
                 );
                 players.add(player);
+            }
+            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")){
+                // 如果是更新操作，重新加载缓存
+                Cache.instance.loadPlayerPrivileges();
             }
         } catch (Exception e) {
             XLogger.err("Database query failed: " + e.getMessage());

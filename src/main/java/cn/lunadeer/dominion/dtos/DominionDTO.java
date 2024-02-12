@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.XLogger;
 
@@ -68,6 +69,10 @@ public class DominionDTO {
                         rs.getBoolean("wither_spawn"),
                         rs.getBoolean("harvest"));
                 dominions.add(dominion);
+            }
+            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
+                // 如果是更新操作，重新加载缓存
+                Cache.instance.loadDominions();
             }
         } catch (SQLException e) {
             XLogger.err("Database query failed: " + e.getMessage());
@@ -177,7 +182,7 @@ public class DominionDTO {
                 "cake = " + dominion.getCake() + ", " +
                 "container = " + dominion.getContainer() + ", " +
                 "craft = " + dominion.getCraft() + ", " +
-                "creeper_explode = " + dominion.getCreeperExplode() + ", " +
+                "creeper_explode = " + dominion.getCreeperExplode() + ", " +        // dom only
                 "diode = " + dominion.getDiode() + ", " +
                 "door = " + dominion.getDoor() + ", " +
                 "dye = " + dominion.getDye() + ", " +
@@ -185,8 +190,8 @@ public class DominionDTO {
                 "enchant = " + dominion.getEnchant() + ", " +
                 "ender_pearl = " + dominion.getEnderPearl() + ", " +
                 "feed = " + dominion.getFeed() + ", " +
-                "fire_spread = " + dominion.getFireSpread() + ", " +
-                "flow_in_protection = " + dominion.getFlowInProtection() + ", " +
+                "fire_spread = " + dominion.getFireSpread() + ", " +                // dom only
+                "flow_in_protection = " + dominion.getFlowInProtection() + ", " +   // dom only
                 "glow = " + dominion.getGlow() + ", " +
                 "grow = " + dominion.getGrow() + ", " +
                 "honey = " + dominion.getHoney() + ", " +
@@ -199,10 +204,10 @@ public class DominionDTO {
                 "riding = " + dominion.getRiding() + ", " +
                 "shear = " + dominion.getShear() + ", " +
                 "shoot = " + dominion.getShoot() + ", " +
-                "tnt_explode = " + dominion.getTntExplode() + ", " +
+                "tnt_explode = " + dominion.getTntExplode() + ", " +                // dom only
                 "trade = " + dominion.getTrade() + ", " +
                 "vehicle_destroy = " + dominion.getVehicleDestroy() + ", " +
-                "wither_spawn = " + dominion.getWitherSpawn() + ", " +
+                "wither_spawn = " + dominion.getWitherSpawn() + ", " +              // dom only
                 "harvest = " + dominion.getHarvest() +
                 " WHERE id = " + dominion.getId() +
                 " RETURNING *;";
