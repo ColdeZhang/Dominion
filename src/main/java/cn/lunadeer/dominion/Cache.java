@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -64,6 +65,10 @@ public class Cache {
         DominionDTO dominion = player_current_dominion.get(player.getUniqueId());
         if (dominion != null) {
             if (!isInDominion(dominion, player)) {
+                // glow
+                if (player.isGlowing()) {
+                    player.setGlowing(false);
+                }
                 Notification.info(player, "您已离开领地：" + dominion.getName());
                 Notification.info(player, dominion.getLeaveMessage());
                 player_current_dominion.put(player.getUniqueId(), null);
@@ -84,10 +89,40 @@ public class Cache {
             in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
             dominion = in_dominions.get(in_dominions.size() - 1);
             player_current_dominion.put(player.getUniqueId(), dominion);
+            // glow
+            PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
+            if (privilege != null) {
+                if (privilege.getGlow()) {
+                    if (player.isGlowing()) {
+                        player.setGlowing(true);
+                    }
+                }
+            } else {
+                if (dominion.getGlow()) {
+                    if (player.isGlowing()) {
+                        player.setGlowing(true);
+                    }
+                }
+            }
             Notification.info(player, "您正在进入领地：" + dominion.getName());
             Notification.info(player, dominion.getJoinMessage());
         }
         return dominion;
+    }
+
+    public DominionDTO getDominion(Location loc) {
+        String world = loc.getWorld().getName();
+        List<DominionDTO> dominions = world_dominions.get(world);
+        if (dominions == null) return null;
+        List<DominionDTO> in_dominions = new ArrayList<>();
+        for (DominionDTO d : dominions) {
+            if (isInDominion(d, loc.getX(), loc.getY(), loc.getZ())) {
+                in_dominions.add(d);
+            }
+        }
+        if (in_dominions.size() == 0) return null;
+        in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
+        return in_dominions.get(in_dominions.size() - 1);
     }
 
     /**
@@ -108,6 +143,13 @@ public class Cache {
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
         double z = player.getLocation().getZ();
+        return x >= dominion.getX1() && x <= dominion.getX2() &&
+                y >= dominion.getY1() && y <= dominion.getY2() &&
+                z >= dominion.getZ1() && z <= dominion.getZ2();
+    }
+
+    private static boolean isInDominion(@Nullable DominionDTO dominion, double x, double y, double z) {
+        if (dominion == null) return false;
         return x >= dominion.getX1() && x <= dominion.getX2() &&
                 y >= dominion.getY1() && y <= dominion.getY2() &&
                 z >= dominion.getZ1() && z <= dominion.getZ2();

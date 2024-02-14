@@ -77,7 +77,7 @@ public class PrivilegeController {
     public static boolean setPrivilege(Player operator, String player_name, String flag, boolean value, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            Notification.error(operator, "领地 " + dominionName + " 不存在");
+            Notification.error(operator, "领地 " + dominionName + " 不存在，无法设置特权");
             return false;
         }
         if (noAuthToChangeFlags(operator, dominion)) return false;
@@ -88,7 +88,7 @@ public class PrivilegeController {
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            privilege = createPlayerPrivilege(operator, player.getUuid(), dominion.getId());
+            privilege = createPlayerPrivilege(operator, player.getUuid(), dominion);
             if (privilege == null) return false;
         }
         switch (flag) {
@@ -110,6 +110,9 @@ public class PrivilegeController {
             case "brew":
                 privilege.setBrew(value);
                 break;
+            case "break":
+                privilege.setBreak(value);
+                break;
             case "button":
                 privilege.setButton(value);
                 break;
@@ -122,8 +125,8 @@ public class PrivilegeController {
             case "craft":
                 privilege.setCraft(value);
                 break;
-            case "diode":
-                privilege.setDiode(value);
+            case "comparer":
+                privilege.setComparer(value);
                 break;
             case "door":
                 privilege.setDoor(value);
@@ -146,6 +149,9 @@ public class PrivilegeController {
             case "glow":
                 privilege.setGlow(value);
                 break;
+            case "harvest":
+                privilege.setHarvest(value);
+                break;
             case "honey":
                 privilege.setHoney(value);
                 break;
@@ -156,7 +162,7 @@ public class PrivilegeController {
                 privilege.setIgnite(value);
                 break;
             case "mob_killing":
-                privilege.setMobKilling(value);
+                privilege.setMonsterKilling(value);
                 break;
             case "move":
                 privilege.setMove(value);
@@ -170,6 +176,9 @@ public class PrivilegeController {
             case "riding":
                 privilege.setRiding(value);
                 break;
+            case "repeater":
+                privilege.setRepeater(value);
+                break;
             case "shear":
                 privilege.setShear(value);
                 break;
@@ -182,9 +191,6 @@ public class PrivilegeController {
             case "vehicle_destroy":
                 privilege.setVehicleDestroy(value);
                 break;
-            case "harvest":
-                privilege.setHarvest(value);
-                break;
             default:
                 Notification.error(operator, "未知的领地权限 " + flag);
                 return false;
@@ -193,8 +199,24 @@ public class PrivilegeController {
         return true;
     }
 
-    private static PlayerPrivilegeDTO createPlayerPrivilege(Player operator, UUID player, Integer domID) {
-        PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, false, domID);
+    private static PlayerPrivilegeDTO createPlayerPrivilege(Player operator, UUID player, DominionDTO dom) {
+        PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, dom.getId(),
+                dom.getAnchor(), dom.getAnimalKilling(), dom.getAnvil(),
+                dom.getBeacon(), dom.getBed(), dom.getBrew(), dom.getBreak(), dom.getButton(),
+                dom.getCake(), dom.getContainer(), dom.getCraft(), dom.getComparer(),
+                dom.getDoor(), dom.getDye(),
+                dom.getEgg(), dom.getEnchant(), dom.getEnderPearl(),
+                dom.getFeed(),
+                dom.getGlow(),
+                dom.getHoney(), dom.getHook(),
+                dom.getIgnite(),
+                dom.getLever(),
+                dom.getMonsterKilling(), dom.getMove(),
+                dom.getPlace(), dom.getPressure(),
+                dom.getRiding(), dom.getRepeater(),
+                dom.getShear(), dom.getShoot(),
+                dom.getTrade(),
+                dom.getVehicleDestroy(), dom.getHarvest());
         privilege = PlayerPrivilegeDTO.insert(privilege);
         if (privilege == null) {
             Notification.error(operator, "创建玩家特权关联玩家时失败");

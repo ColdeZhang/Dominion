@@ -69,12 +69,13 @@ public class Database {
                 " beacon BOOLEAN NOT NULL DEFAULT FALSE," +
                 " bed BOOLEAN NOT NULL DEFAULT FALSE," +
                 " brew BOOLEAN NOT NULL DEFAULT FALSE," +
+                " break BOOLEAN NOT NULL DEFAULT FALSE," +
                 " button BOOLEAN NOT NULL DEFAULT FALSE," +
                 " cake BOOLEAN NOT NULL DEFAULT FALSE," +
                 " container BOOLEAN NOT NULL DEFAULT FALSE," +
                 " craft BOOLEAN NOT NULL DEFAULT FALSE," +
                 " creeper_explode BOOLEAN NOT NULL DEFAULT FALSE," +
-                " diode BOOLEAN NOT NULL DEFAULT FALSE," +
+                " comparer BOOLEAN NOT NULL DEFAULT FALSE," +
                 " door BOOLEAN NOT NULL DEFAULT FALSE," +
                 " dye BOOLEAN NOT NULL DEFAULT FALSE," +
                 " egg BOOLEAN NOT NULL DEFAULT FALSE," +
@@ -83,23 +84,24 @@ public class Database {
                 " feed BOOLEAN NOT NULL DEFAULT FALSE," +
                 " fire_spread BOOLEAN NOT NULL DEFAULT FALSE," +
                 " flow_in_protection BOOLEAN NOT NULL DEFAULT FALSE," +
-                " glow BOOLEAN NOT NULL DEFAULT FALSE," +
-                " grow BOOLEAN NOT NULL DEFAULT FALSE," +
+                " glow BOOLEAN NOT NULL DEFAULT TRUE," +
+                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
                 " honey BOOLEAN NOT NULL DEFAULT FALSE," +
                 " hook BOOLEAN NOT NULL DEFAULT FALSE," +
                 " ignite BOOLEAN NOT NULL DEFAULT FALSE," +
-                " mob_killing BOOLEAN NOT NULL DEFAULT FALSE," +
+                " lever BOOLEAN NOT NULL DEFAULT FALSE," +
+                " monster_killing BOOLEAN NOT NULL DEFAULT FALSE," +
                 " move BOOLEAN NOT NULL DEFAULT TRUE," +
                 " place BOOLEAN NOT NULL DEFAULT FALSE," +
                 " pressure BOOLEAN NOT NULL DEFAULT FALSE," +
                 " riding BOOLEAN NOT NULL DEFAULT FALSE," +
+                " repeater BOOLEAN NOT NULL DEFAULT FALSE," +
                 " shear BOOLEAN NOT NULL DEFAULT FALSE," +
                 " shoot BOOLEAN NOT NULL DEFAULT FALSE," +
                 " tnt_explode BOOLEAN NOT NULL DEFAULT FALSE," +
                 " trade BOOLEAN NOT NULL DEFAULT FALSE," +
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
                 " wither_spawn BOOLEAN NOT NULL DEFAULT FALSE," +
-                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
 
                 " FOREIGN KEY (owner) REFERENCES player_name(uuid)," +
                 " FOREIGN KEY (parent_dom_id) REFERENCES dominion(id)" +
@@ -118,31 +120,34 @@ public class Database {
                 " beacon BOOLEAN NOT NULL DEFAULT FALSE," +
                 " bed BOOLEAN NOT NULL DEFAULT FALSE," +
                 " brew BOOLEAN NOT NULL DEFAULT FALSE," +
+                " break BOOLEAN NOT NULL DEFAULT FALSE," +
                 " button BOOLEAN NOT NULL DEFAULT FALSE," +
                 " cake BOOLEAN NOT NULL DEFAULT FALSE," +
                 " container BOOLEAN NOT NULL DEFAULT FALSE," +
                 " craft BOOLEAN NOT NULL DEFAULT FALSE," +
-                " diode BOOLEAN NOT NULL DEFAULT FALSE," +
+                " comparer BOOLEAN NOT NULL DEFAULT FALSE," +
                 " door BOOLEAN NOT NULL DEFAULT FALSE," +
                 " dye BOOLEAN NOT NULL DEFAULT FALSE," +
                 " egg BOOLEAN NOT NULL DEFAULT FALSE," +
                 " enchant BOOLEAN NOT NULL DEFAULT FALSE," +
                 " ender_pearl BOOLEAN NOT NULL DEFAULT FALSE," +
                 " feed BOOLEAN NOT NULL DEFAULT FALSE," +
-                " glow BOOLEAN NOT NULL DEFAULT FALSE," +
+                " glow BOOLEAN NOT NULL DEFAULT TRUE," +
+                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
                 " honey BOOLEAN NOT NULL DEFAULT FALSE," +
                 " hook BOOLEAN NOT NULL DEFAULT FALSE," +
                 " ignite BOOLEAN NOT NULL DEFAULT FALSE," +
-                " mob_killing BOOLEAN NOT NULL DEFAULT FALSE," +
+                " lever BOOLEAN NOT NULL DEFAULT FALSE," +
+                " monster_killing BOOLEAN NOT NULL DEFAULT FALSE," +
                 " move BOOLEAN NOT NULL DEFAULT TRUE," +
                 " place BOOLEAN NOT NULL DEFAULT FALSE," +
                 " pressure BOOLEAN NOT NULL DEFAULT FALSE," +
                 " riding BOOLEAN NOT NULL DEFAULT FALSE," +
+                " repeater BOOLEAN NOT NULL DEFAULT FALSE," +
                 " shear BOOLEAN NOT NULL DEFAULT FALSE," +
                 " shoot BOOLEAN NOT NULL DEFAULT FALSE," +
                 " trade BOOLEAN NOT NULL DEFAULT FALSE," +
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
-                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
 
                 " UNIQUE (player_uuid, dom_id)," +
                 " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid)," +

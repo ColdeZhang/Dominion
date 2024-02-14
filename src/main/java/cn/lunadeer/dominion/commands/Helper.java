@@ -15,19 +15,42 @@ public class Helper {
 
     public static List<String> dominionFlags() {
         return Arrays.asList(
-                "anchor", "animal_killing", "anvil", "beacon", "bed", "brew", "button", "cake", "container", "craft",
-                "creeper_explode", "diode", "door", "dye", "egg", "enchant", "ender_pearl", "feed", "fire_spread",
-                "flow_in_protection", "glow", "grow", "honey", "hook", "ignite", "mob_killing", "move", "place",
-                "pressure", "riding", "shear", "shoot", "tnt_explode", "trade", "vehicle_destroy", "wither_spawn",
-                "harvest");
+                "anchor", "animal_killing", "anvil",
+                "beacon", "bed", "brew", "break", "button",
+                "cake", "container", "craft", "creeper_explode", "comparer",
+                "door", "dye",
+                "egg", "enchant", "ender_pearl",
+                "feed", "fire_spread", "flow_in_protection",
+                "glow",
+                "honey", "hook", "harvest",
+                "ignite",
+                "lever",
+                "monster_killing", "move",
+                "place", "pressure",
+                "riding", "repeater",
+                "shear", "shoot",
+                "tnt_explode", "trade",
+                "vehicle_destroy",
+                "wither_spawn");
     }
 
     public static List<String> playerPrivileges() {
         return Arrays.asList(
-                "admin", "anchor", "animal_killing", "anvil", "beacon", "bed", "brew", "button", "cake", "container", "craft",
-                "diode", "door", "dye", "egg", "enchant", "ender_pearl", "feed", "glow", "honey", "hook", "ignite",
-                "mob_killing", "move", "place", "pressure", "riding", "shear", "shoot", "trade", "vehicle_destroy",
-                "harvest");
+                "admin", "anchor", "animal_killing", "anvil",
+                "beacon", "bed", "brew", "break", "button",
+                "cake", "container", "craft", "comparer",
+                "door", "dye",
+                "egg", "enchant", "ender_pearl",
+                "feed",
+                "glow",
+                "honey", "hook", "harvest",
+                "ignite",
+                "lever",
+                "monster_killing", "move",
+                "place", "pressure", "riding", "repeater",
+                "shear", "shoot",
+                "trade",
+                "vehicle_destroy");
     }
 
     public static List<String> playerDominions(CommandSender sender) {

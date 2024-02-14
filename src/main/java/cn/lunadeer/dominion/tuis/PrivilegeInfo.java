@@ -107,6 +107,15 @@ public class PrivilegeInfo {
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " brew true " + dominion.getName() + " " + page))
                     .append("使用酿造台"));
         }
+        if (privilege.getBreak()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " break false " + dominion.getName() + " " + page))
+                    .append("破坏方块"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " break true " + dominion.getName() + " " + page))
+                    .append("破坏方块"));
+        }
         if (privilege.getButton()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " button false " + dominion.getName() + " " + page))
@@ -137,20 +146,20 @@ public class PrivilegeInfo {
         if (privilege.getCraft()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " craft false " + dominion.getName() + " " + page))
-                    .append("合成"));
+                    .append("工作台"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " craft true " + dominion.getName() + " " + page))
-                    .append("合成"));
+                    .append("工作台"));
         }
-        if (privilege.getDiode()) {
+        if (privilege.getComparer()){
             view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " diode false " + dominion.getName() + " " + page))
-                    .append("中继器交互"));
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " comparer false " + dominion.getName() + " " + page))
+                    .append("比较器交互"));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " diode true " + dominion.getName() + " " + page))
-                    .append("中继器交互"));
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " comparer true " + dominion.getName() + " " + page))
+                    .append("比较器交互"));
         }
         if (privilege.getDoor()) {
             view.add(Line.create()
@@ -215,6 +224,15 @@ public class PrivilegeInfo {
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " glow true " + dominion.getName() + " " + page))
                     .append("发光"));
         }
+        if (privilege.getHarvest()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " harvest false " + dominion.getName() + " " + page))
+                    .append("收获"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " harvest true " + dominion.getName() + " " + page))
+                    .append("收获"));
+        }
         if (privilege.getHoney()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " honey false " + dominion.getName() + " " + page))
@@ -227,11 +245,11 @@ public class PrivilegeInfo {
         if (privilege.getHook()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " hook false " + dominion.getName() + " " + page))
-                    .append("钩子交互"));
+                    .append("使用钓钩"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " hook true " + dominion.getName() + " " + page))
-                    .append("钩子交互"));
+                    .append("使用钓钩"));
         }
         if (privilege.getIgnite()) {
             view.add(Line.create()
@@ -242,14 +260,23 @@ public class PrivilegeInfo {
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " ignite true " + dominion.getName() + " " + page))
                     .append("点燃"));
         }
-        if (privilege.getMobKilling()) {
+        if (privilege.getLever()){
             view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " mob_killing false " + dominion.getName() + " " + page))
-                    .append("生物伤害"));
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " lever false " + dominion.getName() + " " + page))
+                    .append("使用拉杆"));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " mob_killing true " + dominion.getName() + " " + page))
-                    .append("生物伤害"));
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " lever true " + dominion.getName() + " " + page))
+                    .append("使用拉杆"));
+        }
+        if (privilege.getMonsterKilling()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " monster_killing false " + dominion.getName() + " " + page))
+                    .append("怪物伤害"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " monster_killing true " + dominion.getName() + " " + page))
+                    .append("怪物伤害"));
         }
         if (privilege.getMove()) {
             view.add(Line.create()
@@ -281,11 +308,20 @@ public class PrivilegeInfo {
         if (privilege.getRiding()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " riding false " + dominion.getName() + " " + page))
-                    .append("骑乘"));
+                    .append("骑乘载具"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " riding true " + dominion.getName() + " " + page))
-                    .append("骑乘"));
+                    .append("骑乘载具"));
+        }
+        if (privilege.getRepeater()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " repeater false " + dominion.getName() + " " + page))
+                    .append("中继器交互"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " repeater true " + dominion.getName() + " " + page))
+                    .append("中继器交互"));
         }
         if (privilege.getShear()) {
             view.add(Line.create()
@@ -299,11 +335,11 @@ public class PrivilegeInfo {
         if (privilege.getShoot()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " shoot false " + dominion.getName() + " " + page))
-                    .append("发射"));
+                    .append("射箭/雪球"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " shoot true " + dominion.getName() + " " + page))
-                    .append("发射"));
+                    .append("射箭/雪球"));
         }
         if (privilege.getTrade()) {
             view.add(Line.create()
@@ -322,15 +358,6 @@ public class PrivilegeInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " vehicle_destroy true " + dominion.getName() + " " + page))
                     .append("破坏载具"));
-        }
-        if (privilege.getHarvest()) {
-            view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " harvest false " + dominion.getName() + " " + page))
-                    .append("收获"));
-        } else {
-            view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " harvest true " + dominion.getName() + " " + page))
-                    .append("收获"));
         }
         view.showOn(player, page);
     }

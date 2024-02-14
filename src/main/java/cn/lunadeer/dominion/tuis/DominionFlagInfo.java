@@ -92,6 +92,15 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set brew true " + dominion.getName() + " " + page))
                     .append("使用酿造台"));
         }
+        if (dominion.getBreak()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set break false " + dominion.getName() + " " + page))
+                    .append("破坏方块"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set break true " + dominion.getName() + " " + page))
+                    .append("破坏方块"));
+        }
         if (dominion.getButton()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set button false " + dominion.getName() + " " + page))
@@ -122,11 +131,11 @@ public class DominionFlagInfo {
         if (dominion.getCraft()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set craft false " + dominion.getName() + " " + page))
-                    .append("合成"));
+                    .append("工作台"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set craft true " + dominion.getName() + " " + page))
-                    .append("合成"));
+                    .append("工作台"));
         }
         if (dominion.getCreeperExplode()) {
             view.add(Line.create()
@@ -137,14 +146,14 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set creeper_explode true " + dominion.getName() + " " + page))
                     .append("苦力怕爆炸"));
         }
-        if (dominion.getDiode()) {
+        if (dominion.getComparer()){
             view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set diode false " + dominion.getName() + " " + page))
-                    .append("中继器交互"));
+                    .append(Button.createGreen("☑", "/dominion set comparer false " + dominion.getName() + " " + page))
+                    .append("比较器交互"));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set diode true " + dominion.getName() + " " + page))
-                    .append("中继器交互"));
+                    .append(Button.createRed("☐", "/dominion set comparer true " + dominion.getName() + " " + page))
+                    .append("比较器交互"));
         }
         if (dominion.getDoor()) {
             view.add(Line.create()
@@ -227,14 +236,14 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set glow true " + dominion.getName() + " " + page))
                     .append("发光"));
         }
-        if (dominion.getGrow()) {
+        if (dominion.getHarvest()) {
             view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set grow false " + dominion.getName() + " " + page))
-                    .append("植物生长"));
+                    .append(Button.createGreen("☑", "/dominion set harvest false " + dominion.getName() + " " + page))
+                    .append("收获"));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set grow true " + dominion.getName() + " " + page))
-                    .append("植物生长"));
+                    .append(Button.createRed("☐", "/dominion set harvest true " + dominion.getName() + " " + page))
+                    .append("收获"));
         }
         if (dominion.getHoney()) {
             view.add(Line.create()
@@ -248,11 +257,11 @@ public class DominionFlagInfo {
         if (dominion.getHook()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set hook false " + dominion.getName() + " " + page))
-                    .append("钩子交互"));
+                    .append("使用钓钩"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set hook true " + dominion.getName() + " " + page))
-                    .append("钩子交互"));
+                    .append("使用钓钩"));
         }
         if (dominion.getIgnite()) {
             view.add(Line.create()
@@ -263,14 +272,23 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set ignite true " + dominion.getName() + " " + page))
                     .append("点燃"));
         }
-        if (dominion.getMobKilling()) {
+        if (dominion.getLever()){
             view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set mob_killing false " + dominion.getName() + " " + page))
-                    .append("生物伤害"));
+                    .append(Button.createGreen("☑", "/dominion set lever false " + dominion.getName() + " " + page))
+                    .append("使用拉杆"));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set mob_killing true " + dominion.getName() + " " + page))
-                    .append("生物伤害"));
+                    .append(Button.createRed("☐", "/dominion set lever true " + dominion.getName() + " " + page))
+                    .append("使用拉杆"));
+        }
+        if (dominion.getMonsterKilling()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set monster_killing false " + dominion.getName() + " " + page))
+                    .append("怪物伤害"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set monster_killing true " + dominion.getName() + " " + page))
+                    .append("怪物伤害"));
         }
         if (dominion.getMove()) {
             view.add(Line.create()
@@ -302,11 +320,20 @@ public class DominionFlagInfo {
         if (dominion.getRiding()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set riding false " + dominion.getName() + " " + page))
-                    .append("骑乘"));
+                    .append("骑乘载具"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set riding true " + dominion.getName() + " " + page))
-                    .append("骑乘"));
+                    .append("骑乘载具"));
+        }
+        if (dominion.getRepeater()){
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set repeater false " + dominion.getName() + " " + page))
+                    .append("中继器交互"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set repeater true " + dominion.getName() + " " + page))
+                    .append("中继器交互"));
         }
         if (dominion.getShear()) {
             view.add(Line.create()
@@ -320,11 +347,11 @@ public class DominionFlagInfo {
         if (dominion.getShoot()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set shoot false " + dominion.getName() + " " + page))
-                    .append("发射"));
+                    .append("射箭/雪球"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set shoot true " + dominion.getName() + " " + page))
-                    .append("发射"));
+                    .append("射箭/雪球"));
         }
         if (dominion.getTntExplode()) {
             view.add(Line.create()
@@ -361,15 +388,6 @@ public class DominionFlagInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set wither_spawn true " + dominion.getName() + " " + page))
                     .append("凋零生成"));
-        }
-        if (dominion.getHarvest()) {
-            view.add(Line.create()
-                    .append(Button.createGreen("☑", "/dominion set harvest false " + dominion.getName() + " " + page))
-                    .append("收获"));
-        } else {
-            view.add(Line.create()
-                    .append(Button.createRed("☐", "/dominion set harvest true " + dominion.getName() + " " + page))
-                    .append("收获"));
         }
         view.showOn(player, page);
     }

@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.events.EnvironmentEvents;
 import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.utils.ConfigManager;
 import cn.lunadeer.dominion.utils.Database;
@@ -23,6 +24,7 @@ public final class Dominion extends JavaPlugin {
         Cache.instance = new Cache();
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         XLogger.info("领地插件已启动");

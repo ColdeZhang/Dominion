@@ -25,7 +25,7 @@ public class PlayerPrivilegeDTO {
     public static PlayerPrivilegeDTO select(UUID playerUUID, Integer dom_id) {
         String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + playerUUID + "' " +
                 "AND dom_id = " + dom_id + ";";
-        List<PlayerPrivilegeDTO> p =  query(sql);
+        List<PlayerPrivilegeDTO> p = query(sql);
         if (p.size() == 0) return null;
         return p.get(0);
     }
@@ -41,7 +41,7 @@ public class PlayerPrivilegeDTO {
         query(sql);
     }
 
-    public static List<PlayerPrivilegeDTO> selectAll(){
+    public static List<PlayerPrivilegeDTO> selectAll() {
         String sql = "SELECT * FROM player_privilege;";
         return query(sql);
     }
@@ -56,11 +56,12 @@ public class PlayerPrivilegeDTO {
     private Boolean beacon;
     private Boolean bed;
     private Boolean brew;
+    private Boolean breakBlock;
     private Boolean button;
     private Boolean cake;
     private Boolean container;
     private Boolean craft;
-    private Boolean diode;
+    private Boolean comparer;
     private Boolean door;
     private Boolean dye;
     private Boolean egg;
@@ -71,11 +72,13 @@ public class PlayerPrivilegeDTO {
     private Boolean honey;
     private Boolean hook;
     private Boolean ignite;
-    private Boolean mobKilling;
+    private Boolean lever;
+    private Boolean monsterKilling;
     private Boolean move;
     private Boolean place;
     private Boolean pressure;
     private Boolean riding;
+    private Boolean repeater;
     private Boolean shear;
     private Boolean shoot;
     private Boolean trade;
@@ -122,6 +125,10 @@ public class PlayerPrivilegeDTO {
         return brew;
     }
 
+    public Boolean getBreak() {
+        return breakBlock;
+    }
+
     public Boolean getButton() {
         return button;
     }
@@ -138,8 +145,8 @@ public class PlayerPrivilegeDTO {
         return craft;
     }
 
-    public Boolean getDiode() {
-        return diode;
+    public Boolean getComparer() {
+        return comparer;
     }
 
     public Boolean getDoor() {
@@ -182,8 +189,12 @@ public class PlayerPrivilegeDTO {
         return ignite;
     }
 
-    public Boolean getMobKilling() {
-        return mobKilling;
+    public Boolean getLever() {
+        return lever;
+    }
+
+    public Boolean getMonsterKilling() {
+        return monsterKilling;
     }
 
     public Boolean getMove() {
@@ -200,6 +211,10 @@ public class PlayerPrivilegeDTO {
 
     public Boolean getRiding() {
         return riding;
+    }
+
+    public Boolean getRepeater() {
+        return repeater;
     }
 
     public Boolean getShear() {
@@ -252,6 +267,11 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
+    public PlayerPrivilegeDTO setBreak(Boolean breakBlock) {
+        this.breakBlock = breakBlock;
+        return update(this);
+    }
+
     public PlayerPrivilegeDTO setButton(Boolean button) {
         this.button = button;
         return update(this);
@@ -272,8 +292,8 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
-    public PlayerPrivilegeDTO setDiode(Boolean diode) {
-        this.diode = diode;
+    public PlayerPrivilegeDTO setComparer(Boolean comparer) {
+        this.comparer = comparer;
         return update(this);
     }
 
@@ -327,8 +347,13 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
-    public PlayerPrivilegeDTO setMobKilling(Boolean mobKilling) {
-        this.mobKilling = mobKilling;
+    public PlayerPrivilegeDTO setLever(Boolean lever) {
+        this.lever = lever;
+        return update(this);
+    }
+
+    public PlayerPrivilegeDTO setMonsterKilling(Boolean monsterKilling) {
+        this.monsterKilling = monsterKilling;
         return update(this);
     }
 
@@ -349,6 +374,11 @@ public class PlayerPrivilegeDTO {
 
     public PlayerPrivilegeDTO setRiding(Boolean riding) {
         this.riding = riding;
+        return update(this);
+    }
+
+    public PlayerPrivilegeDTO setRepeater(Boolean repeater) {
+        this.repeater = repeater;
         return update(this);
     }
 
@@ -384,12 +414,21 @@ public class PlayerPrivilegeDTO {
 
     private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID,
                                Boolean anchor, Boolean animalKilling, Boolean anvil,
-                               Boolean beacon, Boolean bed, Boolean brew, Boolean button, Boolean cake,
-                               Boolean container, Boolean craft, Boolean diode, Boolean door, Boolean dye,
-                               Boolean egg, Boolean enchant, Boolean enderPearl, Boolean feed, Boolean glow,
-                               Boolean honey, Boolean hook, Boolean ignite, Boolean mobKilling, Boolean move,
-                               Boolean place, Boolean pressure, Boolean riding, Boolean shear, Boolean shoot,
-                               Boolean trade, Boolean vehicleDestroy, Boolean harvest) {
+                               Boolean beacon, Boolean bed, Boolean brew, Boolean breakBlock, Boolean button,
+                               Boolean cake, Boolean container, Boolean craft, Boolean comparer,
+                               Boolean door, Boolean dye,
+                               Boolean egg, Boolean enchant, Boolean enderPearl,
+                               Boolean feed,
+                               Boolean glow,
+                               Boolean harvest, Boolean honey, Boolean hook,
+                               Boolean ignite,
+                               Boolean lever,
+                               Boolean monsterKilling, Boolean move,
+                               Boolean place, Boolean pressure,
+                               Boolean riding, Boolean repeater,
+                               Boolean shear, Boolean shoot,
+                               Boolean trade,
+                               Boolean vehicleDestroy) {
         this.id = id;
         this.playerUUID = playerUUID;
         this.admin = admin;
@@ -400,11 +439,12 @@ public class PlayerPrivilegeDTO {
         this.beacon = beacon;
         this.bed = bed;
         this.brew = brew;
+        this.breakBlock = breakBlock;
         this.button = button;
         this.cake = cake;
         this.container = container;
         this.craft = craft;
-        this.diode = diode;
+        this.comparer = comparer;
         this.door = door;
         this.dye = dye;
         this.egg = egg;
@@ -412,30 +452,58 @@ public class PlayerPrivilegeDTO {
         this.enderPearl = enderPearl;
         this.feed = feed;
         this.glow = glow;
+        this.harvest = harvest;
         this.honey = honey;
         this.hook = hook;
         this.ignite = ignite;
-        this.mobKilling = mobKilling;
+        this.lever = lever;
+        this.monsterKilling = monsterKilling;
         this.move = move;
         this.place = place;
         this.pressure = pressure;
         this.riding = riding;
+        this.repeater = repeater;
         this.shear = shear;
         this.shoot = shoot;
         this.trade = trade;
         this.vehicleDestroy = vehicleDestroy;
-        this.harvest = harvest;
     }
 
-    public PlayerPrivilegeDTO(UUID playerUUID, Boolean admin, Integer domID) {
-        this(null, playerUUID, admin, domID,
-                false, false, false,
-                false, false, false, false, false,
-                false, false, false, false, false,
-                false, false, false, false, false,
-                false, false, false, false, false,
-                false, false, false, false, false,
-                false, false, false);
+    public PlayerPrivilegeDTO(UUID playerUUID, Integer domID,
+                              Boolean anchor, Boolean animalKilling, Boolean anvil,
+                              Boolean beacon, Boolean bed, Boolean brew, Boolean breakBlock, Boolean button,
+                              Boolean cake, Boolean container, Boolean craft, Boolean comparer,
+                              Boolean door, Boolean dye,
+                              Boolean egg, Boolean enchant, Boolean enderPearl,
+                              Boolean feed,
+                              Boolean glow,
+                              Boolean harvest, Boolean honey, Boolean hook,
+                              Boolean ignite,
+                              Boolean lever,
+                              Boolean monsterKilling, Boolean move,
+                              Boolean place, Boolean pressure,
+                              Boolean riding, Boolean repeater,
+                              Boolean shear, Boolean shoot,
+                              Boolean trade,
+                              Boolean vehicleDestroy
+    ) {
+        this(null, playerUUID, false, domID,
+                anchor, animalKilling, anvil,
+                beacon, bed, brew, breakBlock, button,
+                cake, container, craft, comparer,
+                door, dye,
+                egg, enchant, enderPearl,
+                feed,
+                glow,
+                harvest, honey, hook,
+                ignite,
+                lever,
+                monsterKilling, move,
+                place, pressure,
+                riding, repeater,
+                shear, shoot,
+                trade,
+                vehicleDestroy);
     }
 
     private static List<PlayerPrivilegeDTO> query(String sql) {
@@ -454,11 +522,12 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("beacon"),
                         rs.getBoolean("bed"),
                         rs.getBoolean("brew"),
+                        rs.getBoolean("break"),
                         rs.getBoolean("button"),
                         rs.getBoolean("cake"),
                         rs.getBoolean("container"),
                         rs.getBoolean("craft"),
-                        rs.getBoolean("diode"),
+                        rs.getBoolean("comparer"),
                         rs.getBoolean("door"),
                         rs.getBoolean("dye"),
                         rs.getBoolean("egg"),
@@ -466,23 +535,25 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("ender_pearl"),
                         rs.getBoolean("feed"),
                         rs.getBoolean("glow"),
+                        rs.getBoolean("harvest"),
                         rs.getBoolean("honey"),
                         rs.getBoolean("hook"),
                         rs.getBoolean("ignite"),
-                        rs.getBoolean("mob_killing"),
+                        rs.getBoolean("lever"),
+                        rs.getBoolean("monster_killing"),
                         rs.getBoolean("move"),
                         rs.getBoolean("place"),
                         rs.getBoolean("pressure"),
                         rs.getBoolean("riding"),
+                        rs.getBoolean("repeater"),
                         rs.getBoolean("shear"),
                         rs.getBoolean("shoot"),
                         rs.getBoolean("trade"),
-                        rs.getBoolean("vehicle_destroy"),
-                        rs.getBoolean("harvest")
+                        rs.getBoolean("vehicle_destroy")
                 );
                 players.add(player);
             }
-            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")){
+            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadPlayerPrivileges();
             }
@@ -503,11 +574,12 @@ public class PlayerPrivilegeDTO {
                 "beacon = " + player.getBeacon() + ", " +
                 "bed = " + player.getBed() + ", " +
                 "brew = " + player.getBrew() + ", " +
+                "break = " + player.getBreak() + ", " +
                 "button = " + player.getButton() + ", " +
                 "cake = " + player.getCake() + ", " +
                 "container = " + player.getContainer() + ", " +
                 "craft = " + player.getCraft() + ", " +
-                "diode = " + player.getDiode() + ", " +
+                "comparer = " + player.getComparer() + ", " +
                 "door = " + player.getDoor() + ", " +
                 "dye = " + player.getDye() + ", " +
                 "egg = " + player.getEgg() + ", " +
@@ -515,19 +587,21 @@ public class PlayerPrivilegeDTO {
                 "ender_pearl = " + player.getEnderPearl() + ", " +
                 "feed = " + player.getFeed() + ", " +
                 "glow = " + player.getGlow() + ", " +
+                "harvest = " + player.getHarvest() + ", " +
                 "honey = " + player.getHoney() + ", " +
                 "hook = " + player.getHook() + ", " +
                 "ignite = " + player.getIgnite() + ", " +
-                "mob_killing = " + player.getMobKilling() + ", " +
+                "lever = " + player.getLever() + ", " +
+                "monster_killing = " + player.getMonsterKilling() + ", " +
                 "move = " + player.getMove() + ", " +
                 "place = " + player.getPlace() + ", " +
                 "pressure = " + player.getPressure() + ", " +
                 "riding = " + player.getRiding() + ", " +
+                "repeater = " + player.getRepeater() + ", " +
                 "shear = " + player.getShear() + ", " +
                 "shoot = " + player.getShoot() + ", " +
                 "trade = " + player.getTrade() + ", " +
-                "vehicle_destroy = " + player.getVehicleDestroy() + ", " +
-                "harvest = " + player.getHarvest() + " " +
+                "vehicle_destroy = " + player.getVehicleDestroy() + " " +
                 "WHERE id = " + player.getId() + " " +
                 "RETURNING *;";
         List<PlayerPrivilegeDTO> players = query(sql);
