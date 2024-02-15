@@ -30,6 +30,7 @@ public class Cache {
             }
             world_dominions.get(d.getWorld()).add(d);
         }
+        BlueMapConnect.render();
     }
 
     /**
@@ -153,6 +154,10 @@ public class Cache {
         return x >= dominion.getX1() && x <= dominion.getX2() &&
                 y >= dominion.getY1() && y <= dominion.getY2() &&
                 z >= dominion.getZ1() && z <= dominion.getZ2();
+    }
+
+    public Map<String, List<DominionDTO>> getWorldDominions() {
+        return world_dominions;
     }
 
     public static Cache instance;

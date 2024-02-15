@@ -24,6 +24,7 @@ public class ConfigManager {
         _max_x = _file.getInt("MaxX", 128);
         _max_y = _file.getInt("MaxY", 64);
         _max_z = _file.getInt("MaxZ", 128);
+        _blue_map = _file.getBoolean("BlueMap", true);
     }
 
     public Boolean isDebug() {
@@ -107,6 +108,16 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Boolean getBlueMap() {
+        return _blue_map;
+    }
+
+    public void setBlueMap(Boolean blue_map) {
+        _blue_map = blue_map;
+        _file.set("BlueMap", blue_map);
+        _plugin.saveConfig();
+    }
+
 
     private final Dominion _plugin;
     private FileConfiguration _file;
@@ -123,4 +134,6 @@ public class ConfigManager {
     private Integer _max_x;
     private Integer _max_y;
     private Integer _max_z;
+
+    private Boolean _blue_map;
 }
