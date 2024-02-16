@@ -53,6 +53,15 @@ public class PrivilegeInfo {
                         .append(Button.create("特权列表", "/dominion privilege_list " + dominion.getName()))
                         .append("特权信息")
         );
+        if (privilege.getAdmin()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " admin false " + dominion.getName() + " " + page))
+                    .append("管理员"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " admin true " + dominion.getName() + " " + page))
+                    .append("管理员"));
+        }
         if (privilege.getAnchor()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " anchor false " + dominion.getName() + " " + page))

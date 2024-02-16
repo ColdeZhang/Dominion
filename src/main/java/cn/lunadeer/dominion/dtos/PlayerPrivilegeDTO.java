@@ -77,6 +77,11 @@ public class PlayerPrivilegeDTO {
         return query(sql);
     }
 
+    public static List<PlayerPrivilegeDTO> selectAll(UUID player) {
+        String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + player + "';";
+        return query(sql);
+    }
+
     private final Integer id;
     private final UUID playerUUID;
     private Boolean admin;

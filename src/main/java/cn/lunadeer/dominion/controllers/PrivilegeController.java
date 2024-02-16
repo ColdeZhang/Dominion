@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
+import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -99,6 +100,13 @@ public class PrivilegeController {
             if (privilege == null) return false;
         }
         switch (flag) {
+            case "admin":
+                if (notOwner(operator, dominion)) {
+                    Notification.error(operator, "你不是领地 " + dominionName + " 的拥有者，无法设置其他玩家为管理员");
+                    return false;
+                }
+                privilege.setAdmin(value);
+                break;
             case "anchor":
                 privilege.setAnchor(value);
                 break;
@@ -231,6 +239,10 @@ public class PrivilegeController {
     }
 
     private static PlayerPrivilegeDTO createPlayerPrivilege(Player operator, UUID player, DominionDTO dom) {
+        if (operator.getUniqueId() == player) {
+            Notification.error(operator, "你不能给自己设置特权");
+            return null;
+        }
         PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, dom.getId(),
                 dom.getAnchor(), dom.getAnimalKilling(), dom.getAnvil(),
                 dom.getBeacon(), dom.getBed(), dom.getBrew(), dom.getBreak(), dom.getButton(),

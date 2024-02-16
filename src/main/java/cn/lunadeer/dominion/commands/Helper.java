@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,13 +54,27 @@ public class Helper {
                 "vehicle_destroy");
     }
 
+    /**
+     * 获取玩家可管理的领地列表
+     *
+     * @param sender 命令发送者
+     * @return 领地列表
+     */
     public static List<String> playerDominions(CommandSender sender) {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
-        List<DominionDTO> dominions = DominionController.all(player);
-        for (DominionDTO dominion : dominions) {
+        List<DominionDTO> dominions_own = DominionController.all(player);
+        List<PlayerPrivilegeDTO> dominions_admin = PlayerPrivilegeDTO.selectAll(player.getUniqueId());
+        for (DominionDTO dominion : dominions_own) {
             dominions_name.add(dominion.getName());
+        }
+        for (PlayerPrivilegeDTO privilege : dominions_admin) {
+            if (privilege.getAdmin()) {
+                DominionDTO dom = DominionDTO.select(privilege.getDomID());
+                if (dom == null) continue;
+                dominions_name.add(dom.getName());
+            }
         }
         return dominions_name;
     }
