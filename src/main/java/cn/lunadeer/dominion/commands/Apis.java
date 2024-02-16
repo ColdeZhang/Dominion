@@ -8,7 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Apis {
     public static Player playerOnly(CommandSender sender) {
@@ -40,9 +42,9 @@ public class Apis {
         Location location = player.getLocation();
         Location location1 = new Location(location.getWorld(), location.getX() - size, location.getY() - size, location.getZ() - size);
         Location location2 = new Location(location.getWorld(), location.getX() + size, location.getY() + size, location.getZ() + size);
-        List<Location> points = new ArrayList<>();
-        points.add(location1);
-        points.add(location2);
+        Map<Integer, Location> points = new HashMap<>();
+        points.put(0, location1);
+        points.put(1, location2);
         Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 

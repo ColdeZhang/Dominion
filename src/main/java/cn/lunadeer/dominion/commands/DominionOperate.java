@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
+import java.util.Map;
 
 import static cn.lunadeer.dominion.commands.Apis.*;
 
@@ -27,9 +27,9 @@ public class DominionOperate {
             Notification.error(sender, "用法: /dominion create <领地名称>");
             return;
         }
-        List<Location> points = Dominion.pointsSelect.get(player.getUniqueId());
-        if (points == null || points.size() != 2) {
-            Notification.error(sender, "请先使用木棍选择领地的对角线两点，或使用 /dominion auto_create <领地名称> 创建自动领地");
+        Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
+        if (points == null || points.get(0) == null || points.get(1) == null) {
+            Notification.error(sender, "请先使用箭矢选择领地的对角线两点，或使用 /dominion auto_create <领地名称> 创建自动领地");
             return;
         }
         String name = args[1];
@@ -54,9 +54,9 @@ public class DominionOperate {
             Notification.error(sender, "用法: /dominion create_sub <子领地名称> [父领地名称]");
             return;
         }
-        List<Location> points = Dominion.pointsSelect.get(player.getUniqueId());
-        if (points == null || points.size() != 2) {
-            Notification.error(sender, "请先使用木棍选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
+        Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
+        if (points == null || points.get(0) == null || points.get(1) == null) {
+            Notification.error(sender, "请先使用箭矢选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
             return;
         }
         if (args.length == 2) {

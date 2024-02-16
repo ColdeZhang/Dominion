@@ -2,6 +2,7 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.events.EnvironmentEvents;
 import cn.lunadeer.dominion.events.PlayerEvents;
+import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.utils.ConfigManager;
 import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.XLogger;
@@ -25,6 +26,7 @@ public final class Dominion extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new SelectPointEvents(), this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         XLogger.info("领地插件已启动");
@@ -47,5 +49,5 @@ public final class Dominion extends JavaPlugin {
     public static Dominion instance;
     public static ConfigManager config;
     public static Connection dbConnection;
-    public static Map<UUID, List<Location>> pointsSelect = new HashMap<>();
+    public static Map<UUID, Map<Integer, Location>> pointsSelect = new HashMap<>();
 }
