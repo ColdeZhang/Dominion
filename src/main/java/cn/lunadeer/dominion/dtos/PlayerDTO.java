@@ -21,7 +21,7 @@ public class PlayerDTO {
     }
 
     public static List<PlayerDTO> all() {
-        String sql = "SELECT * FROM player_name;";
+        String sql = "SELECT * FROM player_name WHERE id > 0;";
         return query(sql);
     }
 

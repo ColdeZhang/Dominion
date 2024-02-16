@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 import static cn.lunadeer.dominion.controllers.Apis.noAuthToChangeFlags;
+import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class PrivilegeController {
 
@@ -21,7 +22,10 @@ public class PrivilegeController {
      */
     public static boolean clearPrivilege(Player operator, String player_name) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
-        if (dominion == null) return false;
+        if (dominion == null) {
+            Notification.error(operator, "你不在任何领地内，请指定领地名称 /dominion clear_privilege <玩家名称> <领地名称>");
+            return false;
+        }
         return clearPrivilege(operator, player_name, dominion.getName());
     }
 
@@ -60,7 +64,10 @@ public class PrivilegeController {
      */
     public static boolean setPrivilege(Player operator, String player_name, String flag, boolean value) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
-        if (dominion == null) return false;
+        if (dominion == null) {
+            Notification.error(operator, "你不在任何领地内，请指定领地名称 /dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]");
+            return false;
+        }
         return setPrivilege(operator, player_name, flag, value, dominion.getName());
     }
 
@@ -199,6 +206,30 @@ public class PrivilegeController {
         return true;
     }
 
+    public static boolean createPrivilege(Player operator, String player_name) {
+        DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
+        if (dominion == null) {
+            Notification.error(operator, "你不在任何领地内，请指定领地名称 /dominion create_privilege <玩家名称> <领地名称>");
+            return false;
+        }
+        return createPrivilege(operator, player_name, dominion.getName());
+    }
+
+    public static boolean createPrivilege(Player operator, String player_name, String dominionName) {
+        DominionDTO dominion = DominionDTO.select(dominionName);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + dominionName + " 不存在，无法设置特权");
+            return false;
+        }
+        if (notOwner(operator, dominion)) return false;
+        PlayerDTO player = PlayerController.getPlayerDTO(player_name);
+        if (player == null) {
+            Notification.error(operator, "玩家 " + player_name + " 不存在或没有登录过");
+            return false;
+        }
+        return createPlayerPrivilege(operator, player.getUuid(), dominion) != null;
+    }
+
     private static PlayerPrivilegeDTO createPlayerPrivilege(Player operator, UUID player, DominionDTO dom) {
         PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, dom.getId(),
                 dom.getAnchor(), dom.getAnimalKilling(), dom.getAnvil(),
@@ -208,7 +239,7 @@ public class PrivilegeController {
                 dom.getEgg(), dom.getEnchant(), dom.getEnderPearl(),
                 dom.getFeed(),
                 dom.getGlow(),
-                dom.getHoney(), dom.getHook(),
+                dom.getHarvest(), dom.getHoney(), dom.getHook(),
                 dom.getIgnite(),
                 dom.getLever(),
                 dom.getMonsterKilling(), dom.getMove(),
@@ -216,10 +247,10 @@ public class PrivilegeController {
                 dom.getRiding(), dom.getRepeater(),
                 dom.getShear(), dom.getShoot(),
                 dom.getTrade(),
-                dom.getVehicleDestroy(), dom.getHarvest());
+                dom.getVehicleDestroy());
         privilege = PlayerPrivilegeDTO.insert(privilege);
         if (privilege == null) {
-            Notification.error(operator, "创建玩家特权关联玩家时失败");
+            Notification.error(operator, "创建玩家特权失败，可能是此玩家已存在特权");
             return null;
         }
         return privilege;

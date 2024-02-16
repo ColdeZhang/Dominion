@@ -12,10 +12,41 @@ import java.util.UUID;
 public class PlayerPrivilegeDTO {
 
     public static PlayerPrivilegeDTO insert(PlayerPrivilegeDTO player) {
-        String sql = "INSERT INTO player_privilege (player_uuid, admin, dom_id) VALUES (" +
-                "'" + player.getPlayerUUID() + "', " +
-                player.getAdmin() + ", " +
-                player.getDomID() +
+        String sql = "INSERT INTO player_privilege (player_uuid, admin, dom_id, " +
+                "anchor, animal_killing, anvil, " +
+                "beacon, bed, brew, break, button, " +
+                "cake, container, craft, comparer, " +
+                "door, dye, " +
+                "egg, enchant, ender_pearl, " +
+                "feed, " +
+                "glow, " +
+                "harvest, honey, hook, " +
+                "ignite, " +
+                "lever, " +
+                "monster_killing, move, " +
+                "place, pressure, " +
+                "riding, repeater, " +
+                "shear, shoot, " +
+                "trade, " +
+                "vehicle_destroy" +
+                ") VALUES (" +
+                "'" + player.getPlayerUUID() + "', " + player.getAdmin() + ", " + player.getDomID() + ", " +
+                player.getAnchor() + ", " + player.getAnimalKilling() + ", " + player.getAnvil() + ", " +
+                player.getBeacon() + ", " + player.getBed() + ", " + player.getBrew() + ", " + player.getBreak() + ", " + player.getButton() + ", " +
+                player.getCake() + ", " + player.getContainer() + ", " + player.getCraft() + ", " + player.getComparer() + ", " +
+                player.getDoor() + ", " + player.getDye() + ", " +
+                player.getEgg() + ", " + player.getEnchant() + ", " + player.getEnderPearl() + ", " +
+                player.getFeed() + ", " +
+                player.getGlow() + ", " +
+                player.getHarvest() + ", " + player.getHoney() + ", " + player.getHook() + ", " +
+                player.getIgnite() + ", " +
+                player.getLever() + ", " +
+                player.getMonsterKilling() + ", " + player.getMove() + ", " +
+                player.getPlace() + ", " + player.getPressure() + ", " +
+                player.getRiding() + ", " + player.getRepeater() + ", " +
+                player.getShear() + ", " + player.getShoot() + ", " +
+                player.getTrade() + ", " +
+                player.getVehicleDestroy() +
                 ") RETURNING *;";
         List<PlayerPrivilegeDTO> players = query(sql);
         if (players.size() == 0) return null;

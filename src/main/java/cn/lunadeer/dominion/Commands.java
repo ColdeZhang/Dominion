@@ -99,6 +99,9 @@ public class Commands implements TabExecutor {
             case "set":
                 DominionFlag.setDominionFlag(sender, args);
                 break;
+            case "create_privilege":
+                PlayerPrivilege.createPlayerPrivilege(sender, args);
+                break;
             case "set_privilege":
                 PlayerPrivilege.setPlayerPrivilege(sender, args);
                 break;
@@ -110,6 +113,9 @@ public class Commands implements TabExecutor {
                 break;
             case "privilege_info":
                 PrivilegeInfo.show(sender, args);
+                break;
+            case "select_player_create_privilege":
+                SelectPlayer.show(sender, args);
                 break;
             default:
                 return false;
@@ -135,7 +141,7 @@ public class Commands implements TabExecutor {
         if (args.length == 1) {
             return Arrays.asList("menu", "help", "info", "manage", "flag_info", "group_list", "privilege_list", "group",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
-                    "set_privilege", "clear_privilege", "list", "privilege_info"
+                    "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info"
             );
         }
         if (args.length == 2) {
@@ -154,6 +160,7 @@ public class Commands implements TabExecutor {
                     return playerDominions(sender);
                 case "set":
                     return dominionFlags();
+                case "create_privilege":
                 case "set_privilege":
                 case "clear_privilege":
                 case "privilege_info":
@@ -175,6 +182,7 @@ public class Commands implements TabExecutor {
                 case "expand":
                 case "contract":
                 case "clear_privilege":
+                case "create_privilege":
                 case "privilege_info":
                 case "auto_create_sub":
                 case "create_sub":

@@ -66,10 +66,11 @@ public class Apis {
                 .add(Line.create().append("缩小领地").append("/dominion contract [大小] [领地名称]"))
                 .add(Line.create().append("删除领地").append("/dominion delete <领地名称> [force]"))
                 .add(Line.create().append("设置领地权限").append("/dominion set <权限名称> <true/false> [领地名称]"))
-                .add(Line.create().append("设置玩家权限").append("/dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]"))
-                .add(Line.create().append("重置玩家权限").append("/dominion clear_privilege <玩家名称> [领地名称]"))
+                .add(Line.create().append("创建玩家特权").append("/dominion create_privilege <玩家名称> [领地名称]"))
+                .add(Line.create().append("设置玩家特权").append("/dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]"))
+                .add(Line.create().append("重置玩家特权").append("/dominion clear_privilege <玩家名称> [领地名称]"))
                 .add(Line.create().append("查看领地玩家特权列表").append("/dominion privilege_list [领地名称] [页码]"))
-                .add(Line.create().append("查看玩家权限信息").append("/dominion privilege_info <玩家名称> [领地名称] [页码]"))
+                .add(Line.create().append("查看玩家特权信息").append("/dominion privilege_info <玩家名称> [领地名称] [页码]"))
                 .showOn(player, page);
     }
 

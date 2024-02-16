@@ -36,10 +36,6 @@ public class DominionPrivilegeList {
         ListView view = ListView.create(10, "/dominion privilege_list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(dominion.getId());
-        if (privileges.isEmpty()) {
-            Notification.warn(sender, "领地 " + dominion.getName() + " 没有任何玩家拥有特权");
-            return;
-        }
         view.title("领地 " + dominion.getName() + " 玩家特权列表");
         view.navigator(
                 Line.create()
@@ -48,13 +44,14 @@ public class DominionPrivilegeList {
                         .append(Button.create("管理界面", "/dominion manage " + dominion.getName()))
                         .append("特权列表")
         );
+        view.add(Line.create().append(Button.create("选择玩家创建特权", "/dominion select_player_create_privilege " + dominion.getName())));
         for (PlayerPrivilegeDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
             view.add(Line.create()
                     .append(p_player.getLastKnownName())
                     .append(Button.createGreen("管理", "/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()))
-                    .append(Button.createRed("清空", "/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName()))
+                    .append(Button.createRed("清除", "/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b"))
             );
         }
         view.showOn(player, page);
