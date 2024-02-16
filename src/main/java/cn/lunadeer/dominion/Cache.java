@@ -22,13 +22,15 @@ public class Cache {
      * 从数据库加载所有领地
      */
     public void loadDominions() {
+        id_dominions = new HashMap<>();
         world_dominions = new HashMap<>();
         List<DominionDTO> dominions = DominionDTO.selectAll();
         for (DominionDTO d : dominions) {
+            id_dominions.put(d.getId(), d);
             if (!world_dominions.containsKey(d.getWorld())) {
                 world_dominions.put(d.getWorld(), new ArrayList<>());
             }
-            world_dominions.get(d.getWorld()).add(d);
+            world_dominions.get(d.getWorld()).add(d.getId());
         }
         BlueMapConnect.render();
     }
@@ -37,7 +39,6 @@ public class Cache {
      * 从数据库加载所有玩家特权
      */
     public void loadPlayerPrivileges() {
-        player_current_dominion = new HashMap<>();
         List<PlayerPrivilegeDTO> all_privileges = PlayerPrivilegeDTO.selectAll();
         if (all_privileges == null) {
             XLogger.err("加载玩家特权失败");
@@ -63,13 +64,12 @@ public class Cache {
      * @return 玩家当前所在领地
      */
     public DominionDTO getPlayerCurrentDominion(Player player) {
-        DominionDTO dominion = player_current_dominion.get(player.getUniqueId());
+        Integer dominion_id = player_current_dominion.get(player.getUniqueId());
+        DominionDTO dominion = id_dominions.get(dominion_id);
         if (dominion != null) {
             if (!isInDominion(dominion, player)) {
                 // glow
-                if (player.isGlowing()) {
-                    player.setGlowing(false);
-                }
+                player.setGlowing(false);
                 Notification.info(player, "您已离开领地：" + dominion.getName());
                 Notification.info(player, dominion.getLeaveMessage());
                 player_current_dominion.put(player.getUniqueId(), null);
@@ -78,10 +78,11 @@ public class Cache {
         }
         if (dominion == null) {
             String world = player.getWorld().getName();
-            List<DominionDTO> dominions = world_dominions.get(world);
-            if (dominions == null) return null;
+            List<Integer> dominions_id = world_dominions.get(world);
+            if (dominions_id == null) return null;
             List<DominionDTO> in_dominions = new ArrayList<>();
-            for (DominionDTO d : dominions) {
+            for (Integer id : dominions_id) {
+                DominionDTO d = id_dominions.get(id);
                 if (isInDominion(d, player)) {
                     in_dominions.add(d);
                 }
@@ -89,20 +90,16 @@ public class Cache {
             if (in_dominions.size() == 0) return null;
             in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
             dominion = in_dominions.get(in_dominions.size() - 1);
-            player_current_dominion.put(player.getUniqueId(), dominion);
+            player_current_dominion.put(player.getUniqueId(), dominion.getId());
             // glow
             PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
             if (privilege != null) {
                 if (privilege.getGlow()) {
-                    if (player.isGlowing()) {
-                        player.setGlowing(true);
-                    }
+                    player.setGlowing(true);
                 }
             } else {
                 if (dominion.getGlow()) {
-                    if (player.isGlowing()) {
-                        player.setGlowing(true);
-                    }
+                    player.setGlowing(true);
                 }
             }
             Notification.info(player, "您正在进入领地：" + dominion.getName());
@@ -113,10 +110,11 @@ public class Cache {
 
     public DominionDTO getDominion(Location loc) {
         String world = loc.getWorld().getName();
-        List<DominionDTO> dominions = world_dominions.get(world);
-        if (dominions == null) return null;
+        List<Integer> dominions_id = world_dominions.get(world);
+        if (dominions_id == null) return null;
         List<DominionDTO> in_dominions = new ArrayList<>();
-        for (DominionDTO d : dominions) {
+        for (Integer id : dominions_id) {
+            DominionDTO d = id_dominions.get(id);
             if (isInDominion(d, loc.getX(), loc.getY(), loc.getZ())) {
                 in_dominions.add(d);
             }
@@ -156,12 +154,17 @@ public class Cache {
                 z >= dominion.getZ1() && z <= dominion.getZ2();
     }
 
-    public Map<String, List<DominionDTO>> getWorldDominions() {
+    public Map<String, List<Integer>> getWorldDominions() {
         return world_dominions;
     }
 
+    public DominionDTO getDominion(Integer id) {
+        return id_dominions.get(id);
+    }
+
     public static Cache instance;
-    private Map<String, List<DominionDTO>> world_dominions;                         // 所有领地
+    private Map<Integer, DominionDTO> id_dominions;
+    private Map<String, List<Integer>> world_dominions;                         // 所有领地
     private Map<UUID, Map<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
-    private Map<UUID, DominionDTO> player_current_dominion;                         // 玩家当前所在领地
+    private Map<UUID, Integer> player_current_dominion;                         // 玩家当前所在领地
 }

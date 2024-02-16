@@ -335,11 +335,11 @@ public class PrivilegeInfo {
         if (privilege.getShoot()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " shoot false " + dominion.getName() + " " + page))
-                    .append("射箭/雪球"));
+                    .append("射箭/雪球/三叉戟"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " shoot true " + dominion.getName() + " " + page))
-                    .append("射箭/雪球"));
+                    .append("射箭/雪球/三叉戟"));
         }
         if (privilege.getTrade()) {
             view.add(Line.create()

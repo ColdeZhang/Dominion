@@ -7,6 +7,9 @@ import org.bukkit.entity.Player;
 
 public class Apis {
     public static boolean hasPermission(Player player, DominionDTO dom) {
+        if (player.isOp()) {
+            return true;
+        }
         if (dom == null) {
             return true;
         }

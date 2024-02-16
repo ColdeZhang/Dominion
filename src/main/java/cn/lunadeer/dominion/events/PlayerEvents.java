@@ -7,11 +7,13 @@ import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -19,6 +21,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 public class PlayerEvents implements Listener {
@@ -348,7 +351,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // craft
     public void onCraft(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.CRAFTING) {
+        if (event.getInventory().getType() != InventoryType.WORKBENCH) {
             return;
         }
         if (!(event.getPlayer() instanceof Player)) {
@@ -474,11 +477,10 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // dye
     public void dyeEvent(EntityDyeEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof Player)) {
+        Player player = event.getPlayer();
+        if (player == null) {
             return;
         }
-        Player player = (Player) entity;
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (dom == null) {
             return;
@@ -618,7 +620,26 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // harvest
-    public void onHarvest(PlayerHarvestBlockEvent event) {
+    public void onHarvest(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() != Material.COCOA &&
+                block.getType() != Material.WHEAT &&
+                block.getType() != Material.CARROTS &&
+                block.getType() != Material.POTATOES &&
+                block.getType() != Material.BEETROOTS &&
+                block.getType() != Material.NETHER_WART &&
+                block.getType() != Material.SWEET_BERRY_BUSH &&
+                block.getType() != Material.MELON &&
+                block.getType() != Material.PUMPKIN &&
+                block.getType() != Material.SUGAR_CANE &&
+                block.getType() != Material.BAMBOO &&
+                block.getType() != Material.CACTUS &&
+                block.getType() != Material.CHORUS_PLANT &&
+                block.getType() != Material.CHORUS_FLOWER &&
+                block.getType() != Material.KELP &&
+                block.getType() != Material.KELP_PLANT) {
+            return;
+        }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (dom == null) {
@@ -720,6 +741,7 @@ public class PlayerEvents implements Listener {
             }
         }
         Notification.error(player, "你没有点火的权限");
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // lever
@@ -785,7 +807,7 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // move
-    public void onPlayerMove(PlayerMoveEvent event){
+    public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (dom == null) {
@@ -809,7 +831,7 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // place
-    public void onPlace(BlockPlaceEvent event){
+    public void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (dom == null) {
@@ -829,6 +851,7 @@ public class PlayerEvents implements Listener {
             }
         }
         Notification.error(player, "你没有放置方块的权限");
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // pressure
@@ -955,6 +978,7 @@ public class PlayerEvents implements Listener {
             }
         }
         Notification.error(player, "你没有剪羊毛的权限");
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // shoot
@@ -962,7 +986,9 @@ public class PlayerEvents implements Listener {
         if (!(event.getEntity().getShooter() instanceof Player)) {
             return;
         }
-        if (event.getEntity().getType() != EntityType.ARROW && event.getEntity().getType() != EntityType.SNOWBALL) {
+        if (event.getEntity().getType() != EntityType.ARROW &&
+                event.getEntity().getType() != EntityType.SNOWBALL &&
+                event.getEntity().getType() != EntityType.TRIDENT) {
             return;
         }
         Player player = (Player) event.getEntity().getShooter();
@@ -983,7 +1009,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有发射弓箭或雪球的权限");
+        Notification.error(player, "你没有发射弓箭、三叉戟或雪球的权限");
         event.setCancelled(true);
     }
 
@@ -1018,14 +1044,11 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // vehicle_destroy
-    public void onVehicleDestroy(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
+    public void onVehicleDestroy(VehicleDestroyEvent event) {
+        if (!(event.getAttacker() instanceof Player)) {
             return;
         }
-        if (!(event.getEntity() instanceof Vehicle)) {
-            return;
-        }
-        Player player = (Player) event.getDamager();
+        Player player = (Player) event.getAttacker();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (dom == null) {
             return;
