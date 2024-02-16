@@ -12,7 +12,10 @@ import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public final class Dominion extends JavaPlugin {
 

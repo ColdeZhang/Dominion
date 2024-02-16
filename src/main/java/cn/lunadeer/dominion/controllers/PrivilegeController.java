@@ -4,7 +4,6 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
-import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

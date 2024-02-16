@@ -7,9 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.controllers.PrivilegeController.clearPrivilege;
-import static cn.lunadeer.dominion.controllers.PrivilegeController.setPrivilege;
-import static cn.lunadeer.dominion.controllers.PrivilegeController.createPrivilege;
+import static cn.lunadeer.dominion.controllers.PrivilegeController.*;
 
 public class PlayerPrivilege {
 

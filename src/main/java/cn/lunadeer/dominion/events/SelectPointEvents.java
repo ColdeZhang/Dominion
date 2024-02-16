@@ -2,11 +2,9 @@ package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.Notification;
-import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,9 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
