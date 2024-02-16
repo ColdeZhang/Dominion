@@ -68,9 +68,9 @@ public class Apis {
                 return BlockFace.EAST;
             }
         } else if (pitch > 45) {
-            return BlockFace.UP;
-        } else {
             return BlockFace.DOWN;
+        } else {
+            return BlockFace.UP;
         }
     }
 }

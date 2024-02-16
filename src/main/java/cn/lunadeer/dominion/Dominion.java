@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.utils.ConfigManager;
 import cn.lunadeer.dominion.utils.Database;
+import cn.lunadeer.dominion.utils.Time;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,6 +40,8 @@ public final class Dominion extends JavaPlugin {
         XLogger.info(" | |__| | (_) | | | | | | | | | | | (_) | | | |");
         XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
         XLogger.info(" ");
+
+        Time.runLater(this, BlueMapConnect::render, 20 * 60);
     }
 
     @Override
