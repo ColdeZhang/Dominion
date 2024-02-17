@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.commands.Helper.playerDominions;
+import static cn.lunadeer.dominion.commands.Helper.*;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
 public class ListDominion {
@@ -20,17 +20,19 @@ public class ListDominion {
         if (player == null) return;
         int page = getPage(args);
         ListView view = ListView.create(10, "/dominion list");
-        List<String> dominions = playerDominions(sender);
-        if (dominions.isEmpty()) {
-            Notification.warn(sender, "你没有任何领地");
-            return;
-        }
+        List<String> own_dominions = playerOwnDominions(sender);
+        List<String> admin_dominions = playerAdminDominions(sender);
+
         view.title("我的领地列表");
         view.navigator(Line.create().append(Button.create("主菜单", "/dominion menu")).append("我的领地"));
-        for (String dominion : dominions) {
+        for (String dominion : own_dominions) {
             TextComponent manage = Button.createGreen("管理", "/dominion manage " + dominion);
             TextComponent delete = Button.createRed("删除", "/dominion delete " + dominion);
             view.add(Line.create().append(dominion).append(manage).append(delete));
+        }
+        for (String dominion : admin_dominions) {
+            TextComponent manage = Button.createGreen("管理", "/dominion manage " + dominion);
+            view.add(Line.create().append(dominion).append(manage));
         }
         view.showOn(player, page);
     }

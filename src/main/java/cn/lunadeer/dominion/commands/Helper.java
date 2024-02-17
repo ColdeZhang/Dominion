@@ -64,11 +64,27 @@ public class Helper {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
+        dominions_name.addAll(playerOwnDominions(sender));
+        dominions_name.addAll(playerAdminDominions(sender));
+        return dominions_name;
+    }
+
+    public static List<String> playerOwnDominions(CommandSender sender){
+        List<String> dominions_name = new ArrayList<>();
+        Player player = playerOnly(sender);
+        if (player == null) return dominions_name;
         List<DominionDTO> dominions_own = DominionController.all(player);
-        List<PlayerPrivilegeDTO> dominions_admin = PlayerPrivilegeDTO.selectAll(player.getUniqueId());
         for (DominionDTO dominion : dominions_own) {
             dominions_name.add(dominion.getName());
         }
+        return dominions_name;
+    }
+
+    public static List<String> playerAdminDominions(CommandSender sender){
+        List<String> dominions_name = new ArrayList<>();
+        Player player = playerOnly(sender);
+        if (player == null) return dominions_name;
+        List<PlayerPrivilegeDTO> dominions_admin = PlayerPrivilegeDTO.selectAll(player.getUniqueId());
         for (PlayerPrivilegeDTO privilege : dominions_admin) {
             if (privilege.getAdmin()) {
                 DominionDTO dom = DominionDTO.select(privilege.getDomID());
