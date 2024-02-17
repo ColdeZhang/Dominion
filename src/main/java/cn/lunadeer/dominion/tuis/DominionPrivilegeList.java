@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominion;
+import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
 import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
 public class DominionPrivilegeList {
@@ -28,7 +28,7 @@ public class DominionPrivilegeList {
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominion(player, args);
+        DominionDTO dominion = getDominionNameArg_1(player, args);
         if (dominion == null) {
             Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_list <领地名称>");
             return;

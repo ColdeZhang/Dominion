@@ -11,13 +11,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominion;
+import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
 
 public class DominionSizeInfo {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominion(player, args);
+        DominionDTO dominion = getDominionNameArg_1(player, args);
         if (dominion == null) {
             Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion info <领地名称>");
             return;

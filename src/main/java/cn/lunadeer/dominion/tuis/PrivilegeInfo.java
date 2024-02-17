@@ -11,15 +11,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominion;
-import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
+import static cn.lunadeer.dominion.tuis.Apis.*;
 
 public class PrivilegeInfo {
     // /dominion privilege_info <玩家名称> [领地名称] [页码]
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominion(player, args);
+        DominionDTO dominion = getDominionNameArg_2(player, args);
         int page = 1;
         if (args.length == 4) {
             try {

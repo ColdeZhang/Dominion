@@ -26,9 +26,33 @@ public class Apis {
         return page;
     }
 
-    public static DominionDTO getDominion(Player player, String[] args) {
-        if (args.length == 2) {
+    /**
+     * 尝试从 arg[1] 获取领地名称
+     * 如果没有此参数则会尝试获取玩家当前所在位置
+     *
+     * @param player 玩家
+     * @param args   参数
+     * @return 领地信息
+     */
+    public static DominionDTO getDominionNameArg_1(Player player, String[] args) {
+        if (args.length >= 2) {
             return DominionDTO.select(args[1]);
+        } else {
+            return getPlayerCurrentDominion(player);
+        }
+    }
+
+    /**
+     * 尝试从 arg[2] 获取领地名称
+     * 如果没有此参数则会尝试获取玩家当前所在位置
+     *
+     * @param player 玩家
+     * @param args   参数
+     * @return 领地信息
+     */
+    public static DominionDTO getDominionNameArg_2(Player player, String[] args) {
+        if (args.length >= 3) {
+            return DominionDTO.select(args[2]);
         } else {
             return getPlayerCurrentDominion(player);
         }

@@ -38,7 +38,7 @@ public class PlayerPrivilege {
         }
         Notification.info(sender, "成功创建玩家特权 " + args[1]);
         if (args.length == 4) {
-            String[] newArgs = new String[3];
+            String[] newArgs = new String[2];
             newArgs[0] = "privilege_list";
             newArgs[1] = args[2];
             DominionPrivilegeList.show(sender, newArgs);
