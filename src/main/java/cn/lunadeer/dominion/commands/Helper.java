@@ -23,7 +23,7 @@ public class Helper {
                 "egg", "enchant", "ender_pearl",
                 "feed", "fire_spread", "flow_in_protection",
                 "glow",
-                "honey", "hook", "harvest",
+                "harvest", "honey", "hook", "hopper",
                 "ignite",
                 "lever",
                 "monster_killing", "move",
@@ -44,7 +44,7 @@ public class Helper {
                 "egg", "enchant", "ender_pearl",
                 "feed",
                 "glow",
-                "honey", "hook", "harvest",
+                "harvest", "honey", "hook", "hopper",
                 "ignite",
                 "lever",
                 "monster_killing", "move",
@@ -69,7 +69,7 @@ public class Helper {
         return dominions_name;
     }
 
-    public static List<String> playerOwnDominions(CommandSender sender){
+    public static List<String> playerOwnDominions(CommandSender sender) {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
@@ -80,7 +80,7 @@ public class Helper {
         return dominions_name;
     }
 
-    public static List<String> playerAdminDominions(CommandSender sender){
+    public static List<String> playerAdminDominions(CommandSender sender) {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;

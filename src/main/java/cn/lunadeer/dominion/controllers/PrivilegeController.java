@@ -172,6 +172,9 @@ public class PrivilegeController {
             case "hook":
                 privilege.setHook(value);
                 break;
+            case "hopper":
+                privilege.setHopper(value);
+                break;
             case "ignite":
                 privilege.setIgnite(value);
                 break;
@@ -250,7 +253,7 @@ public class PrivilegeController {
                 dom.getEgg(), dom.getEnchant(), dom.getEnderPearl(),
                 dom.getFeed(),
                 dom.getGlow(),
-                dom.getHarvest(), dom.getHoney(), dom.getHook(),
+                dom.getHarvest(), dom.getHoney(), dom.getHook(), dom.getHopper(),
                 dom.getIgnite(),
                 dom.getLever(),
                 dom.getMonsterKilling(), dom.getMove(),

@@ -56,6 +56,7 @@ public class DominionDTO {
                         rs.getBoolean("harvest"),
                         rs.getBoolean("honey"),
                         rs.getBoolean("hook"),
+                        rs.getBoolean("hopper"),
                         rs.getBoolean("ignite"),
                         rs.getBoolean("lever"),
                         rs.getBoolean("monster_killing"),
@@ -200,6 +201,7 @@ public class DominionDTO {
                 "harvest = " + dominion.getHarvest() + ", " +
                 "honey = " + dominion.getHoney() + ", " +
                 "hook = " + dominion.getHook() + ", " +
+                "hopper = " + dominion.getHopper() + ", " +
                 "ignite = " + dominion.getIgnite() + ", " +
                 "lever = " + dominion.getLever() + ", " +
                 "monster_killing = " + dominion.getMonsterKilling() + ", " +
@@ -232,7 +234,7 @@ public class DominionDTO {
                         Boolean egg, Boolean enchant, Boolean enderPearl,
                         Boolean feed, Boolean fireSpread, Boolean flowInProtection,
                         Boolean glow,
-                        Boolean harvest, Boolean honey, Boolean hook,
+                        Boolean harvest, Boolean honey, Boolean hook, Boolean hopper,
                         Boolean ignite,
                         Boolean lever,
                         Boolean monsterKilling, Boolean move,
@@ -280,6 +282,7 @@ public class DominionDTO {
         this.harvest = harvest;
         this.honey = honey;
         this.hook = hook;
+        this.hopper = hopper;
         this.ignite = ignite;
         this.lever = lever;
         this.monsterKilling = monsterKilling;
@@ -306,7 +309,7 @@ public class DominionDTO {
                 false, false, false, false, false,
                 false, false, false, false, false, false,
                 false, false, false, false, true,
-                true, false, false, false, false, false,
+                true, false, false, false, false, false, false,
                 false, true, false, false, false, false,
                 false, false, false, false, false, false);
     }
@@ -353,6 +356,7 @@ public class DominionDTO {
     private Boolean glow = false;
     private Boolean honey = false;
     private Boolean hook = false;
+    private Boolean hopper = false;
     private Boolean ignite = false;
     private Boolean lever = false;
     private Boolean monsterKilling = false;
@@ -690,6 +694,15 @@ public class DominionDTO {
 
     public DominionDTO setHook(Boolean hook) {
         this.hook = hook;
+        return update(this);
+    }
+
+    public Boolean getHopper() {
+        return hopper;
+    }
+
+    public DominionDTO setHopper(Boolean hopper) {
+        this.hopper = hopper;
         return update(this);
     }
 

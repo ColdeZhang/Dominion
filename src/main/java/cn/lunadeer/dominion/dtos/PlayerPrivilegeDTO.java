@@ -20,7 +20,7 @@ public class PlayerPrivilegeDTO {
                 "egg, enchant, ender_pearl, " +
                 "feed, " +
                 "glow, " +
-                "harvest, honey, hook, " +
+                "harvest, honey, hook, hopper, " +
                 "ignite, " +
                 "lever, " +
                 "monster_killing, move, " +
@@ -38,7 +38,7 @@ public class PlayerPrivilegeDTO {
                 player.getEgg() + ", " + player.getEnchant() + ", " + player.getEnderPearl() + ", " +
                 player.getFeed() + ", " +
                 player.getGlow() + ", " +
-                player.getHarvest() + ", " + player.getHoney() + ", " + player.getHook() + ", " +
+                player.getHarvest() + ", " + player.getHoney() + ", " + player.getHook() + ", " + player.getHopper() + ", " +
                 player.getIgnite() + ", " +
                 player.getLever() + ", " +
                 player.getMonsterKilling() + ", " + player.getMove() + ", " +
@@ -107,6 +107,7 @@ public class PlayerPrivilegeDTO {
     private Boolean glow;
     private Boolean honey;
     private Boolean hook;
+    private Boolean hopper;
     private Boolean ignite;
     private Boolean lever;
     private Boolean monsterKilling;
@@ -219,6 +220,10 @@ public class PlayerPrivilegeDTO {
 
     public Boolean getHook() {
         return hook;
+    }
+
+    public Boolean getHopper() {
+        return hopper;
     }
 
     public Boolean getIgnite() {
@@ -378,6 +383,11 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
+    public PlayerPrivilegeDTO setHopper(Boolean hopper) {
+        this.hopper = hopper;
+        return update(this);
+    }
+
     public PlayerPrivilegeDTO setIgnite(Boolean ignite) {
         this.ignite = ignite;
         return update(this);
@@ -456,7 +466,7 @@ public class PlayerPrivilegeDTO {
                                Boolean egg, Boolean enchant, Boolean enderPearl,
                                Boolean feed,
                                Boolean glow,
-                               Boolean harvest, Boolean honey, Boolean hook,
+                               Boolean harvest, Boolean honey, Boolean hook, Boolean hopper,
                                Boolean ignite,
                                Boolean lever,
                                Boolean monsterKilling, Boolean move,
@@ -491,6 +501,7 @@ public class PlayerPrivilegeDTO {
         this.harvest = harvest;
         this.honey = honey;
         this.hook = hook;
+        this.hopper = hopper;
         this.ignite = ignite;
         this.lever = lever;
         this.monsterKilling = monsterKilling;
@@ -513,7 +524,7 @@ public class PlayerPrivilegeDTO {
                               Boolean egg, Boolean enchant, Boolean enderPearl,
                               Boolean feed,
                               Boolean glow,
-                              Boolean harvest, Boolean honey, Boolean hook,
+                              Boolean harvest, Boolean honey, Boolean hook, Boolean hopper,
                               Boolean ignite,
                               Boolean lever,
                               Boolean monsterKilling, Boolean move,
@@ -531,7 +542,7 @@ public class PlayerPrivilegeDTO {
                 egg, enchant, enderPearl,
                 feed,
                 glow,
-                harvest, honey, hook,
+                harvest, honey, hook, hopper,
                 ignite,
                 lever,
                 monsterKilling, move,
@@ -574,6 +585,7 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("harvest"),
                         rs.getBoolean("honey"),
                         rs.getBoolean("hook"),
+                        rs.getBoolean("hopper"),
                         rs.getBoolean("ignite"),
                         rs.getBoolean("lever"),
                         rs.getBoolean("monster_killing"),
@@ -626,6 +638,7 @@ public class PlayerPrivilegeDTO {
                 "harvest = " + player.getHarvest() + ", " +
                 "honey = " + player.getHoney() + ", " +
                 "hook = " + player.getHook() + ", " +
+                "hopper = " + player.getHopper() + ", " +
                 "ignite = " + player.getIgnite() + ", " +
                 "lever = " + player.getLever() + ", " +
                 "monster_killing = " + player.getMonsterKilling() + ", " +

@@ -122,11 +122,11 @@ public class DominionFlagInfo {
         if (dominion.getContainer()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set container false " + dominion.getName() + " " + page))
-                    .append("容器交互"));
+                    .append("箱子/木桶/潜影盒"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set container true " + dominion.getName() + " " + page))
-                    .append("容器交互"));
+                    .append("箱子/木桶/潜影盒"));
         }
         if (dominion.getCraft()) {
             view.add(Line.create()
@@ -262,6 +262,15 @@ public class DominionFlagInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set hook true " + dominion.getName() + " " + page))
                     .append("使用钓钩"));
+        }
+        if (dominion.getHopper()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set hopper false " + dominion.getName() + " " + page))
+                    .append("漏斗/熔炉/发射器等特殊容器"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set hopper true " + dominion.getName() + " " + page))
+                    .append("漏斗/熔炉/发射器等特殊容器"));
         }
         if (dominion.getIgnite()) {
             view.add(Line.create()

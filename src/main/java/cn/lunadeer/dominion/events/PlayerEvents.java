@@ -320,9 +320,6 @@ public class PlayerEvents implements Listener {
     public void openContainer(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.CHEST &&
                 event.getInventory().getType() != InventoryType.BARREL &&
-                event.getInventory().getType() != InventoryType.HOPPER &&
-                event.getInventory().getType() != InventoryType.DISPENSER &&
-                event.getInventory().getType() != InventoryType.DROPPER &&
                 event.getInventory().getType() != InventoryType.SHULKER_BOX) {
             return;
         }
@@ -716,6 +713,42 @@ public class PlayerEvents implements Listener {
             }
         }
         Notification.error(player, "你没有使用钓钩的权限");
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // hopper
+    public void openHopper(InventoryOpenEvent event) {
+        if (event.getInventory().getType() != InventoryType.HOPPER &&
+                event.getInventory().getType() != InventoryType.DROPPER &&
+                event.getInventory().getType() != InventoryType.DISPENSER &&
+                event.getInventory().getType() != InventoryType.FURNACE &&
+                event.getInventory().getType() != InventoryType.BLAST_FURNACE &&
+                event.getInventory().getType() != InventoryType.SMOKER
+        ) {
+            return;
+        }
+        if (!(event.getPlayer() instanceof Player)) {
+            return;
+        }
+        Player bukkitPlayer = (Player) event.getPlayer();
+        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        if (dom == null) {
+            return;
+        }
+        if (Apis.hasPermission(bukkitPlayer, dom)) {
+            return;
+        }
+        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
+        if (privilege != null) {
+            if (privilege.getHopper()) {
+                return;
+            }
+        } else {
+            if (dom.getHopper()) {
+                return;
+            }
+        }
+        Notification.error(bukkitPlayer, "你没有使用漏斗/熔炉/发射器等特殊容器的权限");
         event.setCancelled(true);
     }
 

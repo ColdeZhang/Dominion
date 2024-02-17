@@ -145,11 +145,11 @@ public class PrivilegeInfo {
         if (privilege.getContainer()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " container false " + dominion.getName() + " " + page))
-                    .append("容器交互"));
+                    .append("箱子/木桶/潜影盒"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " container true " + dominion.getName() + " " + page))
-                    .append("容器交互"));
+                    .append("箱子/木桶/潜影盒"));
         }
         if (privilege.getCraft()) {
             view.add(Line.create()
@@ -258,6 +258,15 @@ public class PrivilegeInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " hook true " + dominion.getName() + " " + page))
                     .append("使用钓钩"));
+        }
+        if (privilege.getHopper()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " hopper false " + dominion.getName() + " " + page))
+                    .append("漏斗/熔炉/发射器等特殊容器"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " hopper true " + dominion.getName() + " " + page))
+                    .append("漏斗/熔炉/发射器等特殊容器"));
         }
         if (privilege.getIgnite()) {
             view.add(Line.create()

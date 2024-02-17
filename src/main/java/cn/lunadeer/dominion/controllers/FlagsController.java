@@ -62,6 +62,7 @@ public class FlagsController {
             case "harvest": return dominion.setHarvest(value);
             case "honey": return dominion.setHoney(value);
             case "hook": return dominion.setHook(value);
+            case "hopper": return dominion.setHopper(value);
             case "ignite": return dominion.setIgnite(value);
             case "lever": return dominion.setLever(value);
             case "monster_killing": return dominion.setMonsterKilling(value);
