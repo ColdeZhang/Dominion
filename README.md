@@ -159,6 +159,10 @@ MaxX: 128
 MaxY: 64
 MaxZ: 128
 
+AutoClean:
+  Enabled: false
+  AfterDays: 180
+  
 BlueMap: true
 
 Debug: false

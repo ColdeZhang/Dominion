@@ -25,6 +25,8 @@ public class ConfigManager {
         _max_y = _file.getInt("MaxY", 64);
         _max_z = _file.getInt("MaxZ", 128);
         _blue_map = _file.getBoolean("BlueMap", true);
+        _auto_clean_enable = _file.getBoolean("AutoClean.Enable", false);
+        _auto_clean_after_days = _file.getInt("AutoClean.AfterDays", 180);
     }
 
     public Boolean isDebug() {
@@ -118,6 +120,26 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Boolean getAutoCleanEnable() {
+        return _auto_clean_enable;
+    }
+
+    public void setAutoCleanEnable(Boolean auto_clean_enable) {
+        _auto_clean_enable = auto_clean_enable;
+        _file.set("AutoClean.Enable", auto_clean_enable);
+        _plugin.saveConfig();
+    }
+
+    public Integer getAutoCleanAfterDays() {
+        return _auto_clean_after_days;
+    }
+
+    public void setAutoCleanAfterDays(Integer auto_clean_after_days) {
+        _auto_clean_after_days = auto_clean_after_days;
+        _file.set("AutoClean.AfterDays", auto_clean_after_days);
+        _plugin.saveConfig();
+    }
+
 
     private final Dominion _plugin;
     private FileConfiguration _file;
@@ -136,4 +158,7 @@ public class ConfigManager {
     private Integer _max_z;
 
     private Boolean _blue_map;
+
+    private Boolean _auto_clean_enable;
+    private Integer _auto_clean_after_days;
 }

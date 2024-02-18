@@ -68,6 +68,11 @@ public class PlayerDTO {
         return query(sql);
     }
 
+    public static void delete(PlayerDTO player) {
+        String sql = "DELETE FROM player_name WHERE uuid = '" + player.getUuid().toString() + "';";
+        query(sql);
+    }
+
     private static PlayerDTO insert(PlayerDTO player) {
         String sql = "INSERT INTO player_name (uuid, last_known_name, last_join_at) " +
                 "VALUES" +

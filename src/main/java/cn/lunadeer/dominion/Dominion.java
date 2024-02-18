@@ -44,6 +44,7 @@ public final class Dominion extends JavaPlugin {
         XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
         XLogger.info(" ");
 
+        Time.runLater(this, AutoClean::run, 20 * 30);
         Time.runLater(this, BlueMapConnect::render, 20 * 60);
     }
 
