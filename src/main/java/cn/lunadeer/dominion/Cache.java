@@ -24,13 +24,23 @@ public class Cache {
     public void loadDominions() {
         id_dominions = new HashMap<>();
         world_dominions = new HashMap<>();
+        dominion_children = new HashMap<>();
         List<DominionDTO> dominions = DominionDTO.selectAll();
         for (DominionDTO d : dominions) {
+            if (!dominion_children.containsKey(d.getId())) {
+                dominion_children.put(d.getId(), new ArrayList<>());
+            }
             id_dominions.put(d.getId(), d);
             if (!world_dominions.containsKey(d.getWorld())) {
                 world_dominions.put(d.getWorld(), new ArrayList<>());
             }
             world_dominions.get(d.getWorld()).add(d.getId());
+            if (d.getParentDomId() != -1) {
+                if (!dominion_children.containsKey(d.getParentDomId())) {
+                    dominion_children.put(d.getParentDomId(), new ArrayList<>());
+                }
+                dominion_children.get(d.getParentDomId()).add(d.getId());
+            }
         }
         BlueMapConnect.render();
     }
@@ -70,10 +80,30 @@ public class Cache {
             if (!isInDominion(dominion, player)) {
                 // glow
                 player.setGlowing(false);
-                Notification.info(player, "您已离开领地：" + dominion.getName());
-                Notification.info(player, dominion.getLeaveMessage());
-                player_current_dominion.put(player.getUniqueId(), null);
-                dominion = null;
+                if (dominion.getParentDomId() == -1) {
+                    Notification.info(player, "您已离开领地：" + dominion.getName());
+                    Notification.info(player, dominion.getLeaveMessage());
+                    player_current_dominion.put(player.getUniqueId(), null);
+                    dominion = null;
+                } else {
+                    Notification.info(player, "您已离开子领地：" + dominion.getName());
+                    Notification.info(player, dominion.getLeaveMessage());
+                    dominion = id_dominions.get(dominion.getParentDomId());
+                    update_player_current_dominion(player, dominion);
+                }
+            } else {
+                // 如果在领地内则检查是否在子领地内
+                List<Integer> children = dominion_children.get(dominion.getId());
+                for (Integer child_id : children) {
+                    DominionDTO child = id_dominions.get(child_id);
+                    if (isInDominion(child, player)) {
+                        dominion = child;
+                        Notification.info(player, "您正在进入子领地：" + dominion.getName());
+                        Notification.info(player, dominion.getJoinMessage());
+                        update_player_current_dominion(player, dominion);
+                        break;
+                    }
+                }
             }
         }
         if (dominion == null) {
@@ -89,23 +119,27 @@ public class Cache {
             }
             if (in_dominions.size() == 0) return null;
             in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
-            dominion = in_dominions.get(in_dominions.size() - 1);
-            player_current_dominion.put(player.getUniqueId(), dominion.getId());
-            // glow
-            PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
-            if (privilege != null) {
-                if (privilege.getGlow()) {
-                    player.setGlowing(true);
-                }
-            } else {
-                if (dominion.getGlow()) {
-                    player.setGlowing(true);
-                }
-            }
+            dominion = in_dominions.get(0);
             Notification.info(player, "您正在进入领地：" + dominion.getName());
             Notification.info(player, dominion.getJoinMessage());
+            update_player_current_dominion(player, dominion);
         }
         return dominion;
+    }
+
+    private void update_player_current_dominion(Player player, DominionDTO dominion) {
+        player_current_dominion.put(player.getUniqueId(), dominion.getId());
+        // glow
+        PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
+        if (privilege != null) {
+            if (privilege.getGlow()) {
+                player.setGlowing(true);
+            }
+        } else {
+            if (dominion.getGlow()) {
+                player.setGlowing(true);
+            }
+        }
     }
 
     public DominionDTO getDominion(Location loc) {
@@ -167,4 +201,5 @@ public class Cache {
     private Map<String, List<Integer>> world_dominions;                         // 所有领地
     private Map<UUID, Map<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
     private Map<UUID, Integer> player_current_dominion;                         // 玩家当前所在领地
+    private Map<Integer, List<Integer>> dominion_children;
 }

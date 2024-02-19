@@ -172,9 +172,9 @@ public class Database {
         query(sql);
 
         // 1.5.0
-        sql = "ALTER TABLE dominion ADD hopper BOOLEAN NOT NULL DEFAULT FALSE;";
+        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS hopper BOOLEAN NOT NULL DEFAULT FALSE;";
         query(sql);
-        sql = "ALTER TABLE player_privilege ADD hopper BOOLEAN NOT NULL DEFAULT FALSE;";
+        sql = "ALTER TABLE player_privilege ADD COLUMN IF NOT EXISTS hopper BOOLEAN NOT NULL DEFAULT FALSE;";
         query(sql);
     }
 }
