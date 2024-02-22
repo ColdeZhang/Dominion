@@ -213,4 +213,46 @@ public class DominionOperate {
         }
         Notification.error(sender, "用法: /dominion delete <领地名称> [force]");
     }
+
+    /**
+     * 设置领地进入提示
+     * /dominion set_enter_msg <提示语> [领地名称]
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void setEnterMessage(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length == 2) {
+            DominionController.setJoinMessage(player, args[1]);
+            return;
+        }
+        if (args.length == 3) {
+            DominionController.setJoinMessage(player, args[1], args[2]);
+            return;
+        }
+        Notification.error(sender, "用法: /dominion set_enter_msg <提示语> [领地名称]");
+    }
+
+    /**
+     * 设置领地离开提示
+     * /dominion set_leave_msg <提示语> [领地名称]
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void setLeaveMessage(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length == 2) {
+            DominionController.setLeaveMessage(player, args[1]);
+            return;
+        }
+        if (args.length == 3) {
+            DominionController.setLeaveMessage(player, args[1], args[2]);
+            return;
+        }
+        Notification.error(sender, "用法: /dominion set_leave_msg <提示语> [领地名称]");
+    }
 }

@@ -117,6 +117,12 @@ public class Commands implements TabExecutor {
             case "select_player_create_privilege":
                 SelectPlayer.show(sender, args);
                 break;
+            case "set_enter_msg":
+                DominionOperate.setEnterMessage(sender, args);
+                break;
+            case "set_leave_msg":
+                DominionOperate.setLeaveMessage(sender, args);
+                break;
             default:
                 return false;
         }
@@ -141,7 +147,9 @@ public class Commands implements TabExecutor {
         if (args.length == 1) {
             return Arrays.asList("menu", "help", "info", "manage", "flag_info", "group_list", "privilege_list", "group",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
-                    "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info"
+                    "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info",
+                    "set_enter_msg",
+                    "set_leave_msg"
             );
         }
         if (args.length == 2) {
@@ -171,6 +179,10 @@ public class Commands implements TabExecutor {
                 case "create_sub":
                 case "auto_create_sub":
                     return Collections.singletonList("子领地名称");
+                case "set_enter_msg":
+                    return Collections.singletonList("进入提示语内容");
+                case "set_leave_msg":
+                    return Collections.singletonList("离开提示语内容");
             }
         }
         if (args.length == 3) {
@@ -186,6 +198,8 @@ public class Commands implements TabExecutor {
                 case "privilege_info":
                 case "auto_create_sub":
                 case "create_sub":
+                case "set_enter_msg":
+                case "set_leave_msg":
                     return playerDominions(sender);
             }
         }

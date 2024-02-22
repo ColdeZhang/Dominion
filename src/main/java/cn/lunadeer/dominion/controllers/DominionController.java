@@ -360,6 +360,7 @@ public class DominionController {
             return;
         }
         if (notOwner(operator, dominion)) {
+            Notification.error(operator, "你不是领地 " + dominion_name + " 的拥有者，无法执行此操作");
             return;
         }
         dominion.setJoinMessage(message);
@@ -393,6 +394,7 @@ public class DominionController {
             return;
         }
         if (notOwner(operator, dominion)) {
+            Notification.error(operator, "你不是领地 " + dominion_name + " 的拥有者，无法执行此操作");
             return;
         }
         dominion.setLeaveMessage(message);
