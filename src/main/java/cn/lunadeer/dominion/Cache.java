@@ -9,11 +9,12 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Cache {
 
     public Cache() {
-        player_current_dominion = new HashMap<>();
+        player_current_dominion = new ConcurrentHashMap<>();
         loadDominions();
         loadPlayerPrivileges();
     }
@@ -22,9 +23,9 @@ public class Cache {
      * 从数据库加载所有领地
      */
     public void loadDominions() {
-        id_dominions = new HashMap<>();
-        world_dominions = new HashMap<>();
-        dominion_children = new HashMap<>();
+        id_dominions = new ConcurrentHashMap<>();
+        world_dominions = new ConcurrentHashMap<>();
+        dominion_children = new ConcurrentHashMap<>();
         List<DominionDTO> dominions = DominionDTO.selectAll();
         for (DominionDTO d : dominions) {
             if (!dominion_children.containsKey(d.getId())) {
@@ -54,11 +55,11 @@ public class Cache {
             XLogger.err("加载玩家特权失败");
             return;
         }
-        player_uuid_to_privilege = new HashMap<>();
+        player_uuid_to_privilege = new ConcurrentHashMap<>();
         for (PlayerPrivilegeDTO privilege : all_privileges) {
             UUID player_uuid = privilege.getPlayerUUID();
             if (!player_uuid_to_privilege.containsKey(player_uuid)) {
-                player_uuid_to_privilege.put(player_uuid, new HashMap<>());
+                player_uuid_to_privilege.put(player_uuid, new ConcurrentHashMap<>());
             }
             player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
         }
@@ -197,9 +198,9 @@ public class Cache {
     }
 
     public static Cache instance;
-    private Map<Integer, DominionDTO> id_dominions;
-    private Map<String, List<Integer>> world_dominions;                         // 所有领地
-    private Map<UUID, Map<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
-    private Map<UUID, Integer> player_current_dominion;                         // 玩家当前所在领地
-    private Map<Integer, List<Integer>> dominion_children;
+    private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
+    private ConcurrentHashMap<String, List<Integer>> world_dominions;                         // 所有领地
+    private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
+    private ConcurrentHashMap<UUID, Integer> player_current_dominion;                         // 玩家当前所在领地
+    private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
 }
