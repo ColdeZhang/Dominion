@@ -1,5 +1,9 @@
 # Dominion
 
+开源地址：[Gitea](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion)
+
+文档地址：[Doc](https://ssl.lunadeer.cn:14448/doc/23/)
+
 ## 简介
 
 鉴于 Residence 插件的作者项目较多，维护压力大，无法及时跟进新版本以及适配Folia核心。故开发此插件，旨在平替纯净版生存服Residence的使用。
@@ -40,7 +44,8 @@
 
 领地有两种创建方式：1.手动选择区域创建；2.以操作者为中心自动创建。
 
-手动创建：需要使用箭矢作为选区工具，依次使用左键点选领地长方体区域的第一个点、右键点击长方体区域的第二个点。然后使用`/dominion create <领地名称>`创建领地，领地名称不可与其他领地重复。
+手动创建：需要使用箭矢作为选区工具，依次使用左键点选领地长方体区域的第一个点、右键点击长方体区域的第二个点。然后使用`/dominion create <领地名称>`
+创建领地，领地名称不可与其他领地重复。
 
 自动创建：不需要选择对角线点，会以玩家为中心自动创建一定区域的领地。使用 `/dominion auto_create <领地名称>`即可自动创建领地区域。
 
@@ -80,7 +85,8 @@
 
 同样可以点击【清除】，即可删除此玩家在此领地的所有特权。
 
-管理员：你可以在玩家特权中将一个玩家设置为【管理员】，那么此玩家即可拥有所有特权，同时此玩家还会**拥有此领地的权限编辑权限**，但是无法对领地大小进行编辑，同时也无法设置其他玩家为管理员。
+管理员：你可以在玩家特权中将一个玩家设置为【管理员】，那么此玩家即可拥有所有特权，同时此玩家还会**拥有此领地的权限编辑权限**
+，但是无法对领地大小进行编辑，同时也无法设置其他玩家为管理员。
 
 ### 4. 领地范围编辑
 
@@ -118,29 +124,32 @@
 
 以下指令尖括号`<>`表示必填参数，方括号`[]`表示可选参数。
 
-| 指令名 | 指令 |
-|-----|----|
-| 打开交互菜单 | `/dominion menu` |
-| 列出所有领地 | `/dominion list` |
-| 查看帮助 | `/dominion help [页码]` |
-| 查看领地信息 | `/dominion info [领地名称]` |
-| 查看领地权限信息 | `/dominion flag_info <领地名称> [页码]` |
-| 管理领地 | `/dominion manage <领地名称>` |
-| 创建领地 | `/dominion create <领地名称>` |
-| 自动创建领地 | `/dominion auto_create <领地名称>` |
-| 创建子领地 | `/dominion create_sub <子领地名称> [父领地名称]` |
-| 自动创建子领地 | `/dominion auto_create_sub <子领地名称> [父领地名称]` |
-| 扩张领地 | `/dominion expand [大小] [领地名称]` |
-| 缩小领地 | `/dominion contract [大小] [领地名称]` |
-| 删除领地 | `/dominion delete <领地名称> [force]` |
-| 设置领地权限 | `/dominion set <权限名称> <true/false> [领地名称]` |
-| 创建玩家特权 | `/dominion create_privilege <玩家名称> [领地名称]` |
-| 设置玩家特权 | `/dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]` |
-| 重置玩家特权 | `/dominion clear_privilege <玩家名称> [领地名称]` |
-| 查看领地玩家特权列表 | `/dominion privilege_list [领地名称] [页码]` |
-| 查看玩家特权信息 | `/dominion privilege_info <玩家名称> [领地名称] [页码]` |
-| 设置进入领地的提示语 | `/dominion set_enter_msg <提示语> [领地名称]` |
-| 设置离开领地的提示语 | `/dominion set_leave_msg <提示语> [领地名称]` |
+| 指令名        | 指令                                                          |
+|------------|-------------------------------------------------------------|
+| 打开交互菜单     | `/dominion menu`                                            |
+| 查看帮助       | `/dominion help [页码]`                                       |
+| 创建领地       | `/dominion create <领地名称>`                                   |
+| 自动创建领地     | `/dominion auto_create <领地名称>`                              |
+| 创建子领地      | `/dominion create_sub <子领地名称> [父领地名称]`                      |
+| 自动创建子领地    | `/dominion auto_create_sub <子领地名称> [父领地名称]`                 |
+| 管理领地       | `/dominion manage <领地名称>`                                   |
+| 扩张领地       | `/dominion expand [大小] [领地名称]`                              |
+| 缩小领地       | `/dominion contract [大小] [领地名称]`                            |
+| 设置进入领地的提示语 | `/dominion set_enter_msg <提示语> [领地名称]`                      |
+| 设置离开领地的提示语 | `/dominion set_leave_msg <提示语> [领地名称]`                      |
+| 重命名领地      | `/dominion rename <原领地名称> <新领地名称>`                          |
+| 转让领地       | `/dominion give <领地名称> <玩家名称>`                              |
+| 删除领地       | `/dominion delete <领地名称>`                                   |
+| ---------- | ----------                                                  |
+| 列出所有领地     | `/dominion list`                                            |
+| 查看领地信息     | `/dominion info [领地名称]`                                     |
+| 查看领地权限信息   | `/dominion flag_info <领地名称> [页码]`                           |
+| 设置领地权限     | `/dominion set <权限名称> <true/false> [领地名称]`                  |
+| 创建玩家特权     | `/dominion create_privilege <玩家名称> [领地名称]`                  |
+| 设置玩家特权     | `/dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]` |
+| 重置玩家特权     | `/dominion clear_privilege <玩家名称> [领地名称]`                   |
+| 查看领地玩家特权列表 | `/dominion privilege_list [领地名称] [页码]`                      |
+| 查看玩家特权信息   | `/dominion privilege_info <玩家名称> [领地名称] [页码]`               |
 
 ### 管理员指令
 
@@ -164,7 +173,7 @@ MaxZ: 128
 AutoClean:
   Enabled: false
   AfterDays: 180
-  
+
 BlueMap: true
 
 Debug: false

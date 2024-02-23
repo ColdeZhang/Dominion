@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.Time;
 import cn.lunadeer.dominion.utils.XLogger;
@@ -9,7 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static cn.lunadeer.dominion.controllers.Apis.*;
 
@@ -29,7 +32,7 @@ public class DominionController {
      * @return 创建的领地
      */
     public static DominionDTO create(Player owner, String name, Location loc1, Location loc2) {
-        DominionDTO parent = getPlayerCurrentDominion(owner,false);
+        DominionDTO parent = getPlayerCurrentDominion(owner, false);
         if (parent == null) {
             return create(owner, name, loc1, loc2, "");
         } else {
@@ -314,7 +317,7 @@ public class DominionController {
         if (notOwner(operator, dominion)) {
             return;
         }
-        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
+        List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
             Notification.warn(operator, "删除领地 " + dominion_name + " 会同时删除其所有子领地，是否继续？");
             String sub_names = "";
@@ -323,7 +326,7 @@ public class DominionController {
             }
             if (sub_dominions.size() > 0) {
                 sub_names = sub_names.substring(0, sub_names.length() - 2);
-                Notification.warn(operator, "当前子领地（不包含子领地的子领地等）：" + sub_names);
+                Notification.warn(operator, "当前子领地：" + sub_names);
             }
             Notification.warn(operator, "输入 /dominion delete " + dominion_name + " force 确认删除");
             return;
@@ -364,6 +367,7 @@ public class DominionController {
             return;
         }
         dominion.setJoinMessage(message);
+        Notification.info(operator, "成功设置领地 " + dominion_name + " 的进入消息");
     }
 
     /**
@@ -398,6 +402,82 @@ public class DominionController {
             return;
         }
         dominion.setLeaveMessage(message);
+        Notification.info(operator, "成功设置领地 " + dominion_name + " 的离开消息");
+    }
+
+    /**
+     * 重命名领地
+     *
+     * @param operator 操作者
+     * @param old_name 旧名称
+     * @param new_name 新名称
+     */
+    public static void rename(Player operator, String old_name, String new_name) {
+        DominionDTO dominion = DominionDTO.select(old_name);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + old_name + " 不存在");
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            Notification.error(operator, "你不是领地 " + old_name + " 的拥有者，无法执行此操作");
+            return;
+        }
+        if (DominionDTO.select(new_name) != null) {
+            Notification.error(operator, "已经存在名称为 " + new_name + " 的领地");
+            return;
+        }
+        dominion.setName(new_name);
+        Notification.info(operator, "成功将领地 " + old_name + " 重命名为 " + new_name);
+    }
+
+    /**
+     * 转让领地
+     *
+     * @param operator    操作者
+     * @param dom_name    领地名称
+     * @param player_name 玩家名称
+     * @param force       是否强制转让
+     */
+    public static void give(Player operator, String dom_name, String player_name, boolean force) {
+        if (Objects.equals(player_name, operator.getName())) {
+            Notification.error(operator, "你不能将领地转让给自己");
+            return;
+        }
+        DominionDTO dominion = DominionDTO.select(dom_name);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + dom_name + " 不存在");
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            return;
+        }
+        PlayerDTO player = PlayerController.getPlayerDTO(player_name);
+        if (player == null) {
+            Notification.error(operator, "玩家 " + player_name + " 不存在");
+            return;
+        }
+        if (dominion.getParentDomId() != -1) {
+            Notification.error(operator, "子领地无法转让，你可以通过将玩家设置为管理员来让其管理子领地");
+            return;
+        }
+        List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
+        if (!force) {
+            Notification.warn(operator, "转让领地 " + dom_name + " 给 " + player_name + " 会同时转让其所有子领地，是否继续？");
+            String sub_names = "";
+            for (DominionDTO sub_dominion : sub_dominions) {
+                sub_names = sub_dominion.getName() + ", ";
+            }
+            if (sub_dominions.size() > 0) {
+                sub_names = sub_names.substring(0, sub_names.length() - 2);
+                Notification.warn(operator, "当前子领地：" + sub_names);
+            }
+            Notification.warn(operator, "输入 /dominion give " + dom_name + " " + player_name + " force 确认转让");
+            return;
+        }
+        for (DominionDTO sub_dominion : sub_dominions) {
+            sub_dominion.setOwner(player.getUuid());
+        }
+        Notification.info(operator, "成功将领地 " + dom_name + " 及其所有子领地转让给 " + player_name);
     }
 
     /**
@@ -434,5 +514,15 @@ public class DominionController {
         return sub.getX1() >= x1 && sub.getX2() <= x2 &&
                 sub.getY1() >= y1 && sub.getY2() <= y2 &&
                 sub.getZ1() >= z1 && sub.getZ2() <= z2;
+    }
+
+    private static List<DominionDTO> getSubDominionsRecursive(DominionDTO dominion) {
+        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
+        List<DominionDTO> sub_sub_dominions = new ArrayList<>();
+        for (DominionDTO sub_dominion : sub_dominions) {
+            sub_sub_dominions.addAll(getSubDominionsRecursive(sub_dominion));
+        }
+        sub_dominions.addAll(sub_sub_dominions);
+        return sub_dominions;
     }
 }

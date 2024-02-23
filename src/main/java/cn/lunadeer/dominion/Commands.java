@@ -123,6 +123,12 @@ public class Commands implements TabExecutor {
             case "set_leave_msg":
                 DominionOperate.setLeaveMessage(sender, args);
                 break;
+            case "rename":
+                DominionOperate.renameDominion(sender, args);
+                break;
+            case "give":
+                DominionOperate.giveDominion(sender, args);
+                break;
             default:
                 return false;
         }
@@ -149,7 +155,9 @@ public class Commands implements TabExecutor {
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
                     "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info",
                     "set_enter_msg",
-                    "set_leave_msg"
+                    "set_leave_msg",
+                    "rename",
+                    "give"
             );
         }
         if (args.length == 2) {
@@ -165,6 +173,8 @@ public class Commands implements TabExecutor {
                 case "manage":
                 case "flag_info":
                 case "privilege_list":
+                case "rename":
+                case "give":
                     return playerDominions(sender);
                 case "set":
                     return dominionFlags();
@@ -201,6 +211,10 @@ public class Commands implements TabExecutor {
                 case "set_enter_msg":
                 case "set_leave_msg":
                     return playerDominions(sender);
+                case "rename":
+                    return Collections.singletonList("输入新领地名称");
+                case "give":
+                    return playerNames();
             }
         }
         if (args.length == 4) {
