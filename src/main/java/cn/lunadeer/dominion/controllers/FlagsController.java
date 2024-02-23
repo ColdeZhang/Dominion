@@ -75,6 +75,7 @@ public class FlagsController {
             case "shoot": return dominion.setShoot(value);
             case "tnt_explode": return dominion.setTntExplode(value);
             case "trade": return dominion.setTrade(value);
+            case "trample": return dominion.setTrample(value);
             case "vehicle_destroy": return dominion.setVehicleDestroy(value);
             case "vehicle_spawn": return dominion.setVehicleSpawn(value);
             case "wither_spawn": return dominion.setWitherSpawn(value);

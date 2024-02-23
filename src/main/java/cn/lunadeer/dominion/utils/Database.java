@@ -182,5 +182,9 @@ public class Database {
         query(sql);
         sql = "ALTER TABLE player_privilege ADD COLUMN IF NOT EXISTS vehicle_spawn BOOLEAN NOT NULL DEFAULT FALSE;";
         query(sql);
+
+        // 1.10.0
+        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS trample BOOLEAN NOT NULL DEFAULT FALSE;";
+        query(sql);
     }
 }

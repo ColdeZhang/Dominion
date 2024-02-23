@@ -30,7 +30,7 @@ public class Helper {
                 "place", "pressure",
                 "riding", "repeater",
                 "shear", "shoot",
-                "tnt_explode", "trade",
+                "tnt_explode", "trade", "trample",
                 "vehicle_destroy",
                 "vehicle_spawn",
                 "wither_spawn");

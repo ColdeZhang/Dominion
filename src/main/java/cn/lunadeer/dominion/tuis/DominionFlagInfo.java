@@ -380,6 +380,15 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set trade true " + dominion.getName() + " " + page))
                     .append("交易"));
         }
+        if (dominion.getTrample()){
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set trample false " + dominion.getName() + " " + page))
+                    .append("践踏耕地"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set trample true " + dominion.getName() + " " + page))
+                    .append("践踏耕地"));
+        }
         if (dominion.getVehicleDestroy()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set vehicle_destroy false " + dominion.getName() + " " + page))

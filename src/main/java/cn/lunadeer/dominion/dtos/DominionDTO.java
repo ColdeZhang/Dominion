@@ -69,6 +69,7 @@ public class DominionDTO {
                         rs.getBoolean("shoot"),
                         rs.getBoolean("tnt_explode"),
                         rs.getBoolean("trade"),
+                        rs.getBoolean("trample"),
                         rs.getBoolean("vehicle_destroy"),
                         rs.getBoolean("vehicle_spawn"),
                         rs.getBoolean("wither_spawn")
@@ -215,6 +216,7 @@ public class DominionDTO {
                 "shoot = " + dominion.getShoot() + ", " +
                 "tnt_explode = " + dominion.getTntExplode() + ", " +                // dom only
                 "trade = " + dominion.getTrade() + ", " +
+                "trample = " + dominion.getTrample() + ", " +                       // dom only
                 "vehicle_destroy = " + dominion.getVehicleDestroy() + ", " +
                 "vehicle_spawn = " + dominion.getVehicleSpawn() + ", " +
                 "wither_spawn = " + dominion.getWitherSpawn() + " " +               // dom only
@@ -243,7 +245,7 @@ public class DominionDTO {
                         Boolean place, Boolean pressure,
                         Boolean riding, Boolean repeater,
                         Boolean shear, Boolean shoot,
-                        Boolean tntExplode, Boolean trade,
+                        Boolean tntExplode, Boolean trade, Boolean trample,
                         Boolean vehicleDestroy,
                         Boolean vehicleSpawn,
                         Boolean witherSpawn) {
@@ -298,6 +300,7 @@ public class DominionDTO {
         this.shoot = shoot;
         this.tntExplode = tntExplode;
         this.trade = trade;
+        this.trample = trample;
         this.vehicleDestroy = vehicleDestroy;
         this.vehicleSpawn = vehicleSpawn;
         this.witherSpawn = witherSpawn;
@@ -315,7 +318,7 @@ public class DominionDTO {
                 false, false, false, false, true,
                 true, false, false, false, false, false, false,
                 false, true, false, false, false, false,
-                false, false, false, false, false, false, false);
+                false, false, false, false, false, false, false, false);
     }
 
     public DominionDTO(UUID owner, String name, String world,
@@ -373,6 +376,7 @@ public class DominionDTO {
     private Boolean shoot = false;
     private Boolean tntExplode = false;
     private Boolean trade = false;
+    private Boolean trample = false;
     private Boolean vehicleDestroy = false;
     private Boolean vehicleSpawn = false;
     private Boolean witherSpawn = false;
@@ -821,6 +825,15 @@ public class DominionDTO {
 
     public DominionDTO setTrade(Boolean trade) {
         this.trade = trade;
+        return update(this);
+    }
+
+    public Boolean getTrample() {
+        return trample;
+    }
+
+    public DominionDTO setTrample(Boolean trample) {
+        this.trample = trample;
         return update(this);
     }
 
