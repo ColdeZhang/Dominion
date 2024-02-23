@@ -31,10 +31,10 @@ public class BlueMapConnect {
                         for (Integer id : world_dominions.getValue()) {
                             DominionDTO dominion = Cache.instance.getDominion(id);
                             Collection<Vector2d> vectors = new ArrayList<>();
-                            vectors.add(new Vector2d(dominion.getX1(), dominion.getZ1()));
-                            vectors.add(new Vector2d(dominion.getX2(), dominion.getZ1()));
-                            vectors.add(new Vector2d(dominion.getX2(), dominion.getZ2()));
-                            vectors.add(new Vector2d(dominion.getX1(), dominion.getZ2()));
+                            vectors.add(new Vector2d(dominion.getX1() + 0.001, dominion.getZ1() + 0.001));
+                            vectors.add(new Vector2d(dominion.getX2() - 0.001, dominion.getZ1() + 0.001));
+                            vectors.add(new Vector2d(dominion.getX2() - 0.001, dominion.getZ2() - 0.001));
+                            vectors.add(new Vector2d(dominion.getX1() + 0.001, dominion.getZ2() - 0.001));
                             Shape shape = new Shape(vectors);
                             double x = vectors.iterator().next().getX();
                             double z = vectors.iterator().next().getY();
@@ -49,7 +49,7 @@ public class BlueMapConnect {
                             ExtrudeMarker marker = ExtrudeMarker.builder()
                                     .label(dominion.getName())
                                     .position(x, y, z)
-                                    .shape(shape, dominion.getY1(), dominion.getY2())
+                                    .shape(shape, dominion.getY1() + 0.001f, dominion.getY2() - 0.001f)
                                     .lineColor(line)
                                     .fillColor(fill)
                                     .build();
