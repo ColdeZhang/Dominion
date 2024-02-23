@@ -12,10 +12,7 @@ import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static cn.lunadeer.dominion.commands.Helper.*;
 
@@ -54,7 +51,8 @@ public class Commands implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            return false;
+            Menu.show(sender, args);
+            return true;
         }
         switch (args[0]) {
             case "menu":
