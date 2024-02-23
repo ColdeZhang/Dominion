@@ -70,6 +70,7 @@ public class DominionDTO {
                         rs.getBoolean("tnt_explode"),
                         rs.getBoolean("trade"),
                         rs.getBoolean("vehicle_destroy"),
+                        rs.getBoolean("vehicle_spawn"),
                         rs.getBoolean("wither_spawn")
                 );
                 dominions.add(dominion);
@@ -215,6 +216,7 @@ public class DominionDTO {
                 "tnt_explode = " + dominion.getTntExplode() + ", " +                // dom only
                 "trade = " + dominion.getTrade() + ", " +
                 "vehicle_destroy = " + dominion.getVehicleDestroy() + ", " +
+                "vehicle_spawn = " + dominion.getVehicleSpawn() + ", " +
                 "wither_spawn = " + dominion.getWitherSpawn() + " " +               // dom only
                 " WHERE id = " + dominion.getId() +
                 " RETURNING *;";
@@ -243,6 +245,7 @@ public class DominionDTO {
                         Boolean shear, Boolean shoot,
                         Boolean tntExplode, Boolean trade,
                         Boolean vehicleDestroy,
+                        Boolean vehicleSpawn,
                         Boolean witherSpawn) {
         this.id = id;
         this.owner = owner;
@@ -296,6 +299,7 @@ public class DominionDTO {
         this.tntExplode = tntExplode;
         this.trade = trade;
         this.vehicleDestroy = vehicleDestroy;
+        this.vehicleSpawn = vehicleSpawn;
         this.witherSpawn = witherSpawn;
     }
 
@@ -311,7 +315,7 @@ public class DominionDTO {
                 false, false, false, false, true,
                 true, false, false, false, false, false, false,
                 false, true, false, false, false, false,
-                false, false, false, false, false, false);
+                false, false, false, false, false, false, false);
     }
 
     public DominionDTO(UUID owner, String name, String world,
@@ -370,6 +374,7 @@ public class DominionDTO {
     private Boolean tntExplode = false;
     private Boolean trade = false;
     private Boolean vehicleDestroy = false;
+    private Boolean vehicleSpawn = false;
     private Boolean witherSpawn = false;
     private Boolean harvest = false;
 
@@ -825,6 +830,15 @@ public class DominionDTO {
 
     public DominionDTO setVehicleDestroy(Boolean vehicleDestroy) {
         this.vehicleDestroy = vehicleDestroy;
+        return update(this);
+    }
+
+    public Boolean getVehicleSpawn() {
+        return vehicleSpawn;
+    }
+
+    public DominionDTO setVehicleSpawn(Boolean vehicleSpawn) {
+        this.vehicleSpawn = vehicleSpawn;
         return update(this);
     }
 

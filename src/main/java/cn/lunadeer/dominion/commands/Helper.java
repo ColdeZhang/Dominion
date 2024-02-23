@@ -32,6 +32,7 @@ public class Helper {
                 "shear", "shoot",
                 "tnt_explode", "trade",
                 "vehicle_destroy",
+                "vehicle_spawn",
                 "wither_spawn");
     }
 
@@ -51,7 +52,8 @@ public class Helper {
                 "place", "pressure", "riding", "repeater",
                 "shear", "shoot",
                 "trade",
-                "vehicle_destroy");
+                "vehicle_destroy",
+                "vehicle_spawn");
     }
 
     /**

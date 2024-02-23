@@ -211,6 +211,9 @@ public class PrivilegeController {
             case "vehicle_destroy":
                 privilege.setVehicleDestroy(value);
                 break;
+            case "vehicle_spawn":
+                privilege.setVehicleSpawn(value);
+                break;
             default:
                 Notification.error(operator, "未知的领地权限 " + flag);
                 return false;
@@ -264,7 +267,8 @@ public class PrivilegeController {
                 dom.getRiding(), dom.getRepeater(),
                 dom.getShear(), dom.getShoot(),
                 dom.getTrade(),
-                dom.getVehicleDestroy());
+                dom.getVehicleDestroy(),
+                dom.getVehicleSpawn());
         privilege = PlayerPrivilegeDTO.insert(privilege);
         if (privilege == null) {
             Notification.error(operator, "创建玩家特权失败，可能是此玩家已存在特权");

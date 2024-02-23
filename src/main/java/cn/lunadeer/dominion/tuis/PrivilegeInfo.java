@@ -307,11 +307,11 @@ public class PrivilegeInfo {
         if (privilege.getPlace()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " place false " + dominion.getName() + " " + page))
-                    .append("放置"));
+                    .append("放置方块"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " place true " + dominion.getName() + " " + page))
-                    .append("放置"));
+                    .append("放置方块"));
         }
         if (privilege.getPressure()) {
             view.add(Line.create()
@@ -375,6 +375,15 @@ public class PrivilegeInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " vehicle_destroy true " + dominion.getName() + " " + page))
                     .append("破坏载具"));
+        }
+        if (privilege.getVehicleSpawn()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " vehicle_spawn false " + dominion.getName() + " " + page))
+                    .append("放置载具"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " vehicle_spawn true " + dominion.getName() + " " + page))
+                    .append("放置载具"));
         }
         view.showOn(player, page);
     }

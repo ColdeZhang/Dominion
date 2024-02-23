@@ -76,6 +76,7 @@ public class FlagsController {
             case "tnt_explode": return dominion.setTntExplode(value);
             case "trade": return dominion.setTrade(value);
             case "vehicle_destroy": return dominion.setVehicleDestroy(value);
+            case "vehicle_spawn": return dominion.setVehicleSpawn(value);
             case "wither_spawn": return dominion.setWitherSpawn(value);
             default:
                 Notification.error(operator, "未知的领地权限 " + flag);

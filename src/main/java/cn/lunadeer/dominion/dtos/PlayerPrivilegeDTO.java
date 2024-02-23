@@ -28,7 +28,8 @@ public class PlayerPrivilegeDTO {
                 "riding, repeater, " +
                 "shear, shoot, " +
                 "trade, " +
-                "vehicle_destroy" +
+                "vehicle_destroy, " +
+                "vehicle_spawn" +
                 ") VALUES (" +
                 "'" + player.getPlayerUUID() + "', " + player.getAdmin() + ", " + player.getDomID() + ", " +
                 player.getAnchor() + ", " + player.getAnimalKilling() + ", " + player.getAnvil() + ", " +
@@ -46,7 +47,8 @@ public class PlayerPrivilegeDTO {
                 player.getRiding() + ", " + player.getRepeater() + ", " +
                 player.getShear() + ", " + player.getShoot() + ", " +
                 player.getTrade() + ", " +
-                player.getVehicleDestroy() +
+                player.getVehicleDestroy() + ", " +
+                player.getVehicleSpawn() + " " +
                 ") RETURNING *;";
         List<PlayerPrivilegeDTO> players = query(sql);
         if (players.size() == 0) return null;
@@ -105,6 +107,7 @@ public class PlayerPrivilegeDTO {
     private Boolean enderPearl;
     private Boolean feed;
     private Boolean glow;
+    private Boolean harvest;
     private Boolean honey;
     private Boolean hook;
     private Boolean hopper;
@@ -120,7 +123,7 @@ public class PlayerPrivilegeDTO {
     private Boolean shoot;
     private Boolean trade;
     private Boolean vehicleDestroy;
-    private Boolean harvest;
+    private Boolean vehicleSpawn;
 
     public Integer getId() {
         return id;
@@ -214,6 +217,10 @@ public class PlayerPrivilegeDTO {
         return glow;
     }
 
+    public Boolean getHarvest() {
+        return harvest;
+    }
+
     public Boolean getHoney() {
         return honey;
     }
@@ -274,8 +281,8 @@ public class PlayerPrivilegeDTO {
         return vehicleDestroy;
     }
 
-    public Boolean getHarvest() {
-        return harvest;
+    public Boolean getVehicleSpawn() {
+        return vehicleSpawn;
     }
 
     public PlayerPrivilegeDTO setAnchor(Boolean anchor) {
@@ -448,6 +455,11 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
+    public PlayerPrivilegeDTO setVehicleSpawn(Boolean vehicleSpawn) {
+        this.vehicleSpawn = vehicleSpawn;
+        return update(this);
+    }
+
     public PlayerPrivilegeDTO setHarvest(Boolean harvest) {
         this.harvest = harvest;
         return update(this);
@@ -474,7 +486,8 @@ public class PlayerPrivilegeDTO {
                                Boolean riding, Boolean repeater,
                                Boolean shear, Boolean shoot,
                                Boolean trade,
-                               Boolean vehicleDestroy) {
+                               Boolean vehicleDestroy,
+                               Boolean vehicleSpawn) {
         this.id = id;
         this.playerUUID = playerUUID;
         this.admin = admin;
@@ -514,6 +527,7 @@ public class PlayerPrivilegeDTO {
         this.shoot = shoot;
         this.trade = trade;
         this.vehicleDestroy = vehicleDestroy;
+        this.vehicleSpawn = vehicleSpawn;
     }
 
     public PlayerPrivilegeDTO(UUID playerUUID, Integer domID,
@@ -532,7 +546,8 @@ public class PlayerPrivilegeDTO {
                               Boolean riding, Boolean repeater,
                               Boolean shear, Boolean shoot,
                               Boolean trade,
-                              Boolean vehicleDestroy
+                              Boolean vehicleDestroy,
+                              Boolean vehicleSpawn
     ) {
         this(null, playerUUID, false, domID,
                 anchor, animalKilling, anvil,
@@ -550,7 +565,8 @@ public class PlayerPrivilegeDTO {
                 riding, repeater,
                 shear, shoot,
                 trade,
-                vehicleDestroy);
+                vehicleDestroy,
+                vehicleSpawn);
     }
 
     private static List<PlayerPrivilegeDTO> query(String sql) {
@@ -597,7 +613,8 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("shear"),
                         rs.getBoolean("shoot"),
                         rs.getBoolean("trade"),
-                        rs.getBoolean("vehicle_destroy")
+                        rs.getBoolean("vehicle_destroy"),
+                        rs.getBoolean("vehicle_spawn")
                 );
                 players.add(player);
             }
@@ -650,7 +667,8 @@ public class PlayerPrivilegeDTO {
                 "shear = " + player.getShear() + ", " +
                 "shoot = " + player.getShoot() + ", " +
                 "trade = " + player.getTrade() + ", " +
-                "vehicle_destroy = " + player.getVehicleDestroy() + " " +
+                "vehicle_destroy = " + player.getVehicleDestroy() + ", " +
+                "vehicle_spawn = " + player.getVehicleSpawn() + " " +
                 "WHERE id = " + player.getId() + " " +
                 "RETURNING *;";
         List<PlayerPrivilegeDTO> players = query(sql);

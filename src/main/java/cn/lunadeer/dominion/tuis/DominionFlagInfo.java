@@ -146,7 +146,7 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set creeper_explode true " + dominion.getName() + " " + page))
                     .append("苦力怕/凋零头颅爆炸"));
         }
-        if (dominion.getComparer()){
+        if (dominion.getComparer()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set comparer false " + dominion.getName() + " " + page))
                     .append("比较器交互"));
@@ -281,7 +281,7 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set ignite true " + dominion.getName() + " " + page))
                     .append("点燃"));
         }
-        if (dominion.getLever()){
+        if (dominion.getLever()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set lever false " + dominion.getName() + " " + page))
                     .append("使用拉杆"));
@@ -311,11 +311,11 @@ public class DominionFlagInfo {
         if (dominion.getPlace()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set place false " + dominion.getName() + " " + page))
-                    .append("放置"));
+                    .append("放置方块"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set place true " + dominion.getName() + " " + page))
-                    .append("放置"));
+                    .append("放置方块"));
         }
         if (dominion.getPressure()) {
             view.add(Line.create()
@@ -335,7 +335,7 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set riding true " + dominion.getName() + " " + page))
                     .append("骑乘载具"));
         }
-        if (dominion.getRepeater()){
+        if (dominion.getRepeater()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set repeater false " + dominion.getName() + " " + page))
                     .append("中继器交互"));
@@ -388,6 +388,15 @@ public class DominionFlagInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set vehicle_destroy true " + dominion.getName() + " " + page))
                     .append("破坏载具"));
+        }
+        if (dominion.getVehicleSpawn()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set vehicle_spawn false " + dominion.getName() + " " + page))
+                    .append("放置载具"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set vehicle_spawn true " + dominion.getName() + " " + page))
+                    .append("放置载具"));
         }
         if (dominion.getWitherSpawn()) {
             view.add(Line.create()

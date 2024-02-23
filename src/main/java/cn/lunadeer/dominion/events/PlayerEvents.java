@@ -8,10 +8,7 @@ import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +16,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -1102,6 +1101,37 @@ public class PlayerEvents implements Listener {
             }
         }
         Notification.error(player, "你没有破坏交通工具的权限");
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // vehicle_spawn
+    public void onVehicleSpawn(EntityPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Vehicle)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        if (dom == null) {
+            return;
+        }
+        if (Apis.hasPermission(player, dom)) {
+            return;
+        }
+        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
+        if (privilege != null) {
+            if (privilege.getVehicleSpawn()) {
+                return;
+            }
+        } else {
+            if (dom.getVehicleSpawn()) {
+                return;
+            }
+        }
+        Notification.error(player, "你没有放置交通工具的权限");
         event.setCancelled(true);
     }
 }

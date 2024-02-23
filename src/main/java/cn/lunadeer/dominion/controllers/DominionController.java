@@ -53,6 +53,10 @@ public class DominionController {
     public static DominionDTO create(Player owner, String name,
                                      Location loc1, Location loc2,
                                      String parent_dominion_name) {
+        if (name.contains(" ")) {
+            Notification.error(owner, "领地名称不能包含空格");
+            return null;
+        }
         if (DominionDTO.select(name) != null) {
             Notification.error(owner, "已经存在名称为 " + name + " 的领地");
             return null;
@@ -413,6 +417,10 @@ public class DominionController {
      * @param new_name 新名称
      */
     public static void rename(Player operator, String old_name, String new_name) {
+        if (new_name.contains(" ")) {
+            Notification.error(operator, "领地名称不能包含空格");
+            return;
+        }
         DominionDTO dominion = DominionDTO.select(old_name);
         if (dominion == null) {
             Notification.error(operator, "领地 " + old_name + " 不存在");
