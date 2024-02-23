@@ -321,7 +321,7 @@ public class DominionDTO {
 
     private Integer id;
     private UUID owner;
-    private final String name;
+    private String name;
     private final String world;
     private Integer x1;
     private Integer y1;
@@ -394,6 +394,11 @@ public class DominionDTO {
 
     public String getName() {
         return name;
+    }
+
+    public DominionDTO setName(String name) {
+        this.name = name;
+        return update(this);
     }
 
     public String getWorld() {

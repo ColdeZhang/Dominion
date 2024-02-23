@@ -75,28 +75,31 @@ public class Apis {
         if (player == null) return;
         int page = getPage(args);
         ListView view = ListView.create(5, "/dominion help");
-        view.title("领地插件命令帮助")
+        view.title("领地插件命令帮助 <>表示必填参数 []表示可选参数")
                 .add(Line.create().append("打开交互菜单").append(Button.create("/dominion menu", "/dominion menu")))
-                .add(Line.create().append("列出所有领地").append(Button.create("/dominion list", "/dominion list")))
                 .add(Line.create().append("查看帮助").append(Button.create("/dominion help [页码]", "/dominion help 1")))
-                .add(Line.create().append("查看领地信息").append(Button.create("/dominion info [领地名称]", "/dominion info")))
-                .add(Line.create().append("查看领地权限信息").append(Button.create("/dominion flag_info <领地名称> [页码]", "/dominion flag_info")))
-                .add(Line.create().append("管理领地").append("/dominion manage <领地名称>"))
                 .add(Line.create().append("创建领地").append("/dominion create <领地名称>"))
                 .add(Line.create().append("自动创建领地").append("/dominion auto_create <领地名称>"))
                 .add(Line.create().append("创建子领地").append("/dominion create_sub <子领地名称> [父领地名称]"))
                 .add(Line.create().append("自动创建子领地").append("/dominion auto_create_sub <子领地名称> [父领地名称]"))
+                .add(Line.create().append("管理领地").append("/dominion manage <领地名称>"))
                 .add(Line.create().append("扩张领地").append("/dominion expand [大小] [领地名称]"))
                 .add(Line.create().append("缩小领地").append("/dominion contract [大小] [领地名称]"))
+                .add(Line.create().append("设置进入领地的提示语").append("/dominion set_enter_msg <提示语> [领地名称]"))
+                .add(Line.create().append("设置离开领地的提示语").append("/dominion set_leave_msg <提示语> [领地名称]"))
+                .add(Line.create().append("重命名领地").append("/dominion rename <原领地名称> <新领地名称>"))
+                .add(Line.create().append("转让领地").append("/dominion give <领地名称> <玩家名称> [force]"))
                 .add(Line.create().append("删除领地").append("/dominion delete <领地名称> [force]"))
+                // 以下指令主要被用于 ui 触发
+                .add(Line.create().append("列出所有领地").append(Button.create("/dominion list", "/dominion list")))
+                .add(Line.create().append("查看领地信息").append(Button.create("/dominion info [领地名称]", "/dominion info")))
+                .add(Line.create().append("查看领地权限信息").append(Button.create("/dominion flag_info <领地名称> [页码]", "/dominion flag_info")))
                 .add(Line.create().append("设置领地权限").append("/dominion set <权限名称> <true/false> [领地名称]"))
                 .add(Line.create().append("创建玩家特权").append("/dominion create_privilege <玩家名称> [领地名称]"))
                 .add(Line.create().append("设置玩家特权").append("/dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]"))
                 .add(Line.create().append("重置玩家特权").append("/dominion clear_privilege <玩家名称> [领地名称]"))
                 .add(Line.create().append("查看领地玩家特权列表").append("/dominion privilege_list [领地名称] [页码]"))
                 .add(Line.create().append("查看玩家特权信息").append("/dominion privilege_info <玩家名称> [领地名称] [页码]"))
-                .add(Line.create().append("设置进入领地的提示语").append("/dominion set_enter_msg <提示语> [领地名称]"))
-                .add(Line.create().append("设置离开领地的提示语").append("/dominion set_leave_msg <提示语> [领地名称]"))
                 .showOn(player, page);
     }
 

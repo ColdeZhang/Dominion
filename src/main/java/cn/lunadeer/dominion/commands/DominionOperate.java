@@ -211,7 +211,7 @@ public class DominionOperate {
                 return;
             }
         }
-        Notification.error(sender, "用法: /dominion delete <领地名称> [force]");
+        Notification.error(sender, "用法: /dominion delete <领地名称>");
     }
 
     /**
@@ -254,5 +254,49 @@ public class DominionOperate {
             return;
         }
         Notification.error(sender, "用法: /dominion set_leave_msg <提示语> [领地名称]");
+    }
+
+    /**
+     * 重命名领地
+     * /dominion rename <原领地名称> <新领地名称>
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void renameDominion(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length != 3) {
+            Notification.error(sender, "用法: /dominion rename <原领地名称> <新领地名称>");
+            return;
+        }
+        DominionController.rename(player, args[1], args[2]);
+    }
+
+    /**
+     * 转让领地
+     * /dominion give <领地名称> <玩家名称> [force]
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void giveDominion(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length == 3) {
+            String dom_name = args[1];
+            String player_name = args[2];
+            DominionController.give(player, dom_name, player_name, false);
+            return;
+        }
+        if (args.length == 4) {
+            String dom_name = args[1];
+            String player_name = args[2];
+            if (args[3].equals("force")) {
+                DominionController.give(player, dom_name, player_name, true);
+                return;
+            }
+        }
+        Notification.error(sender, "用法: /dominion give <领地名称> <玩家名称>");
     }
 }
