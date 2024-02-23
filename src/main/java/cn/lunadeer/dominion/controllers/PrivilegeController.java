@@ -228,10 +228,10 @@ public class PrivilegeController {
     public static boolean createPrivilege(Player operator, String player_name, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            Notification.error(operator, "领地 " + dominionName + " 不存在，无法设置特权");
+            Notification.error(operator, "领地 " + dominionName + " 不存在，无法创建特权");
             return false;
         }
-        if (notOwner(operator, dominion)) return false;
+        if (noAuthToChangeFlags(operator, dominion)) return false;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
             Notification.error(operator, "玩家 " + player_name + " 不存在或没有登录过");
