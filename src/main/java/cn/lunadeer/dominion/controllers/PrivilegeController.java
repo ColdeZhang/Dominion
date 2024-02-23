@@ -178,6 +178,9 @@ public class PrivilegeController {
             case "ignite":
                 privilege.setIgnite(value);
                 break;
+            case "lever":
+                privilege.setLever(value);
+                break;
             case "monster_killing":
                 privilege.setMonsterKilling(value);
                 break;
