@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -154,7 +155,7 @@ public class Cache {
         List<DominionDTO> in_dominions = new ArrayList<>();
         for (Integer id : dominions_id) {
             DominionDTO d = id_dominions.get(id);
-            if (isInDominion(d, loc.getX(), loc.getY(), loc.getZ())) {
+            if (isInDominion(d, loc)) {
                 in_dominions.add(d);
             }
         }
@@ -178,6 +179,7 @@ public class Cache {
 
     private static boolean isInDominion(@Nullable DominionDTO dominion, Player player) {
         if (dominion == null) return false;
+        if (!Objects.equals(dominion.getWorld(), player.getWorld().getName())) return false;
         double x = player.getLocation().getX();
         double y = player.getLocation().getY();
         double z = player.getLocation().getZ();
@@ -186,8 +188,12 @@ public class Cache {
                 z >= dominion.getZ1() && z <= dominion.getZ2();
     }
 
-    private static boolean isInDominion(@Nullable DominionDTO dominion, double x, double y, double z) {
+    private static boolean isInDominion(@Nullable DominionDTO dominion, Location location) {
         if (dominion == null) return false;
+        if (!Objects.equals(dominion.getWorld(), location.getWorld().getName())) return false;
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
         return x >= dominion.getX1() && x <= dominion.getX2() &&
                 y >= dominion.getY1() && y <= dominion.getY2() &&
                 z >= dominion.getZ1() && z <= dominion.getZ2();
