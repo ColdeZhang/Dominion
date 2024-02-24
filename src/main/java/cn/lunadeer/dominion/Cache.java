@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Cache {
 
     public Cache() {
-        player_current_dominion = new ConcurrentHashMap<>();
+        player_current_dominion_id = new HashMap<>();
         loadDominions();
         loadPlayerPrivileges();
     }
@@ -75,20 +76,23 @@ public class Cache {
      * @return 玩家当前所在领地
      */
     public DominionDTO getPlayerCurrentDominion(Player player) {
-        Integer dominion_id = player_current_dominion.get(player.getUniqueId());
-        DominionDTO dominion = id_dominions.get(dominion_id);
+        Integer dominion_id = player_current_dominion_id.get(player.getUniqueId());
+        DominionDTO dominion = null;
+        if (dominion_id != null) {
+            dominion = id_dominions.get(dominion_id);
+        }
         if (dominion != null) {
             if (!isInDominion(dominion, player)) {
                 // glow
                 player.setGlowing(false);
                 if (dominion.getParentDomId() == -1) {
                     Notification.info(player, "您已离开领地：" + dominion.getName());
-                    Notification.info(player, dominion.getLeaveMessage());
-                    player_current_dominion.put(player.getUniqueId(), null);
+                    player.sendMessage(Component.text(dominion.getLeaveMessage()));
+                    player_current_dominion_id.put(player.getUniqueId(), null);
                     dominion = null;
                 } else {
                     Notification.info(player, "您已离开子领地：" + dominion.getName());
-                    Notification.info(player, dominion.getLeaveMessage());
+                    player.sendMessage(Component.text(dominion.getLeaveMessage()));
                     dominion = id_dominions.get(dominion.getParentDomId());
                     update_player_current_dominion(player, dominion);
                 }
@@ -100,7 +104,7 @@ public class Cache {
                     if (isInDominion(child, player)) {
                         dominion = child;
                         Notification.info(player, "您正在进入子领地：" + dominion.getName());
-                        Notification.info(player, dominion.getJoinMessage());
+                        player.sendMessage(Component.text(dominion.getJoinMessage()));
                         update_player_current_dominion(player, dominion);
                         break;
                     }
@@ -122,14 +126,14 @@ public class Cache {
             in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
             dominion = in_dominions.get(0);
             Notification.info(player, "您正在进入领地：" + dominion.getName());
-            Notification.info(player, dominion.getJoinMessage());
+            player.sendMessage(Component.text(dominion.getJoinMessage()));
             update_player_current_dominion(player, dominion);
         }
         return dominion;
     }
 
     private void update_player_current_dominion(Player player, DominionDTO dominion) {
-        player_current_dominion.put(player.getUniqueId(), dominion.getId());
+        player_current_dominion_id.put(player.getUniqueId(), dominion.getId());
         // glow
         PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
         if (privilege != null) {
@@ -201,6 +205,6 @@ public class Cache {
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
     private ConcurrentHashMap<String, List<Integer>> world_dominions;                         // 所有领地
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
-    private ConcurrentHashMap<UUID, Integer> player_current_dominion;                         // 玩家当前所在领地
+    private final Map<UUID, Integer> player_current_dominion_id;                         // 玩家当前所在领地
     private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
 }
