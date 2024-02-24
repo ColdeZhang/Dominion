@@ -360,7 +360,7 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @param message       消息
      */
-    public static void setJoinMessage(Player operator, String dominion_name, String message) {
+    public static void setJoinMessage(Player operator, String message, String dominion_name) {
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
             Notification.error(operator, "领地 " + dominion_name + " 不存在");
@@ -395,7 +395,7 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @param message       消息
      */
-    public static void setLeaveMessage(Player operator, String dominion_name, String message) {
+    public static void setLeaveMessage(Player operator, String message, String dominion_name) {
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
             Notification.error(operator, "领地 " + dominion_name + " 不存在");
