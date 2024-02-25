@@ -186,5 +186,9 @@ public class Database {
         // 1.10.0
         sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS trample BOOLEAN NOT NULL DEFAULT FALSE;";
         query(sql);
+
+        // 1.11.0
+        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS mob_drop_item BOOLEAN NOT NULL DEFAULT TRUE;";
+        query(sql);
     }
 }

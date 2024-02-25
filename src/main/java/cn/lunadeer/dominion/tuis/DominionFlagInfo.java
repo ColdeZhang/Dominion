@@ -290,6 +290,15 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set lever true " + dominion.getName() + " " + page))
                     .append("使用拉杆"));
         }
+        if (dominion.getMobDropItem()){
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set mob_drop_item false " + dominion.getName() + " " + page))
+                    .append("生物战利品掉落"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set mob_drop_item true " + dominion.getName() + " " + page))
+                    .append("生物战利品掉落"));
+        }
         if (dominion.getMonsterKilling()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set monster_killing false " + dominion.getName() + " " + page))

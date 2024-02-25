@@ -65,6 +65,7 @@ public class FlagsController {
             case "hopper": return dominion.setHopper(value);
             case "ignite": return dominion.setIgnite(value);
             case "lever": return dominion.setLever(value);
+            case "mob_drop_item": return dominion.setMobDropItem(value);
             case "monster_killing": return dominion.setMonsterKilling(value);
             case "move": return dominion.setMove(value);
             case "place": return dominion.setPlace(value);

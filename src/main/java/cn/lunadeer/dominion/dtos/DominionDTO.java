@@ -59,6 +59,7 @@ public class DominionDTO {
                         rs.getBoolean("hopper"),
                         rs.getBoolean("ignite"),
                         rs.getBoolean("lever"),
+                        rs.getBoolean("mob_drop_item"),
                         rs.getBoolean("monster_killing"),
                         rs.getBoolean("move"),
                         rs.getBoolean("place"),
@@ -206,6 +207,7 @@ public class DominionDTO {
                 "hopper = " + dominion.getHopper() + ", " +
                 "ignite = " + dominion.getIgnite() + ", " +
                 "lever = " + dominion.getLever() + ", " +
+                "mob_drop_item = " + dominion.getMobDropItem() + ", " +            // dom only
                 "monster_killing = " + dominion.getMonsterKilling() + ", " +
                 "move = " + dominion.getMove() + ", " +
                 "place = " + dominion.getPlace() + ", " +
@@ -241,7 +243,7 @@ public class DominionDTO {
                         Boolean harvest, Boolean honey, Boolean hook, Boolean hopper,
                         Boolean ignite,
                         Boolean lever,
-                        Boolean monsterKilling, Boolean move,
+                        Boolean mobDropItem, Boolean monsterKilling, Boolean move,
                         Boolean place, Boolean pressure,
                         Boolean riding, Boolean repeater,
                         Boolean shear, Boolean shoot,
@@ -290,6 +292,7 @@ public class DominionDTO {
         this.hopper = hopper;
         this.ignite = ignite;
         this.lever = lever;
+        this.mobDropItem = mobDropItem;
         this.monsterKilling = monsterKilling;
         this.move = move;
         this.place = place;
@@ -316,7 +319,7 @@ public class DominionDTO {
                 false, false, false, false, false,
                 false, false, false, false, false, false,
                 false, false, false, false, true,
-                true, false, false, false, false, false, false,
+                true, false, false, false, false, false, false, true,
                 false, true, false, false, false, false,
                 false, false, false, false, false, false, false, false);
     }
@@ -366,6 +369,7 @@ public class DominionDTO {
     private Boolean hopper = false;
     private Boolean ignite = false;
     private Boolean lever = false;
+    private Boolean mobDropItem = true;
     private Boolean monsterKilling = false;
     private Boolean move = true;
     private Boolean place = false;
@@ -735,6 +739,15 @@ public class DominionDTO {
 
     public DominionDTO setLever(Boolean lever) {
         this.lever = lever;
+        return update(this);
+    }
+
+    public Boolean getMobDropItem() {
+        return mobDropItem;
+    }
+
+    public DominionDTO setMobDropItem(Boolean mobDropItem) {
+        this.mobDropItem = mobDropItem;
         return update(this);
     }
 

@@ -865,27 +865,39 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // place
-    public void onPlace(BlockPlaceEvent event) {
+    public void onPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (dom == null) {
+        if (onPlace(player)) {
             return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getPlace()) {
-                return;
-            }
-        } else {
-            if (dom.getPlace()) {
-                return;
-            }
         }
         Notification.error(player, "你没有放置方块的权限");
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlaceLavaOrWater(PlayerBucketEmptyEvent event) {
+        Player player = event.getPlayer();
+        if (onPlace(player)) {
+            return;
+        }
+        Notification.error(player, "你没有放置方块的权限");
+        event.setCancelled(true);
+    }
+
+    public static boolean onPlace(Player player) {
+        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        if (dom == null) {
+            return false;
+        }
+        if (Apis.hasPermission(player, dom)) {
+            return true;
+        }
+        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
+        if (privilege != null) {
+            return privilege.getPlace();
+        } else {
+            return dom.getPlace();
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // pressure

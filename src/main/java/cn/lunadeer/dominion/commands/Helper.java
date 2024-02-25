@@ -26,7 +26,7 @@ public class Helper {
                 "harvest", "honey", "hook", "hopper",
                 "ignite",
                 "lever",
-                "monster_killing", "move",
+                "mob_drop_item", "monster_killing", "move",
                 "place", "pressure",
                 "riding", "repeater",
                 "shear", "shoot",
