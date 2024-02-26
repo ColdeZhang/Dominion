@@ -133,6 +133,10 @@ public class DominionOperate {
             Notification.error(sender, "大小格式错误");
             return;
         }
+        if (size <= 0) {
+            Notification.error(sender, "大小必须大于0");
+            return;
+        }
         if (args.length == 3) {
             name = args[2];
         }
@@ -170,6 +174,10 @@ public class DominionOperate {
             size = Integer.parseInt(args[1]);
         } catch (Exception e) {
             Notification.error(sender, "大小格式错误");
+            return;
+        }
+        if (size <= 0) {
+            Notification.error(sender, "大小必须大于0");
             return;
         }
         if (args.length == 3) {
