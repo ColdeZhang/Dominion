@@ -267,16 +267,16 @@ public class DominionController {
         Integer y2 = dominion.getY2();
         Integer z2 = dominion.getZ2();
         switch (face) {
-            case NORTH:
+            case SOUTH:
                 z2 -= size;
                 break;
-            case SOUTH:
+            case NORTH:
                 z1 += size;
                 break;
-            case WEST:
+            case EAST:
                 x2 -= size;
                 break;
-            case EAST:
+            case WEST:
                 x1 += size;
                 break;
             case UP:
