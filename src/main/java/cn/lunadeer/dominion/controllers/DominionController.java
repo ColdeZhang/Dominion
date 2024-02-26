@@ -98,8 +98,10 @@ public class DominionController {
             return null;
         }
         // 是否是父领地的拥有者
-        if (notOwner(owner, parent_dominion) && parent_dominion.getId() != -1) {
-            return null;
+        if (parent_dominion.getId() != -1) {
+            if (notOwner(owner, parent_dominion)) {
+                return null;
+            }
         }
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {

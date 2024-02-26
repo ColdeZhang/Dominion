@@ -887,7 +887,7 @@ public class PlayerEvents implements Listener {
     public static boolean onPlace(Player player) {
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (dom == null) {
-            return false;
+            return true;
         }
         if (Apis.hasPermission(player, dom)) {
             return true;
