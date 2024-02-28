@@ -484,6 +484,7 @@ public class DominionController {
             Notification.warn(operator, "输入 /dominion give " + dom_name + " " + player_name + " force 确认转让");
             return;
         }
+        dominion.setOwner(player.getUuid());
         for (DominionDTO sub_dominion : sub_dominions) {
             sub_dominion.setOwner(player.getUuid());
         }

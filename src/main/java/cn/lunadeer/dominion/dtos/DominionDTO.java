@@ -168,6 +168,7 @@ public class DominionDTO {
 
     private static DominionDTO update(DominionDTO dominion) {
         String sql = "UPDATE dominion SET " +
+                "owner = '" + dominion.getOwner().toString() + "', " +
                 "name = '" + dominion.getName() + "', " +
                 "world = '" + dominion.getWorld() + "', " +
                 "x1 = " + dominion.getX1() + ", " +
