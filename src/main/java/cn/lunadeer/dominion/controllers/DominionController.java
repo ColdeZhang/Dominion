@@ -199,6 +199,13 @@ public class DominionController {
                 Notification.error(operator, "无效的方向");
                 return null;
         }
+        int x_length = x2 - x1;
+        int y_length = y2 - y1;
+        int z_length = z2 - z1;
+        if (x_length > Dominion.config.getMaxX() || y_length > Dominion.config.getMaxY() || z_length > Dominion.config.getMaxZ()) {
+            Notification.error(operator, "领地尺寸不能超过 " + Dominion.config.getMaxX() + " x " + Dominion.config.getMaxY() + " x " + Dominion.config.getMaxZ());
+            return null;
+        }
         // 校验是否超出父领地范围
         DominionDTO parent_dominion = DominionDTO.select(dominion.getParentDomId());
         if (parent_dominion == null) {
