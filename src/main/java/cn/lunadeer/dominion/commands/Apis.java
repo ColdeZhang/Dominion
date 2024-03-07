@@ -46,4 +46,15 @@ public class Apis {
         Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 
+    public static boolean notOpOrConsole(CommandSender sender) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (!player.isOp()) {
+                Notification.warn(player, "你没有权限使用此命令");
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -2,6 +2,7 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.commands.DominionFlag;
 import cn.lunadeer.dominion.commands.DominionOperate;
+import cn.lunadeer.dominion.commands.Operator;
 import cn.lunadeer.dominion.commands.PlayerPrivilege;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
@@ -127,6 +128,8 @@ public class Commands implements TabExecutor {
             case "give":
                 DominionOperate.giveDominion(sender, args);
                 break;
+            case "reload_cache":
+                Operator.reloadCache(sender, args);
             default:
                 return false;
         }
@@ -155,7 +158,8 @@ public class Commands implements TabExecutor {
                     "set_enter_msg",
                     "set_leave_msg",
                     "rename",
-                    "give"
+                    "give",
+                    "reload_cache"
             );
         }
         if (args.length == 2) {

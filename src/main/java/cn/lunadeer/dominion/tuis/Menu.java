@@ -25,12 +25,18 @@ public class Menu {
                 .append(Component.text("[使用文档]", ViewStyles.action_color)
                         .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://ssl.lunadeer.cn:14448/doc/23/")))
                 .append("在浏览器中打开使用文档");
+        Line reload = Line.create()
+                .append(Button.create("重载缓存", "/dominion reload_cache"))
+                .append("手动刷新缓存可解决一些玩家操作无效问题，不建议频繁操作");
         View view = View.create();
         view.title("Dominion 领地系统")
                 .navigator(Line.create().append("主菜单"))
                 .addLine(list)
                 .addLine(help)
-                .addLine(link)
-                .showOn(player);
+                .addLine(link);
+        if (player.isOp()) {
+            view.addLine(reload);
+        }
+        view.showOn(player);
     }
 }
