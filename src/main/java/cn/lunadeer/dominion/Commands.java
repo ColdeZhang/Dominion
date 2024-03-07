@@ -130,6 +130,7 @@ public class Commands implements TabExecutor {
                 break;
             case "reload_cache":
                 Operator.reloadCache(sender, args);
+                break;
             default:
                 return false;
         }
