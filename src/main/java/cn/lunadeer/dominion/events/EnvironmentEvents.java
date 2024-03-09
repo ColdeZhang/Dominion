@@ -16,7 +16,6 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Objects;
@@ -27,7 +26,11 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        if (entity.getType() != EntityType.CREEPER && entity.getType() != EntityType.WITHER_SKULL) {
+        if (entity.getType() != EntityType.CREEPER
+                && entity.getType() != EntityType.WITHER_SKULL
+                && entity.getType() != EntityType.FIREBALL
+                && entity.getType() != EntityType.ENDER_CRYSTAL
+        ) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(event.getLocation());

@@ -6,7 +6,6 @@ import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;

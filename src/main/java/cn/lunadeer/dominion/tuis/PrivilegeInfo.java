@@ -11,7 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.*;
+import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_2;
+import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
 public class PrivilegeInfo {
     // /dominion privilege_info <玩家名称> [领地名称] [页码]

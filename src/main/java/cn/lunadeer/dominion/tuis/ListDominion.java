@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
@@ -11,7 +10,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.commands.Helper.*;
+import static cn.lunadeer.dominion.commands.Helper.playerAdminDominions;
+import static cn.lunadeer.dominion.commands.Helper.playerOwnDominions;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
 public class ListDominion {

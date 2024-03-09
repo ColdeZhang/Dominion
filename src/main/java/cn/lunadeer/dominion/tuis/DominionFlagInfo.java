@@ -140,11 +140,11 @@ public class DominionFlagInfo {
         if (dominion.getCreeperExplode()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set creeper_explode false " + dominion.getName() + " " + page))
-                    .append("苦力怕/凋零头颅爆炸"));
+                    .append("苦力怕/凋零头颅/水晶爆炸"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set creeper_explode true " + dominion.getName() + " " + page))
-                    .append("苦力怕/凋零头颅爆炸"));
+                    .append("苦力怕/凋零头颅/水晶爆炸"));
         }
         if (dominion.getComparer()) {
             view.add(Line.create()
