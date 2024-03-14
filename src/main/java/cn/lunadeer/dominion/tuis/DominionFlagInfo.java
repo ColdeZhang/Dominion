@@ -122,11 +122,11 @@ public class DominionFlagInfo {
         if (dominion.getContainer()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set container false " + dominion.getName() + " " + page))
-                    .append("箱子/木桶/潜影盒"));
+                    .append("箱子/木桶/潜影盒/盔甲架/展示框"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set container true " + dominion.getName() + " " + page))
-                    .append("箱子/木桶/潜影盒"));
+                    .append("箱子/木桶/潜影盒/盔甲架/展示框"));
         }
         if (dominion.getCraft()) {
             view.add(Line.create()

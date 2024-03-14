@@ -146,11 +146,11 @@ public class PrivilegeInfo {
         if (privilege.getContainer()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " container false " + dominion.getName() + " " + page))
-                    .append("箱子/木桶/潜影盒"));
+                    .append("箱子/木桶/潜影盒/盔甲架/展示框"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " container true " + dominion.getName() + " " + page))
-                    .append("箱子/木桶/潜影盒"));
+                    .append("箱子/木桶/潜影盒/盔甲架/展示框"));
         }
         if (privilege.getCraft()) {
             view.add(Line.create()

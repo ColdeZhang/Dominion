@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -22,6 +23,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 public class PlayerEvents implements Listener {
@@ -314,6 +316,29 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
+    // 检查是否有容器权限
+    private static boolean hasContainerPermission(Player player) {
+        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        if (dom == null) {
+            return true;
+        }
+        if (Apis.hasPermission(player, dom)) {
+            return true;
+        }
+        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
+        if (privilege != null) {
+            if (privilege.getContainer()) {
+                return true;
+            }
+        } else {
+            if (dom.getContainer()) {
+                return true;
+            }
+        }
+        Notification.error(player, "你没有使用容器/盔甲架/展示框的权限");
+        return false;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // container
     public void openContainer(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.CHEST &&
@@ -325,24 +350,47 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        if (dom == null) {
+        if (hasContainerPermission(bukkitPlayer)) {
             return;
         }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // container (armor stand)
+    public void manipulateArmorStand(PlayerArmorStandManipulateEvent event) {
+        Player bukkitPlayer = event.getPlayer();
+        if (hasContainerPermission(bukkitPlayer)) {
             return;
         }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getContainer()) {
-                return;
-            }
-        } else {
-            if (dom.getContainer()) {
-                return;
-            }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame）
+    public void putSomeOnItemFrame(PlayerInteractEntityEvent event) {
+        Entity entity = event.getRightClicked();
+        if (!(entity instanceof ItemFrame)) {
+            return;
         }
-        Notification.error(bukkitPlayer, "你没有使用容器的权限");
+        Player bukkitPlayer = event.getPlayer();
+        if (hasContainerPermission(bukkitPlayer)) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame）
+    public void removeSomeOnItemFrame(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ItemFrame)) {
+            return;
+        }
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+        Player bukkitPlayer = (Player) event.getDamager();
+        if (hasContainerPermission(bukkitPlayer)) {
+            return;
+        }
         event.setCancelled(true);
     }
 
