@@ -15,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -81,7 +82,7 @@ public class EnvironmentEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // mob_drop_item
-    public void onMobDropItem(EntityDropItemEvent event) {
+    public void onMobDropItem(EntityDeathEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             return;
@@ -93,7 +94,7 @@ public class EnvironmentEvents implements Listener {
         if (dom.getMobDropItem()) {
             return;
         }
-        event.setCancelled(true);
+        event.getDrops().clear();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode
