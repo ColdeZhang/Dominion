@@ -191,6 +191,15 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set enchant true " + dominion.getName() + " " + page))
                     .append("附魔"));
         }
+        if (dominion.getEnderMan()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set ender_man false " + dominion.getName() + " " + page))
+                    .append("末影人生成、瞬移"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set ender_man true " + dominion.getName() + " " + page))
+                    .append("末影人生成、瞬移"));
+        }
         if (dominion.getEnderPearl()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set ender_pearl false " + dominion.getName() + " " + page))
@@ -290,7 +299,7 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set lever true " + dominion.getName() + " " + page))
                     .append("使用拉杆"));
         }
-        if (dominion.getMobDropItem()){
+        if (dominion.getMobDropItem()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set mob_drop_item false " + dominion.getName() + " " + page))
                     .append("生物战利品掉落"));
@@ -389,7 +398,7 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set trade true " + dominion.getName() + " " + page))
                     .append("交易"));
         }
-        if (dominion.getTrample()){
+        if (dominion.getTrample()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set trample false " + dominion.getName() + " " + page))
                     .append("践踏耕地"));

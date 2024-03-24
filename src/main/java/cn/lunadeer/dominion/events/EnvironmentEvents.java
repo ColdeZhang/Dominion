@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import com.destroystokyo.paper.event.entity.EndermanEscapeEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -145,6 +146,35 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         if (dom.getWitherSpawn()) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // ender_man spawn
+    public void onEnderManSpawn(CreatureSpawnEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.ENDERMAN) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        if (dom == null) {
+            return;
+        }
+        if (dom.getEnderMan()) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // ender_man escape
+    public void onEnderManEscape(EndermanEscapeEvent event){
+        Entity entity = event.getEntity();
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        if (dom == null) {
+            return;
+        }
+        if (dom.getEnderMan()) {
             return;
         }
         event.setCancelled(true);

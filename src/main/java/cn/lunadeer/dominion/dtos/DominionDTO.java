@@ -48,6 +48,7 @@ public class DominionDTO {
                         rs.getBoolean("dye"),
                         rs.getBoolean("egg"),
                         rs.getBoolean("enchant"),
+                        rs.getBoolean("ender_man"),
                         rs.getBoolean("ender_pearl"),
                         rs.getBoolean("feed"),
                         rs.getBoolean("fire_spread"),
@@ -197,6 +198,7 @@ public class DominionDTO {
                 "dye = " + dominion.getDye() + ", " +
                 "egg = " + dominion.getEgg() + ", " +
                 "enchant = " + dominion.getEnchant() + ", " +
+                "ender_man = " + dominion.getEnderMan() + ", " +                    // dom only
                 "ender_pearl = " + dominion.getEnderPearl() + ", " +
                 "feed = " + dominion.getFeed() + ", " +
                 "fire_spread = " + dominion.getFireSpread() + ", " +                // dom only
@@ -238,7 +240,7 @@ public class DominionDTO {
                         Boolean beacon, Boolean bed, Boolean brew, Boolean breakBlock, Boolean button,
                         Boolean cake, Boolean container, Boolean craft, Boolean creeperExplode, Boolean comparer,
                         Boolean door, Boolean dye,
-                        Boolean egg, Boolean enchant, Boolean enderPearl,
+                        Boolean egg, Boolean enchant, Boolean enderMan, Boolean enderPearl,
                         Boolean feed, Boolean fireSpread, Boolean flowInProtection,
                         Boolean glow,
                         Boolean harvest, Boolean honey, Boolean hook, Boolean hopper,
@@ -282,6 +284,7 @@ public class DominionDTO {
         this.dye = dye;
         this.egg = egg;
         this.enchant = enchant;
+        this.enderMan = enderMan;
         this.enderPearl = enderPearl;
         this.feed = feed;
         this.fireSpread = fireSpread;
@@ -319,7 +322,7 @@ public class DominionDTO {
                 false, false, false, false, false,
                 false, false, false, false, false,
                 false, false, false, false, false, false,
-                false, false, false, false, true,
+                false, false, false, false, false, true,
                 true, false, false, false, false, false, false, true,
                 false, true, false, false, false, false,
                 false, false, false, false, false, false, false, false);
@@ -360,6 +363,7 @@ public class DominionDTO {
     private Boolean dye = false;
     private Boolean egg = false;
     private Boolean enchant = false;
+    private Boolean enderMan = false;
     private Boolean enderPearl = false;
     private Boolean feed = false;
     private Boolean fireSpread = false;
@@ -650,6 +654,15 @@ public class DominionDTO {
 
     public DominionDTO setEnchant(Boolean enchant) {
         this.enchant = enchant;
+        return update(this);
+    }
+
+    public Boolean getEnderMan() {
+        return enderMan;
+    }
+
+    public DominionDTO setEnderMan(Boolean enderMan) {
+        this.enderMan = enderMan;
         return update(this);
     }
 

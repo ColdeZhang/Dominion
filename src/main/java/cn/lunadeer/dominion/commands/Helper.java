@@ -20,7 +20,7 @@ public class Helper {
                 "beacon", "bed", "brew", "break", "button",
                 "cake", "container", "craft", "creeper_explode", "comparer",
                 "door", "dye",
-                "egg", "enchant", "ender_pearl",
+                "egg", "enchant", "ender_man", "ender_pearl",
                 "feed", "fire_spread", "flow_in_protection",
                 "glow",
                 "harvest", "honey", "hook", "hopper",

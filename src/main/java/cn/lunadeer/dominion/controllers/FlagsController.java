@@ -54,6 +54,7 @@ public class FlagsController {
             case "dye": return dominion.setDye(value);
             case "egg": return dominion.setEgg(value);
             case "enchant": return dominion.setEnchant(value);
+            case "ender_man": return dominion.setEnderMan(value);
             case "ender_pearl": return dominion.setEnderPearl(value);
             case "feed": return dominion.setFeed(value);
             case "fire_spread": return dominion.setFireSpread(value);
