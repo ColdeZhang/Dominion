@@ -30,7 +30,7 @@ jobs:
           echo "done!"
       - name: "setup go for release script"
         run: |
-          wget --no-check-certificate https://go.dev/dl/go1.21.6.linux-amd64.tar.gz 
+          wget --no-check-certificate https://golang.google.cn/dl/go1.21.6.linux-amd64.tar.gz
           rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
           ln -s /usr/local/go/bin/go /usr/bin/go
           go version
