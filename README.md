@@ -8,6 +8,8 @@
 
 鉴于 Residence 插件的作者项目较多，维护压力大，无法及时跟进新版本以及适配Folia核心。故开发此插件，旨在平替纯净版生存服Residence的使用。
 
+请注意，本插件仍然处于测试阶段，因此可能存在一定的行为控制漏洞。如果遇到此类遗漏的行为控制欢迎即使发送邮件或添加QQ告知，感激不尽。
+
 ## 说明
 
 本插件基本还原了Residence的核心功能，主要适用于原版纯净生存服务器的防破坏目的，因此暂不考虑引入价格系统、商店等非原版Minecraft玩法。
@@ -182,3 +184,9 @@ Debug: false
 ## TODO
 
 - WebUI
+
+## 建议与反馈
+
+Mail: [zhangyuheng@lunadeer.cn](mailto:zhangyuheng@lunadeer.cn)
+
+QQ: 2751268851
