@@ -1,8 +1,11 @@
-# Dominion
 
-开源地址：[Gitea](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion)
+<div style="text-align: center;">
 
-文档地址：[Doc](https://ssl.lunadeer.cn:14448/doc/23/)
+<img src="https://ssl.lunadeer.cn:14437/i/2024/03/28/6604f0cec0f0e.png" alt="" width="70%">
+
+### [开源地址](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion) | [文档地址](https://ssl.lunadeer.cn:14448/doc/23/)
+
+</div>
 
 ## 简介
 
