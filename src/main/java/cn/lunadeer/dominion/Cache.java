@@ -206,6 +206,10 @@ public class Cache {
         return id_dominions.get(id);
     }
 
+    public List<DominionDTO> getDominions() {
+        return new ArrayList<>(id_dominions.values());
+    }
+
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
     private ConcurrentHashMap<String, List<Integer>> world_dominions;                         // 所有领地

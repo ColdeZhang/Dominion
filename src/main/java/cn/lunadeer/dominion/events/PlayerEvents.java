@@ -7,7 +7,6 @@ import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -23,7 +22,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.persistence.PersistentDataType;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 public class PlayerEvents implements Listener {

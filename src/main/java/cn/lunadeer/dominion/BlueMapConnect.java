@@ -68,4 +68,58 @@ public class BlueMapConnect {
             XLogger.err(e.getMessage());
         }
     }
+
+    public static void renderMCA(Map<String, List<String>> mca_files) {
+        if (!Dominion.config.getBlueMap()) {
+            return;
+        }
+        try {
+            BlueMapAPI.getInstance().ifPresent(api -> {
+                for (String world : mca_files.keySet()) {
+                    api.getWorld(world).ifPresent(bmWorld -> {
+                        MarkerSet markerSet = MarkerSet.builder()
+                                .label("MCA")
+                                .defaultHidden(true)
+                                .build();
+                        for (String file : mca_files.get(world)) {
+                            // r.-1.-1.mca
+                            int mca_x = Integer.parseInt(file.split("\\.")[1]);
+                            int mca_z = Integer.parseInt(file.split("\\.")[2]);
+                            int world_x1 = mca_x * 512;
+                            int world_x2 = (mca_x + 1) * 512;
+                            int world_z1 = mca_z * 512;
+                            int world_z2 = (mca_z + 1) * 512;
+                            Collection<Vector2d> vectors = new ArrayList<>();
+                            vectors.add(new Vector2d(world_x1 + 0.001, world_z1 + 0.001));
+                            vectors.add(new Vector2d(world_x2 - 0.001, world_z1 + 0.001));
+                            vectors.add(new Vector2d(world_x2 - 0.001, world_z2 - 0.001));
+                            vectors.add(new Vector2d(world_x1 + 0.001, world_z2 - 0.001));
+                            Shape shape = new Shape(vectors);
+                            double x = vectors.iterator().next().getX();
+                            double z = vectors.iterator().next().getY();
+                            double y = -64;
+
+                            Color line = new Color(0, 204, 0, 0.8F);
+                            Color fill = new Color(0, 204, 0, 0.2F);
+                            ExtrudeMarker marker = ExtrudeMarker.builder()
+                                    .label(file)
+                                    .position(x, y, z)
+                                    .shape(shape, -64, 320)
+                                    .lineColor(line)
+                                    .fillColor(fill)
+                                    .build();
+                            markerSet.getMarkers()
+                                    .put(file, marker);
+                        }
+                        for (BlueMapMap map : bmWorld.getMaps()) {
+                            map.getMarkerSets().put(world + "-" + markerSet.getLabel(), markerSet);
+                        }
+                    });
+                }
+            });
+        } catch (NoClassDefFoundError e) {
+            XLogger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
+            XLogger.err(e.getMessage());
+        }
+    }
 }

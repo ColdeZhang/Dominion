@@ -134,6 +134,9 @@ public class Commands implements TabExecutor {
             case "reload_cache":
                 Operator.reloadCache(sender, args);
                 break;
+            case "export_mca":
+                Operator.exportMca(sender, args);
+                break;
             default:
                 return false;
         }
@@ -163,7 +166,8 @@ public class Commands implements TabExecutor {
                     "set_leave_msg",
                     "rename",
                     "give",
-                    "reload_cache"
+                    "reload_cache",
+                    "export_mca"
             );
         }
         if (args.length == 2) {

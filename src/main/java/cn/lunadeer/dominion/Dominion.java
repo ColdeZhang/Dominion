@@ -5,7 +5,7 @@ import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.utils.ConfigManager;
 import cn.lunadeer.dominion.utils.Database;
-import cn.lunadeer.dominion.utils.Time;
+import cn.lunadeer.dominion.utils.Scheduler;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class Dominion extends JavaPlugin {
 
@@ -26,6 +27,7 @@ public final class Dominion extends JavaPlugin {
         config = new ConfigManager(this);
         dbConnection = Database.createConnection();
         Database.migrate();
+        scheduler = new Scheduler(this);
         Cache.instance = new Cache();
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
@@ -46,8 +48,13 @@ public final class Dominion extends JavaPlugin {
         XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
         XLogger.info(" ");
 
-        Time.runLater(this, AutoClean::run, 20 * 30);
-        Time.runLater(this, BlueMapConnect::render, 20 * 60);
+        scheduler.async.runDelayed(this, scheduledTask -> {
+            AutoClean.run();
+        }, 30, TimeUnit.SECONDS);
+
+        scheduler.async.runDelayed(this, scheduledTask -> {
+            BlueMapConnect.render();
+        }, 40, TimeUnit.SECONDS);
     }
 
     @Override
@@ -59,4 +66,5 @@ public final class Dominion extends JavaPlugin {
     public static ConfigManager config;
     public static Connection dbConnection;
     public static Map<UUID, Map<Integer, Location>> pointsSelect = new HashMap<>();
+    public static Scheduler scheduler;
 }

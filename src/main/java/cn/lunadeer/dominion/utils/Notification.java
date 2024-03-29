@@ -10,6 +10,7 @@ public class Notification {
     private static final Style i_style = Style.style(TextColor.color(139, 255, 123));
     private static final Style w_style = Style.style(TextColor.color(255, 185, 69));
     private static final Style e_style = Style.style(TextColor.color(255, 96, 72));
+    private static final Style d_style = Style.style(TextColor.color(0, 255, 255));
 
     private static final String prefix = "[Dominion] ";
 

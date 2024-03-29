@@ -1,11 +1,9 @@
 package cn.lunadeer.dominion.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class Time {
 
@@ -38,24 +36,5 @@ public class Time {
     public static Boolean isFolia() {
         if (IS_FOLIA == null) IS_FOLIA = tryFolia();
         return IS_FOLIA;
-    }
-
-    /**
-     * 定时异步任务
-     *
-     * @param plugin   插件
-     * @param runnable 任务
-     * @param ticks    间隔
-     */
-    public static void runAtFixedRateAsync(Plugin plugin, Runnable runnable, int ticks) {
-        if (isFolia())
-            Bukkit.getAsyncScheduler().runAtFixedRate(plugin, (task) -> runnable.run(), ticks / 20, ticks / 20, TimeUnit.SECONDS);
-        else Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, ticks, ticks);
-    }
-
-    public static void runLater(Plugin plugin, Runnable runnable, int ticks) {
-        if (isFolia())
-            Bukkit.getAsyncScheduler().runDelayed(plugin, (task) -> runnable.run(), ticks / 20, TimeUnit.SECONDS);
-        else Bukkit.getScheduler().runTaskLater(plugin, runnable, ticks);
     }
 }
