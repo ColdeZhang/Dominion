@@ -1,4 +1,3 @@
-
 <div style="text-align: center;">
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/03/28/6604f0cec0f0e.png" alt="" width="70%">
@@ -158,7 +157,10 @@
 
 ### 管理员指令
 
-暂无
+| 指令名  | 指令                        |
+|------|---------------------------|
+| 重载缓存 | `/dominion reload_cache`  |
+| 重载配置 | `/dominion reload_config` |
 
 ## 配置文件参考
 
@@ -182,7 +184,7 @@ Limit:
   SizeZ: 128
   Amount: 10
   Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
-  WorldBlackList: []
+  WorldBlackList: [ ]
 
 # -1 表示不开启
 AutoCleanAfterDays: 180
