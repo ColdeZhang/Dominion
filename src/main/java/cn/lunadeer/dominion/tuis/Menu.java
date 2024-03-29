@@ -1,9 +1,6 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.utils.STUI.Button;
-import cn.lunadeer.dominion.utils.STUI.Line;
-import cn.lunadeer.dominion.utils.STUI.View;
-import cn.lunadeer.dominion.utils.STUI.ViewStyles;
+import cn.lunadeer.dominion.utils.STUI.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
@@ -28,15 +25,15 @@ public class Menu {
         Line reload = Line.create()
                 .append(Button.create("重载缓存", "/dominion reload_cache"))
                 .append("手动刷新缓存可解决一些玩家操作无效问题，不建议频繁操作");
-        View view = View.create();
+        ListView view = ListView.create(10, "/dominion");
         view.title("Dominion 领地系统")
                 .navigator(Line.create().append("主菜单"))
-                .addLine(list)
-                .addLine(help)
-                .addLine(link);
+                .add(list)
+                .add(help)
+                .add(link);
         if (player.isOp()) {
-            view.addLine(reload);
+            view.add(reload);
         }
-        view.showOn(player);
+        view.showOn(player, 1);
     }
 }

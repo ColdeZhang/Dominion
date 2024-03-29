@@ -572,6 +572,10 @@ public class PlayerPrivilegeDTO {
     private static List<PlayerPrivilegeDTO> query(String sql) {
         List<PlayerPrivilegeDTO> players = new ArrayList<>();
         try (ResultSet rs = Database.query(sql)) {
+            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
+                // 如果是更新操作，重新加载缓存
+                Cache.instance.loadPlayerPrivileges();
+            }
             if (rs == null) return players;
             while (rs.next()) {
                 PlayerPrivilegeDTO player = new PlayerPrivilegeDTO(
@@ -617,10 +621,6 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("vehicle_spawn")
                 );
                 players.add(player);
-            }
-            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
-                // 如果是更新操作，重新加载缓存
-                Cache.instance.loadPlayerPrivileges();
             }
         } catch (Exception e) {
             XLogger.err("Database query failed: " + e.getMessage());

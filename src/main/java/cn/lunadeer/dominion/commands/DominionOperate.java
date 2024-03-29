@@ -88,6 +88,10 @@ public class DominionOperate {
             Notification.error(sender, "用法: /dominion auto_create <领地名称>");
             return;
         }
+        if (Dominion.config.getAutoCreateRadius() < 0) {
+            Notification.error(sender, "自动创建领地功能已关闭");
+            return;
+        }
         autoPoints(player);
         createDominion(sender, args);
     }
@@ -105,6 +109,10 @@ public class DominionOperate {
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
             Notification.error(sender, "用法: /dominion auto_create_sub <子领地名称> [父领地名称]");
+            return;
+        }
+        if (Dominion.config.getAutoCreateRadius() < 0) {
+            Notification.error(sender, "自动创建领地功能已关闭");
             return;
         }
         autoPoints(player);

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
+import cn.lunadeer.dominion.utils.STUI.ListView;
 import cn.lunadeer.dominion.utils.STUI.View;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,15 +32,15 @@ public class DominionManage {
         Line privilege_list = Line.create()
                 .append(Button.create("玩家权限", "/dominion privilege_list " + dominion.getName()))
                 .append("管理玩家特权");
-        View view = View.create();
+        ListView view = ListView.create(10, "/dominion manage " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 管理界面")
                 .navigator(Line.create()
                         .append(Button.create("主菜单", "/dominion menu"))
                         .append(Button.create("我的领地", "/dominion list"))
                         .append(dominion.getName()))
-                .addLine(size_info)
-                .addLine(flag_info)
-                .addLine(privilege_list)
-                .showOn(player);
+                .add(size_info)
+                .add(flag_info)
+                .add(privilege_list)
+                .showOn(player, 1);
     }
 }

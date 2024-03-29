@@ -3,6 +3,8 @@ package cn.lunadeer.dominion.utils;
 import cn.lunadeer.dominion.Dominion;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.List;
+
 public class ConfigManager {
     public ConfigManager(Dominion plugin) {
         _plugin = plugin;
@@ -21,12 +23,36 @@ public class ConfigManager {
         _db_user = _file.getString("Database.User", "postgres");
         _db_pass = _file.getString("Database.Pass", "postgres");
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
-        _max_x = _file.getInt("MaxX", 128);
-        _max_y = _file.getInt("MaxY", 64);
-        _max_z = _file.getInt("MaxZ", 128);
+        if (_auto_create_radius == 0) {
+            XLogger.err("AutoCreateRadius 不能等于 0，已重置为 10");
+            setAutoCreateRadius(10);
+        }
+        _limit_size_x = _file.getInt("Limit.SizeX", 128);
+        if (_limit_size_x <= 4) {
+            XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
+            setLimitSizeX(128);
+        }
+        _limit_size_y = _file.getInt("Limit.SizeY", 64);
+        if (_limit_size_y <= 4) {
+            XLogger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
+            setLimitSizeY(64);
+        }
+        _limit_size_z = _file.getInt("Limit.SizeZ", 128);
+        if (_limit_size_z <= 4) {
+            XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
+            setLimitSizeZ(128);
+        }
         _blue_map = _file.getBoolean("BlueMap", true);
-        _auto_clean_enable = _file.getBoolean("AutoClean.Enable", false);
-        _auto_clean_after_days = _file.getInt("AutoClean.AfterDays", 180);
+        _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
+        if (_auto_clean_after_days == 0) {
+            XLogger.err("AutoCleanAfterDays 不能等于 0，已重置为 180");
+            setAutoCleanAfterDays(180);
+        }
+        _limit_min_y = _file.getInt("Limit.MinY", -64);
+        _limit_max_y = _file.getInt("Limit.MaxY", 320);
+        _limit_amount = _file.getInt("Limit.Amount", 10);
+        _limit_depth = _file.getInt("Limit.Depth", 10);
+        _world_black_list = _file.getStringList("WorldBlackList");
     }
 
     public Boolean isDebug() {
@@ -70,33 +96,33 @@ public class ConfigManager {
         return _db_pass;
     }
 
-    public Integer getMaxX() {
-        return _max_x;
+    public Integer getLimitSizeX() {
+        return _limit_size_x;
     }
 
-    public void setMaxX(Integer max_x) {
-        _max_x = max_x;
-        _file.set("MaxX", max_x);
+    public void setLimitSizeX(Integer max_x) {
+        _limit_size_x = max_x;
+        _file.set("Limit.SizeX", max_x);
         _plugin.saveConfig();
     }
 
-    public Integer getMaxY() {
-        return _max_y;
+    public Integer getLimitSizeY() {
+        return _limit_size_y;
     }
 
-    public void setMaxY(Integer max_y) {
-        _max_y = max_y;
-        _file.set("MaxY", max_y);
+    public void setLimitSizeY(Integer max_y) {
+        _limit_size_y = max_y;
+        _file.set("Limit.SizeY", max_y);
         _plugin.saveConfig();
     }
 
-    public Integer getMaxZ() {
-        return _max_z;
+    public Integer getLimitSizeZ() {
+        return _limit_size_z;
     }
 
-    public void setMaxZ(Integer max_z) {
-        _max_z = max_z;
-        _file.set("MaxZ", max_z);
+    public void setLimitSizeZ(Integer max_z) {
+        _limit_size_z = max_z;
+        _file.set("Limit.SizeZ", max_z);
         _plugin.saveConfig();
     }
 
@@ -120,24 +146,58 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
-    public Boolean getAutoCleanEnable() {
-        return _auto_clean_enable;
-    }
-
-    public void setAutoCleanEnable(Boolean auto_clean_enable) {
-        _auto_clean_enable = auto_clean_enable;
-        _file.set("AutoClean.Enable", auto_clean_enable);
-        _plugin.saveConfig();
-    }
-
     public Integer getAutoCleanAfterDays() {
         return _auto_clean_after_days;
     }
 
     public void setAutoCleanAfterDays(Integer auto_clean_after_days) {
         _auto_clean_after_days = auto_clean_after_days;
-        _file.set("AutoClean.AfterDays", auto_clean_after_days);
+        _file.set("AutoCleanAfterDays", auto_clean_after_days);
         _plugin.saveConfig();
+    }
+
+    public Integer getLimitMinY() {
+        return _limit_min_y;
+    }
+
+    public void setLimitMinY(Integer limit_bottom) {
+        _limit_min_y = limit_bottom;
+        _file.set("Limit.MinY", limit_bottom);
+        _plugin.saveConfig();
+    }
+
+    public Integer getLimitMaxY() {
+        return _limit_max_y;
+    }
+
+    public void setLimitMaxY(Integer limit_top) {
+        _limit_max_y = limit_top;
+        _file.set("Limit.MaxY", limit_top);
+        _plugin.saveConfig();
+    }
+
+    public Integer getLimitAmount() {
+        return _limit_amount;
+    }
+
+    public void setLimitAmount(Integer limit_amount) {
+        _limit_amount = limit_amount;
+        _file.set("Limit.Amount", limit_amount);
+        _plugin.saveConfig();
+    }
+
+    public Integer getLimitDepth() {
+        return _limit_depth;
+    }
+
+    public void setLimitDepth(Integer limit_depth) {
+        _limit_depth = limit_depth;
+        _file.set("Limit.Depth", limit_depth);
+        _plugin.saveConfig();
+    }
+
+    public List<String> getWorldBlackList() {
+        return _world_black_list;
     }
 
 
@@ -153,12 +213,15 @@ public class ConfigManager {
 
     private Integer _auto_create_radius;
 
-    private Integer _max_x;
-    private Integer _max_y;
-    private Integer _max_z;
+    private Integer _limit_size_x;
+    private Integer _limit_size_y;
+    private Integer _limit_size_z;
 
     private Boolean _blue_map;
-
-    private Boolean _auto_clean_enable;
     private Integer _auto_clean_after_days;
+    private Integer _limit_min_y;
+    private Integer _limit_max_y;
+    private Integer _limit_amount;
+    private Integer _limit_depth;
+    private List<String> _world_black_list;
 }

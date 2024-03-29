@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AutoClean {
     public static void run() {
-        if (!Dominion.config.getAutoCleanEnable()) {
+        if (Dominion.config.getAutoCleanAfterDays() < 0) {
             return;
         }
         XLogger.info("开始自动清理长时间未登录玩家领地数据");

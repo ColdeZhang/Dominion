@@ -28,6 +28,7 @@ public final class Dominion extends JavaPlugin {
         dbConnection = Database.createConnection();
         Database.migrate();
         scheduler = new Scheduler(this);
+        AutoClean.run();
         Cache.instance = new Cache();
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
@@ -47,10 +48,6 @@ public final class Dominion extends JavaPlugin {
         XLogger.info(" | |__| | (_) | | | | | | | | | | | (_) | | | |");
         XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
         XLogger.info(" ");
-
-        scheduler.async.runDelayed(this, scheduledTask -> {
-            AutoClean.run();
-        }, 30, TimeUnit.SECONDS);
 
         scheduler.async.runDelayed(this, scheduledTask -> {
             BlueMapConnect.render();

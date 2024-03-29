@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
@@ -69,15 +70,20 @@ public class DominionController {
             Notification.error(owner, "禁止跨世界操作");
             return null;
         }
-        int x_length = Math.abs((int) (loc1.getX() - loc2.getX()));
-        int y_length = Math.abs((int) (loc1.getY() - loc2.getY()));
-        int z_length = Math.abs((int) (loc1.getZ() - loc2.getZ()));
-        if (x_length < 4 || y_length < 4 || z_length < 4) {
-            Notification.error(owner, "领地的任意一边长度不得小于4");
+        // 检查世界是否可以创建
+        if (Dominion.config.getWorldBlackList().contains(owner.getWorld().getName())) {
+            Notification.error(owner, "禁止在世界 " + owner.getWorld().getName() + " 创建领地");
             return null;
         }
-        if (x_length > Dominion.config.getMaxX() || y_length > Dominion.config.getMaxY() || z_length > Dominion.config.getMaxZ()) {
-            Notification.error(owner, "领地尺寸不能超过 " + Dominion.config.getMaxX() + " x " + Dominion.config.getMaxY() + " x " + Dominion.config.getMaxZ());
+        // 检查领地数量是否达到上限
+        if (Cache.instance.getPlayerDominionCount(owner) >= Dominion.config.getLimitAmount() && Dominion.config.getLimitAmount() > 0) {
+            Notification.error(owner, "你的领地数量已达上限，当前上限为 " + Dominion.config.getLimitAmount());
+            return null;
+        }
+        // 检查领地大小是否合法
+        if (sizeNotValid(owner,
+                loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ(),
+                loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ())) {
             return null;
         }
         DominionDTO dominion = new DominionDTO(owner.getUniqueId(), name, owner.getWorld().getName(),
@@ -106,6 +112,10 @@ public class DominionController {
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
             Notification.error(owner, "禁止跨世界操作");
+            return null;
+        }
+        // 检查深度是否达到上限
+        if (depthNotValid(owner, parent_dominion)) {
             return null;
         }
         // 检查是否超出父领地范围
@@ -199,11 +209,7 @@ public class DominionController {
                 Notification.error(operator, "无效的方向");
                 return null;
         }
-        int x_length = x2 - x1;
-        int y_length = y2 - y1;
-        int z_length = z2 - z1;
-        if (x_length > Dominion.config.getMaxX() || y_length > Dominion.config.getMaxY() || z_length > Dominion.config.getMaxZ()) {
-            Notification.error(operator, "领地尺寸不能超过 " + Dominion.config.getMaxX() + " x " + Dominion.config.getMaxY() + " x " + Dominion.config.getMaxZ());
+        if (sizeNotValid(operator, x1, y1, z1, x2, y2, z2)) {
             return null;
         }
         // 校验是否超出父领地范围
@@ -301,6 +307,9 @@ public class DominionController {
         // 校验第二组坐标是否小于第一组坐标
         if (x1 >= x2 || y1 >= y2 || z1 >= z2) {
             Notification.error(operator, "缩小后的领地无效");
+            return null;
+        }
+        if (sizeNotValid(operator, x1, y1, z1, x2, y2, z2)) {
             return null;
         }
         // 获取所有的子领地
@@ -517,12 +526,18 @@ public class DominionController {
      * 判断 sub 是否完全被 parent 包裹
      */
     private static boolean isContained(DominionDTO sub, DominionDTO parent) {
+        if (parent.getId() == -1) {
+            return true;
+        }
         return sub.getX1() >= parent.getX1() && sub.getX2() <= parent.getX2() &&
                 sub.getY1() >= parent.getY1() && sub.getY2() <= parent.getY2() &&
                 sub.getZ1() >= parent.getZ1() && sub.getZ2() <= parent.getZ2();
     }
 
     private static boolean isContained(Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
+        if (parent.getId() == -1) {
+            return true;
+        }
         return x1 >= parent.getX1() && x2 <= parent.getX2() &&
                 y1 >= parent.getY1() && y2 <= parent.getY2() &&
                 z1 >= parent.getZ1() && z2 <= parent.getZ2();
@@ -542,5 +557,75 @@ public class DominionController {
         }
         sub_dominions.addAll(sub_sub_dominions);
         return sub_dominions;
+    }
+
+    private static boolean sizeNotValid(Player operator, int x1, int y1, int z1, int x2, int y2, int z2) {
+        // 如果 1 > 2 则交换
+        if (x1 > x2) {
+            int temp = x1;
+            x1 = x2;
+            x2 = temp;
+        }
+        if (y1 > y2) {
+            int temp = y1;
+            y1 = y2;
+            y2 = temp;
+        }
+        if (z1 > z2) {
+            int temp = z1;
+            z1 = z2;
+            z2 = temp;
+        }
+        int x_length = x2 - x1;
+        int y_length = y2 - y1;
+        int z_length = z2 - z1;
+        if (x_length < 4 || y_length < 4 || z_length < 4) {
+            Notification.error(operator, "领地的任意一边长度不得小于4");
+            return true;
+        }
+        if (x_length > Dominion.config.getLimitSizeX() && Dominion.config.getLimitSizeX() > 0) {
+            Notification.error(operator, "领地X方向长度不能超过 " + Dominion.config.getLimitSizeX());
+            return true;
+        }
+        if (y_length > Dominion.config.getLimitSizeY() && Dominion.config.getLimitSizeY() > 0) {
+            Notification.error(operator, "领地Y方向高度不能超过 " + Dominion.config.getLimitSizeY());
+            return true;
+        }
+        if (z_length > Dominion.config.getLimitSizeZ() && Dominion.config.getLimitSizeZ() > 0) {
+            Notification.error(operator, "领地Z方向长度不能超过 " + Dominion.config.getLimitSizeZ());
+            return true;
+        }
+        if (y2 > Dominion.config.getLimitMaxY() && Dominion.config.getLimitMaxY() > 0) {
+            Notification.error(operator, "领地Y坐标不能超过 " + Dominion.config.getLimitMaxY());
+            return true;
+        }
+        if (y1 < Dominion.config.getLimitMinY() && Dominion.config.getLimitMinY() > 0) {
+            Notification.error(operator, "领地Y坐标不能低于 " + Dominion.config.getLimitMinY());
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean depthNotValid(Player operator, DominionDTO parent_dom) {
+        if (Dominion.config.getLimitDepth() < 0) {
+            return false;
+        }
+        if (parent_dom.getId() != -1 && Dominion.config.getLimitDepth() == 0) {
+            Notification.error(operator, "不允许创建子领地");
+            return true;
+        }
+        if (parent_dom.getId() == -1) {
+            return false;
+        }
+        int level = 0;
+        while (parent_dom.getParentDomId() != -1) {
+            parent_dom = Cache.instance.getDominion(parent_dom.getParentDomId());
+            level++;
+        }
+        if (level >= Dominion.config.getLimitDepth()) {
+            Notification.error(operator, "子领地嵌套深度不能超过 " + Dominion.config.getLimitDepth());
+            return true;
+        }
+        return false;
     }
 }

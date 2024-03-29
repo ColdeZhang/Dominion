@@ -5,14 +5,22 @@ Database:
   User: dominion
   Pass: dominion
 
+# -1 表示不开启
 AutoCreateRadius: 10
-MaxX: 128
-MaxY: 64
-MaxZ: 128
 
-AutoClean:
-  Enabled: false
-  AfterDays: 180
+# -1 表示不限制
+Limit:
+  MinY: -64
+  MaxY: 320
+  SizeX: 128
+  SizeY: 64
+  SizeZ: 128
+  Amount: 10
+  Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
+  WorldBlackList: []
+
+# -1 表示不开启
+AutoCleanAfterDays: 180
 
 BlueMap: true
 

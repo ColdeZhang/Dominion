@@ -103,6 +103,15 @@ public class Operator {
         });
     }
 
+    public static void reloadConfig(CommandSender sender, String[] args) {
+        if (notOpOrConsole(sender)) return;
+        Dominion.scheduler.async.runNow(Dominion.instance, ScheduledTask -> {
+            Notification.info(sender, "正在重新加载配置文件...");
+            Dominion.config.reload();
+            Notification.info(sender, "配置文件已重新加载");
+        });
+    }
+
     private static int convertWorld2Mca(int world) {
         return world < 0 ? world / 512 - 1 : world / 512;
     }

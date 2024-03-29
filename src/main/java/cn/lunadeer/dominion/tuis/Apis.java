@@ -74,7 +74,7 @@ public class Apis {
         Player player = playerOnly(sender);
         if (player == null) return;
         int page = getPage(args);
-        ListView view = ListView.create(5, "/dominion help");
+        ListView view = ListView.create(10, "/dominion help");
         view.title("领地插件命令帮助 <>表示必填参数 []表示可选参数")
                 .add(Line.create().append("打开交互菜单").append(Button.create("/dominion menu", "/dominion menu")))
                 .add(Line.create().append("查看帮助").append(Button.create("/dominion help [页码]", "/dominion help 1")))

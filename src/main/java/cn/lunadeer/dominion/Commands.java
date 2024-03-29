@@ -134,6 +134,9 @@ public class Commands implements TabExecutor {
             case "reload_cache":
                 Operator.reloadCache(sender, args);
                 break;
+            case "reload_config":
+                Operator.reloadConfig(sender, args);
+                break;
             case "export_mca":
                 Operator.exportMca(sender, args);
                 break;
@@ -167,6 +170,7 @@ public class Commands implements TabExecutor {
                     "rename",
                     "give",
                     "reload_cache",
+                    "reload_config",
                     "export_mca"
             );
         }

@@ -15,6 +15,10 @@ public class DominionDTO {
     private static List<DominionDTO> query(String sql) {
         List<DominionDTO> dominions = new ArrayList<>();
         try (ResultSet rs = Database.query(sql)) {
+            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
+                // 如果是更新操作，重新加载缓存
+                Cache.instance.loadDominions();
+            }
             if (rs == null) return dominions;
             while (rs.next()) {
                 Integer id = rs.getInt("id");
@@ -77,10 +81,6 @@ public class DominionDTO {
                         rs.getBoolean("wither_spawn")
                 );
                 dominions.add(dominion);
-            }
-            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
-                // 如果是更新操作，重新加载缓存
-                Cache.instance.loadDominions();
             }
         } catch (SQLException e) {
             XLogger.err("Database query failed: " + e.getMessage());
