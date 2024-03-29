@@ -46,10 +46,10 @@ public class Operator {
                 Integer world_x2 = dom.getX2();
                 Integer world_z1 = dom.getZ1();
                 Integer world_z2 = dom.getZ2();
-                int mca_x1 = world_x1 / 512 - 1;
-                int mca_x2 = world_x2 / 512 + 1;
-                int mca_z1 = world_z1 / 512 - 1;
-                int mca_z2 = world_z2 / 512 + 1;
+                int mca_x1 = convertWorld2Mca(world_x1) - 1;
+                int mca_x2 = convertWorld2Mca(world_x2) + 1;
+                int mca_z1 = convertWorld2Mca(world_z1) - 1;
+                int mca_z2 = convertWorld2Mca(world_z2) + 1;
                 for (int x = mca_x1; x <= mca_x2; x++) {
                     for (int z = mca_z1; z <= mca_z2; z++) {
                         String file_name = "r." + x + "." + z + ".mca";
@@ -101,6 +101,10 @@ public class Operator {
             BlueMapConnect.renderMCA(mca_cords);
             Notification.info(sender, "MCA文件列表已导出到 " + folder.getAbsolutePath());
         });
+    }
+
+    private static int convertWorld2Mca(int world) {
+        return world < 0 ? world / 512 - 1 : world / 512;
     }
 
 }
