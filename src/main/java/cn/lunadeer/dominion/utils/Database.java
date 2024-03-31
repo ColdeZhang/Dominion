@@ -194,5 +194,18 @@ public class Database {
         // 1.12.0
         sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS ender_man BOOLEAN NOT NULL DEFAULT FAlSE;";
         query(sql);
+
+        // 1.14.7
+        sql = "ALTER TABLE dominion DROP CONSTRAINT IF EXISTS dominion_owner_fkey;";
+        sql += "ALTER TABLE dominion ADD CONSTRAINT dominion_owner_fkey FOREIGN KEY (owner) REFERENCES player_name(uuid) ON DELETE CASCADE;";
+        sql += "ALTER TABLE dominion DROP CONSTRAINT IF EXISTS dominion_parent_dom_id_fkey;";
+        sql += "ALTER TABLE dominion ADD CONSTRAINT dominion_parent_dom_id_fkey FOREIGN KEY (parent_dom_id) REFERENCES dominion(id) ON DELETE CASCADE;";
+        sql += "ALTER TABLE player_privilege DROP CONSTRAINT IF EXISTS player_privilege_player_uuid_fkey;";
+        sql += "ALTER TABLE player_privilege ADD CONSTRAINT player_privilege_player_uuid_fkey FOREIGN KEY (player_uuid) REFERENCES player_name(uuid) ON DELETE CASCADE;";
+        sql += "ALTER TABLE player_privilege DROP CONSTRAINT IF EXISTS player_privilege_dom_id_fkey;";
+        sql += "ALTER TABLE player_privilege ADD CONSTRAINT player_privilege_dom_id_fkey FOREIGN KEY (dom_id) REFERENCES dominion(id) ON DELETE CASCADE;";
+        query(sql);
+
+
     }
 }
