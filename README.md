@@ -197,6 +197,7 @@ Debug: false
 ## TODO
 
 - WebUI
+- Admin TUI
 
 ## 建议与反馈
 
