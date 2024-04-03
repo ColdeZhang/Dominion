@@ -209,8 +209,7 @@ public class Cache {
     public int getPlayerDominionCount(Player player) {
         UUID player_uuid = player.getUniqueId();
         int count = 0;
-        for (Integer id : world_dominions.get(player.getWorld().getName())) {
-            DominionDTO dominion = id_dominions.get(id);
+        for (DominionDTO dominion : id_dominions.values()) {
             if (dominion.getOwner().equals(player_uuid)) {
                 count++;
             }
