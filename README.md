@@ -24,7 +24,7 @@
 
 ## 功能介绍
 
-- 使用 Postgresql 存储数据；
+- 使用 Postgresql 或 sqlite 存储数据；
 - 支持BlueMap卫星地图渲染；
 - 可视化领地权限配置；
 - 支持为玩家单独设置特权；
