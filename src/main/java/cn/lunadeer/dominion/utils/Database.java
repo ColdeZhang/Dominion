@@ -8,10 +8,28 @@ public class Database {
 
     public static Connection createConnection() {
         try {
-            Class.forName("org.postgresql.Driver");
-            return DriverManager.getConnection(Dominion.config.getDBConnectionUrl(), Dominion.config.getDbUser(), Dominion.config.getDbPass());
+            String connectionUrl;
+            if (Dominion.config.getDbType().equals("pgsql")) {
+                XLogger.info("正在连接到 PostgreSQL 数据库");
+                Class.forName("org.postgresql.Driver");
+                connectionUrl = "jdbc:postgresql://" + Dominion.config.getDbHost() + ":" + Dominion.config.getDbPort();
+                connectionUrl += "/" + Dominion.config.getDbName();
+                return DriverManager.getConnection(connectionUrl, Dominion.config.getDbUser(), Dominion.config.getDbPass());
+            } else if (Dominion.config.getDbType().equals("sqlite")) {
+                XLogger.info("正在连接到 SQLite 数据库");
+                Class.forName("org.sqlite.JDBC");
+                connectionUrl = "jdbc:sqlite:" + Dominion.instance.getDataFolder() + "/" + Dominion.config.getDbName() + ".db";
+                return DriverManager.getConnection(connectionUrl);
+            } else {
+                XLogger.err("=== 严重错误 ===");
+                XLogger.err("数据库类型错误，只能为 pgsql 或 sqlite");
+                XLogger.err("===============");
+                return null;
+            }
         } catch (ClassNotFoundException | SQLException e) {
+            XLogger.err("=== 严重错误 ===");
             XLogger.err("Database connection failed: " + e.getMessage());
+            XLogger.err("===============");
             return null;
         }
     }
@@ -26,13 +44,42 @@ public class Database {
             // if query with no result return null
             if (stmt.execute(sql)) {
                 return stmt.getResultSet();
-            } else {
-                return null;
             }
         } catch (SQLException e) {
-            XLogger.err("Database query failed: " + e.getMessage());
-            XLogger.err("SQL: " + sql);
-            return null;
+            handleDatabaseError("Database query failed: ", e, sql);
+        }
+        return null;
+    }
+
+    private static void handleDatabaseError(String errorMessage, SQLException e, String sql) {
+        XLogger.err("=== 严重错误 ===");
+        XLogger.err(errorMessage + e.getMessage());
+        XLogger.err("SQL: " + sql);
+        XLogger.err("===============");
+    }
+
+    private static void addColumnIfNotExists(String tableName, String columnName, String columnDefinition) {
+        if (Dominion.config.getDbType().equals("pgsql")) {
+            String sql = "ALTER TABLE " + tableName + " ADD COLUMN IF NOT EXISTS " + columnName + " " + columnDefinition + ";";
+            query(sql);
+        } else if (Dominion.config.getDbType().equals("sqlite")) {
+            try {
+                ResultSet rs = query("PRAGMA table_info(" + tableName + ");");
+                boolean columnExists = false;
+                if (rs != null) {
+                    while (rs.next()) {
+                        if (columnName.equals(rs.getString("name"))) {
+                            columnExists = true;
+                            break;
+                        }
+                    }
+                }
+                if (!columnExists) {
+                    query("ALTER TABLE " + tableName + " ADD COLUMN " + columnName + " " + columnDefinition + ";");
+                }
+            } catch (SQLException e) {
+                handleDatabaseError("Database operation failed: ", e, "");
+            }
         }
     }
 
@@ -40,15 +87,16 @@ public class Database {
         String sql = "";
 
         // player name
-        sql += "CREATE TABLE IF NOT EXISTS player_name (" +
+        sql = "CREATE TABLE IF NOT EXISTS player_name (" +
                 " id                SERIAL PRIMARY KEY," +
                 " uuid              VARCHAR(36) NOT NULL UNIQUE," +
                 " last_known_name   TEXT NOT NULL," +
                 " last_join_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" +
                 ");";
+        query(sql);
 
         // dominion table
-        sql += "CREATE TABLE IF NOT EXISTS dominion (" +
+        sql = "CREATE TABLE IF NOT EXISTS dominion (" +
                 " id    SERIAL PRIMARY KEY," +
                 " owner VARCHAR(36) NOT NULL," +
                 " name  TEXT NOT NULL UNIQUE," +
@@ -103,12 +151,13 @@ public class Database {
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
                 " wither_spawn BOOLEAN NOT NULL DEFAULT FALSE," +
 
-                " FOREIGN KEY (owner) REFERENCES player_name(uuid)," +
-                " FOREIGN KEY (parent_dom_id) REFERENCES dominion(id)" +
+                " FOREIGN KEY (owner) REFERENCES player_name(uuid) ON DELETE CASCADE," +
+                " FOREIGN KEY (parent_dom_id) REFERENCES dominion(id) ON DELETE CASCADE" +
                 ");";
+        query(sql);
 
         // player privilege
-        sql += "CREATE TABLE IF NOT EXISTS player_privilege (" +
+        sql = "CREATE TABLE IF NOT EXISTS player_privilege (" +
                 " id          SERIAL PRIMARY KEY," +
                 " player_uuid VARCHAR(36) NOT NULL," +
                 " dom_id      INT NOT NULL," +
@@ -150,17 +199,19 @@ public class Database {
                 " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
 
                 " UNIQUE (player_uuid, dom_id)," +
-                " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid)," +
-                " FOREIGN KEY (dom_id) REFERENCES dominion(id)" +
+                " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid) ON DELETE CASCADE," +
+                " FOREIGN KEY (dom_id) REFERENCES dominion(id) ON DELETE CASCADE" +
                 ");";
+        query(sql);
 
-        sql += "INSERT INTO player_name (" +
+        sql = "INSERT INTO player_name (" +
                 "id, uuid, last_known_name" +
                 ") VALUES (" +
                 "-1, '00000000-0000-0000-0000-000000000000', 'server'" +
                 ") ON CONFLICT DO NOTHING;";
+        query(sql);
 
-        sql += "INSERT INTO dominion (" +
+        sql = "INSERT INTO dominion (" +
                 "id, owner, name, world, x1, y1, z1, x2, y2, z2, parent_dom_id, join_message, leave_message" +
                 ") VALUES (" +
                 "-1, '00000000-0000-0000-0000-000000000000', '根领地', 'all', " +
@@ -168,44 +219,23 @@ public class Database {
                 "2147483647, 2147483647, 2147483647, -1, " +
                 "'欢迎', '再见'" +
                 ") ON CONFLICT DO NOTHING;";
-
         query(sql);
 
         // 1.5.0
-        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS hopper BOOLEAN NOT NULL DEFAULT FALSE;";
-        query(sql);
-        sql = "ALTER TABLE player_privilege ADD COLUMN IF NOT EXISTS hopper BOOLEAN NOT NULL DEFAULT FALSE;";
-        query(sql);
+        addColumnIfNotExists("dominion", "hopper", "BOOLEAN NOT NULL DEFAULT FALSE");
+        addColumnIfNotExists("player_privilege", "hopper", "BOOLEAN NOT NULL DEFAULT FALSE");
 
         // 1.9.0
-        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS vehicle_spawn BOOLEAN NOT NULL DEFAULT FALSE;";
-        query(sql);
-        sql = "ALTER TABLE player_privilege ADD COLUMN IF NOT EXISTS vehicle_spawn BOOLEAN NOT NULL DEFAULT FALSE;";
-        query(sql);
+        addColumnIfNotExists("dominion", "vehicle_spawn", "BOOLEAN NOT NULL DEFAULT FALSE");
+        addColumnIfNotExists("player_privilege", "vehicle_spawn", "BOOLEAN NOT NULL DEFAULT FALSE");
 
         // 1.10.0
-        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS trample BOOLEAN NOT NULL DEFAULT FALSE;";
-        query(sql);
+        addColumnIfNotExists("dominion", "trample", "BOOLEAN NOT NULL DEFAULT FALSE");
 
         // 1.11.0
-        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS mob_drop_item BOOLEAN NOT NULL DEFAULT TRUE;";
-        query(sql);
+        addColumnIfNotExists("dominion", "mob_drop_item", "BOOLEAN NOT NULL DEFAULT TRUE");
 
         // 1.12.0
-        sql = "ALTER TABLE dominion ADD COLUMN IF NOT EXISTS ender_man BOOLEAN NOT NULL DEFAULT FAlSE;";
-        query(sql);
-
-        // 1.14.7
-        sql = "ALTER TABLE dominion DROP CONSTRAINT IF EXISTS dominion_owner_fkey;";
-        sql += "ALTER TABLE dominion ADD CONSTRAINT dominion_owner_fkey FOREIGN KEY (owner) REFERENCES player_name(uuid) ON DELETE CASCADE;";
-        sql += "ALTER TABLE dominion DROP CONSTRAINT IF EXISTS dominion_parent_dom_id_fkey;";
-        sql += "ALTER TABLE dominion ADD CONSTRAINT dominion_parent_dom_id_fkey FOREIGN KEY (parent_dom_id) REFERENCES dominion(id) ON DELETE CASCADE;";
-        sql += "ALTER TABLE player_privilege DROP CONSTRAINT IF EXISTS player_privilege_player_uuid_fkey;";
-        sql += "ALTER TABLE player_privilege ADD CONSTRAINT player_privilege_player_uuid_fkey FOREIGN KEY (player_uuid) REFERENCES player_name(uuid) ON DELETE CASCADE;";
-        sql += "ALTER TABLE player_privilege DROP CONSTRAINT IF EXISTS player_privilege_dom_id_fkey;";
-        sql += "ALTER TABLE player_privilege ADD CONSTRAINT player_privilege_dom_id_fkey FOREIGN KEY (dom_id) REFERENCES dominion(id) ON DELETE CASCADE;";
-        query(sql);
-
-
+        addColumnIfNotExists("dominion", "ender_man", "BOOLEAN NOT NULL DEFAULT FAlSE");
     }
 }

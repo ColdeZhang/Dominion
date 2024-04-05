@@ -28,7 +28,7 @@ public class XLogger {
     }
 
     public static void warn(String message) {
-        _logger.info(" W | " + message);
+        _logger.warning(" W | " + message);
     }
 
     public static void err(Player player, String message) {
@@ -38,7 +38,7 @@ public class XLogger {
     }
 
     public static void err(String message) {
-        _logger.info(" E | " + message);
+        _logger.severe(" E | " + message);
     }
 
     public static void debug(Player player, String message) {

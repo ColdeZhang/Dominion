@@ -6,7 +6,7 @@
 
     <groupId>cn.lunadeer</groupId>
     <artifactId>Dominion</artifactId>
-    <version>1.14.9-beta</version>
+    <version>1.15.9-beta</version>
     <packaging>jar</packaging>
 
     <name>Dominion</name>
@@ -74,6 +74,11 @@
             <artifactId>folia-api</artifactId>
             <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.34.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

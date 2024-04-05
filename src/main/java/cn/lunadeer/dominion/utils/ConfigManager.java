@@ -17,6 +17,11 @@ public class ConfigManager {
         _plugin.reloadConfig();
         _file = _plugin.getConfig();
         _debug = _file.getBoolean("Debug", false);
+        _db_type = _file.getString("Database.Type", "sqlite");
+        if (!_db_type.equals("pgsql") && !_db_type.equals("sqlite")) {
+            XLogger.err("当前数据库只支持 pgsql 或 sqlite，已重置为 sqlite");
+            setDbType("sqlite");
+        }
         _db_host = _file.getString("Database.Host", "localhost");
         _db_port = _file.getString("Database.Port", "5432");
         _db_name = _file.getString("Database.Name", "dominion");
@@ -65,10 +70,27 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
-    public String getDBConnectionUrl() {
-        return "jdbc:postgresql://" + _db_host + ":" + _db_port + "/" + _db_name;
+    public String getDbType() {
+        return _db_type;
     }
 
+    public void setDbType(String db_type) {
+        _db_type = db_type;
+        _file.set("Database.Type", db_type);
+        _plugin.saveConfig();
+    }
+
+    public String getDbHost() {
+        return _db_host;
+    }
+
+    public String getDbPort() {
+        return _db_port;
+    }
+
+    public String getDbName() {
+        return _db_name;
+    }
 
     public void setDbUser(String db_user) {
         _db_user = db_user;
@@ -205,6 +227,7 @@ public class ConfigManager {
     private FileConfiguration _file;
     private Boolean _debug;
 
+    private String _db_type;
     private String _db_host;
     private String _db_port;
     private String _db_user;

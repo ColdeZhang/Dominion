@@ -166,6 +166,7 @@
 
 ```yaml
 Database:
+  Type: sqlite # pgsql, sqlite
   Host: localhost
   Port: 5432
   Name: dominion
