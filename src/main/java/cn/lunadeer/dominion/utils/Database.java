@@ -41,6 +41,9 @@ public class Database {
         }
         try {
             Statement stmt = conn.createStatement();
+            if (sql.contains("SERIAL PRIMARY KEY") && Dominion.config.getDbType().equals("sqlite")) {
+                sql = sql.replace("SERIAL PRIMARY KEY", "INTEGER PRIMARY KEY AUTOINCREMENT");
+            }
             // if query with no result return null
             if (stmt.execute(sql)) {
                 return stmt.getResultSet();
