@@ -87,7 +87,7 @@ public class GiteaReleaseCheck {
                 XLogger.info("更新内容：" + latest_release.message);
                 XLogger.info("下载页面：" + latest_release.html_url);
             } else {
-                XLogger.info("当前已是最新版本");
+                XLogger.info("当前已是最新版本：" + current_version);
             }
             XLogger.info("================================");
         } catch (Exception e) {
