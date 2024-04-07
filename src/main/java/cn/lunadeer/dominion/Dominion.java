@@ -34,10 +34,13 @@ public final class Dominion extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         Metrics metrics = new Metrics(this, 21445);
-        GiteaReleaseCheck giteaReleaseCheck = new GiteaReleaseCheck(this,
-                "https://ssl.lunadeer.cn:14446",
-                "zhangyuheng",
-                "Dominion");
+        GiteaReleaseCheck giteaReleaseCheck = null;
+        if (config.getCheckUpdate()) {
+            giteaReleaseCheck = new GiteaReleaseCheck(this,
+                    "https://ssl.lunadeer.cn:14446",
+                    "zhangyuheng",
+                    "Dominion");
+        }
 
         XLogger.info("领地插件已启动");
         XLogger.info("版本：" + this.getPluginMeta().getVersion());

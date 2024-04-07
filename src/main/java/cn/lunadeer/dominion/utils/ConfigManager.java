@@ -58,6 +58,7 @@ public class ConfigManager {
         _limit_amount = _file.getInt("Limit.Amount", 10);
         _limit_depth = _file.getInt("Limit.Depth", 10);
         _world_black_list = _file.getStringList("WorldBlackList");
+        _check_update = _file.getBoolean("CheckUpdate", true);
     }
 
     public Boolean isDebug() {
@@ -222,6 +223,10 @@ public class ConfigManager {
         return _world_black_list;
     }
 
+    public Boolean getCheckUpdate() {
+        return _check_update;
+    }
+
 
     private final Dominion _plugin;
     private FileConfiguration _file;
@@ -247,4 +252,5 @@ public class ConfigManager {
     private Integer _limit_amount;
     private Integer _limit_depth;
     private List<String> _world_black_list;
+    private Boolean _check_update;
 }
