@@ -34,7 +34,6 @@ public final class Dominion extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         Metrics metrics = new Metrics(this, 21445);
-        GiteaReleaseCheck giteaReleaseCheck = null;
         if (config.getCheckUpdate()) {
             giteaReleaseCheck = new GiteaReleaseCheck(this,
                     "https://ssl.lunadeer.cn:14446",
@@ -68,4 +67,5 @@ public final class Dominion extends JavaPlugin {
     public static Connection dbConnection;
     public static Map<UUID, Map<Integer, Location>> pointsSelect = new HashMap<>();
     public static Scheduler scheduler;
+    private GiteaReleaseCheck giteaReleaseCheck;
 }
