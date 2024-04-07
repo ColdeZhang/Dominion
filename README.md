@@ -2,9 +2,9 @@
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/03/28/6604f0cec0f0e.png" alt="" width="70%">
 
-### [开源地址](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion) | [文档地址](https://ssl.lunadeer.cn:14448/doc/23/) 
-### [统计页面](https://bstats.org/plugin/bukkit/Dominion/21445) | [下载页面](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion/releases)
-### [Hangar](https://hangar.papermc.io/zhangyuheng/Dominion)
+### [开源地址](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion) | [文档地址](https://ssl.lunadeer.cn:14448/doc/23/)
+### [下载页面](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion/releases)
+### [统计页面](https://bstats.org/plugin/bukkit/Dominion/21445) | [Hangar](https://hangar.papermc.io/zhangyuheng/Dominion)
 
 </div>
 
