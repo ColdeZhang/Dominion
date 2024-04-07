@@ -3,10 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.events.EnvironmentEvents;
 import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;
-import cn.lunadeer.dominion.utils.ConfigManager;
-import cn.lunadeer.dominion.utils.Database;
-import cn.lunadeer.dominion.utils.Scheduler;
-import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,6 +34,10 @@ public final class Dominion extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         Metrics metrics = new Metrics(this, 21445);
+        GiteaReleaseCheck giteaReleaseCheck = new GiteaReleaseCheck(this,
+                "https://ssl.lunadeer.cn:14446",
+                "zhangyuheng",
+                "Dominion");
 
         XLogger.info("领地插件已启动");
         XLogger.info("版本：" + this.getPluginMeta().getVersion());
