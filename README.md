@@ -196,6 +196,8 @@ AutoCleanAfterDays: 180
 
 BlueMap: true
 
+CheckUpdate: true
+
 Debug: false
 ```
 
