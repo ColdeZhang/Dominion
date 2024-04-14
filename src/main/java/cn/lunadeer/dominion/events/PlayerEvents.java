@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -22,7 +23,10 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.inventory.Inventory;
 import org.spigotmc.event.entity.EntityMountEvent;
+
+import static cn.lunadeer.dominion.events.Apis.getInvDominion;
 
 public class PlayerEvents implements Listener {
     @EventHandler
@@ -81,7 +85,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getDamager();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
         if (dom == null) {
             return;
         }
@@ -165,7 +169,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // bed
     public void onBedUse(PlayerBedEnterEvent event) {
         Player bukkitPlayer = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = Cache.instance.getDominion(event.getBed().getLocation());
         if (dom == null) {
             return;
         }
@@ -219,7 +223,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // break
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
         if (dom == null) {
             return;
         }
@@ -288,12 +292,13 @@ public class PlayerEvents implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
+        Block block = event.getClickedBlock();
+        Material clicked = block.getType();
         if (clicked != Material.CAKE) {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         if (dom == null) {
             return;
         }
@@ -315,8 +320,13 @@ public class PlayerEvents implements Listener {
     }
 
     // 检查是否有容器权限
-    private static boolean hasContainerPermission(Player player) {
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+    private static boolean hasContainerPermission(Player player, Location loc) {
+        DominionDTO dom;
+        if (loc == null) {
+            dom = Cache.instance.getPlayerCurrentDominion(player);
+        } else {
+            dom = Cache.instance.getDominion(loc);
+        }
         if (dom == null) {
             return true;
         }
@@ -348,7 +358,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getPlayer();
-        if (hasContainerPermission(bukkitPlayer)) {
+        if (hasContainerPermission(bukkitPlayer, event.getInventory().getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -357,7 +367,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // container (armor stand)
     public void manipulateArmorStand(PlayerArmorStandManipulateEvent event) {
         Player bukkitPlayer = event.getPlayer();
-        if (hasContainerPermission(bukkitPlayer)) {
+        if (hasContainerPermission(bukkitPlayer, event.getRightClicked().getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -370,7 +380,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = event.getPlayer();
-        if (hasContainerPermission(bukkitPlayer)) {
+        if (hasContainerPermission(bukkitPlayer, event.getRightClicked().getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -386,7 +396,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getDamager();
-        if (hasContainerPermission(bukkitPlayer)) {
+        if (hasContainerPermission(bukkitPlayer, event.getEntity().getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -394,14 +404,15 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // craft
     public void onCraft(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.WORKBENCH) {
+        Inventory inv = event.getInventory();
+        if (inv.getType() != InventoryType.WORKBENCH) {
             return;
         }
         if (!(event.getPlayer() instanceof Player)) {
             return;
         }
         Player bukkitPlayer = (Player) event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = getInvDominion(bukkitPlayer, inv);
         if (dom == null) {
             return;
         }
@@ -432,7 +443,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
         if (dom == null) {
             return;
         }
@@ -497,7 +508,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
         if (dom == null) {
             return;
         }
@@ -524,7 +535,7 @@ public class PlayerEvents implements Listener {
         if (player == null) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
         if (dom == null) {
             return;
         }
@@ -584,7 +595,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
         if (dom == null) {
             return;
         }
@@ -641,7 +652,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getRightClicked().getLocation());
         if (dom == null) {
             return;
         }
@@ -684,7 +695,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         if (dom == null) {
             return;
         }
@@ -710,12 +721,13 @@ public class PlayerEvents implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
+        Block block = event.getClickedBlock();
+        Material clicked = block.getType();
         if (clicked != Material.BEEHIVE && clicked != Material.BEE_NEST) {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         if (dom == null) {
             return;
         }
@@ -738,8 +750,12 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // hook
     public void onHook(PlayerFishEvent event) {
+        Entity caught = event.getCaught();
+        if (caught == null) {
+            return;
+        }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(caught.getLocation());
         if (dom == null) {
             return;
         }
@@ -775,7 +791,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
         if (dom == null) {
             return;
         }
@@ -802,7 +818,7 @@ public class PlayerEvents implements Listener {
         if (player == null) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
         if (dom == null) {
             return;
         }
@@ -828,12 +844,13 @@ public class PlayerEvents implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
+        Block block = event.getClickedBlock();
+        Material clicked = block.getType();
         if (clicked != Material.LEVER) {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         if (dom == null) {
             return;
         }
@@ -859,12 +876,13 @@ public class PlayerEvents implements Listener {
         if (!(event.getDamager() instanceof Player)) {
             return;
         }
-        // 如果不是动物 则不处理
-        if (!(event.getEntity() instanceof Monster)) {
+        // 如果不是怪物 则不处理
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Monster)) {
             return;
         }
         Player bukkitPlayer = (Player) event.getDamager();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         if (dom == null) {
             return;
         }
@@ -912,7 +930,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // place
     public void onPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        if (onPlace(player)) {
+        if (onPlace(player, event.getBlock().getLocation())) {
             return;
         }
         Notification.error(player, "你没有放置方块的权限");
@@ -922,15 +940,15 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlaceLavaOrWater(PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
-        if (onPlace(player)) {
+        if (onPlace(player, event.getBlock().getLocation())) {
             return;
         }
         Notification.error(player, "你没有放置方块的权限");
         event.setCancelled(true);
     }
 
-    public static boolean onPlace(Player player) {
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+    public static boolean onPlace(Player player, Location location) {
+        DominionDTO dom = Cache.instance.getDominion(location);
         if (dom == null) {
             return true;
         }
@@ -950,7 +968,8 @@ public class PlayerEvents implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
+        Block block = event.getClickedBlock();
+        Material clicked = block.getType();
         if (clicked != Material.STONE_PRESSURE_PLATE &&
                 clicked != Material.LIGHT_WEIGHTED_PRESSURE_PLATE &&
                 clicked != Material.HEAVY_WEIGHTED_PRESSURE_PLATE &&
@@ -969,7 +988,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         if (dom == null) {
             return;
         }
@@ -996,7 +1015,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = (Player) event.getEntity();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getMount().getLocation());
         if (dom == null) {
             return;
         }
@@ -1022,12 +1041,13 @@ public class PlayerEvents implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
+        Block block = event.getClickedBlock();
+        Material clicked = block.getType();
         if (clicked != Material.REPEATER) {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         if (dom == null) {
             return;
         }
@@ -1051,7 +1071,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // shear
     public void onShear(PlayerShearEntityEvent event) {
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
         if (dom == null) {
             return;
         }
@@ -1113,7 +1133,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getPlayer();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
         if (dom == null) {
             return;
         }
@@ -1140,7 +1160,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = (Player) event.getAttacker();
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(event.getVehicle().getLocation());
         if (dom == null) {
             return;
         }
@@ -1171,7 +1191,7 @@ public class PlayerEvents implements Listener {
         if (!(entity instanceof Vehicle)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         if (dom == null) {
             return;
         }
