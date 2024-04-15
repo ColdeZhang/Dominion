@@ -155,11 +155,11 @@ public class PrivilegeInfo {
         if (privilege.getCraft()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " craft false " + dominion.getName() + " " + page))
-                    .append("工作台"));
+                    .append("使用工作台"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " craft true " + dominion.getName() + " " + page))
-                    .append("工作台"));
+                    .append("使用工作台"));
         }
         if (privilege.getComparer()){
             view.add(Line.create()
@@ -200,20 +200,20 @@ public class PrivilegeInfo {
         if (privilege.getEnchant()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " enchant false " + dominion.getName() + " " + page))
-                    .append("附魔"));
+                    .append("使用附魔台"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " enchant true " + dominion.getName() + " " + page))
-                    .append("附魔"));
+                    .append("使用附魔台"));
         }
         if (privilege.getEnderPearl()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " ender_pearl false " + dominion.getName() + " " + page))
-                    .append("末影珍珠"));
+                    .append("投掷末影珍珠"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " ender_pearl true " + dominion.getName() + " " + page))
-                    .append("末影珍珠"));
+                    .append("投掷末影珍珠"));
         }
         if (privilege.getFeed()) {
             view.add(Line.create()
@@ -299,11 +299,11 @@ public class PrivilegeInfo {
         if (privilege.getMove()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " move false " + dominion.getName() + " " + page))
-                    .append("移动"));
+                    .append("玩家移动"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " move true " + dominion.getName() + " " + page))
-                    .append("移动"));
+                    .append("玩家移动"));
         }
         if (privilege.getPlace()) {
             view.add(Line.create()

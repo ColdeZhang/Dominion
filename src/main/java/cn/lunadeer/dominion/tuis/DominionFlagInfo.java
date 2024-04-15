@@ -185,11 +185,11 @@ public class DominionFlagInfo {
         if (dominion.getEnchant()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set enchant false " + dominion.getName() + " " + page))
-                    .append("附魔"));
+                    .append("使用附魔台"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set enchant true " + dominion.getName() + " " + page))
-                    .append("附魔"));
+                    .append("使用附魔台"));
         }
         if (dominion.getEnderMan()) {
             view.add(Line.create()
@@ -203,11 +203,11 @@ public class DominionFlagInfo {
         if (dominion.getEnderPearl()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set ender_pearl false " + dominion.getName() + " " + page))
-                    .append("末影珍珠"));
+                    .append("投掷末影珍珠"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set ender_pearl true " + dominion.getName() + " " + page))
-                    .append("末影珍珠"));
+                    .append("投掷末影珍珠"));
         }
         if (dominion.getFeed()) {
             view.add(Line.create()
@@ -320,11 +320,11 @@ public class DominionFlagInfo {
         if (dominion.getMove()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set move false " + dominion.getName() + " " + page))
-                    .append("移动"));
+                    .append("玩家移动"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set move true " + dominion.getName() + " " + page))
-                    .append("移动"));
+                    .append("玩家移动"));
         }
         if (dominion.getPlace()) {
             view.add(Line.create()
