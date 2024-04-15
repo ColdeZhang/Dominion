@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class Cache {
 
@@ -24,6 +25,24 @@ public class Cache {
      * 从数据库加载所有领地
      */
     public void loadDominions() {
+        if (_last_update_dominion + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            XLogger.debug("run loadDominionsExecution directly");
+            loadDominionsExecution();
+        } else {
+            if (_update_dominion_is_scheduled) return;
+            XLogger.debug("schedule loadDominionsExecution");
+            _update_dominion_is_scheduled = true;
+            Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
+                        XLogger.debug("run loadDominionsExecution scheduled");
+                        loadDominionsExecution();
+                        _update_dominion_is_scheduled = false;
+                    },
+                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion),
+                    TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void loadDominionsExecution() {
         id_dominions = new ConcurrentHashMap<>();
         world_dominions = new ConcurrentHashMap<>();
         dominion_children = new ConcurrentHashMap<>();
@@ -45,12 +64,28 @@ public class Cache {
             }
         }
         BlueMapConnect.render();
+        _last_update_dominion = System.currentTimeMillis();
     }
 
     /**
      * 从数据库加载所有玩家特权
      */
     public void loadPlayerPrivileges() {
+        if (_last_update_privilege + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            loadPlayerPrivilegesExecution();
+        } else {
+            if (_update_privilege_is_scheduled) return;
+            _update_privilege_is_scheduled = true;
+            Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
+                        loadPlayerPrivilegesExecution();
+                        _update_privilege_is_scheduled = false;
+                    },
+                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_privilege),
+                    TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void loadPlayerPrivilegesExecution() {
         List<PlayerPrivilegeDTO> all_privileges = PlayerPrivilegeDTO.selectAll();
         if (all_privileges == null) {
             XLogger.err("加载玩家特权失败");
@@ -64,6 +99,7 @@ public class Cache {
             }
             player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
         }
+        _last_update_privilege = System.currentTimeMillis();
     }
 
     /**
@@ -227,4 +263,9 @@ public class Cache {
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
     private final Map<UUID, Integer> player_current_dominion_id;                         // 玩家当前所在领地
     private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
+    private long _last_update_dominion = 0;
+    private boolean _update_dominion_is_scheduled = false;
+    private long _last_update_privilege = 0;
+    private boolean _update_privilege_is_scheduled = false;
+    private static final long UPDATE_INTERVAL = 1000 * 4;
 }
