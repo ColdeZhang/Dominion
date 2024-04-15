@@ -12,6 +12,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Cache {
 
@@ -25,19 +27,19 @@ public class Cache {
      * 从数据库加载所有领地
      */
     public void loadDominions() {
-        if (_last_update_dominion + UPDATE_INTERVAL < System.currentTimeMillis()) {
+        if (_last_update_dominion.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
             XLogger.debug("run loadDominionsExecution directly");
             loadDominionsExecution();
         } else {
-            if (_update_dominion_is_scheduled) return;
+            if (_update_dominion_is_scheduled.get()) return;
             XLogger.debug("schedule loadDominionsExecution");
-            _update_dominion_is_scheduled = true;
+            _update_dominion_is_scheduled.set(true);
             Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
                         XLogger.debug("run loadDominionsExecution scheduled");
                         loadDominionsExecution();
-                        _update_dominion_is_scheduled = false;
+                        _update_dominion_is_scheduled.set(false);
                     },
-                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion),
+                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get()),
                     TimeUnit.MILLISECONDS);
         }
     }
@@ -64,23 +66,23 @@ public class Cache {
             }
         }
         BlueMapConnect.render();
-        _last_update_dominion = System.currentTimeMillis();
+        _last_update_dominion.set(System.currentTimeMillis());
     }
 
     /**
      * 从数据库加载所有玩家特权
      */
     public void loadPlayerPrivileges() {
-        if (_last_update_privilege + UPDATE_INTERVAL < System.currentTimeMillis()) {
+        if (_last_update_privilege.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
             loadPlayerPrivilegesExecution();
         } else {
-            if (_update_privilege_is_scheduled) return;
-            _update_privilege_is_scheduled = true;
+            if (_update_privilege_is_scheduled.get()) return;
+            _update_privilege_is_scheduled.set(true);
             Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
                         loadPlayerPrivilegesExecution();
-                        _update_privilege_is_scheduled = false;
+                        _update_privilege_is_scheduled.set(false);
                     },
-                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_privilege),
+                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_privilege.get()),
                     TimeUnit.MILLISECONDS);
         }
     }
@@ -99,7 +101,7 @@ public class Cache {
             }
             player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
         }
-        _last_update_privilege = System.currentTimeMillis();
+        _last_update_privilege.set(System.currentTimeMillis());
     }
 
     /**
@@ -263,9 +265,9 @@ public class Cache {
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
     private final Map<UUID, Integer> player_current_dominion_id;                         // 玩家当前所在领地
     private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
-    private long _last_update_dominion = 0;
-    private boolean _update_dominion_is_scheduled = false;
-    private long _last_update_privilege = 0;
-    private boolean _update_privilege_is_scheduled = false;
+    private final AtomicLong _last_update_dominion = new AtomicLong(0);
+    private final AtomicBoolean _update_dominion_is_scheduled = new AtomicBoolean(false);
+    private final AtomicLong _last_update_privilege = new AtomicLong(0);
+    private final AtomicBoolean _update_privilege_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
 }
