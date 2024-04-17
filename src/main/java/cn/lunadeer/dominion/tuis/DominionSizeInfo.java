@@ -35,6 +35,7 @@ public class DominionSizeInfo {
                 .addLine(Line.create().append("领地大小：").append((x2 - x1) + " x" + (y2 - y1) + " x" + (z2 - z1)))
                 .addLine(Line.create().append("中心坐标：").append((x1 + (x2 - x1) / 2) + " " + (y1 + (y2 - y1) / 2) + " " + (z1 + (z2 - z1) / 2)))
                 .addLine(Line.create().append("垂直高度：").append(String.valueOf(y2 - y1)))
+                .addLine(Line.create().append("Y轴坐标：").append(y1 + " ~ " + y2))
                 .addLine(Line.create().append("水平面积：").append(String.valueOf((x2 - x1) * (z2 - z1))))
                 .addLine(Line.create().append("领地体积：").append(String.valueOf((x2 - x1) * (y2 - y1) * (z2 - z1))))
                 .actionBar(Line.create()
