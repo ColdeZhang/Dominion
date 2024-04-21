@@ -125,6 +125,12 @@ public class Commands implements TabExecutor {
             case "set_leave_msg":
                 DominionOperate.setLeaveMessage(sender, args);
                 break;
+            case "set_tp_location":
+                DominionOperate.setTpLocation(sender, args);
+                break;
+            case "tp":
+                DominionOperate.teleportToDominion(sender, args);
+                break;
             case "rename":
                 DominionOperate.renameDominion(sender, args);
                 break;
@@ -167,6 +173,8 @@ public class Commands implements TabExecutor {
                     "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info",
                     "set_enter_msg",
                     "set_leave_msg",
+                    "set_tp_location",
+                    "tp",
                     "rename",
                     "give",
                     "reload_cache",
@@ -189,7 +197,10 @@ public class Commands implements TabExecutor {
                 case "privilege_list":
                 case "rename":
                 case "give":
+                case "set_tp_location":
                     return playerDominions(sender);
+                case "tp":
+                    return allDominions();
                 case "set":
                     return dominionFlags();
                 case "create_privilege":

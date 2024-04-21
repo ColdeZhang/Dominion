@@ -359,6 +359,15 @@ public class PrivilegeInfo {
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " shoot true " + dominion.getName() + " " + page))
                     .append("射箭/雪球/三叉戟"));
         }
+        if (privilege.getTeleport()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " teleport false " + dominion.getName() + " " + page))
+                    .append("领地传送"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " teleport true " + dominion.getName() + " " + page))
+                    .append("领地传送"));
+        }
         if (privilege.getTrade()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " trade false " + dominion.getName() + " " + page))

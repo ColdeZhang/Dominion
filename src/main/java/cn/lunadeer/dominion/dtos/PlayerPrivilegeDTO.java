@@ -27,7 +27,7 @@ public class PlayerPrivilegeDTO {
                 "place, pressure, " +
                 "riding, repeater, " +
                 "shear, shoot, " +
-                "trade, " +
+                "teleport, trade, " +
                 "vehicle_destroy, " +
                 "vehicle_spawn" +
                 ") VALUES (" +
@@ -46,7 +46,7 @@ public class PlayerPrivilegeDTO {
                 player.getPlace() + ", " + player.getPressure() + ", " +
                 player.getRiding() + ", " + player.getRepeater() + ", " +
                 player.getShear() + ", " + player.getShoot() + ", " +
-                player.getTrade() + ", " +
+                player.getTeleport() + ", " + player.getTrade() + ", " +
                 player.getVehicleDestroy() + ", " +
                 player.getVehicleSpawn() + " " +
                 ") RETURNING *;";
@@ -121,6 +121,7 @@ public class PlayerPrivilegeDTO {
     private Boolean repeater;
     private Boolean shear;
     private Boolean shoot;
+    private Boolean teleport;
     private Boolean trade;
     private Boolean vehicleDestroy;
     private Boolean vehicleSpawn;
@@ -271,6 +272,10 @@ public class PlayerPrivilegeDTO {
 
     public Boolean getShoot() {
         return shoot;
+    }
+
+    public Boolean getTeleport() {
+        return teleport;
     }
 
     public Boolean getTrade() {
@@ -445,6 +450,11 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
+    public PlayerPrivilegeDTO setTeleport(Boolean teleport) {
+        this.teleport = teleport;
+        return update(this);
+    }
+
     public PlayerPrivilegeDTO setTrade(Boolean trade) {
         this.trade = trade;
         return update(this);
@@ -485,7 +495,7 @@ public class PlayerPrivilegeDTO {
                                Boolean place, Boolean pressure,
                                Boolean riding, Boolean repeater,
                                Boolean shear, Boolean shoot,
-                               Boolean trade,
+                               Boolean teleport, Boolean trade,
                                Boolean vehicleDestroy,
                                Boolean vehicleSpawn) {
         this.id = id;
@@ -525,6 +535,7 @@ public class PlayerPrivilegeDTO {
         this.repeater = repeater;
         this.shear = shear;
         this.shoot = shoot;
+        this.teleport = teleport;
         this.trade = trade;
         this.vehicleDestroy = vehicleDestroy;
         this.vehicleSpawn = vehicleSpawn;
@@ -545,7 +556,7 @@ public class PlayerPrivilegeDTO {
                               Boolean place, Boolean pressure,
                               Boolean riding, Boolean repeater,
                               Boolean shear, Boolean shoot,
-                              Boolean trade,
+                              Boolean teleport, Boolean trade,
                               Boolean vehicleDestroy,
                               Boolean vehicleSpawn
     ) {
@@ -564,7 +575,7 @@ public class PlayerPrivilegeDTO {
                 place, pressure,
                 riding, repeater,
                 shear, shoot,
-                trade,
+                teleport, trade,
                 vehicleDestroy,
                 vehicleSpawn);
     }
@@ -616,6 +627,7 @@ public class PlayerPrivilegeDTO {
                         rs.getBoolean("repeater"),
                         rs.getBoolean("shear"),
                         rs.getBoolean("shoot"),
+                        rs.getBoolean("teleport"),
                         rs.getBoolean("trade"),
                         rs.getBoolean("vehicle_destroy"),
                         rs.getBoolean("vehicle_spawn")
@@ -666,6 +678,7 @@ public class PlayerPrivilegeDTO {
                 "repeater = " + player.getRepeater() + ", " +
                 "shear = " + player.getShear() + ", " +
                 "shoot = " + player.getShoot() + ", " +
+                "teleport = " + player.getTeleport() + ", " +
                 "trade = " + player.getTrade() + ", " +
                 "vehicle_destroy = " + player.getVehicleDestroy() + ", " +
                 "vehicle_spawn = " + player.getVehicleSpawn() + " " +

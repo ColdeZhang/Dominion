@@ -1,13 +1,18 @@
 package cn.lunadeer.dominion.commands;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import static cn.lunadeer.dominion.commands.Apis.*;
@@ -273,6 +278,27 @@ public class DominionOperate {
     }
 
     /**
+     * 设置领地传送点
+     * /dominion set_tp_location [领地名称]
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void setTpLocation(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length == 1) {
+            DominionController.setTpLocation(player);
+            return;
+        }
+        if (args.length == 2) {
+            DominionController.setTpLocation(player, args[1]);
+            return;
+        }
+        Notification.error(sender, "用法: /dominion set_tp_location [领地名称]");
+    }
+
+    /**
      * 重命名领地
      * /dominion rename <原领地名称> <新领地名称>
      *
@@ -314,5 +340,77 @@ public class DominionOperate {
             }
         }
         Notification.error(sender, "用法: /dominion give <领地名称> <玩家名称>");
+    }
+
+    /**
+     * 传送到领地
+     * /dominion tp <领地名称>
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void teleportToDominion(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length != 2) {
+            Notification.error(sender, "用法: /dominion tp <领地名称>");
+            return;
+        }
+        if (!Dominion.config.getTpEnable()) {
+            Notification.error(sender, "管理员没有开启领地传送功能");
+            return;
+        }
+        DominionDTO dominionDTO = DominionDTO.select(args[1]);
+        if (dominionDTO == null) {
+            Notification.error(sender, "领地不存在");
+            return;
+        }
+        PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
+        if (privilegeDTO == null) {
+            if (!dominionDTO.getTeleport()) {
+                Notification.error(sender, "此领地禁止传送");
+                return;
+            }
+        } else {
+            if (!privilegeDTO.getTeleport()) {
+                Notification.error(sender, "你不被允许传送到这个领地");
+                return;
+            }
+        }
+
+        Location location = dominionDTO.getTpLocation();
+        if (location == null) {
+            Notification.error(sender, "此领地没有设置传送点");
+            return;
+//            int center_x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
+//            int center_z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
+//            // find safe location
+//            World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
+//            if (world == null) {
+//                Notification.error(sender, "此领地所在世界不存在");
+//                XLogger.warn("领地 " + dominionDTO.getName() + " 所在世界不存在");
+//                return;
+//            }
+//            location = world.getHighestBlockAt(center_x, center_z).getLocation();
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime next_time = Cache.instance.NextTimeAllowTeleport.get(player.getUniqueId());
+        if (next_time != null) {
+            if (now.isBefore(next_time)) {
+                long secs_until_next = now.until(next_time, java.time.temporal.ChronoUnit.SECONDS);
+                Notification.error(player, "请等待 " + secs_until_next + " 秒后再次传送");
+                return;
+            }
+        }
+
+        Notification.info(player, "传送将在 " + Dominion.config.getTpDelay() + " 秒后执行");
+        Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
+        Dominion.scheduler.region.runDelayed(Dominion.instance, (instance) -> {
+            if (player.isOnline()) {
+                player.teleportAsync(location);
+                Notification.info(player, "已将你传送到 " + dominionDTO.getName());
+            }
+        }, Dominion.config.getTpDelay() == 0 ? 1 : 20L * Dominion.config.getTpDelay());
     }
 }

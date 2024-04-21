@@ -20,6 +20,13 @@ Limit:
   Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
   WorldBlackList: []
 
+Teleport:
+  Enable: true
+  # 传送延迟 秒
+  Delay: 0
+  # 冷却时间 秒
+  CoolDown: 0
+
 # -1 表示不开启
 AutoCleanAfterDays: 180
 

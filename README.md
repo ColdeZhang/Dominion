@@ -3,7 +3,9 @@
 <img src="https://ssl.lunadeer.cn:14437/i/2024/03/28/6604f0cec0f0e.png" alt="" width="70%">
 
 ### [开源地址](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion) | [文档地址](https://ssl.lunadeer.cn:14448/doc/23/)
+
 ### [下载页面](https://ssl.lunadeer.cn:14446/zhangyuheng/Dominion/releases)
+
 ### [统计页面](https://bstats.org/plugin/bukkit/Dominion/21445) | [Hangar](https://hangar.papermc.io/zhangyuheng/Dominion)
 
 </div>
@@ -147,6 +149,8 @@
 | 缩小领地       | `/dominion contract [大小] [领地名称]`                            |
 | 设置进入领地的提示语 | `/dominion set_enter_msg <提示语> [领地名称]`                      |
 | 设置离开领地的提示语 | `/dominion set_leave_msg <提示语> [领地名称]`                      |
+| 设置领地传送点    | `/dominion set_tp_location [领地名称]`                          |
+| 传送到领地传送点   | `/dominion tp <领地名称>`                                       |
 | 重命名领地      | `/dominion rename <原领地名称> <新领地名称>`                          |
 | 转让领地       | `/dominion give <领地名称> <玩家名称>`                              |
 | 删除领地       | `/dominion delete <领地名称>`                                   |
@@ -197,6 +201,13 @@ Limit:
 AutoCleanAfterDays: 180
 
 BlueMap: true
+
+Teleport:
+  Enable: true
+  # 传送延迟 秒
+  Delay: 0
+  # 冷却时间 秒
+  CoolDown: 0
 
 CheckUpdate: true
 

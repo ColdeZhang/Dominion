@@ -24,14 +24,17 @@ public class DominionManage {
         }
         if (noAuthToManage(player, dominion)) return;
         Line size_info = Line.create()
-                .append(Button.create("尺寸信息", "/dominion info " + dominion.getName()))
-                .append("查看领地尺寸信息");
+                .append(Button.create("详细信息", "/dominion info " + dominion.getName()))
+                .append("查看领地详细信息");
         Line flag_info = Line.create()
                 .append(Button.create("权限设置", "/dominion flag_info " + dominion.getName()))
                 .append("管理领地默认权限");
         Line privilege_list = Line.create()
                 .append(Button.create("玩家权限", "/dominion privilege_list " + dominion.getName()))
                 .append("管理玩家特权");
+        Line set_tp = Line.create()
+                .append(Button.create("设置传送点", "/dominion set_tp_location " + dominion.getName()))
+                .append("设置当前位置为此领地传送点");
         ListView view = ListView.create(10, "/dominion manage " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 管理界面")
                 .navigator(Line.create()
@@ -41,6 +44,7 @@ public class DominionManage {
                 .add(size_info)
                 .add(flag_info)
                 .add(privilege_list)
+                .add(set_tp)
                 .showOn(player, 1);
     }
 }

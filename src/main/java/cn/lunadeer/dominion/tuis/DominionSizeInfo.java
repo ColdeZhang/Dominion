@@ -38,6 +38,11 @@ public class DominionSizeInfo {
                 .addLine(Line.create().append("Y轴坐标：").append(y1 + " ~ " + y2))
                 .addLine(Line.create().append("水平面积：").append(String.valueOf((x2 - x1) * (z2 - z1))))
                 .addLine(Line.create().append("领地体积：").append(String.valueOf((x2 - x1) * (y2 - y1) * (z2 - z1))))
+                .addLine(Line.create().append("传送点坐标：").append(
+                        dominion.getTpLocation() == null ?
+                                "无" :
+                                dominion.getTpLocation().getX() + " " + dominion.getTpLocation().getY() + " " + dominion.getTpLocation().getZ()
+                ))
                 .actionBar(Line.create()
                         .append(Button.create("管理界面", "/dominion manage " + dominion.getName()))
                         .append(Button.create("权限列表", "/dominion flag_info " + dominion.getName())))

@@ -23,6 +23,10 @@ public class DominionController {
         return DominionDTO.selectAll(owner.getUniqueId());
     }
 
+    public static List<DominionDTO> all() {
+        return DominionDTO.selectAll();
+    }
+
     /**
      * 创建领地
      *
@@ -425,6 +429,55 @@ public class DominionController {
         }
         dominion.setLeaveMessage(message);
         Notification.info(operator, "成功设置领地 " + dominion_name + " 的离开消息");
+    }
+
+    /**
+     * 设置领地的传送点
+     *
+     * @param operator 操作者
+     */
+    public static void setTpLocation(Player operator) {
+        DominionDTO dominion = getPlayerCurrentDominion(operator);
+        if (dominion == null) {
+            return;
+        }
+        setTpLocation(operator, dominion.getName());
+    }
+
+    /**
+     * 设置领地的传送点
+     *
+     * @param operator      操作者
+     * @param dominion_name 领地名称
+     */
+    public static void setTpLocation(Player operator, String dominion_name) {
+        DominionDTO dominion = DominionDTO.select(dominion_name);
+        if (dominion == null) {
+            Notification.error(operator, "领地 " + dominion_name + " 不存在");
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            Notification.error(operator, "你不是领地 " + dominion_name + " 的拥有者，无法执行此操作");
+            return;
+        }
+        // 检查是否在领地内
+        if (operator.getWorld().getName().equals(dominion.getWorld()) &&
+                operator.getLocation().getBlockX() >= dominion.getX1() &&
+                operator.getLocation().getBlockX() <= dominion.getX2() &&
+                operator.getLocation().getBlockY() >= dominion.getY1() &&
+                operator.getLocation().getBlockY() <= dominion.getY2() &&
+                operator.getLocation().getBlockZ() >= dominion.getZ1() &&
+                operator.getLocation().getBlockZ() <= dominion.getZ2()) {
+            Location loc = operator.getLocation();
+            loc.setY(loc.getY() + 1.5);
+            dominion.setTpLocation(loc);
+            Notification.info(operator, "成功设置领地 " + dominion_name + " 的传送点," +
+                    "当前位置为 " + operator.getLocation().getBlockX() + " " +
+                    operator.getLocation().getBlockY() + 1 + " " +
+                    operator.getLocation().getBlockZ());
+        } else {
+            Notification.error(operator, "你不在领地 " + dominion_name + " 内，无法设置传送点");
+        }
     }
 
     /**

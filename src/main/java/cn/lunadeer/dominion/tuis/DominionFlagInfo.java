@@ -50,11 +50,11 @@ public class DominionFlagInfo {
         if (dominion.getAnimalKilling()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set animal_killing false " + dominion.getName() + " " + page))
-                    .append("动物伤害"));
+                    .append("对动物造成伤害"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set animal_killing true " + dominion.getName() + " " + page))
-                    .append("动物伤害"));
+                    .append("对动物造成伤害"));
         }
         if (dominion.getAnvil()) {
             view.add(Line.create()
@@ -131,11 +131,11 @@ public class DominionFlagInfo {
         if (dominion.getCraft()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set craft false " + dominion.getName() + " " + page))
-                    .append("工作台"));
+                    .append("使用工作台"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set craft true " + dominion.getName() + " " + page))
-                    .append("工作台"));
+                    .append("使用工作台"));
         }
         if (dominion.getCreeperExplode()) {
             view.add(Line.create()
@@ -230,20 +230,20 @@ public class DominionFlagInfo {
         if (dominion.getFlowInProtection()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set flow_in_protection false " + dominion.getName() + " " + page))
-                    .append("流体保护"));
+                    .append("外部流体是否可以进入"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set flow_in_protection true " + dominion.getName() + " " + page))
-                    .append("流体保护"));
+                    .append("外部流体是否可以进入"));
         }
         if (dominion.getGlow()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set glow false " + dominion.getName() + " " + page))
-                    .append("发光"));
+                    .append("玩家发光"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set glow true " + dominion.getName() + " " + page))
-                    .append("发光"));
+                    .append("玩家发光"));
         }
         if (dominion.getHarvest()) {
             view.add(Line.create()
@@ -311,11 +311,11 @@ public class DominionFlagInfo {
         if (dominion.getMonsterKilling()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set monster_killing false " + dominion.getName() + " " + page))
-                    .append("怪物伤害"));
+                    .append("对怪物造成伤害"));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set monster_killing true " + dominion.getName() + " " + page))
-                    .append("怪物伤害"));
+                    .append("对怪物造成伤害"));
         }
         if (dominion.getMove()) {
             view.add(Line.create()
@@ -379,6 +379,15 @@ public class DominionFlagInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐", "/dominion set shoot true " + dominion.getName() + " " + page))
                     .append("射箭/雪球/三叉戟"));
+        }
+        if (dominion.getTeleport()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set teleport false " + dominion.getName() + " " + page))
+                    .append("领地传送"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set teleport true " + dominion.getName() + " " + page))
+                    .append("领地传送"));
         }
         if (dominion.getTntExplode()) {
             view.add(Line.create()

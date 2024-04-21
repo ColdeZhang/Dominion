@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -270,4 +271,6 @@ public class Cache {
     private final AtomicLong _last_update_privilege = new AtomicLong(0);
     private final AtomicBoolean _update_privilege_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
+
+    public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
 }

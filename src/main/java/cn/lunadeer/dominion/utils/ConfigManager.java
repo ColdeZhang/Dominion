@@ -59,6 +59,9 @@ public class ConfigManager {
         _limit_depth = _file.getInt("Limit.Depth", 10);
         _world_black_list = _file.getStringList("WorldBlackList");
         _check_update = _file.getBoolean("CheckUpdate", true);
+        _tp_enable = _file.getBoolean("Teleport.Enable", false);
+        _tp_delay = _file.getInt("Teleport.Delay", 0);
+        _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
     }
 
     public Boolean isDebug() {
@@ -227,6 +230,36 @@ public class ConfigManager {
         return _check_update;
     }
 
+    public Boolean getTpEnable() {
+        return _tp_enable;
+    }
+
+    public void setTpEnable(Boolean tp_enable) {
+        _tp_enable = tp_enable;
+        _file.set("Teleport.Enable", tp_enable);
+        _plugin.saveConfig();
+    }
+
+    public Integer getTpDelay() {
+        return _tp_delay;
+    }
+
+    public void setTpDelay(Integer tp_delay) {
+        _tp_delay = tp_delay;
+        _file.set("Teleport.Delay", tp_delay);
+        _plugin.saveConfig();
+    }
+
+    public Integer getTpCoolDown() {
+        return _tp_cool_down;
+    }
+
+    public void setTpCoolDown(Integer tp_cool_down) {
+        _tp_cool_down = tp_cool_down;
+        _file.set("Teleport.CoolDown", tp_cool_down);
+        _plugin.saveConfig();
+    }
+
 
     private final Dominion _plugin;
     private FileConfiguration _file;
@@ -253,4 +286,8 @@ public class ConfigManager {
     private Integer _limit_depth;
     private List<String> _world_black_list;
     private Boolean _check_update;
+
+    private Boolean _tp_enable;
+    private Integer _tp_delay;
+    private Integer _tp_cool_down;
 }

@@ -87,6 +87,8 @@ public class Apis {
                 .add(Line.create().append("缩小领地").append("/dominion contract [大小] [领地名称]"))
                 .add(Line.create().append("设置进入领地的提示语").append("/dominion set_enter_msg <提示语> [领地名称]"))
                 .add(Line.create().append("设置离开领地的提示语").append("/dominion set_leave_msg <提示语> [领地名称]"))
+                .add(Line.create().append("设置领地传送点").append("/dominion set_tp_location [领地名称]"))
+                .add(Line.create().append("传送到领地").append("/dominion tp <领地名称>"))
                 .add(Line.create().append("重命名领地").append("/dominion rename <原领地名称> <新领地名称>"))
                 .add(Line.create().append("转让领地").append("/dominion give <领地名称> <玩家名称> [force]"))
                 .add(Line.create().append("删除领地").append("/dominion delete <领地名称> [force]"))

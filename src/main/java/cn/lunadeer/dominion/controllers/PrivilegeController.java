@@ -205,6 +205,9 @@ public class PrivilegeController {
             case "shoot":
                 privilege.setShoot(value);
                 break;
+            case "teleport":
+                privilege.setTeleport(value);
+                break;
             case "trade":
                 privilege.setTrade(value);
                 break;
@@ -266,7 +269,7 @@ public class PrivilegeController {
                 dom.getPlace(), dom.getPressure(),
                 dom.getRiding(), dom.getRepeater(),
                 dom.getShear(), dom.getShoot(),
-                dom.getTrade(),
+                dom.getTeleport(), dom.getTrade(),
                 dom.getVehicleDestroy(),
                 dom.getVehicleSpawn());
         privilege = PlayerPrivilegeDTO.insert(privilege);

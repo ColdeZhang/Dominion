@@ -30,6 +30,7 @@ public class Apis {
         Notification.info(sender, "  大小为" + (x2 - x1) + " x" + (y2 - y1) + " x" + (z2 - z1));
         Notification.info(sender, "  中心坐标为 " + (x1 + (x2 - x1) / 2) + " " + (y1 + (y2 - y1) / 2) + " " + (z1 + (z2 - z1) / 2));
         Notification.info(sender, "  高度为 " + (y2 - y1));
+        Notification.info(sender, "  Y1=" + y1 + " Y2=" + y2);
         Notification.info(sender, "  体积为 " + (x2 - x1) * (y2 - y1) * (z2 - z1));
         Notification.info(sender, "  领地的世界为 " + dominionDTO.getWorld());
         Notification.info(sender, "  领地的对角点坐标为 x1=" + x1 + " y1=" + y1 + " z1=" + z1 + " x2=" + x2 + " y2=" + y2 + " z2=" + z2);

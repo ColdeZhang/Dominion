@@ -1,13 +1,17 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.Database;
 import cn.lunadeer.dominion.utils.XLogger;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class DominionDTO {
@@ -32,6 +36,7 @@ public class DominionDTO {
                 Integer y2 = rs.getInt("y2");
                 Integer z2 = rs.getInt("z2");
                 Integer parentDomId = rs.getInt("parent_dom_id");
+                String tp_location = rs.getString("tp_location");
                 DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
                         rs.getString("join_message"),
                         rs.getString("leave_message"),
@@ -73,12 +78,14 @@ public class DominionDTO {
                         rs.getBoolean("repeater"),
                         rs.getBoolean("shear"),
                         rs.getBoolean("shoot"),
+                        rs.getBoolean("teleport"),
                         rs.getBoolean("tnt_explode"),
                         rs.getBoolean("trade"),
                         rs.getBoolean("trample"),
                         rs.getBoolean("vehicle_destroy"),
                         rs.getBoolean("vehicle_spawn"),
-                        rs.getBoolean("wither_spawn")
+                        rs.getBoolean("wither_spawn"),
+                        tp_location
                 );
                 dominions.add(dominion);
             }
@@ -168,6 +175,13 @@ public class DominionDTO {
     }
 
     private static DominionDTO update(DominionDTO dominion) {
+        String tp_location;
+        if (dominion.getTpLocation() == null) {
+            tp_location = "default";
+        } else {
+            Location loc = dominion.getTpLocation();
+            tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+        }
         String sql = "UPDATE dominion SET " +
                 "owner = '" + dominion.getOwner().toString() + "', " +
                 "name = '" + dominion.getName() + "', " +
@@ -219,12 +233,14 @@ public class DominionDTO {
                 "repeater = " + dominion.getRepeater() + ", " +
                 "shear = " + dominion.getShear() + ", " +
                 "shoot = " + dominion.getShoot() + ", " +
+                "teleport = " + dominion.getTeleport() + ", " +
                 "tnt_explode = " + dominion.getTntExplode() + ", " +                // dom only
                 "trade = " + dominion.getTrade() + ", " +
                 "trample = " + dominion.getTrample() + ", " +                       // dom only
                 "vehicle_destroy = " + dominion.getVehicleDestroy() + ", " +
                 "vehicle_spawn = " + dominion.getVehicleSpawn() + ", " +
-                "wither_spawn = " + dominion.getWitherSpawn() + " " +               // dom only
+                "wither_spawn = " + dominion.getWitherSpawn() + ", " +               // dom only
+                "tp_location = '" + tp_location + "' " +
                 " WHERE id = " + dominion.getId() +
                 " RETURNING *;";
         List<DominionDTO> dominions = query(sql);
@@ -250,10 +266,11 @@ public class DominionDTO {
                         Boolean place, Boolean pressure,
                         Boolean riding, Boolean repeater,
                         Boolean shear, Boolean shoot,
-                        Boolean tntExplode, Boolean trade, Boolean trample,
+                        Boolean teleport, Boolean tntExplode, Boolean trade, Boolean trample,
                         Boolean vehicleDestroy,
                         Boolean vehicleSpawn,
-                        Boolean witherSpawn) {
+                        Boolean witherSpawn,
+                        String tp_location) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -305,27 +322,43 @@ public class DominionDTO {
         this.repeater = repeater;
         this.shear = shear;
         this.shoot = shoot;
+        this.teleport = teleport;
         this.tntExplode = tntExplode;
         this.trade = trade;
         this.trample = trample;
         this.vehicleDestroy = vehicleDestroy;
         this.vehicleSpawn = vehicleSpawn;
         this.witherSpawn = witherSpawn;
+        if (Objects.equals(tp_location, "default")) {
+            this.tp_location = null;
+        } else {
+            // 0:0:0
+            String[] loc = tp_location.split(":");
+            World w = Dominion.instance.getServer().getWorld(world);
+            if (loc.length == 3 && w != null) {
+                this.tp_location = new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
+            } else {
+                XLogger.warn("领地传送点数据异常: " + tp_location);
+                this.tp_location = null;
+            }
+        }
     }
 
 
     private DominionDTO(Integer id, UUID owner, String name, String world,
                         Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2,
                         Integer parentDomId) {
-        this(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
-                "欢迎", "再见",
-                false, false, false, false, false,
-                false, false, false, false, false,
-                false, false, false, false, false, false,
-                false, false, false, false, false, true,
-                true, false, false, false, false, false, false, true,
-                false, true, false, false, false, false,
-                false, false, false, false, false, false, false, false);
+        this.id = id;
+        this.owner = owner;
+        this.name = name;
+        this.world = world;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.z1 = z1;
+        this.x2 = x2;
+        this.y2 = y2;
+        this.z2 = z2;
+        this.parentDomId = parentDomId;
     }
 
     public DominionDTO(UUID owner, String name, String world,
@@ -383,6 +416,7 @@ public class DominionDTO {
     private Boolean repeater = false;
     private Boolean shear = false;
     private Boolean shoot = false;
+    private Boolean teleport = false;
     private Boolean tntExplode = false;
     private Boolean trade = false;
     private Boolean trample = false;
@@ -390,6 +424,7 @@ public class DominionDTO {
     private Boolean vehicleSpawn = false;
     private Boolean witherSpawn = false;
     private Boolean harvest = false;
+    private Location tp_location = null;
 
     // getters and setters
     public Integer getId() {
@@ -837,6 +872,15 @@ public class DominionDTO {
         return update(this);
     }
 
+    public Boolean getTeleport() {
+        return teleport;
+    }
+
+    public DominionDTO setTeleport(Boolean teleport) {
+        this.teleport = teleport;
+        return update(this);
+    }
+
     public Boolean getTntExplode() {
         return tntExplode;
     }
@@ -907,6 +951,15 @@ public class DominionDTO {
         this.x2 = x2;
         this.y2 = y2;
         this.z2 = z2;
+        return update(this);
+    }
+
+    public Location getTpLocation() {
+        return tp_location;
+    }
+
+    public DominionDTO setTpLocation(Location loc) {
+        this.tp_location = loc;
         return update(this);
     }
 }
