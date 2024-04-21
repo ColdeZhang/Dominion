@@ -34,7 +34,7 @@ public class DominionOperate {
         }
         Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
         if (points == null || points.get(0) == null || points.get(1) == null) {
-            Notification.error(sender, "请先使用箭矢选择领地的对角线两点，或使用 /dominion auto_create <领地名称> 创建自动领地");
+            Notification.error(sender, "请先使用工具选择领地的对角线两点，或使用 /dominion auto_create <领地名称> 创建自动领地");
             return;
         }
         String name = args[1];
@@ -61,7 +61,7 @@ public class DominionOperate {
         }
         Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
         if (points == null || points.get(0) == null || points.get(1) == null) {
-            Notification.error(sender, "请先使用箭矢选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
+            Notification.error(sender, "请先使用工具选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
             return;
         }
         if (args.length == 2) {

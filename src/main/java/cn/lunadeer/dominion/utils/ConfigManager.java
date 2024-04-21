@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Dominion;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
@@ -62,6 +63,11 @@ public class ConfigManager {
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
         _tp_delay = _file.getInt("Teleport.Delay", 0);
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
+        _tool = _file.getString("Tool", "ARROW");
+        if (Material.getMaterial(_tool) == null) {
+            XLogger.err("工具名称设置错误，已重置为 ARROW");
+            setTool("ARROW");
+        }
     }
 
     public Boolean isDebug() {
@@ -260,6 +266,15 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Material getTool() {
+        return Material.getMaterial(_tool);
+    }
+
+    public void setTool(String tool) {
+        _tool = tool;
+        _file.set("Tool", tool);
+        _plugin.saveConfig();
+    }
 
     private final Dominion _plugin;
     private FileConfiguration _file;
@@ -290,4 +305,5 @@ public class ConfigManager {
     private Boolean _tp_enable;
     private Integer _tp_delay;
     private Integer _tp_cool_down;
+    private String _tool;
 }

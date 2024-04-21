@@ -6,19 +6,19 @@ Database:
   User: dominion
   Pass: dominion
 
-# -1 表示不开启
-AutoCreateRadius: 10
+# 自动圈地大小
+AutoCreateRadius: 10  #-1 表示不开启
 
 # -1 表示不限制
 Limit:
-  MinY: -64
-  MaxY: 320
-  SizeX: 128
-  SizeY: 64
-  SizeZ: 128
-  Amount: 10
+  MinY: -64     # 最小Y坐标
+  MaxY: 320     # 最大Y坐标
+  SizeX: 128    # X方向最大长度
+  SizeY: 64     # Y方向最大长度
+  SizeZ: 128    # Z方向最大长度
+  Amount: 10    # 最大领地数量
   Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
-  WorldBlackList: []
+  WorldBlackList: []  # 不允许领地的世界
 
 Teleport:
   Enable: true
@@ -27,8 +27,11 @@ Teleport:
   # 冷却时间 秒
   CoolDown: 0
 
-# -1 表示不开启
-AutoCleanAfterDays: 180
+# 自动清理长时间未上线玩家的领地
+AutoCleanAfterDays: 180 # -1 表示不开启
+
+# 圈地工具
+Tool: ARROW
 
 BlueMap: true
 

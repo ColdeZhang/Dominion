@@ -23,7 +23,7 @@ public class SelectPointEvents implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (item.getType() != Material.ARROW) {
+        if (item.getType() != Dominion.config.getTool()) {
             return;
         }
         Block block = event.getClickedBlock();

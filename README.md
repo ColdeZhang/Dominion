@@ -52,7 +52,7 @@
 
 领地有两种创建方式：1.手动选择区域创建；2.以操作者为中心自动创建。
 
-手动创建：需要使用箭矢作为选区工具，依次使用左键点选领地长方体区域的第一个点、右键点击长方体区域的第二个点。然后使用`/dominion create <领地名称>`
+手动创建：需要使用圈地工具（默认为箭矢），依次使用左键点选领地长方体区域的第一个点、右键点击长方体区域的第二个点。然后使用`/dominion create <领地名称>`
 创建领地，领地名称不可与其他领地重复。
 
 自动创建：不需要选择对角线点，会以玩家为中心自动创建一定区域的领地。使用 `/dominion auto_create <领地名称>`即可自动创建领地区域。
@@ -183,24 +183,19 @@ Database:
   User: dominion
   Pass: dominion
 
-# -1 表示不开启
-AutoCreateRadius: 10
+# 自动圈地大小
+AutoCreateRadius: 10  #-1 表示不开启
 
 # -1 表示不限制
 Limit:
-  MinY: -64
-  MaxY: 320
-  SizeX: 128
-  SizeY: 64
-  SizeZ: 128
-  Amount: 10
+  MinY: -64     # 最小Y坐标
+  MaxY: 320     # 最大Y坐标
+  SizeX: 128    # X方向最大长度
+  SizeY: 64     # Y方向最大长度
+  SizeZ: 128    # Z方向最大长度
+  Amount: 10    # 最大领地数量
   Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
-  WorldBlackList: [ ]
-
-# -1 表示不开启
-AutoCleanAfterDays: 180
-
-BlueMap: true
+  WorldBlackList: []  # 不允许领地的世界
 
 Teleport:
   Enable: true
@@ -208,6 +203,14 @@ Teleport:
   Delay: 0
   # 冷却时间 秒
   CoolDown: 0
+
+# 自动清理长时间未上线玩家的领地
+AutoCleanAfterDays: 180 # -1 表示不开启
+
+# 圈地工具
+Tool: ARROW
+
+BlueMap: true
 
 CheckUpdate: true
 
