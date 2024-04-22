@@ -8,6 +8,7 @@ import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -19,12 +20,18 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.spigotmc.event.entity.EntityMountEvent;
+
+import java.util.Objects;
 
 import static cn.lunadeer.dominion.events.Apis.getInvDominion;
 
@@ -223,25 +230,50 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // break
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
-        if (dom == null) {
+        if (onBreak(player, event.getBlock().getLocation())) {
             return;
         }
-        if (Apis.hasPermission(player, dom)) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // break - item frame
+    public void onItemFrameBreak(HangingBreakByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ItemFrame)) {
             return;
+        }
+        ItemFrame itemFrame = (ItemFrame) entity;
+        Entity remover = event.getRemover();
+        if (!(remover instanceof Player)) {
+            return;
+        }
+        if (onBreak((Player) event.getRemover(), itemFrame.getLocation())) {
+            return;
+        }
+        itemFrame.remove();
+        event.setCancelled(true);
+    }
+
+    public static boolean onBreak(Player player, Location location) {
+        DominionDTO dom = Cache.instance.getDominion(location);
+        if (dom == null) {
+            return true;
+        }
+        if (Apis.hasPermission(player, dom)) {
+            return true;
         }
         PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
         if (privilege != null) {
             if (privilege.getBreak()) {
-                return;
+                return true;
             }
         } else {
             if (dom.getBreak()) {
-                return;
+                return true;
             }
         }
         Notification.error(player, "你没有破坏方块的权限");
-        event.setCancelled(true);
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // button
@@ -933,17 +965,31 @@ public class PlayerEvents implements Listener {
         if (onPlace(player, event.getBlock().getLocation())) {
             return;
         }
-        Notification.error(player, "你没有放置方块的权限");
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST) // place - lava or water
     public void onPlaceLavaOrWater(PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
         if (onPlace(player, event.getBlock().getLocation())) {
             return;
         }
-        Notification.error(player, "你没有放置方块的权限");
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // place - item frame
+    public void placeItemFrame(HangingPlaceEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.ITEM_FRAME && entity.getType() != EntityType.GLOW_ITEM_FRAME) {
+            return;
+        }
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        if (onPlace(player, entity.getLocation())) {
+            return;
+        }
         event.setCancelled(true);
     }
 
@@ -957,10 +1003,16 @@ public class PlayerEvents implements Listener {
         }
         PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
         if (privilege != null) {
-            return privilege.getPlace();
+            if (privilege.getPlace()) {
+                return true;
+            }
         } else {
-            return dom.getPlace();
+            if (dom.getPlace()) {
+                return true;
+            }
         }
+        Notification.error(player, "你没有放置方块的权限");
+        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // pressure
