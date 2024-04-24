@@ -49,3 +49,7 @@
 Mail: [zhangyuheng@lunadeer.cn](mailto:zhangyuheng@lunadeer.cn)
 
 QQ群：309428300
+
+## 统计
+
+![bstats](https://bstats.org/signatures/bukkit/Dominion.svg)
