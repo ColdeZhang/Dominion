@@ -33,6 +33,16 @@ AutoCleanAfterDays: 180 # -1 表示不开启
 # 圈地工具
 Tool: ARROW
 
+# 经济系统 - 需要安装Vault插件
+Economy:
+  Enable: false
+  # 单价 - 每方块
+  Price: 10.0
+  # 是否只计算xz平面积
+  OnlyXZ: false
+  # 删除领地退还比例
+  Refund: 0.85
+
 BlueMap: true
 
 CheckUpdate: true

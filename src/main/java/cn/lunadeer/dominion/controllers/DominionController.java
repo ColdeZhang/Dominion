@@ -90,6 +90,21 @@ public class DominionController {
                 loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ())) {
             return null;
         }
+        // 检查经济
+        if (Dominion.config.getEconomyEnable()) {
+            int count;
+            if (Dominion.config.getEconomyOnlyXZ()) {
+                count = (loc2.getBlockX() - loc1.getBlockX() + 1) * (loc2.getBlockZ() - loc1.getBlockZ() + 1);
+            } else {
+                count = (loc2.getBlockX() - loc1.getBlockX() + 1) * (loc2.getBlockY() - loc1.getBlockY() + 1) * (loc2.getBlockZ() - loc1.getBlockZ() + 1);
+            }
+            double price = count * Dominion.config.getEconomyPrice();
+            if (Dominion.vault.getEconomy().getBalance(owner) < price) {
+                Notification.error(owner, "你的余额不足，创建此领地需要 " + price + " " + Dominion.vault.getEconomy().currencyNamePlural());
+                return null;
+            }
+            Dominion.vault.getEconomy().withdrawPlayer(owner, price);
+        }
         DominionDTO dominion = new DominionDTO(owner.getUniqueId(), name, owner.getWorld().getName(),
                 (int) Math.min(loc1.getX(), loc2.getX()), (int) Math.min(loc1.getY(), loc2.getY()),
                 (int) Math.min(loc1.getZ(), loc2.getZ()), (int) Math.max(loc1.getX(), loc2.getX()),
@@ -236,6 +251,21 @@ public class DominionController {
                 return null;
             }
         }
+        // 检查经济
+        if (Dominion.config.getEconomyEnable()) {
+            int count;
+            if (Dominion.config.getEconomyOnlyXZ()) {
+                count = (x2 - x1 + 1) * (z2 - z1 + 1) - dominion.getSquare();
+            } else {
+                count = (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1) - dominion.getVolume();
+            }
+            double price = count * Dominion.config.getEconomyPrice();
+            if (Dominion.vault.getEconomy().getBalance(operator) < price) {
+                Notification.error(operator, "你的余额不足，扩展此领地需要 " + price + " " + Dominion.vault.getEconomy().currencyNamePlural());
+                return null;
+            }
+            Dominion.vault.getEconomy().withdrawPlayer(operator, price);
+        }
         return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
     }
 
@@ -324,6 +354,18 @@ public class DominionController {
                 return null;
             }
         }
+        // 退还经济
+        if (Dominion.config.getEconomyEnable()) {
+            int count;
+            if (Dominion.config.getEconomyOnlyXZ()) {
+                count = dominion.getSquare() - (x2 - x1 + 1) * (z2 - z1 + 1);
+            } else {
+                count = dominion.getVolume() - (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
+            }
+            double refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
+            Dominion.vault.getEconomy().depositPlayer(operator, refund);
+            XLogger.info("已经退还 " + refund + " " + Dominion.vault.getEconomy().currencyNamePlural());
+        }
         return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
     }
 
@@ -358,6 +400,22 @@ public class DominionController {
             return;
         }
         DominionDTO.delete(dominion);
+        // 退还经济
+        if (Dominion.config.getEconomyEnable()) {
+            int count = 0;
+            if (Dominion.config.getEconomyOnlyXZ()) {
+                for (DominionDTO sub_dominion : sub_dominions) {
+                    count += sub_dominion.getSquare();
+                }
+            } else {
+                for (DominionDTO sub_dominion : sub_dominions) {
+                    count += sub_dominion.getVolume();
+                }
+            }
+            double refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
+            Dominion.vault.getEconomy().depositPlayer(operator, refund);
+            XLogger.info("已经退还 " + refund + " " + Dominion.vault.getEconomy().currencyNamePlural());
+        }
         Notification.info(operator, "领地 " + dominion_name + " 及其所有子领地已删除");
     }
 

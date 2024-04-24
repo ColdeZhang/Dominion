@@ -512,6 +512,14 @@ public class DominionDTO {
         return update(this);
     }
 
+    public Integer getSquare() {
+        return (x2 - x1) * (z2 - z1);
+    }
+
+    public Integer getVolume() {
+        return getSquare() * (y2 - y1);
+    }
+
     public Integer getParentDomId() {
         return parentDomId;
     }

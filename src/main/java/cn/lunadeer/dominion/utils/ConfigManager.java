@@ -68,6 +68,10 @@ public class ConfigManager {
             XLogger.err("工具名称设置错误，已重置为 ARROW");
             setTool("ARROW");
         }
+        _economy_enable = _file.getBoolean("Economy.Enable", false);
+        _economy_price = (float) _file.getDouble("Economy.Price", 10.0);
+        _economy_only_xz = _file.getBoolean("Economy.OnlyXZ", false);
+        _economy_refund = (float) _file.getDouble("Economy.Refund", 0.85);
     }
 
     public Boolean isDebug() {
@@ -276,6 +280,26 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Boolean getEconomyEnable() {
+        return _economy_enable;
+    }
+
+    public void setEconomyEnable(Boolean economy_enable) {
+        _economy_enable = economy_enable;
+    }
+
+    public Float getEconomyPrice() {
+        return _economy_price;
+    }
+
+    public Boolean getEconomyOnlyXZ() {
+        return _economy_only_xz;
+    }
+
+    public Float getEconomyRefund() {
+        return _economy_refund;
+    }
+
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;
@@ -306,4 +330,9 @@ public class ConfigManager {
     private Integer _tp_delay;
     private Integer _tp_cool_down;
     private String _tool;
+
+    private Boolean _economy_enable;
+    private Float _economy_price;
+    private Boolean _economy_only_xz;
+    private Float _economy_refund;
 }

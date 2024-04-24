@@ -28,6 +28,13 @@ public final class Dominion extends JavaPlugin {
         AutoClean.run();
         Cache.instance = new Cache();
 
+        if (config.getEconomyEnable()) {
+            vault = new VaultConnect(this);
+            if (vault.getEconomy() == null) {
+                config.setEconomyEnable(false);
+            }
+        }
+
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
         Bukkit.getPluginManager().registerEvents(new SelectPointEvents(), this);
@@ -68,4 +75,5 @@ public final class Dominion extends JavaPlugin {
     public static Map<UUID, Map<Integer, Location>> pointsSelect = new HashMap<>();
     public static Scheduler scheduler;
     private GiteaReleaseCheck giteaReleaseCheck;
+    public static VaultConnect vault;
 }
