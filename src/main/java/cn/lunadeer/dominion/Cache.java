@@ -3,6 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.ParticleRender;
 import cn.lunadeer.dominion.utils.XLogger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -127,7 +128,7 @@ public class Cache {
                 if (dominion.getParentDomId() == -1) {
                     Notification.info(player, "您已离开领地：" + dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
-                    player_current_dominion_id.put(player.getUniqueId(), null);
+                    update_player_current_dominion(player, null);
                     dominion = null;
                 } else {
                     Notification.info(player, "您已离开子领地：" + dominion.getName());
@@ -172,7 +173,16 @@ public class Cache {
     }
 
     private void update_player_current_dominion(Player player, DominionDTO dominion) {
+        if (dominion == null) {
+            player.setGlowing(false);
+            player_current_dominion_id.put(player.getUniqueId(), null);
+            return;
+        }
         player_current_dominion_id.put(player.getUniqueId(), dominion.getId());
+        // show border
+        if (dominion.getShowBorder()) {
+            ParticleRender.showBoxBorder(dominion);
+        }
         // glow
         PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
         if (privilege != null) {

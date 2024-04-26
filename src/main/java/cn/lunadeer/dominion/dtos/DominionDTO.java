@@ -78,6 +78,7 @@ public class DominionDTO {
                         rs.getBoolean("repeater"),
                         rs.getBoolean("shear"),
                         rs.getBoolean("shoot"),
+                        rs.getBoolean("show_border"),
                         rs.getBoolean("teleport"),
                         rs.getBoolean("tnt_explode"),
                         rs.getBoolean("trade"),
@@ -233,6 +234,7 @@ public class DominionDTO {
                 "repeater = " + dominion.getRepeater() + ", " +
                 "shear = " + dominion.getShear() + ", " +
                 "shoot = " + dominion.getShoot() + ", " +
+                "show_border = " + dominion.getShowBorder() + ", " +                // dom only
                 "teleport = " + dominion.getTeleport() + ", " +
                 "tnt_explode = " + dominion.getTntExplode() + ", " +                // dom only
                 "trade = " + dominion.getTrade() + ", " +
@@ -265,7 +267,7 @@ public class DominionDTO {
                         Boolean mobDropItem, Boolean monsterKilling, Boolean move,
                         Boolean place, Boolean pressure,
                         Boolean riding, Boolean repeater,
-                        Boolean shear, Boolean shoot,
+                        Boolean shear, Boolean shoot, Boolean showBorder,
                         Boolean teleport, Boolean tntExplode, Boolean trade, Boolean trample,
                         Boolean vehicleDestroy,
                         Boolean vehicleSpawn,
@@ -322,6 +324,7 @@ public class DominionDTO {
         this.repeater = repeater;
         this.shear = shear;
         this.shoot = shoot;
+        this.showBorder = showBorder;
         this.teleport = teleport;
         this.tntExplode = tntExplode;
         this.trade = trade;
@@ -416,6 +419,7 @@ public class DominionDTO {
     private Boolean repeater = false;
     private Boolean shear = false;
     private Boolean shoot = false;
+    private Boolean showBorder = true;
     private Boolean teleport = false;
     private Boolean tntExplode = false;
     private Boolean trade = false;
@@ -877,6 +881,15 @@ public class DominionDTO {
 
     public DominionDTO setShoot(Boolean shoot) {
         this.shoot = shoot;
+        return update(this);
+    }
+
+    public Boolean getShowBorder() {
+        return showBorder;
+    }
+
+    public DominionDTO setShowBorder(Boolean showBorder) {
+        this.showBorder = showBorder;
         return update(this);
     }
 

@@ -245,5 +245,8 @@ public class Database {
         addColumnIfNotExists("dominion", "tp_location", "TEXT NOT NULL DEFAULT 'default'");
         addColumnIfNotExists("dominion", "teleport", "BOOLEAN NOT NULL DEFAULT FALSE");
         addColumnIfNotExists("player_privilege", "teleport", "BOOLEAN NOT NULL DEFAULT FALSE");
+
+        // 1.21
+        addColumnIfNotExists("dominion", "show_border", "BOOLEAN NOT NULL DEFAULT TRUE");
     }
 }

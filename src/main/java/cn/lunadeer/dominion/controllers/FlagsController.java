@@ -75,6 +75,7 @@ public class FlagsController {
             case "repeater": return dominion.setRepeater(value);
             case "shear": return dominion.setShear(value);
             case "shoot": return dominion.setShoot(value);
+            case "show_border": return dominion.setShowBorder(value);
             case "teleport": return dominion.setTeleport(value);
             case "tnt_explode": return dominion.setTntExplode(value);
             case "trade": return dominion.setTrade(value);

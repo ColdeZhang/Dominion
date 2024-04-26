@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static cn.lunadeer.dominion.controllers.Apis.*;
+import static cn.lunadeer.dominion.utils.ParticleRender.showBoxBorder;
 
 public class DominionController {
 
@@ -157,6 +158,7 @@ public class DominionController {
             Notification.error(owner, "创建失败，详细错误请联系管理员查询日志（当前时间：" + Time.nowStr() + "）");
             return null;
         }
+        showBoxBorder(dominion.getWorld(), dominion.getX1(), dominion.getY1(), dominion.getZ1(), dominion.getX2(), dominion.getY2(), dominion.getZ2());
         return dominion.setParentDomId(parent_dominion.getId());
     }
 
@@ -268,6 +270,7 @@ public class DominionController {
             Notification.info(operator, "已扣除 " + price + " " + Dominion.vault.getEconomy().currencyNamePlural());
             Dominion.vault.getEconomy().withdrawPlayer(operator, price);
         }
+        showBoxBorder(dominion.getWorld(), x1, y1, z1, x2, y2, z2);
         return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
     }
 
@@ -368,6 +371,7 @@ public class DominionController {
             Dominion.vault.getEconomy().depositPlayer(operator, refund);
             Notification.info(operator, "已经退还 " + refund + " " + Dominion.vault.getEconomy().currencyNamePlural());
         }
+        showBoxBorder(dominion.getWorld(), x1, y1, z1, x2, y2, z2);
         return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
     }
 

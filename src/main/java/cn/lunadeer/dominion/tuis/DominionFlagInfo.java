@@ -380,6 +380,15 @@ public class DominionFlagInfo {
                     .append(Button.createRed("☐", "/dominion set shoot true " + dominion.getName() + " " + page))
                     .append("射箭/雪球/三叉戟"));
         }
+        if (dominion.getShowBorder()) {
+            view.add(Line.create()
+                    .append(Button.createGreen("☑", "/dominion set show_border false " + dominion.getName() + " " + page))
+                    .append("玩家进入时是否显示领地边界"));
+        } else {
+            view.add(Line.create()
+                    .append(Button.createRed("☐", "/dominion set show_border true " + dominion.getName() + " " + page))
+                    .append("玩家进入时是否显示领地边界"));
+        }
         if (dominion.getTeleport()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set teleport false " + dominion.getName() + " " + page))

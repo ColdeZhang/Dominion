@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.events;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.Notification;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -15,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static cn.lunadeer.dominion.utils.ParticleRender.showBoxBorder;
 
 
 public class SelectPointEvents implements Listener {
@@ -54,6 +57,10 @@ public class SelectPointEvents implements Listener {
             if (world == null) {
                 return;
             }
+            if (!points.get(0).getWorld().equals(points.get(1).getWorld())) {
+                Notification.error(player, "两个点不在同一个世界");
+                return;
+            }
 
             Location loc1 = points.get(0);
             Location loc2 = points.get(1);
@@ -73,7 +80,7 @@ public class SelectPointEvents implements Listener {
                 double price = count * Dominion.config.getEconomyPrice();
                 Notification.info(player, "预计领地创建价格为 " + price + " " + Dominion.vault.getEconomy().currencyNamePlural());
             }
-            // todo 用粒子效果显示边界
+            showBoxBorder(loc1, loc2);
 
             Notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
             Notification.info(player, "尺寸为 " +

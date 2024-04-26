@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
+import static cn.lunadeer.dominion.utils.ParticleRender.showBoxBorder;
 
 public class DominionSizeInfo {
     public static void show(CommandSender sender, String[] args) {
@@ -47,5 +48,6 @@ public class DominionSizeInfo {
                         .append(Button.create("管理界面", "/dominion manage " + dominion.getName()))
                         .append(Button.create("权限列表", "/dominion flag_info " + dominion.getName())))
                 .showOn(player);
+        showBoxBorder(dominion.getWorld(), x1, y1, z1, x2, y2, z2);
     }
 }

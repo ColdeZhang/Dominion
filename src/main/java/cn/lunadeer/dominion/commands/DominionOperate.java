@@ -380,16 +380,6 @@ public class DominionOperate {
         if (location == null) {
             Notification.error(sender, "此领地没有设置传送点");
             return;
-//            int center_x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
-//            int center_z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
-//            // find safe location
-//            World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
-//            if (world == null) {
-//                Notification.error(sender, "此领地所在世界不存在");
-//                XLogger.warn("领地 " + dominionDTO.getName() + " 所在世界不存在");
-//                return;
-//            }
-//            location = world.getHighestBlockAt(center_x, center_z).getLocation();
         }
 
         LocalDateTime now = LocalDateTime.now();
