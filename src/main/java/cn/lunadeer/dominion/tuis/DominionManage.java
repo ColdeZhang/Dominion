@@ -5,7 +5,6 @@ import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
-import cn.lunadeer.dominion.utils.STUI.View;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

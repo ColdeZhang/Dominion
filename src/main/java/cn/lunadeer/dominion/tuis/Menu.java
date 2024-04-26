@@ -1,6 +1,9 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.utils.STUI.*;
+import cn.lunadeer.dominion.utils.STUI.Button;
+import cn.lunadeer.dominion.utils.STUI.Line;
+import cn.lunadeer.dominion.utils.STUI.ListView;
+import cn.lunadeer.dominion.utils.STUI.ViewStyles;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;

@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.events;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.Notification;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +50,31 @@ public class SelectPointEvents implements Listener {
         }
 
         if (points.size() == 2) {
+            World world = points.get(0).getWorld();
+            if (world == null) {
+                return;
+            }
+
+            Location loc1 = points.get(0);
+            Location loc2 = points.get(1);
+            int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
+            int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
+            int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
+            int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
+            int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
+            int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
+            if (Dominion.config.getEconomyEnable()) {
+                int count;
+                if (Dominion.config.getEconomyOnlyXZ()) {
+                    count = (maxX - minX) * (maxZ - minZ);
+                } else {
+                    count = (maxX - minX) * (maxY - minY) * (maxZ - minZ);
+                }
+                double price = count * Dominion.config.getEconomyPrice();
+                Notification.info(player, "预计领地创建价格为 " + price + " " + Dominion.vault.getEconomy().currencyNamePlural());
+            }
+            // todo 用粒子效果显示边界
+
             Notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
             Notification.info(player, "尺寸为 " +
                     Math.abs(points.get(1).getX() - points.get(0).getX()) + " x " +
