@@ -17,6 +17,15 @@ public class ParticleRender {
     }
 
     public static void showBoxBorder(Location loc1, Location loc2) {
+        int deltaX = Math.abs(loc1.getBlockX() - loc2.getBlockX());
+        int deltaY = Math.abs(loc1.getBlockY() - loc2.getBlockY());
+        int deltaZ = Math.abs(loc1.getBlockZ() - loc2.getBlockZ());
+        if (deltaX > 256 || deltaY > 256 || deltaZ > 256) {
+            XLogger.debug("渲染区域过大，为避免卡顿此渲染已跳过");
+            XLogger.debug("loc1: " + loc1.toString());
+            XLogger.debug("loc2: " + loc2.toString());
+            return;
+        }
         Dominion.scheduler.region.run(Dominion.instance, (instance) -> {
             if (!loc1.getWorld().equals(loc2.getWorld())) {
                 return;
