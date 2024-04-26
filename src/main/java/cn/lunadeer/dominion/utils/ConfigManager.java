@@ -58,7 +58,7 @@ public class ConfigManager {
         _limit_max_y = _file.getInt("Limit.MaxY", 320);
         _limit_amount = _file.getInt("Limit.Amount", 10);
         _limit_depth = _file.getInt("Limit.Depth", 10);
-        _world_black_list = _file.getStringList("WorldBlackList");
+        _world_black_list = _file.getStringList("Limit.WorldBlackList");
         _check_update = _file.getBoolean("CheckUpdate", true);
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
         _tp_delay = _file.getInt("Teleport.Delay", 0);
