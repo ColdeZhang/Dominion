@@ -73,7 +73,7 @@ public class GiteaReleaseCheck {
             JSONObject latestRelease = (JSONObject) releaseList.get(0);
             GiteaRelease release = new GiteaRelease();
             release.tag_name = (String) latestRelease.get("tag_name");
-            release.message = getTagMessage(release.tag_name);
+            release.message = (String) latestRelease.get("body");
             release.html_url = (String) latestRelease.get("html_url");
             JSONArray assets = (JSONArray) latestRelease.get("assets");
             if (assets.size() > 0) {
