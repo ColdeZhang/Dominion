@@ -87,7 +87,11 @@ public class GiteaReleaseCheck {
             XLogger.debug("HTML URL: " + latest_release.html_url);
             if (isNewVersion(current_version, latest_release.tag_name)) {
                 XLogger.info("发现新版本：" + latest_release.tag_name);
-                XLogger.info("版本信息：" + latest_release.message);
+                XLogger.info("版本信息：");
+                String[] message = latest_release.message.split("\n");
+                for (String line : message) {
+                    XLogger.info("\t" + line);
+                }
                 XLogger.info("下载页面：" + latest_release.html_url);
             } else {
                 XLogger.info("当前已是最新版本：" + current_version);
