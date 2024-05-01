@@ -37,7 +37,7 @@ jobs:
       - name: "Release"
         uses: https://ssl.lunadeer.cn:14446/zhangyuheng/release-action@main
         with:
-          note: "提示：带 ‘original-’ 前缀的文件无法用于运行，请下载不带此前缀的版本。"
+          note: "带 `original-` 前缀的文件无法用于运行，请下载不带此前缀的版本。"
           files: |-
             staging/*.jar
           api_key: '${{secrets.RELEASE_TOKEN}}'
