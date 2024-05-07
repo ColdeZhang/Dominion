@@ -18,7 +18,8 @@ Limit:
   SizeZ: 128    # Z方向最大长度
   Amount: 10    # 最大领地数量
   Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
-  WorldBlackList: []  # 不允许领地的世界
+  Vert: false   # 是否自动延伸到 MaxY 和 MinY
+  WorldBlackList: [ ]  # 不允许领地的世界
 
 Teleport:
   Enable: true

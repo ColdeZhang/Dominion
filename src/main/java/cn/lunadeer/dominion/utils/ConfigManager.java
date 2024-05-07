@@ -56,8 +56,28 @@ public class ConfigManager {
         }
         _limit_min_y = _file.getInt("Limit.MinY", -64);
         _limit_max_y = _file.getInt("Limit.MaxY", 320);
+        if (_limit_min_y >= _limit_max_y) {
+            XLogger.err("Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320");
+            setLimitMinY(-64);
+            setLimitMaxY(320);
+        }
         _limit_amount = _file.getInt("Limit.Amount", 10);
         _limit_depth = _file.getInt("Limit.Depth", 10);
+        _limit_vert = _file.getBoolean("Limit.Vert", false);
+        if (_limit_vert) {
+            if (_limit_min_y == -1) {
+                XLogger.warn("启用 Limit.Vert 时 Limit.MinY 不能设置为无限，已自动调整为 -64");
+                setLimitMinY(-64);
+            }
+            if (_limit_max_y == -1) {
+                XLogger.warn("启用 Limit.Vert 时 Limit.MaxY 不能设置为无限，已自动调整为 320");
+                setLimitMaxY(320);
+            }
+            if (_limit_size_y <= _limit_max_y - _limit_min_y) {
+                setLimitSizeY(_limit_max_y - _limit_min_y + 1);
+                XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (_limit_max_y - _limit_min_y + 1));
+            }
+        }
         _world_black_list = _file.getStringList("Limit.WorldBlackList");
         _check_update = _file.getBoolean("CheckUpdate", true);
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
@@ -232,6 +252,10 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Boolean getLimitVert() {
+        return _limit_vert;
+    }
+
     public List<String> getWorldBlackList() {
         return _world_black_list;
     }
@@ -323,6 +347,7 @@ public class ConfigManager {
     private Integer _limit_max_y;
     private Integer _limit_amount;
     private Integer _limit_depth;
+    private Boolean _limit_vert;
     private List<String> _world_black_list;
     private Boolean _check_update;
 

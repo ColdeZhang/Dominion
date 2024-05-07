@@ -41,6 +41,10 @@ public class Apis {
         Location location = player.getLocation();
         Location location1 = new Location(location.getWorld(), location.getX() - size, location.getY() - size, location.getZ() - size);
         Location location2 = new Location(location.getWorld(), location.getX() + size, location.getY() + size, location.getZ() + size);
+        if (Dominion.config.getLimitVert()) {
+            location1.setY(Dominion.config.getLimitMinY());
+            location2.setY(Dominion.config.getLimitMaxY());
+        }
         Map<Integer, Location> points = new HashMap<>();
         points.put(0, location1);
         points.put(1, location2);

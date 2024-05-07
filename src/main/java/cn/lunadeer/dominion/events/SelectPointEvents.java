@@ -70,6 +70,10 @@ public class SelectPointEvents implements Listener {
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
+            if (Dominion.config.getLimitVert()) {
+                minY = Dominion.config.getLimitMinY();
+                maxY = Dominion.config.getLimitMaxY();
+            }
             if (Dominion.config.getEconomyEnable()) {
                 int count;
                 if (Dominion.config.getEconomyOnlyXZ()) {
