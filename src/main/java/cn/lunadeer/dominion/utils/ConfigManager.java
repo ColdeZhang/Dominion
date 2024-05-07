@@ -34,17 +34,17 @@ public class ConfigManager {
             setAutoCreateRadius(10);
         }
         _limit_size_x = _file.getInt("Limit.SizeX", 128);
-        if (_limit_size_x <= 4) {
+        if (_limit_size_x <= 4 && _limit_size_x != -1) {
             XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
             setLimitSizeX(128);
         }
         _limit_size_y = _file.getInt("Limit.SizeY", 64);
-        if (_limit_size_y <= 4) {
+        if (_limit_size_y <= 4 && _limit_size_y != -1) {
             XLogger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
             setLimitSizeY(64);
         }
         _limit_size_z = _file.getInt("Limit.SizeZ", 128);
-        if (_limit_size_z <= 4) {
+        if (_limit_size_z <= 4 && _limit_size_z != -1) {
             XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
             setLimitSizeZ(128);
         }
