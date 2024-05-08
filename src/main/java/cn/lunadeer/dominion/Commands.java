@@ -146,6 +146,9 @@ public class Commands implements TabExecutor {
             case "export_mca":
                 Operator.exportMca(sender, args);
                 break;
+            case "config":
+                DominionConfig.show(sender, args);
+                break;
             default:
                 return false;
         }
@@ -168,7 +171,7 @@ public class Commands implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("menu", "help", "info", "manage", "flag_info", "group_list", "privilege_list", "group",
+            return Arrays.asList("menu", "help", "info", "manage", "flag_info", "privilege_list",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
                     "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info",
                     "set_enter_msg",
@@ -179,13 +182,15 @@ public class Commands implements TabExecutor {
                     "give",
                     "reload_cache",
                     "reload_config",
-                    "export_mca"
+                    "export_mca",
+                    "config"
             );
         }
         if (args.length == 2) {
             switch (args[0]) {
                 case "help":
-                case "group":
+                case "list":
+                case "config":
                     return Collections.singletonList("页码(可选)");
                 case "create":
                 case "auto_create":
