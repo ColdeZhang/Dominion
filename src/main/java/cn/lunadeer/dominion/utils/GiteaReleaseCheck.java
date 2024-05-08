@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class GiteaReleaseCheck {
@@ -30,11 +31,12 @@ public class GiteaReleaseCheck {
         this.current_version = plugin.getPluginMeta().getVersion();
         // 异步每12小时检查一次更新
         plugin.getServer().getAsyncScheduler().runAtFixedRate(plugin, (instance) -> {
-            getLatestRelease();
-            if (auto_update) {
-                downloadUpdate();
-            }
-        }, 10, 60 * 60 * 12, TimeUnit.SECONDS);
+                    getLatestRelease();
+                    if (auto_update) {
+                        downloadUpdate();
+                    }
+                }, 10 + new Random().nextInt(10), 60 * 60 * 12 + new Random().nextInt(60),
+                TimeUnit.SECONDS);
     }
 
     public void enableAutoUpdate() {
