@@ -120,11 +120,11 @@ public class DominionConfig {
                     .append(Button.createRed("☐", "/dominion set_config tp_enable true " + page)));
         }
         Line tpDelay = Line.create()
-                .append(Component.text("    传送延迟"))
+                .append(Component.text("    传送延迟(秒)"))
                 .append(NumChanger.create(Dominion.config.getTpDelay(), "/dominion set_config tp_delay").setPageNumber(page).build());
         view.add(tpDelay);
         Line tpCoolDown = Line.create()
-                .append(Component.text("    传送冷却"))
+                .append(Component.text("    传送冷却(秒)"))
                 .append(NumChanger.create(Dominion.config.getTpCoolDown(), "/dominion set_config tp_cool_down").setPageNumber(page).build());
         view.add(tpCoolDown);
         if (Dominion.config.getEconomyEnable()) {
