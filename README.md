@@ -38,6 +38,23 @@
 - 领地区域可视化；
 - 管理员可在游戏内使用TUI配置领地系统；
 
+<div style="text-align: center;">
+
+创建领地
+
+<img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debf78eca4.gif" alt="" width="60%">
+
+权限管理
+
+<img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debe052786.gif" alt="" width="60%">
+
+配置
+
+<img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debec11dad.gif" alt="" width="60%">
+
+
+</div>
+
 ## 支持版本
 
 - 1.20.1+ (Paper、Folia)
