@@ -1,12 +1,10 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.commands.DominionFlag;
-import cn.lunadeer.dominion.commands.DominionOperate;
-import cn.lunadeer.dominion.commands.Operator;
-import cn.lunadeer.dominion.commands.PlayerPrivilege;
+import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.tuis.*;
+import cn.lunadeer.dominion.tuis.Apis;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -148,6 +146,9 @@ public class Commands implements TabExecutor {
                 break;
             case "config":
                 DominionConfig.show(sender, args);
+                break;
+            case "set_config":
+                SetConfig.handler(sender, args);
                 break;
             default:
                 return false;

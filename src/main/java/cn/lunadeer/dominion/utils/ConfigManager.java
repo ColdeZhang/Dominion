@@ -64,20 +64,11 @@ public class ConfigManager {
         _limit_amount = _file.getInt("Limit.Amount", 10);
         _limit_depth = _file.getInt("Limit.Depth", 10);
         _limit_vert = _file.getBoolean("Limit.Vert", false);
-        if (_limit_vert) {
-            if (_limit_min_y == -1) {
-                XLogger.warn("启用 Limit.Vert 时 Limit.MinY 不能设置为无限，已自动调整为 -64");
-                setLimitMinY(-64);
-            }
-            if (_limit_max_y == -1) {
-                XLogger.warn("启用 Limit.Vert 时 Limit.MaxY 不能设置为无限，已自动调整为 320");
-                setLimitMaxY(320);
-            }
-            if (_limit_size_y <= _limit_max_y - _limit_min_y) {
-                setLimitSizeY(_limit_max_y - _limit_min_y + 1);
-                XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (_limit_max_y - _limit_min_y + 1));
-            }
+        if (_limit_vert && _limit_size_y <= _limit_max_y - _limit_min_y) {
+            setLimitSizeY(_limit_max_y - _limit_min_y + 1);
+            XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (_limit_max_y - _limit_min_y + 1));
         }
+        _limit_op_bypass = _file.getBoolean("Limit.OpByPass", true);
         _world_black_list = _file.getStringList("Limit.WorldBlackList");
         _check_update = _file.getBoolean("CheckUpdate", true);
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
@@ -256,8 +247,24 @@ public class ConfigManager {
         return _limit_vert;
     }
 
+    public void setLimitVert(Boolean limit_vert) {
+        _limit_vert = limit_vert;
+        _file.set("Limit.Vert", limit_vert);
+        _plugin.saveConfig();
+    }
+
     public List<String> getWorldBlackList() {
         return _world_black_list;
+    }
+
+    public Boolean getLimitOpBypass() {
+        return _limit_op_bypass;
+    }
+
+    public void setLimitOpBypass(Boolean limit_op_bypass) {
+        _limit_op_bypass = limit_op_bypass;
+        _file.set("Limit.OpByPass", limit_op_bypass);
+        _plugin.saveConfig();
     }
 
     public Boolean getCheckUpdate() {
@@ -316,12 +323,30 @@ public class ConfigManager {
         return _economy_price;
     }
 
+    public void setEconomyPrice(Float economy_price) {
+        _economy_price = economy_price;
+        _file.set("Economy.Price", economy_price);
+        _plugin.saveConfig();
+    }
+
     public Boolean getEconomyOnlyXZ() {
         return _economy_only_xz;
     }
 
+    public void setEconomyOnlyXZ(Boolean economy_only_xz) {
+        _economy_only_xz = economy_only_xz;
+        _file.set("Economy.OnlyXZ", economy_only_xz);
+        _plugin.saveConfig();
+    }
+
     public Float getEconomyRefund() {
         return _economy_refund;
+    }
+
+    public void setEconomyRefund(Float economy_refund) {
+        _economy_refund = economy_refund;
+        _file.set("Economy.Refund", economy_refund);
+        _plugin.saveConfig();
     }
 
     private final Dominion _plugin;
@@ -340,6 +365,7 @@ public class ConfigManager {
     private Integer _limit_size_x;
     private Integer _limit_size_y;
     private Integer _limit_size_z;
+    private Boolean _limit_op_bypass;
 
     private Boolean _blue_map;
     private Integer _auto_clean_after_days;

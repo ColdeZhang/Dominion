@@ -76,13 +76,11 @@ public class DominionController {
             return null;
         }
         // 检查世界是否可以创建
-        if (Dominion.config.getWorldBlackList().contains(owner.getWorld().getName())) {
-            Notification.error(owner, "禁止在世界 " + owner.getWorld().getName() + " 创建领地");
+        if (worldNotValid(owner)) {
             return null;
         }
         // 检查领地数量是否达到上限
-        if (Cache.instance.getPlayerDominionCount(owner) >= Dominion.config.getLimitAmount() && Dominion.config.getLimitAmount() > 0) {
-            Notification.error(owner, "你的领地数量已达上限，当前上限为 " + Dominion.config.getLimitAmount());
+        if (amountNotValid(owner)) {
             return null;
         }
         // 检查领地大小是否合法
@@ -677,6 +675,9 @@ public class DominionController {
     }
 
     private static boolean sizeNotValid(Player operator, int x1, int y1, int z1, int x2, int y2, int z2) {
+        if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
+            return false;
+        }
         // 如果 1 > 2 则交换
         if (x1 > x2) {
             int temp = x1;
@@ -712,11 +713,11 @@ public class DominionController {
             Notification.error(operator, "领地Z方向长度不能超过 " + Dominion.config.getLimitSizeZ());
             return true;
         }
-        if (y2 > Dominion.config.getLimitMaxY() && Dominion.config.getLimitMaxY() > 0) {
+        if (y2 > Dominion.config.getLimitMaxY()) {
             Notification.error(operator, "领地Y坐标不能超过 " + Dominion.config.getLimitMaxY());
             return true;
         }
-        if (y1 < Dominion.config.getLimitMinY() && Dominion.config.getLimitMinY() > 0) {
+        if (y1 < Dominion.config.getLimitMinY()) {
             Notification.error(operator, "领地Y坐标不能低于 " + Dominion.config.getLimitMinY());
             return true;
         }
@@ -724,7 +725,10 @@ public class DominionController {
     }
 
     private static boolean depthNotValid(Player operator, DominionDTO parent_dom) {
-        if (Dominion.config.getLimitDepth() < 0) {
+        if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
+            return false;
+        }
+        if (Dominion.config.getLimitDepth() == -1) {
             return false;
         }
         if (parent_dom.getId() != -1 && Dominion.config.getLimitDepth() == 0) {
@@ -741,6 +745,28 @@ public class DominionController {
         }
         if (level >= Dominion.config.getLimitDepth()) {
             Notification.error(operator, "子领地嵌套深度不能超过 " + Dominion.config.getLimitDepth());
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean amountNotValid(Player operator) {
+        if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
+            return false;
+        }
+        if (Cache.instance.getPlayerDominionCount(operator) >= Dominion.config.getLimitAmount() && Dominion.config.getLimitAmount() != -1) {
+            Notification.error(operator, "你的领地数量已达上限，当前上限为 " + Dominion.config.getLimitAmount());
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean worldNotValid(Player operator) {
+        if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
+            return false;
+        }
+        if (Dominion.config.getWorldBlackList().contains(operator.getWorld().getName())) {
+            Notification.error(operator, "禁止在世界 " + operator.getWorld().getName() + " 创建领地");
             return true;
         }
         return false;

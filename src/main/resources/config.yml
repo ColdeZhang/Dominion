@@ -9,17 +9,17 @@ Database:
 # 自动圈地大小
 AutoCreateRadius: 10  #-1 表示不开启
 
-# -1 表示不限制
 Limit:
   MinY: -64     # 最小Y坐标
   MaxY: 320     # 最大Y坐标
-  SizeX: 128    # X方向最大长度
-  SizeY: 64     # Y方向最大长度
-  SizeZ: 128    # Z方向最大长度
-  Amount: 10    # 最大领地数量
+  SizeX: 128    # X方向最大长度 -1：表示不限制
+  SizeY: 64     # Y方向最大长度 -1：表示不限制
+  SizeZ: 128    # Z方向最大长度 -1：表示不限制
+  Amount: 10    # 最大领地数量 -1：表示不限制
   Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
   Vert: false   # 是否自动延伸到 MaxY 和 MinY
   WorldBlackList: [ ]  # 不允许领地的世界
+  OpByPass: true # 是否允许OP无视领地限制
 
 Teleport:
   Enable: true

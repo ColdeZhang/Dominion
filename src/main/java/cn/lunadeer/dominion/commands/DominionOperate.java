@@ -391,8 +391,9 @@ public class DominionOperate {
                 return;
             }
         }
-
-        Notification.info(player, "传送将在 " + Dominion.config.getTpDelay() + " 秒后执行");
+        if (Dominion.config.getTpDelay() > 0) {
+            Notification.info(player, "传送将在 " + Dominion.config.getTpDelay() + " 秒后执行");
+        }
         Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
         Dominion.scheduler.region.runDelayed(Dominion.instance, (instance) -> {
             if (player.isOnline()) {

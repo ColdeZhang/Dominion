@@ -41,6 +41,8 @@ public class Menu {
                 .add(help)
                 .add(link);
         if (player.isOp()) {
+            view.add(Line.create().append(""));
+            view.add(Line.create().append("---以下选项仅OP可见---"));
             view.add(config);
             view.add(reload_cache);
             view.add(reload_config);
