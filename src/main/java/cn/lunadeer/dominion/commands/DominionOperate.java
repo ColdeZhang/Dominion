@@ -8,7 +8,10 @@ import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
@@ -411,7 +414,33 @@ public class DominionOperate {
 
     private static void doTeleportSafely(Player player, Location location) {
         location.getWorld().getChunkAtAsyncUrgently(location).thenAccept((chunk) -> {
-            location.setY(chunk.getWorld().getHighestBlockYAt(location) + 1);
+            int max_attempts = 512;
+            while (location.getBlock().isPassable()) {
+                location.setY(location.getY() - 1);
+                max_attempts--;
+                if (max_attempts <= 0) {
+                    Notification.error(player, "传送目的地不安全，已取消传送");
+                    return;
+                }
+            }
+            Block up1 = location.getBlock().getRelative(BlockFace.UP);
+            Block up2 = up1.getRelative(BlockFace.UP);
+            max_attempts = 512;
+            while (!(up1.isPassable() && !up1.isLiquid()) || !(up2.isPassable() && !up2.isLiquid())) {
+                location.setY(location.getY() + 1);
+                up1 = location.getBlock().getRelative(BlockFace.UP);
+                up2 = up1.getRelative(BlockFace.UP);
+                max_attempts--;
+                if (max_attempts <= 0) {
+                    Notification.error(player, "传送目的地不安全，已取消传送");
+                    return;
+                }
+            }
+            location.setY(location.getY() + 1);
+            if (location.getBlock().getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
+                Notification.error(player, "传送目的地不安全，已取消传送");
+                return;
+            }
             player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
         });
     }
