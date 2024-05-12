@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.utils.Database;
+import cn.lunadeer.dominion.managers.DatabaseManager;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,7 +18,7 @@ public class DominionDTO {
 
     private static List<DominionDTO> query(String sql) {
         List<DominionDTO> dominions = new ArrayList<>();
-        try (ResultSet rs = Database.query(sql)) {
+        try (ResultSet rs = DatabaseManager.query(sql)) {
             if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadDominions();

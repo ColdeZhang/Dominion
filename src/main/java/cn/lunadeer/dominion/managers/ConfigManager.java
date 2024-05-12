@@ -1,6 +1,7 @@
-package cn.lunadeer.dominion.utils;
+package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
