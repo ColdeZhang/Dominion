@@ -6,9 +6,16 @@ import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -376,12 +383,6 @@ public class DominionOperate {
             }
         }
 
-        Location location = dominionDTO.getTpLocation();
-        if (location == null) {
-            Notification.error(sender, "此领地没有设置传送点");
-            return;
-        }
-
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime next_time = Cache.instance.NextTimeAllowTeleport.get(player.getUniqueId());
         if (next_time != null) {
@@ -396,10 +397,51 @@ public class DominionOperate {
         }
         Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
         Dominion.scheduler.region.runDelayed(Dominion.instance, (instance) -> {
+            Location location = dominionDTO.getTpLocation();
+            if (location == null) {
+                int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
+                int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
+                World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
+                location = new Location(world, x, player.getY(), z);
+                XLogger.warn("领地 " + dominionDTO.getName() + " 没有设置传送点，将传送到中心点");
+            }
             if (player.isOnline()) {
-                player.teleportAsync(location);
+                doTeleportSafely(player, location);
                 Notification.info(player, "已将你传送到 " + dominionDTO.getName());
             }
         }, Dominion.config.getTpDelay() == 0 ? 1 : 20L * Dominion.config.getTpDelay());
+    }
+
+    private static void doTeleportSafely(Player player, Location location) {
+        location.getWorld().getChunkAtAsyncUrgently(location).thenAccept((chunk) -> {
+            int max_attempts = 512;
+            while (location.getBlock().isPassable()) {
+                location.setY(location.getY() - 1);
+                max_attempts--;
+                if (max_attempts <= 0) {
+                    Notification.error(player, "传送目的地不安全，已取消传送");
+                    return;
+                }
+            }
+            Block up1 = location.getBlock().getRelative(BlockFace.UP);
+            Block up2 = up1.getRelative(BlockFace.UP);
+            max_attempts = 512;
+            while (!(up1.isPassable() && !up1.isLiquid()) || !(up2.isPassable() && !up2.isLiquid())) {
+                location.setY(location.getY() + 1);
+                up1 = location.getBlock().getRelative(BlockFace.UP);
+                up2 = up1.getRelative(BlockFace.UP);
+                max_attempts--;
+                if (max_attempts <= 0) {
+                    Notification.error(player, "传送目的地不安全，已取消传送");
+                    return;
+                }
+            }
+            location.setY(location.getY() + 1);
+            if (location.getBlock().getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
+                Notification.error(player, "传送目的地不安全，已取消传送");
+                return;
+            }
+            player.teleportAsync(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        });
     }
 }

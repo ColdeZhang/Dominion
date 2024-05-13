@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.utils.Database;
+import cn.lunadeer.dominion.managers.DatabaseManager;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.entity.Player;
 
@@ -31,7 +31,7 @@ public class PlayerDTO {
 
     private static List<PlayerDTO> query(String sql) {
         List<PlayerDTO> players = new ArrayList<>();
-        try (ResultSet rs = Database.query(sql)) {
+        try (ResultSet rs = DatabaseManager.query(sql)) {
             if (rs == null) return players;
             while (rs.next()) {
                 Integer id = rs.getInt("id");

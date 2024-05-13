@@ -3,7 +3,11 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.events.EnvironmentEvents;
 import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;
-import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.managers.ConfigManager;
+import cn.lunadeer.dominion.managers.DatabaseManager;
+import cn.lunadeer.dominion.utils.GiteaReleaseCheck;
+import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,8 +26,8 @@ public final class Dominion extends JavaPlugin {
         // Plugin startup logic
         instance = this;
         config = new ConfigManager(this);
-        dbConnection = Database.createConnection();
-        Database.migrate();
+        dbConnection = DatabaseManager.createConnection();
+        DatabaseManager.migrate();
         scheduler = new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();

@@ -1,10 +1,11 @@
-package cn.lunadeer.dominion.utils;
+package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.utils.XLogger;
 
 import java.sql.*;
 
-public class Database {
+public class DatabaseManager {
 
     public static Connection createConnection() {
         try {

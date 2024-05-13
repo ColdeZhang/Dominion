@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.utils.Database;
+import cn.lunadeer.dominion.managers.DatabaseManager;
 import cn.lunadeer.dominion.utils.XLogger;
 
 import java.sql.ResultSet;
@@ -582,7 +582,7 @@ public class PlayerPrivilegeDTO {
 
     private static List<PlayerPrivilegeDTO> query(String sql) {
         List<PlayerPrivilegeDTO> players = new ArrayList<>();
-        try (ResultSet rs = Database.query(sql)) {
+        try (ResultSet rs = DatabaseManager.query(sql)) {
             if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadPlayerPrivileges();
