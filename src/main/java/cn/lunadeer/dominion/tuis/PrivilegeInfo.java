@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
@@ -29,19 +29,19 @@ public class PrivilegeInfo {
         }
         String playerName = args[1];
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
+            Dominion.notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
             return;
         }
         ListView view = ListView.create(10, "/dominion privilege_info " + playerName + " " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         PlayerDTO playerDTO = PlayerDTO.select(playerName);
         if (playerDTO == null) {
-            Notification.error(sender, "玩家 " + playerName + " 不存在");
+            Dominion.notification.error(sender, "玩家 %s 不存在", playerName);
             return;
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(playerDTO.getUuid(), dominion.getId());
         if (privilege == null) {
-            Notification.warn(sender, "玩家 " + playerName + " 没有任何特权");
+            Dominion.notification.warn(sender, "玩家 %s 没有任何特权", playerName);
             return;
         }
         view.title("玩家 " + playerName + " 在领地 " + dominion.getName() + " 的特权信息");
@@ -161,7 +161,7 @@ public class PrivilegeInfo {
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " craft true " + dominion.getName() + " " + page))
                     .append("使用工作台"));
         }
-        if (privilege.getComparer()){
+        if (privilege.getComparer()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " comparer false " + dominion.getName() + " " + page))
                     .append("比较器交互"));
@@ -278,7 +278,7 @@ public class PrivilegeInfo {
                     .append(Button.createRed("☐", "/dominion set_privilege " + playerName + " ignite true " + dominion.getName() + " " + page))
                     .append("点燃"));
         }
-        if (privilege.getLever()){
+        if (privilege.getLever()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑", "/dominion set_privilege " + playerName + " lever false " + dominion.getName() + " " + page))
                     .append("使用拉杆"));

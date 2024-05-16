@@ -1,10 +1,10 @@
 package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,7 +54,7 @@ public class PlayerEvents implements Listener {
         PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
         if (privilege != null) {
             if (!privilege.getAnchor()) {
-                Notification.error(bukkitPlayer, "你没有锚点重生权限");
+                Dominion.notification.error(bukkitPlayer, "你没有锚点重生权限");
                 return;
             } else {
                 if (bukkitPlayer.getBedSpawnLocation() != null) {
@@ -65,7 +65,7 @@ public class PlayerEvents implements Listener {
             }
         } else {
             if (dom.getAnchor()) {
-                Notification.error(bukkitPlayer, "你没有锚点重生权限");
+                Dominion.notification.error(bukkitPlayer, "你没有锚点重生权限");
                 return;
             } else {
                 if (bukkitPlayer.getBedSpawnLocation() != null) {
@@ -104,7 +104,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有动物击杀权限");
+        Dominion.notification.error(bukkitPlayer, "你没有动物击杀权限");
         event.setCancelled(true);
     }
 
@@ -134,7 +134,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用铁砧的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用铁砧的权限");
         event.setCancelled(true);
     }
 
@@ -164,7 +164,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用信标的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用信标的权限");
         event.setCancelled(true);
     }
 
@@ -188,7 +188,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用床的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用床的权限");
         event.setCancelled(true);
     }
 
@@ -218,7 +218,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用酿造台的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用酿造台的权限");
         event.setCancelled(true);
     }
 
@@ -267,7 +267,7 @@ public class PlayerEvents implements Listener {
                 return true;
             }
         }
-        Notification.error(player, "你没有破坏方块的权限");
+        Dominion.notification.error(player, "你没有破坏方块的权限");
         return false;
     }
 
@@ -310,7 +310,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用按钮的权限");
+        Dominion.notification.error(player, "你没有使用按钮的权限");
         event.setCancelled(true);
     }
 
@@ -342,7 +342,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有吃蛋糕权限");
+        Dominion.notification.error(player, "你没有吃蛋糕权限");
         event.setCancelled(true);
     }
 
@@ -370,7 +370,7 @@ public class PlayerEvents implements Listener {
                 return true;
             }
         }
-        Notification.error(player, "你没有使用容器/盔甲架/展示框的权限");
+        Dominion.notification.error(player, "你没有使用容器/盔甲架/展示框的权限");
         return false;
     }
 
@@ -456,7 +456,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用工作台的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用工作台的权限");
         event.setCancelled(true);
     }
 
@@ -487,7 +487,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用红石比较器的权限");
+        Dominion.notification.error(player, "你没有使用红石比较器的权限");
         event.setCancelled(true);
     }
 
@@ -552,7 +552,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用门的权限");
+        Dominion.notification.error(player, "你没有使用门的权限");
         event.setCancelled(true);
     }
 
@@ -579,7 +579,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有染色的权限");
+        Dominion.notification.error(player, "你没有染色的权限");
         event.setCancelled(true);
     }
 
@@ -609,7 +609,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有扔鸡蛋的权限");
+        Dominion.notification.error(player, "你没有扔鸡蛋的权限");
         event.setCancelled(true);
     }
 
@@ -639,7 +639,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用附魔台的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用附魔台的权限");
         event.setCancelled(true);
     }
 
@@ -669,7 +669,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用末影珍珠的权限");
+        Dominion.notification.error(player, "你没有使用末影珍珠的权限");
         event.setCancelled(true);
     }
 
@@ -696,7 +696,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有喂养动物的权限");
+        Dominion.notification.error(player, "你没有喂养动物的权限");
         event.setCancelled(true);
     }
 
@@ -739,7 +739,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有收获的权限");
+        Dominion.notification.error(player, "你没有收获的权限");
         event.setCancelled(true);
     }
 
@@ -771,7 +771,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有与蜜蜂交互的权限");
+        Dominion.notification.error(player, "你没有与蜜蜂交互的权限");
         event.setCancelled(true);
     }
 
@@ -799,7 +799,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用钓钩的权限");
+        Dominion.notification.error(player, "你没有使用钓钩的权限");
         event.setCancelled(true);
     }
 
@@ -835,7 +835,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有使用漏斗/熔炉/发射器等特殊容器的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有使用漏斗/熔炉/发射器等特殊容器的权限");
         event.setCancelled(true);
     }
 
@@ -862,7 +862,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有点火的权限");
+        Dominion.notification.error(player, "你没有点火的权限");
         event.setCancelled(true);
     }
 
@@ -894,7 +894,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用拉杆的权限");
+        Dominion.notification.error(player, "你没有使用拉杆的权限");
         event.setCancelled(true);
     }
 
@@ -926,7 +926,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有击杀怪物的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有击杀怪物的权限");
         event.setCancelled(true);
     }
 
@@ -950,7 +950,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有移动的权限");
+        Dominion.notification.error(player, "你没有移动的权限");
         event.setCancelled(true);
     }
 
@@ -1006,7 +1006,7 @@ public class PlayerEvents implements Listener {
                 return true;
             }
         }
-        Notification.error(player, "你没有放置方块的权限");
+        Dominion.notification.error(player, "你没有放置方块的权限");
         return false;
     }
 
@@ -1052,7 +1052,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用压力板的权限");
+        Dominion.notification.error(player, "你没有使用压力板的权限");
         event.setCancelled(true);
     }
 
@@ -1079,7 +1079,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有骑乘交通工具的权限");
+        Dominion.notification.error(player, "你没有骑乘交通工具的权限");
         event.setCancelled(true);
     }
 
@@ -1111,7 +1111,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有使用红石中继器的权限");
+        Dominion.notification.error(player, "你没有使用红石中继器的权限");
         event.setCancelled(true);
     }
 
@@ -1135,7 +1135,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有剪羊毛的权限");
+        Dominion.notification.error(player, "你没有剪羊毛的权限");
         event.setCancelled(true);
     }
 
@@ -1167,7 +1167,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有发射弓箭、三叉戟或雪球的权限");
+        Dominion.notification.error(player, "你没有发射弓箭、三叉戟或雪球的权限");
         event.setCancelled(true);
     }
 
@@ -1197,7 +1197,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(bukkitPlayer, "你没有交易的权限");
+        Dominion.notification.error(bukkitPlayer, "你没有交易的权限");
         event.setCancelled(true);
     }
 
@@ -1224,7 +1224,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有破坏交通工具的权限");
+        Dominion.notification.error(player, "你没有破坏交通工具的权限");
         event.setCancelled(true);
     }
 
@@ -1255,7 +1255,7 @@ public class PlayerEvents implements Listener {
                 return;
             }
         }
-        Notification.error(player, "你没有放置交通工具的权限");
+        Dominion.notification.error(player, "你没有放置交通工具的权限");
         event.setCancelled(true);
     }
 }

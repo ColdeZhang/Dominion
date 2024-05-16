@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
@@ -63,7 +63,7 @@ public class Apis {
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             PlayerPrivilegeDTO privileges = PlayerPrivilegeDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
-                Notification.error(player, "你不是领地 " + dominion.getName() + " 的拥有者或管理员，无权访问此页面");
+                Dominion.notification.error(player, "你不是领地 %s 的拥有者或管理员，无权访问此页面", dominion.getName());
                 return true;
             }
         }

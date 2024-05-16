@@ -2,9 +2,7 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.Notification;
-import cn.lunadeer.dominion.utils.ParticleRender;
-import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,14 +28,14 @@ public class Cache {
      */
     public void loadDominions() {
         if (_last_update_dominion.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            XLogger.debug("run loadDominionsExecution directly");
+            Dominion.logger.debug("run loadDominionsExecution directly");
             loadDominionsExecution();
         } else {
             if (_update_dominion_is_scheduled.get()) return;
-            XLogger.debug("schedule loadDominionsExecution");
+            Dominion.logger.debug("schedule loadDominionsExecution");
             _update_dominion_is_scheduled.set(true);
             Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
-                        XLogger.debug("run loadDominionsExecution scheduled");
+                        Dominion.logger.debug("run loadDominionsExecution scheduled");
                         loadDominionsExecution();
                         _update_dominion_is_scheduled.set(false);
                     },
@@ -92,7 +90,7 @@ public class Cache {
     private void loadPlayerPrivilegesExecution() {
         List<PlayerPrivilegeDTO> all_privileges = PlayerPrivilegeDTO.selectAll();
         if (all_privileges == null) {
-            XLogger.err("加载玩家特权失败");
+            Dominion.logger.err("加载玩家特权失败");
             return;
         }
         player_uuid_to_privilege = new ConcurrentHashMap<>();
@@ -126,12 +124,12 @@ public class Cache {
                 // glow
                 player.setGlowing(false);
                 if (dominion.getParentDomId() == -1) {
-                    Notification.info(player, "您已离开领地：" + dominion.getName());
+                    Dominion.notification.info(player, "您已离开领地：%s", dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
                     update_player_current_dominion(player, null);
                     dominion = null;
                 } else {
-                    Notification.info(player, "您已离开子领地：" + dominion.getName());
+                    Dominion.notification.info(player, "您已离开子领地：%s", dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
                     dominion = id_dominions.get(dominion.getParentDomId());
                     update_player_current_dominion(player, dominion);
@@ -143,7 +141,7 @@ public class Cache {
                     DominionDTO child = id_dominions.get(child_id);
                     if (isInDominion(child, player)) {
                         dominion = child;
-                        Notification.info(player, "您正在进入子领地：" + dominion.getName());
+                        Dominion.notification.info(player, "您正在进入子领地：%s", dominion.getName());
                         player.sendMessage(Component.text(dominion.getJoinMessage()));
                         update_player_current_dominion(player, dominion);
                         break;
@@ -165,7 +163,7 @@ public class Cache {
             if (in_dominions.size() == 0) return null;
             in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
             dominion = in_dominions.get(0);
-            Notification.info(player, "您正在进入领地：" + dominion.getName());
+            Dominion.notification.info(player, "您正在进入领地：%s", dominion.getName());
             player.sendMessage(Component.text(dominion.getJoinMessage()));
             update_player_current_dominion(player, dominion);
         }
@@ -181,7 +179,9 @@ public class Cache {
         player_current_dominion_id.put(player.getUniqueId(), dominion.getId());
         // show border
         if (dominion.getShowBorder()) {
-            ParticleRender.showBoxBorder(dominion);
+            ParticleRender.showBoxFace(Dominion.instance, player,
+                    dominion.getLocation1(),
+                    dominion.getLocation2());
         }
         // glow
         PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);

@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.utils.XLogger;
 import com.flowpowered.math.vector.Vector2d;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
@@ -64,8 +63,8 @@ public class BlueMapConnect {
                 }
             });
         } catch (NoClassDefFoundError e) {
-            XLogger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
-            XLogger.err(e.getMessage());
+            Dominion.logger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
+            Dominion.logger.err(e.getMessage());
         }
     }
 
@@ -118,8 +117,8 @@ public class BlueMapConnect {
                 }
             });
         } catch (NoClassDefFoundError e) {
-            XLogger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
-            XLogger.err(e.getMessage());
+            Dominion.logger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
+            Dominion.logger.err(e.getMessage());
         }
     }
 }

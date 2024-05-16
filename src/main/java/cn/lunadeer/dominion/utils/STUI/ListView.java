@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.utils.STUI;
 
-import cn.lunadeer.dominion.utils.Notification;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
@@ -64,11 +63,9 @@ public class ListView {
     public void showOn(Player player, Integer page) {
         int offset = (page - 1) * page_size;
         if (lines.isEmpty()) {
-            Notification.warn(player, "没有数据");
             return;
         }
         if (offset >= lines.size() || offset < 0) {
-            Notification.error(player, "页数超出范围");
             return;
         }
         for (int i = offset; i < offset + page_size; i++) {

@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.managers.DatabaseManager;
-import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.Dominion;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
@@ -31,7 +30,7 @@ public class PlayerDTO {
 
     private static List<PlayerDTO> query(String sql) {
         List<PlayerDTO> players = new ArrayList<>();
-        try (ResultSet rs = DatabaseManager.query(sql)) {
+        try (ResultSet rs = Dominion.database.query(sql)) {
             if (rs == null) return players;
             while (rs.next()) {
                 Integer id = rs.getInt("id");
@@ -42,8 +41,7 @@ public class PlayerDTO {
                 players.add(player);
             }
         } catch (SQLException e) {
-            XLogger.err("Database query failed: " + e.getMessage());
-            XLogger.err("SQL: " + sql);
+            Dominion.database.handleDatabaseError("查询玩家信息失败: ", e, sql);
         }
         return players;
     }

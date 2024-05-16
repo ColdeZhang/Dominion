@@ -6,7 +6,7 @@
 
     <groupId>cn.lunadeer</groupId>
     <artifactId>Dominion</artifactId>
-    <version>1.23.12-beta</version>
+    <version>1.24.0-beta</version>
     <packaging>jar</packaging>
 
     <name>Dominion</name>
@@ -66,6 +66,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>lunadeer-repo</id>
+            <url>https://ssl.lunadeer.cn:14454/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -76,14 +80,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.41.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.2</version>
+            <groupId>cn.lunadeer</groupId>
+            <artifactId>MinecraftPluginUtils</artifactId>
+            <version>1.1.4</version>
         </dependency>
         <dependency>
             <groupId>com.github.BlueMap-Minecraft</groupId>

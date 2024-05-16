@@ -29,8 +29,8 @@ public class Helper {
                 "mob_drop_item", "monster_killing", "move",
                 "place", "pressure",
                 "riding", "repeater",
-                "shear", "shoot",
-                "tnt_explode", "trade", "trample",
+                "shear", "shoot", "show_border",
+                "teleport", "tnt_explode", "trade", "trample",
                 "vehicle_destroy",
                 "vehicle_spawn",
                 "wither_spawn");
@@ -51,7 +51,7 @@ public class Helper {
                 "monster_killing", "move",
                 "place", "pressure", "riding", "repeater",
                 "shear", "shoot",
-                "trade",
+                "teleport", "trade",
                 "vehicle_destroy",
                 "vehicle_spawn");
     }

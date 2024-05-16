@@ -1,9 +1,8 @@
 package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,9 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static cn.lunadeer.dominion.utils.ParticleRender.showBoxBorder;
-
 
 public class SelectPointEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -42,11 +38,11 @@ public class SelectPointEvents implements Listener {
 
         if (action == Action.LEFT_CLICK_BLOCK) {
             event.setCancelled(true);
-            Notification.info(player, "已选择第一个点: " + block.getX() + " " + block.getY() + " " + block.getZ());
+            Dominion.notification.info(player, "已选择第一个点: %d %d %d", block.getX(), block.getY(), block.getZ());
             points.put(0, block.getLocation());
         } else if (action == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
-            Notification.info(player, "已选择第二个点: " + block.getX() + " " + block.getY() + " " + block.getZ());
+            Dominion.notification.info(player, "已选择第二个点: %d %d %d", block.getX(), block.getY(), block.getZ());
             points.put(1, block.getLocation());
         } else {
             return;
@@ -58,10 +54,10 @@ public class SelectPointEvents implements Listener {
                 return;
             }
             if (!points.get(0).getWorld().equals(points.get(1).getWorld())) {
-                Notification.error(player, "两个点不在同一个世界");
+                Dominion.notification.error(player, "两个点不在同一个世界");
                 return;
             }
-
+            Dominion.notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
             Location loc1 = points.get(0);
             Location loc2 = points.get(1);
             int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
@@ -81,25 +77,14 @@ public class SelectPointEvents implements Listener {
                 } else {
                     count = (maxX - minX) * (maxY - minY) * (maxZ - minZ);
                 }
-                double price = count * Dominion.config.getEconomyPrice();
-                Notification.info(player, "预计领地创建价格为 " + price + " " + Dominion.vault.getEconomy().currencyNamePlural());
+                float price = count * Dominion.config.getEconomyPrice();
+                Dominion.notification.info(player, "预计领地创建价格为 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
             }
-            showBoxBorder(loc1, loc2);
-
-            Notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
-            Notification.info(player, "尺寸为 " +
-                    Math.abs(points.get(1).getX() - points.get(0).getX()) + " x " +
-                    Math.abs(points.get(1).getY() - points.get(0).getY()) + " x " +
-                    Math.abs(points.get(1).getZ() - points.get(0).getZ()));
-            Notification.info(player, "面积为 " +
-                    Math.abs(points.get(1).getX() - points.get(0).getX()) *
-                            Math.abs(points.get(1).getZ() - points.get(0).getZ()));
-            Notification.info(player, "高度为 " +
-                    Math.abs(points.get(1).getY() - points.get(0).getY()));
-            Notification.info(player, "体积为 " +
-                    Math.abs(points.get(1).getX() - points.get(0).getX()) *
-                            Math.abs(points.get(1).getY() - points.get(0).getY()) *
-                            Math.abs(points.get(1).getZ() - points.get(0).getZ()));
+            ParticleRender.showBoxFace(Dominion.instance, player, loc1, loc2);
+            Dominion.notification.info(player, "尺寸： %d x %d x %d", Math.abs(points.get(1).getX() - points.get(0).getX()), Math.abs(points.get(1).getY() - points.get(0).getY()), Math.abs(points.get(1).getZ() - points.get(0).getZ()));
+            Dominion.notification.info(player, "面积： %d", Math.abs(points.get(1).getX() - points.get(0).getX()) * Math.abs(points.get(1).getZ() - points.get(0).getZ()));
+            Dominion.notification.info(player, "高度： %d", Math.abs(points.get(1).getY() - points.get(0).getY()));
+            Dominion.notification.info(player, "体积： %d", Math.abs(points.get(1).getX() - points.get(0).getX()) * Math.abs(points.get(1).getY() - points.get(0).getY()) * Math.abs(points.get(1).getZ() - points.get(0).getZ()));
         }
         Dominion.pointsSelect.put(player.getUniqueId(), points);
     }

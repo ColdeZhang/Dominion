@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.utils.XLogger;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -17,7 +16,7 @@ public class VaultConnect {
     public VaultConnect(JavaPlugin plugin) {
         this.plugin = plugin;
         if (!setupEconomy() ) {
-            XLogger.err("你没有安装 Vault 前置插件，无法使用经济功能，如果不需要使用经济功能请前往配置文件关闭。");
+            Dominion.logger.err("你没有安装 Vault 前置插件，无法使用经济功能，如果不需要使用经济功能请前往配置文件关闭。");
             return;
         }
         setupPermissions();

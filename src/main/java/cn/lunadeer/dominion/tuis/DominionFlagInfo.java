@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
@@ -16,12 +16,12 @@ public class DominionFlagInfo {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion flag_info <领地名称> [页码]");
+            Dominion.notification.error(sender, "用法: /dominion flag_info <领地名称> [页码]");
             return;
         }
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Notification.error(sender, "领地 " + args[1] + " 不存在");
+            Dominion.notification.error(sender, "领地 %s 不存在", args[1]);
             return;
         }
         int page = 1;

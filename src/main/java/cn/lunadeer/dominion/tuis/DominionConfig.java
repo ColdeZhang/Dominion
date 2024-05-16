@@ -2,9 +2,9 @@ package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.STUI.Button;
-import cn.lunadeer.dominion.utils.STUI.NumChanger;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
+import cn.lunadeer.dominion.utils.STUI.NumChanger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;

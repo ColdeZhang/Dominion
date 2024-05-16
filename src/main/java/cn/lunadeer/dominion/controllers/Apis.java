@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ public class Apis {
     public static boolean notOwner(Player player, DominionDTO dominion) {
         if (player.isOp()) return false;
         if (dominion.getOwner().equals(player.getUniqueId())) return false;
-        Notification.error(player, "你不是领地 " + dominion.getName() + " 的拥有者，无法执行此操作");
+        Dominion.notification.error(player, "你不是领地 %s 的拥有者，无法执行此操作", dominion.getName());
         return true;
     }
 
@@ -23,7 +23,7 @@ public class Apis {
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             PlayerPrivilegeDTO privileges = PlayerPrivilegeDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
-                Notification.error(player, "你不是领地 " + dominion.getName() + " 的拥有者或管理员，无权修改权限");
+                Dominion.notification.error(player, "你不是领地 %s 的拥有者或管理员，无权修改权限", dominion.getName());
                 return true;
             }
         }
@@ -43,7 +43,7 @@ public class Apis {
                 (int) location.getX(), (int) location.getY(), (int) location.getZ());
         if (dominions.size() != 1) {
             if (show_warning) {
-                Notification.error(player, "你不在一个领地内或在子领地内，无法确定你要操作的领地，请手动指定要操作的领地名称");
+                Dominion.notification.error(player, "你不在一个领地内或在子领地内，无法确定你要操作的领地，请手动指定要操作的领地名称");
             }
             return null;
         }

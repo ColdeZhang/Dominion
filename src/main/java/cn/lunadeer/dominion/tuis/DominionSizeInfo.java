@@ -1,18 +1,18 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.View;
+import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
-import static cn.lunadeer.dominion.utils.ParticleRender.showBoxBorder;
 
 public class DominionSizeInfo {
     public static void show(CommandSender sender, String[] args) {
@@ -20,7 +20,7 @@ public class DominionSizeInfo {
         if (player == null) return;
         DominionDTO dominion = getDominionNameArg_1(player, args);
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion info <领地名称>");
+            Dominion.notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion info <领地名称>");
             return;
         }
         PlayerDTO owner = PlayerController.getPlayerDTO(dominion.getOwner());
@@ -48,6 +48,8 @@ public class DominionSizeInfo {
                         .append(Button.create("管理界面", "/dominion manage " + dominion.getName()))
                         .append(Button.create("权限列表", "/dominion flag_info " + dominion.getName())))
                 .showOn(player);
-        showBoxBorder(dominion.getWorld(), x1, y1, z1, x2, y2, z2);
+        ParticleRender.showBoxFace(Dominion.instance, player,
+                dominion.getLocation1(),
+                dominion.getLocation2());
     }
 }

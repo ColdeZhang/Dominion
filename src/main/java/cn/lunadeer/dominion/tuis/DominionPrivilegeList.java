@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.STUI.Button;
 import cn.lunadeer.dominion.utils.STUI.Line;
 import cn.lunadeer.dominion.utils.STUI.ListView;
@@ -30,7 +30,7 @@ public class DominionPrivilegeList {
         if (player == null) return;
         DominionDTO dominion = getDominionNameArg_1(player, args);
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_list <领地名称>");
+            Dominion.notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_list <领地名称>");
             return;
         }
         ListView view = ListView.create(10, "/dominion privilege_list " + dominion.getName());

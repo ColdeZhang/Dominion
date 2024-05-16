@@ -1,8 +1,7 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.managers.DatabaseManager;
-import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.Dominion;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -582,7 +581,7 @@ public class PlayerPrivilegeDTO {
 
     private static List<PlayerPrivilegeDTO> query(String sql) {
         List<PlayerPrivilegeDTO> players = new ArrayList<>();
-        try (ResultSet rs = DatabaseManager.query(sql)) {
+        try (ResultSet rs = Dominion.database.query(sql)) {
             if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadPlayerPrivileges();
@@ -635,8 +634,7 @@ public class PlayerPrivilegeDTO {
                 players.add(player);
             }
         } catch (Exception e) {
-            XLogger.err("Database query failed: " + e.getMessage());
-            XLogger.err("SQL: " + sql);
+            Dominion.database.handleDatabaseError("查询玩家权限失败: ", e, sql);
         }
         return players;
     }

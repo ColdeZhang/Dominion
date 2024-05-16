@@ -2,8 +2,6 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.managers.DatabaseManager;
-import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -18,7 +16,7 @@ public class DominionDTO {
 
     private static List<DominionDTO> query(String sql) {
         List<DominionDTO> dominions = new ArrayList<>();
-        try (ResultSet rs = DatabaseManager.query(sql)) {
+        try (ResultSet rs = Dominion.database.query(sql)) {
             if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadDominions();
@@ -91,8 +89,7 @@ public class DominionDTO {
                 dominions.add(dominion);
             }
         } catch (SQLException e) {
-            XLogger.err("Database query failed: " + e.getMessage());
-            XLogger.err("SQL: " + sql);
+            Dominion.database.handleDatabaseError("数据库操作失败: ", e, sql);
         }
         return dominions;
     }
@@ -341,7 +338,7 @@ public class DominionDTO {
             if (loc.length == 3 && w != null) {
                 this.tp_location = new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
             } else {
-                XLogger.warn("领地传送点数据异常: " + tp_location);
+                Dominion.logger.warn("领地传送点数据异常: %s", tp_location);
                 this.tp_location = null;
             }
         }
@@ -982,5 +979,13 @@ public class DominionDTO {
     public DominionDTO setTpLocation(Location loc) {
         this.tp_location = loc;
         return update(this);
+    }
+
+    public Location getLocation1() {
+        return new Location(Dominion.instance.getServer().getWorld(world), x1, y1, z1);
+    }
+
+    public Location getLocation2() {
+        return new Location(Dominion.instance.getServer().getWorld(world), x2, y2, z2);
     }
 }

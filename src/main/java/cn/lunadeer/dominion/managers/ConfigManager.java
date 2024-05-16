@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -19,9 +18,10 @@ public class ConfigManager {
         _plugin.reloadConfig();
         _file = _plugin.getConfig();
         _debug = _file.getBoolean("Debug", false);
+        Dominion.logger.setDebug(_debug);
         _db_type = _file.getString("Database.Type", "sqlite");
         if (!_db_type.equals("pgsql") && !_db_type.equals("sqlite")) {
-            XLogger.err("当前数据库只支持 pgsql 或 sqlite，已重置为 sqlite");
+            Dominion.logger.err("当前数据库只支持 pgsql 或 sqlite，已重置为 sqlite");
             setDbType("sqlite");
         }
         _db_host = _file.getString("Database.Host", "localhost");
@@ -31,34 +31,34 @@ public class ConfigManager {
         _db_pass = _file.getString("Database.Pass", "postgres");
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
         if (_auto_create_radius == 0) {
-            XLogger.err("AutoCreateRadius 不能等于 0，已重置为 10");
+            Dominion.logger.err("AutoCreateRadius 不能等于 0，已重置为 10");
             setAutoCreateRadius(10);
         }
         _limit_size_x = _file.getInt("Limit.SizeX", 128);
         if (_limit_size_x <= 4 && _limit_size_x != -1) {
-            XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
+            Dominion.logger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
             setLimitSizeX(128);
         }
         _limit_size_y = _file.getInt("Limit.SizeY", 64);
         if (_limit_size_y <= 4 && _limit_size_y != -1) {
-            XLogger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
+            Dominion.logger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
             setLimitSizeY(64);
         }
         _limit_size_z = _file.getInt("Limit.SizeZ", 128);
         if (_limit_size_z <= 4 && _limit_size_z != -1) {
-            XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
+            Dominion.logger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
             setLimitSizeZ(128);
         }
         _blue_map = _file.getBoolean("BlueMap", true);
         _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
         if (_auto_clean_after_days == 0) {
-            XLogger.err("AutoCleanAfterDays 不能等于 0，已重置为 180");
+            Dominion.logger.err("AutoCleanAfterDays 不能等于 0，已重置为 180");
             setAutoCleanAfterDays(180);
         }
         _limit_min_y = _file.getInt("Limit.MinY", -64);
         _limit_max_y = _file.getInt("Limit.MaxY", 320);
         if (_limit_min_y >= _limit_max_y) {
-            XLogger.err("Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320");
+            Dominion.logger.err("Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320");
             setLimitMinY(-64);
             setLimitMaxY(320);
         }
@@ -67,7 +67,7 @@ public class ConfigManager {
         _limit_vert = _file.getBoolean("Limit.Vert", false);
         if (_limit_vert && _limit_size_y <= _limit_max_y - _limit_min_y) {
             setLimitSizeY(_limit_max_y - _limit_min_y + 1);
-            XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (_limit_max_y - _limit_min_y + 1));
+            Dominion.logger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (_limit_max_y - _limit_min_y + 1));
         }
         _limit_op_bypass = _file.getBoolean("Limit.OpByPass", true);
         _world_black_list = _file.getStringList("Limit.WorldBlackList");
@@ -77,7 +77,7 @@ public class ConfigManager {
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
         _tool = _file.getString("Tool", "ARROW");
         if (Material.getMaterial(_tool) == null) {
-            XLogger.err("工具名称设置错误，已重置为 ARROW");
+            Dominion.logger.err("工具名称设置错误，已重置为 ARROW");
             setTool("ARROW");
         }
         _economy_enable = _file.getBoolean("Economy.Enable", false);
@@ -94,6 +94,7 @@ public class ConfigManager {
         _debug = debug;
         _file.set("Debug", debug);
         _plugin.saveConfig();
+        Dominion.logger.setDebug(debug);
     }
 
     public String getDbType() {
