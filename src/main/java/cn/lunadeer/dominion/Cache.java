@@ -34,13 +34,13 @@ public class Cache {
             if (_update_dominion_is_scheduled.get()) return;
             Dominion.logger.debug("schedule loadDominionsExecution");
             _update_dominion_is_scheduled.set(true);
-            Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
+            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
+            Dominion.scheduler.runTaskLaterAsync(() -> {
                         Dominion.logger.debug("run loadDominionsExecution scheduled");
                         loadDominionsExecution();
                         _update_dominion_is_scheduled.set(false);
                     },
-                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get()),
-                    TimeUnit.MILLISECONDS);
+                    delay_tick);
         }
     }
 
@@ -78,12 +78,12 @@ public class Cache {
         } else {
             if (_update_privilege_is_scheduled.get()) return;
             _update_privilege_is_scheduled.set(true);
-            Dominion.scheduler.async.runDelayed(Dominion.instance, (instance) -> {
+            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
+            Dominion.scheduler.runTaskLaterAsync(() -> {
                         loadPlayerPrivilegesExecution();
                         _update_privilege_is_scheduled.set(false);
                     },
-                    UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_privilege.get()),
-                    TimeUnit.MILLISECONDS);
+                    delay_tick);
         }
     }
 

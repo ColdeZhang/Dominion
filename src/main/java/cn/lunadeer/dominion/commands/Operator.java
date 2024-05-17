@@ -18,12 +18,12 @@ public class Operator {
 
     public static void reloadCache(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
-        Dominion.scheduler.async.runNow(Dominion.instance, ScheduledTask -> {
+        Dominion.scheduler.runTaskAsync(() -> {
             Dominion.notification.info(sender, "正在从数据库重新加载领地缓存...");
             Cache.instance.loadDominions();
             Dominion.notification.info(sender, "领地缓存已重新加载");
         });
-        Dominion.scheduler.async.runNow(Dominion.instance, ScheduledTask -> {
+        Dominion.scheduler.runTaskAsync(() -> {
             Dominion.notification.info(sender, "正在从数据库重新加载玩家权限缓存...");
             Cache.instance.loadPlayerPrivileges();
             Dominion.notification.info(sender, "玩家权限缓存已重新加载");
@@ -32,7 +32,7 @@ public class Operator {
 
     public static void exportMca(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
-        Dominion.scheduler.async.runNow(Dominion.instance, ScheduledTask -> {
+        Dominion.scheduler.runTaskAsync(() -> {
             Dominion.notification.info(sender, "正在导出拥有领地的MCA文件列表...");
             Map<String, List<String>> mca_cords = new HashMap<>();
             List<DominionDTO> doms = Cache.instance.getDominions();
@@ -103,7 +103,7 @@ public class Operator {
 
     public static void reloadConfig(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
-        Dominion.scheduler.async.runNow(Dominion.instance, ScheduledTask -> {
+        Dominion.scheduler.runTaskAsync(() -> {
             Dominion.notification.info(sender, "正在重新加载配置文件...");
             Dominion.config.reload();
             Dominion.notification.info(sender, "配置文件已重新加载");

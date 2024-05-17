@@ -5,7 +5,6 @@ import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
-import cn.lunadeer.dominion.utils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public final class Dominion extends JavaPlugin {
 
@@ -70,9 +68,7 @@ public final class Dominion extends JavaPlugin {
         logger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
         logger.info(" ");
 
-        scheduler.async.runDelayed(this, scheduledTask -> {
-            BlueMapConnect.render();
-        }, 40, TimeUnit.SECONDS);
+        scheduler.runTaskLaterAsync(BlueMapConnect::render, 40 * 20);
     }
 
     @Override

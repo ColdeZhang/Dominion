@@ -390,7 +390,7 @@ public class DominionOperate {
             Dominion.notification.info(player, "传送将在 %d 秒后执行", Dominion.config.getTpDelay());
         }
         Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
-        Dominion.scheduler.region.runDelayed(Dominion.instance, (instance) -> {
+        Dominion.scheduler.runTaskLater(() -> {
             Location location = dominionDTO.getTpLocation();
             if (location == null) {
                 int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
@@ -403,6 +403,6 @@ public class DominionOperate {
                 Teleport.doTeleportSafely(Dominion.instance, player, location);
                 Dominion.notification.info(player, "已将你传送到 " + dominionDTO.getName());
             }
-        }, Dominion.config.getTpDelay() == 0 ? 1 : 20L * Dominion.config.getTpDelay());
+        }, 20L * Dominion.config.getTpDelay());
     }
 }
