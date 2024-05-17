@@ -4,10 +4,10 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.utils.STUI.Button;
-import cn.lunadeer.dominion.utils.STUI.Line;
-import cn.lunadeer.dominion.utils.STUI.View;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
+import cn.lunadeer.minecraftpluginutils.stui.View;
+import cn.lunadeer.minecraftpluginutils.stui.components.Button;
+import cn.lunadeer.minecraftpluginutils.stui.components.Line;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -45,8 +45,8 @@ public class DominionSizeInfo {
                                 dominion.getTpLocation().getX() + " " + dominion.getTpLocation().getY() + " " + dominion.getTpLocation().getZ()
                 ))
                 .actionBar(Line.create()
-                        .append(Button.create("管理界面", "/dominion manage " + dominion.getName()))
-                        .append(Button.create("权限列表", "/dominion flag_info " + dominion.getName())))
+                        .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
+                        .append(Button.create("权限列表").setExecuteCommand("/dominion flag_info " + dominion.getName()).build()))
                 .showOn(player);
         ParticleRender.showBoxFace(Dominion.instance, player,
                 dominion.getLocation1(),

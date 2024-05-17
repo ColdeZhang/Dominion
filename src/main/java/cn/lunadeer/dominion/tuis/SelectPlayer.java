@@ -2,9 +2,9 @@ package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.utils.STUI.Button;
-import cn.lunadeer.dominion.utils.STUI.Line;
-import cn.lunadeer.dominion.utils.STUI.ListView;
+import cn.lunadeer.minecraftpluginutils.stui.ListView;
+import cn.lunadeer.minecraftpluginutils.stui.components.Button;
+import cn.lunadeer.minecraftpluginutils.stui.components.Line;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -26,7 +26,7 @@ public class SelectPlayer {
         }
         String dominion_name = args[1];
         ListView view = ListView.create(10, "/dominion select_player_create_privilege " + dominion_name);
-        Line sub = Line.create().append("只能选择已经登录过的玩家").append(Button.create("返回", "/dominion privilege_list " + dominion_name));
+        Line sub = Line.create().append("只能选择已经登录过的玩家").append(Button.create("返回").setExecuteCommand("/dominion privilege_list " + dominion_name).build());
         view.title("选择玩家以创建特权").subtitle(sub);
         List<PlayerDTO> players = PlayerController.allPlayers();
         for (PlayerDTO p : players) {
@@ -34,8 +34,9 @@ public class SelectPlayer {
                 continue;
             }
             view.add(Line.create().
-                    append(Button.create(p.getLastKnownName(),
-                            "/dominion create_privilege " + p.getLastKnownName() + " " + dominion_name + " b")));
+                    append(Button.create(p.getLastKnownName())
+                            .setExecuteCommand("/dominion create_privilege " + p.getLastKnownName() + " " + dominion_name + " b")
+                            .build()));
         }
         view.showOn(player, page);
     }

@@ -250,7 +250,8 @@ public class PrivilegeController {
     }
 
     private static PlayerPrivilegeDTO createPlayerPrivilege(Player operator, UUID player, DominionDTO dom) {
-        if (operator.getUniqueId() == player) {
+        Dominion.logger.debug("operator: " + operator.getUniqueId() + " player: " + player);
+        if (operator.getUniqueId().equals(player)) {
             Dominion.notification.error(operator, "你不能给自己设置特权");
             return null;
         }
