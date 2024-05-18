@@ -6,7 +6,7 @@
 
     <groupId>cn.lunadeer</groupId>
     <artifactId>Dominion</artifactId>
-    <version>1.24.1-beta</version>
+    <version>1.24.2-beta</version>
     <packaging>jar</packaging>
 
     <name>Dominion</name>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>cn.lunadeer</groupId>
             <artifactId>MinecraftPluginUtils</artifactId>
-            <version>1.1.6</version>
+            <version>1.1.7</version>
         </dependency>
         <dependency>
             <groupId>com.github.BlueMap-Minecraft</groupId>
