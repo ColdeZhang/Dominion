@@ -3,9 +3,9 @@ package cn.lunadeer.dominion.tuis;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.utils.STUI.Button;
-import cn.lunadeer.dominion.utils.STUI.Line;
-import cn.lunadeer.dominion.utils.STUI.ListView;
+import cn.lunadeer.minecraftpluginutils.stui.ListView;
+import cn.lunadeer.minecraftpluginutils.stui.components.Button;
+import cn.lunadeer.minecraftpluginutils.stui.components.Line;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -76,8 +76,8 @@ public class Apis {
         int page = getPage(args);
         ListView view = ListView.create(10, "/dominion help");
         view.title("领地插件命令帮助 <>表示必填参数 []表示可选参数")
-                .add(Line.create().append("打开交互菜单").append(Button.create("/dominion menu", "/dominion menu")))
-                .add(Line.create().append("查看帮助").append(Button.create("/dominion help [页码]", "/dominion help 1")))
+                .add(Line.create().append("打开交互菜单").append(Button.create("/dominion menu").setExecuteCommand("/dominion menu").build()))
+                .add(Line.create().append("查看帮助").append(Button.create("/dominion help [页码]").setExecuteCommand("/dominion help 1").build()))
                 .add(Line.create().append("创建领地").append("/dominion create <领地名称>"))
                 .add(Line.create().append("自动创建领地").append("/dominion auto_create <领地名称>"))
                 .add(Line.create().append("创建子领地").append("/dominion create_sub <子领地名称> [父领地名称]"))
@@ -94,20 +94,20 @@ public class Apis {
                 .add(Line.create().append("删除领地").append("/dominion delete <领地名称> [force]"))
                 // 管理员指令
                 .add(Line.create().append("---[管理员指令]---"))
-                .add(Line.create().append("刷新缓存").append(Button.create("/dominion reload_cache", "/dominion reload_cache")))
-                .add(Line.create().append("重载配置").append(Button.create("/dominion reload_config", "/dominion reload_config")))
+                .add(Line.create().append("刷新缓存").append(Button.create("/dominion reload_cache").setExecuteCommand("/dominion reload_cache").build()))
+                .add(Line.create().append("重载配置").append(Button.create("/dominion reload_config").setExecuteCommand("/dominion reload_config").build()))
                 // 以下指令主要被用于 ui 触发
                 .add(Line.create().append("---[以下主要用于UI触发]---"))
-                .add(Line.create().append("列出所有领地").append(Button.create("/dominion list [页码]", "/dominion list")))
-                .add(Line.create().append("查看领地信息").append(Button.create("/dominion info [领地名称]", "/dominion info")))
-                .add(Line.create().append("查看领地权限信息").append(Button.create("/dominion flag_info <领地名称> [页码]", "/dominion flag_info")))
+                .add(Line.create().append("列出所有领地").append(Button.create("/dominion list [页码]").setExecuteCommand("/dominion list").build()))
+                .add(Line.create().append("查看领地信息").append(Button.create("/dominion info [领地名称]").setExecuteCommand("/dominion info").build()))
+                .add(Line.create().append("查看领地权限信息").append(Button.create("/dominion flag_info <领地名称> [页码]").setExecuteCommand("/dominion flag_info").build()))
                 .add(Line.create().append("设置领地权限").append("/dominion set <权限名称> <true/false> [领地名称]"))
                 .add(Line.create().append("创建玩家特权").append("/dominion create_privilege <玩家名称> [领地名称]"))
                 .add(Line.create().append("设置玩家特权").append("/dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]"))
                 .add(Line.create().append("重置玩家特权").append("/dominion clear_privilege <玩家名称> [领地名称]"))
                 .add(Line.create().append("查看领地玩家特权列表").append("/dominion privilege_list [领地名称] [页码]"))
                 .add(Line.create().append("查看玩家特权信息").append("/dominion privilege_info <玩家名称> [领地名称] [页码]"))
-                .add(Line.create().append("系统配置").append(Button.create("/dominion config [页码]", "/dominion config")))
+                .add(Line.create().append("系统配置").append(Button.create("/dominion config [页码]").setExecuteCommand("/dominion config").build()))
                 .showOn(player, page);
     }
 
