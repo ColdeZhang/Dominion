@@ -24,6 +24,7 @@ public final class Dominion extends JavaPlugin {
         notification = new Notification(this);
         logger = new XLogger(this);
         config = new ConfigManager(this);
+        logger.setDebug(config.isDebug());
         database = new DatabaseManager(this,
                 config.getDbType().equals("pgsql") ? DatabaseManager.TYPE.POSTGRESQL : DatabaseManager.TYPE.SQLITE,
                 config.getDbHost(),
