@@ -14,9 +14,9 @@ import java.util.UUID;
 
 public class DominionDTO {
 
-    private static List<DominionDTO> query(String sql) {
+    private static List<DominionDTO> query(String sql, Object... args) {
         List<DominionDTO> dominions = new ArrayList<>();
-        try (ResultSet rs = Dominion.database.query(sql)) {
+        try (ResultSet rs = Dominion.database.query(sql, args)) {
             if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadDominions();
@@ -100,18 +100,18 @@ public class DominionDTO {
     }
 
     public static List<DominionDTO> selectAll(String world) {
-        String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND id > 0;";
-        return query(sql);
+        String sql = "SELECT * FROM dominion WHERE world = ? AND id > 0;";
+        return query(sql, world);
     }
 
     public static List<DominionDTO> search(String name) {
-        String sql = "SELECT * FROM dominion WHERE name LIKE '%" + name + "%' AND id > 0;";
-        return query(sql);
+        String sql = "SELECT * FROM dominion WHERE name LIKE ? AND id > 0;";
+        return query(sql, "%" + name + "%");
     }
 
     public static List<DominionDTO> selectAll(UUID owner) {
-        String sql = "SELECT * FROM dominion WHERE owner = '" + owner.toString() + "' AND id > 0";
-        return query(sql);
+        String sql = "SELECT * FROM dominion WHERE owner = ? AND id > 0;";
+        return query(sql, owner.toString());
     }
 
     public static DominionDTO select(Integer id) {
@@ -122,28 +122,28 @@ public class DominionDTO {
                     -2147483648, -2147483648, -2147483648,
                     2147483647, 2147483647, 2147483647, -1);
         }
-        String sql = "SELECT * FROM dominion WHERE id = " + id + " AND id > 0";
-        List<DominionDTO> dominions = query(sql);
+        String sql = "SELECT * FROM dominion WHERE id = ? AND id > 0;";
+        List<DominionDTO> dominions = query(sql, id);
         if (dominions.size() == 0) return null;
         return dominions.get(0);
     }
 
     public static List<DominionDTO> selectByParentId(String world, Integer parentId) {
-        String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND parent_dom_id = " + parentId + " AND id > 0;";
-        return query(sql);
+        String sql = "SELECT * FROM dominion WHERE world = ? AND parent_dom_id = ? AND id > 0;";
+        return query(sql, world, parentId);
     }
 
     public static List<DominionDTO> selectByLocation(String world, Integer x, Integer y, Integer z) {
-        String sql = "SELECT * FROM dominion WHERE world = '" + world + "' AND " +
-                "x1 <= " + x + " AND x2 >= " + x + " AND " +
-                "y1 <= " + y + " AND y2 >= " + y + " AND " +
-                "z1 <= " + z + " AND z2 >= " + z + " AND " + "id > 0;";
-        return query(sql);
+        String sql = "SELECT * FROM dominion WHERE world = ? AND " +
+                "x1 <= ? AND x2 >= ? AND " +
+                "y1 <= ? AND y2 >= ? AND " +
+                "z1 <= ? AND z2 >= ? AND " + "id > 0;";
+        return query(sql, world, x, x, y, y, z, z);
     }
 
     public static DominionDTO select(String name) {
-        String sql = "SELECT * FROM dominion WHERE name = '" + name + "' AND id > 0;";
-        List<DominionDTO> dominions = query(sql);
+        String sql = "SELECT * FROM dominion WHERE name = ? AND id > 0;";
+        List<DominionDTO> dominions = query(sql, name);
         if (dominions.size() == 0) return null;
         return dominions.get(0);
     }
@@ -151,25 +151,24 @@ public class DominionDTO {
     public static DominionDTO insert(DominionDTO dominion) {
         String sql = "INSERT INTO dominion (" +
                 "owner, name, world, x1, y1, z1, x2, y2, z2" +
-                ") VALUES (" +
-                "'" + dominion.getOwner().toString() + "', " +
-                "'" + dominion.getName() + "', " +
-                "'" + dominion.getWorld() + "', " +
-                dominion.getX1() + ", " +
-                dominion.getY1() + ", " +
-                dominion.getZ1() + ", " +
-                dominion.getX2() + ", " +
-                dominion.getY2() + ", " +
-                dominion.getZ2() +
-                ") RETURNING *;";
-        List<DominionDTO> dominions = query(sql);
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
+        List<DominionDTO> dominions = query(sql,
+                dominion.getOwner(),
+                dominion.getName(),
+                dominion.getWorld(),
+                dominion.getX1(),
+                dominion.getY1(),
+                dominion.getZ1(),
+                dominion.getX2(),
+                dominion.getY2(),
+                dominion.getZ2());
         if (dominions.size() == 0) return null;
         return dominions.get(0);
     }
 
     public static void delete(DominionDTO dominion) {
-        String sql = "DELETE FROM dominion WHERE id = " + dominion.getId() + ";";
-        query(sql);
+        String sql = "DELETE FROM dominion WHERE id = ?;";
+        query(sql, dominion.getId());
     }
 
     private static DominionDTO update(DominionDTO dominion) {
@@ -181,9 +180,9 @@ public class DominionDTO {
             tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
         }
         String sql = "UPDATE dominion SET " +
-                "owner = '" + dominion.getOwner().toString() + "', " +
-                "name = '" + dominion.getName() + "', " +
-                "world = '" + dominion.getWorld() + "', " +
+                "owner = ?," +
+                "name = ?," +
+                "world = ?," +
                 "x1 = " + dominion.getX1() + ", " +
                 "y1 = " + dominion.getY1() + ", " +
                 "z1 = " + dominion.getZ1() + ", " +
@@ -191,8 +190,8 @@ public class DominionDTO {
                 "y2 = " + dominion.getY2() + ", " +
                 "z2 = " + dominion.getZ2() + ", " +
                 "parent_dom_id = " + dominion.getParentDomId() + ", " +
-                "join_message = '" + dominion.getJoinMessage() + "', " +
-                "leave_message = '" + dominion.getLeaveMessage() + "', " +
+                "join_message = ?," +
+                "leave_message = ?," +
                 "anchor = " + dominion.getAnchor() + ", " +
                 "animal_killing = " + dominion.getAnimalKilling() + ", " +
                 "anvil = " + dominion.getAnvil() + ", " +
@@ -239,10 +238,16 @@ public class DominionDTO {
                 "vehicle_destroy = " + dominion.getVehicleDestroy() + ", " +
                 "vehicle_spawn = " + dominion.getVehicleSpawn() + ", " +
                 "wither_spawn = " + dominion.getWitherSpawn() + ", " +               // dom only
-                "tp_location = '" + tp_location + "' " +
+                "tp_location = ?" +
                 " WHERE id = " + dominion.getId() +
                 " RETURNING *;";
-        List<DominionDTO> dominions = query(sql);
+        List<DominionDTO> dominions = query(sql,
+                dominion.getOwner().toString(),
+                dominion.getName(),
+                dominion.getWorld(),
+                dominion.getJoinMessage(),
+                dominion.getLeaveMessage(),
+                tp_location);
         if (dominions.size() == 0) return null;
         return dominions.get(0);
     }

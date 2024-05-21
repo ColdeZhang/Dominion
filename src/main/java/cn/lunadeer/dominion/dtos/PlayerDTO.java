@@ -28,9 +28,9 @@ public class PlayerDTO {
         return update(this);
     }
 
-    private static List<PlayerDTO> query(String sql) {
+    private static List<PlayerDTO> query(String sql, Object... params) {
         List<PlayerDTO> players = new ArrayList<>();
-        try (ResultSet rs = Dominion.database.query(sql)) {
+        try (ResultSet rs = Dominion.database.query(sql, params)) {
             if (rs == null) return players;
             while (rs.next()) {
                 Integer id = rs.getInt("id");
@@ -47,47 +47,47 @@ public class PlayerDTO {
     }
 
     public static PlayerDTO select(UUID uuid) {
-        String sql = "SELECT * FROM player_name WHERE uuid = '" + uuid.toString() + "';";
-        List<PlayerDTO> players = query(sql);
+        String sql = "SELECT * FROM player_name WHERE uuid = ?;";
+        List<PlayerDTO> players = query(sql, uuid.toString());
         if (players.size() == 0) return null;
         return players.get(0);
     }
 
     public static PlayerDTO select(String name) {
-        String sql = "SELECT * FROM player_name WHERE last_known_name = '" + name + "';";
-        List<PlayerDTO> players = query(sql);
+        String sql = "SELECT * FROM player_name WHERE last_known_name = ?;";
+        List<PlayerDTO> players = query(sql, name);
         if (players.size() == 0) return null;
         return players.get(0);
     }
 
     public static List<PlayerDTO> search(String name) {
         // 模糊搜索
-        String sql = "SELECT * FROM player_name WHERE last_known_name LIKE '%" + name + "%';";
-        return query(sql);
+        String sql = "SELECT * FROM player_name WHERE last_known_name LIKE ?;";
+        return query(sql, "%" + name + "%");
     }
 
     public static void delete(PlayerDTO player) {
-        String sql = "DELETE FROM player_name WHERE uuid = '" + player.getUuid().toString() + "';";
-        query(sql);
+        String sql = "DELETE FROM player_name WHERE uuid = ?;";
+        query(sql, player.getUuid());
     }
 
     private static PlayerDTO insert(PlayerDTO player) {
         String sql = "INSERT INTO player_name (uuid, last_known_name, last_join_at) " +
                 "VALUES" +
-                " ('" + player.getUuid().toString() + "', '" + player.getLastKnownName() + "', CURRENT_TIMESTAMP) " +
+                " (?, ?, CURRENT_TIMESTAMP) " +
                 "RETURNING *;";
-        List<PlayerDTO> players = query(sql);
+        List<PlayerDTO> players = query(sql, player.getUuid().toString(), player.getLastKnownName());
         if (players.size() == 0) return null;
         return players.get(0);
     }
 
     private static PlayerDTO update(PlayerDTO player) {
         String sql = "UPDATE player_name SET " +
-                "last_known_name = '" + player.getLastKnownName() + "', " +
+                "last_known_name = ?, " +
                 "last_join_at = CURRENT_TIMESTAMP " +
-                "WHERE uuid = '" + player.getUuid().toString() + "' " +
+                "WHERE uuid = ? " +
                 "RETURNING *;";
-        List<PlayerDTO> players = query(sql);
+        List<PlayerDTO> players = query(sql, player.getLastKnownName(), player.getUuid().toString());
         if (players.size() == 0) return null;
         return players.get(0);
     }

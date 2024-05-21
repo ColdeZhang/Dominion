@@ -55,22 +55,20 @@ public class PlayerPrivilegeDTO {
     }
 
     public static PlayerPrivilegeDTO select(UUID playerUUID, Integer dom_id) {
-        String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + playerUUID + "' " +
-                "AND dom_id = " + dom_id + ";";
-        List<PlayerPrivilegeDTO> p = query(sql);
+        String sql = "SELECT * FROM player_privilege WHERE player_uuid = ? AND dom_id = ?;";
+        List<PlayerPrivilegeDTO> p = query(sql, playerUUID.toString(), dom_id);
         if (p.size() == 0) return null;
         return p.get(0);
     }
 
     public static List<PlayerPrivilegeDTO> select(Integer dom_id) {
-        String sql = "SELECT * FROM player_privilege WHERE dom_id = " + dom_id + ";";
-        return query(sql);
+        String sql = "SELECT * FROM player_privilege WHERE dom_id = ?;";
+        return query(sql, dom_id);
     }
 
     public static void delete(UUID player, Integer domID) {
-        String sql = "DELETE FROM player_privilege WHERE player_uuid = '" + player + "' " +
-                "AND dom_id = " + domID + ";";
-        query(sql);
+        String sql = "DELETE FROM player_privilege WHERE player_uuid = ? AND dom_id = ?;";
+        query(sql, player.toString(), domID);
     }
 
     public static List<PlayerPrivilegeDTO> selectAll() {
@@ -79,8 +77,8 @@ public class PlayerPrivilegeDTO {
     }
 
     public static List<PlayerPrivilegeDTO> selectAll(UUID player) {
-        String sql = "SELECT * FROM player_privilege WHERE player_uuid = '" + player + "';";
-        return query(sql);
+        String sql = "SELECT * FROM player_privilege WHERE player_uuid = ?;";
+        return query(sql, player.toString());
     }
 
     private final Integer id;
@@ -579,9 +577,9 @@ public class PlayerPrivilegeDTO {
                 vehicleSpawn);
     }
 
-    private static List<PlayerPrivilegeDTO> query(String sql) {
+    private static List<PlayerPrivilegeDTO> query(String sql, Object... params) {
         List<PlayerPrivilegeDTO> players = new ArrayList<>();
-        try (ResultSet rs = Dominion.database.query(sql)) {
+        try (ResultSet rs = Dominion.database.query(sql, params)) {
             if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadPlayerPrivileges();
