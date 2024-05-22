@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -121,19 +120,16 @@ public class Cache {
         }
         if (dominion != null) {
             if (!isInDominion(dominion, player)) {
-                // glow
-                player.setGlowing(false);
-                if (dominion.getParentDomId() == -1) {
+                if (dominion.isTopDom()) {
                     Dominion.notification.info(player, "您已离开领地：%s", dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
-                    update_player_current_dominion(player, null);
                     dominion = null;
                 } else {
                     Dominion.notification.info(player, "您已离开子领地：%s", dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
                     dominion = id_dominions.get(dominion.getParentDomId());
-                    update_player_current_dominion(player, dominion);
                 }
+                update_player_current_dominion(player, dominion);
             } else {
                 // 如果在领地内则检查是否在子领地内
                 List<Integer> children = dominion_children.get(dominion.getId());
@@ -150,29 +146,20 @@ public class Cache {
             }
         }
         if (dominion == null) {
-            String world = player.getWorld().getName();
-            List<Integer> dominions_id = world_dominions.get(world);
-            if (dominions_id == null) return null;
-            List<DominionDTO> in_dominions = new ArrayList<>();
-            for (Integer id : dominions_id) {
-                DominionDTO d = id_dominions.get(id);
-                if (isInDominion(d, player)) {
-                    in_dominions.add(d);
-                }
+            List<DominionDTO> in_dominions = getDominionsParentAndChildren(player.getLocation());
+            if (in_dominions.size() != 0) {
+                dominion = in_dominions.get(0);
+                Dominion.notification.info(player, "您正在进入领地：%s", dominion.getName());
+                player.sendMessage(Component.text(dominion.getJoinMessage()));
             }
-            if (in_dominions.size() == 0) return null;
-            in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
-            dominion = in_dominions.get(0);
-            Dominion.notification.info(player, "您正在进入领地：%s", dominion.getName());
-            player.sendMessage(Component.text(dominion.getJoinMessage()));
             update_player_current_dominion(player, dominion);
         }
         return dominion;
     }
 
     private void update_player_current_dominion(Player player, DominionDTO dominion) {
+        lightOrNot(player, dominion);   // 发光检查
         if (dominion == null) {
-            player.setGlowing(false);
             player_current_dominion_id.put(player.getUniqueId(), null);
             return;
         }
@@ -183,32 +170,45 @@ public class Cache {
                     dominion.getLocation1(),
                     dominion.getLocation2());
         }
-        // glow
+    }
+
+    /**
+     * 检查玩家是否需要设置为发光
+     *
+     * @param player   玩家
+     * @param dominion 领地
+     */
+    private void lightOrNot(Player player, DominionDTO dominion) {
+        if (dominion == null) {
+            player.setGlowing(false);
+            return;
+        }
         PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
         if (privilege != null) {
-            if (privilege.getGlow()) {
-                player.setGlowing(true);
-            }
+            player.setGlowing(privilege.getGlow());
         } else {
-            if (dominion.getGlow()) {
-                player.setGlowing(true);
-            }
+            player.setGlowing(dominion.getGlow());
         }
     }
 
-    public DominionDTO getDominion(Location loc) {
+    private List<DominionDTO> getDominionsParentAndChildren(Location loc) {
         String world = loc.getWorld().getName();
         List<Integer> dominions_id = world_dominions.get(world);
-        if (dominions_id == null) return null;
         List<DominionDTO> in_dominions = new ArrayList<>();
+        if (dominions_id == null) return in_dominions;
         for (Integer id : dominions_id) {
             DominionDTO d = id_dominions.get(id);
             if (isInDominion(d, loc)) {
                 in_dominions.add(d);
             }
         }
-        if (in_dominions.size() == 0) return null;
         in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
+        return in_dominions;
+    }
+
+    public DominionDTO getDominion(Location loc) {
+        List<DominionDTO> in_dominions = getDominionsParentAndChildren(loc);
+        if (in_dominions.size() == 0) return null;
         return in_dominions.get(in_dominions.size() - 1);
     }
 
