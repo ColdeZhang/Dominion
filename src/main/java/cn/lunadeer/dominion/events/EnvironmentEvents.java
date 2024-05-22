@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import com.destroystokyo.paper.event.entity.EndermanEscapeEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -38,7 +39,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getCreeperExplode()) {
+        if (dom.getFlagValue(Flag.CREEPER_EXPLODE)) {
             return;
         }
         event.setCancelled(true);
@@ -55,7 +56,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getFireSpread()) {
+        if (dom.getFlagValue(Flag.FIRE_SPREAD)) {
             return;
         }
         event.setCancelled(true);
@@ -75,7 +76,7 @@ public class EnvironmentEvents implements Listener {
                 return;
             }
         }
-        if (dom_to.getFlowInProtection()) {
+        if (dom_to.getFlagValue(Flag.FLOW_IN_PROTECTION)) {
             event.setCancelled(true);
         }
     }
@@ -90,7 +91,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getMobDropItem()) {
+        if (dom.getFlagValue(Flag.MOB_DROP_ITEM)) {
             return;
         }
         event.getDrops().clear();
@@ -106,7 +107,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getTntExplode()) {
+        if (dom.getFlagValue(Flag.TNT_EXPLODE)) {
             return;
         }
         event.setCancelled(true);
@@ -129,7 +130,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getTrample()) {
+        if (dom.getFlagValue(Flag.TRAMPLE)) {
             return;
         }
         event.setCancelled(true);
@@ -145,7 +146,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getWitherSpawn()) {
+        if (dom.getFlagValue(Flag.WITHER_SPAWN)) {
             return;
         }
         event.setCancelled(true);
@@ -161,7 +162,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getEnderMan()) {
+        if (dom.getFlagValue(Flag.ENDER_MAN)) {
             return;
         }
         event.setCancelled(true);
@@ -174,7 +175,7 @@ public class EnvironmentEvents implements Listener {
         if (dom == null) {
             return;
         }
-        if (dom.getEnderMan()) {
+        if (dom.getFlagValue(Flag.ENDER_MAN)) {
             return;
         }
         event.setCancelled(true);

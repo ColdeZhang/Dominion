@@ -7,13 +7,9 @@ import org.bukkit.World;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class DominionDTO {
-
     private static List<DominionDTO> query(String sql, Object... args) {
         List<DominionDTO> dominions = new ArrayList<>();
         try (ResultSet rs = Dominion.database.query(sql, args)) {
@@ -35,55 +31,15 @@ public class DominionDTO {
                 Integer z2 = rs.getInt("z2");
                 Integer parentDomId = rs.getInt("parent_dom_id");
                 String tp_location = rs.getString("tp_location");
+                Map<Flag, Boolean> flags = new HashMap<>();
+                for (Flag f : Flag.getDominionFlags()) {
+                    flags.put(f, rs.getBoolean(f.getFlagName()));
+                }
+
                 DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
                         rs.getString("join_message"),
                         rs.getString("leave_message"),
-                        rs.getBoolean("anchor"),
-                        rs.getBoolean("animal_killing"),
-                        rs.getBoolean("anvil"),
-                        rs.getBoolean("beacon"),
-                        rs.getBoolean("bed"),
-                        rs.getBoolean("brew"),
-                        rs.getBoolean("break"),
-                        rs.getBoolean("button"),
-                        rs.getBoolean("cake"),
-                        rs.getBoolean("container"),
-                        rs.getBoolean("craft"),
-                        rs.getBoolean("creeper_explode"),
-                        rs.getBoolean("comparer"),
-                        rs.getBoolean("door"),
-                        rs.getBoolean("dye"),
-                        rs.getBoolean("egg"),
-                        rs.getBoolean("enchant"),
-                        rs.getBoolean("ender_man"),
-                        rs.getBoolean("ender_pearl"),
-                        rs.getBoolean("feed"),
-                        rs.getBoolean("fire_spread"),
-                        rs.getBoolean("flow_in_protection"),
-                        rs.getBoolean("glow"),
-                        rs.getBoolean("harvest"),
-                        rs.getBoolean("honey"),
-                        rs.getBoolean("hook"),
-                        rs.getBoolean("hopper"),
-                        rs.getBoolean("ignite"),
-                        rs.getBoolean("lever"),
-                        rs.getBoolean("mob_drop_item"),
-                        rs.getBoolean("monster_killing"),
-                        rs.getBoolean("move"),
-                        rs.getBoolean("place"),
-                        rs.getBoolean("pressure"),
-                        rs.getBoolean("riding"),
-                        rs.getBoolean("repeater"),
-                        rs.getBoolean("shear"),
-                        rs.getBoolean("shoot"),
-                        rs.getBoolean("show_border"),
-                        rs.getBoolean("teleport"),
-                        rs.getBoolean("tnt_explode"),
-                        rs.getBoolean("trade"),
-                        rs.getBoolean("trample"),
-                        rs.getBoolean("vehicle_destroy"),
-                        rs.getBoolean("vehicle_spawn"),
-                        rs.getBoolean("wither_spawn"),
+                        flags,
                         tp_location
                 );
                 dominions.add(dominion);
@@ -191,54 +147,11 @@ public class DominionDTO {
                 "z2 = " + dominion.getZ2() + ", " +
                 "parent_dom_id = " + dominion.getParentDomId() + ", " +
                 "join_message = ?," +
-                "leave_message = ?," +
-                "anchor = " + dominion.getAnchor() + ", " +
-                "animal_killing = " + dominion.getAnimalKilling() + ", " +
-                "anvil = " + dominion.getAnvil() + ", " +
-                "beacon = " + dominion.getBeacon() + ", " +
-                "bed = " + dominion.getBed() + ", " +
-                "brew = " + dominion.getBrew() + ", " +
-                "break = " + dominion.getBreak() + ", " +
-                "button = " + dominion.getButton() + ", " +
-                "cake = " + dominion.getCake() + ", " +
-                "container = " + dominion.getContainer() + ", " +
-                "craft = " + dominion.getCraft() + ", " +
-                "creeper_explode = " + dominion.getCreeperExplode() + ", " +        // dom only
-                "comparer = " + dominion.getComparer() + ", " +
-                "door = " + dominion.getDoor() + ", " +
-                "dye = " + dominion.getDye() + ", " +
-                "egg = " + dominion.getEgg() + ", " +
-                "enchant = " + dominion.getEnchant() + ", " +
-                "ender_man = " + dominion.getEnderMan() + ", " +                    // dom only
-                "ender_pearl = " + dominion.getEnderPearl() + ", " +
-                "feed = " + dominion.getFeed() + ", " +
-                "fire_spread = " + dominion.getFireSpread() + ", " +                // dom only
-                "flow_in_protection = " + dominion.getFlowInProtection() + ", " +   // dom only
-                "glow = " + dominion.getGlow() + ", " +
-                "harvest = " + dominion.getHarvest() + ", " +
-                "honey = " + dominion.getHoney() + ", " +
-                "hook = " + dominion.getHook() + ", " +
-                "hopper = " + dominion.getHopper() + ", " +
-                "ignite = " + dominion.getIgnite() + ", " +
-                "lever = " + dominion.getLever() + ", " +
-                "mob_drop_item = " + dominion.getMobDropItem() + ", " +            // dom only
-                "monster_killing = " + dominion.getMonsterKilling() + ", " +
-                "move = " + dominion.getMove() + ", " +
-                "place = " + dominion.getPlace() + ", " +
-                "pressure = " + dominion.getPressure() + ", " +
-                "riding = " + dominion.getRiding() + ", " +
-                "repeater = " + dominion.getRepeater() + ", " +
-                "shear = " + dominion.getShear() + ", " +
-                "shoot = " + dominion.getShoot() + ", " +
-                "show_border = " + dominion.getShowBorder() + ", " +                // dom only
-                "teleport = " + dominion.getTeleport() + ", " +
-                "tnt_explode = " + dominion.getTntExplode() + ", " +                // dom only
-                "trade = " + dominion.getTrade() + ", " +
-                "trample = " + dominion.getTrample() + ", " +                       // dom only
-                "vehicle_destroy = " + dominion.getVehicleDestroy() + ", " +
-                "vehicle_spawn = " + dominion.getVehicleSpawn() + ", " +
-                "wither_spawn = " + dominion.getWitherSpawn() + ", " +               // dom only
-                "tp_location = ?" +
+                "leave_message = ?,";
+        for (Flag f : Flag.getDominionFlags()) {
+            sql += f.getFlagName() + " = " + dominion.getFlagValue(f) + ",";
+        }
+        sql += "tp_location = ?" +
                 " WHERE id = " + dominion.getId() +
                 " RETURNING *;";
         List<DominionDTO> dominions = query(sql,
@@ -256,24 +169,7 @@ public class DominionDTO {
                         Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2,
                         Integer parentDomId,
                         String joinMessage, String leaveMessage,
-                        Boolean anchor, Boolean animalKilling, Boolean anvil,
-                        Boolean beacon, Boolean bed, Boolean brew, Boolean breakBlock, Boolean button,
-                        Boolean cake, Boolean container, Boolean craft, Boolean creeperExplode, Boolean comparer,
-                        Boolean door, Boolean dye,
-                        Boolean egg, Boolean enchant, Boolean enderMan, Boolean enderPearl,
-                        Boolean feed, Boolean fireSpread, Boolean flowInProtection,
-                        Boolean glow,
-                        Boolean harvest, Boolean honey, Boolean hook, Boolean hopper,
-                        Boolean ignite,
-                        Boolean lever,
-                        Boolean mobDropItem, Boolean monsterKilling, Boolean move,
-                        Boolean place, Boolean pressure,
-                        Boolean riding, Boolean repeater,
-                        Boolean shear, Boolean shoot, Boolean showBorder,
-                        Boolean teleport, Boolean tntExplode, Boolean trade, Boolean trample,
-                        Boolean vehicleDestroy,
-                        Boolean vehicleSpawn,
-                        Boolean witherSpawn,
+                        Map<Flag, Boolean> flags,
                         String tp_location) {
         this.id = id;
         this.owner = owner;
@@ -288,52 +184,7 @@ public class DominionDTO {
         this.parentDomId = parentDomId;
         this.joinMessage = joinMessage;
         this.leaveMessage = leaveMessage;
-        this.anchor = anchor;
-        this.animalKilling = animalKilling;
-        this.anvil = anvil;
-        this.beacon = beacon;
-        this.bed = bed;
-        this.brew = brew;
-        this.breakBlock = breakBlock;
-        this.button = button;
-        this.cake = cake;
-        this.container = container;
-        this.craft = craft;
-        this.creeperExplode = creeperExplode;
-        this.comparer = comparer;
-        this.door = door;
-        this.dye = dye;
-        this.egg = egg;
-        this.enchant = enchant;
-        this.enderMan = enderMan;
-        this.enderPearl = enderPearl;
-        this.feed = feed;
-        this.fireSpread = fireSpread;
-        this.flowInProtection = flowInProtection;
-        this.glow = glow;
-        this.harvest = harvest;
-        this.honey = honey;
-        this.hook = hook;
-        this.hopper = hopper;
-        this.ignite = ignite;
-        this.lever = lever;
-        this.mobDropItem = mobDropItem;
-        this.monsterKilling = monsterKilling;
-        this.move = move;
-        this.place = place;
-        this.pressure = pressure;
-        this.riding = riding;
-        this.repeater = repeater;
-        this.shear = shear;
-        this.shoot = shoot;
-        this.showBorder = showBorder;
-        this.teleport = teleport;
-        this.tntExplode = tntExplode;
-        this.trade = trade;
-        this.trample = trample;
-        this.vehicleDestroy = vehicleDestroy;
-        this.vehicleSpawn = vehicleSpawn;
-        this.witherSpawn = witherSpawn;
+        this.flags.putAll(flags);
         if (Objects.equals(tp_location, "default")) {
             this.tp_location = null;
         } else {
@@ -384,52 +235,7 @@ public class DominionDTO {
     private Integer parentDomId = -1;
     private String joinMessage = "欢迎";
     private String leaveMessage = "再见";
-    private Boolean anchor = false;
-    private Boolean animalKilling = false;
-    private Boolean anvil = false;
-    private Boolean beacon = false;
-    private Boolean bed = false;
-    private Boolean brew = false;
-    private Boolean breakBlock = false;
-    private Boolean button = false;
-    private Boolean cake = false;
-    private Boolean container = false;
-    private Boolean craft = false;
-    private Boolean creeperExplode = false;
-    private Boolean comparer = false;
-    private Boolean door = false;
-    private Boolean dye = false;
-    private Boolean egg = false;
-    private Boolean enchant = false;
-    private Boolean enderMan = false;
-    private Boolean enderPearl = false;
-    private Boolean feed = false;
-    private Boolean fireSpread = false;
-    private Boolean flowInProtection = false;
-    private Boolean glow = false;
-    private Boolean honey = false;
-    private Boolean hook = false;
-    private Boolean hopper = false;
-    private Boolean ignite = false;
-    private Boolean lever = false;
-    private Boolean mobDropItem = true;
-    private Boolean monsterKilling = false;
-    private Boolean move = true;
-    private Boolean place = false;
-    private Boolean pressure = false;
-    private Boolean riding = false;
-    private Boolean repeater = false;
-    private Boolean shear = false;
-    private Boolean shoot = false;
-    private Boolean showBorder = true;
-    private Boolean teleport = false;
-    private Boolean tntExplode = false;
-    private Boolean trade = false;
-    private Boolean trample = false;
-    private Boolean vehicleDestroy = false;
-    private Boolean vehicleSpawn = false;
-    private Boolean witherSpawn = false;
-    private Boolean harvest = false;
+    private final Map<Flag, Boolean> flags = new HashMap<>();
     private Location tp_location = null;
 
     // getters and setters
@@ -557,417 +363,12 @@ public class DominionDTO {
         return update(this);
     }
 
-    public Boolean getAnchor() {
-        return anchor;
+    public Boolean getFlagValue(Flag flag) {
+        return flags.get(flag);
     }
 
-    public DominionDTO setAnchor(Boolean anchor) {
-        this.anchor = anchor;
-        return update(this);
-    }
-
-    public Boolean getAnimalKilling() {
-        return animalKilling;
-    }
-
-    public DominionDTO setAnimalKilling(Boolean animalKilling) {
-        this.animalKilling = animalKilling;
-        return update(this);
-    }
-
-    public Boolean getAnvil() {
-        return anvil;
-    }
-
-    public DominionDTO setAnvil(Boolean anvil) {
-        this.anvil = anvil;
-        return update(this);
-    }
-
-    public Boolean getBeacon() {
-        return beacon;
-    }
-
-    public DominionDTO setBeacon(Boolean beacon) {
-        this.beacon = beacon;
-        return update(this);
-    }
-
-    public Boolean getBed() {
-        return bed;
-    }
-
-    public DominionDTO setBed(Boolean bed) {
-        this.bed = bed;
-        return update(this);
-    }
-
-    public Boolean getBrew() {
-        return brew;
-    }
-
-    public DominionDTO setBrew(Boolean brew) {
-        this.brew = brew;
-        return update(this);
-    }
-
-    public Boolean getBreak() {
-        return breakBlock;
-    }
-
-    public DominionDTO setBreak(Boolean breakBlock) {
-        this.breakBlock = breakBlock;
-        return update(this);
-    }
-
-    public Boolean getButton() {
-        return button;
-    }
-
-    public DominionDTO setButton(Boolean button) {
-        this.button = button;
-        return update(this);
-    }
-
-    public Boolean getCake() {
-        return cake;
-    }
-
-    public DominionDTO setCake(Boolean cake) {
-        this.cake = cake;
-        return update(this);
-    }
-
-    public Boolean getContainer() {
-        return container;
-    }
-
-    public DominionDTO setContainer(Boolean container) {
-        this.container = container;
-        return update(this);
-    }
-
-    public Boolean getCraft() {
-        return craft;
-    }
-
-    public DominionDTO setCraft(Boolean craft) {
-        this.craft = craft;
-        return update(this);
-    }
-
-    public Boolean getCreeperExplode() {
-        return creeperExplode;
-    }
-
-    public DominionDTO setCreeperExplode(Boolean creeperExplode) {
-        this.creeperExplode = creeperExplode;
-        return update(this);
-    }
-
-    public Boolean getComparer() {
-        return comparer;
-    }
-
-    public DominionDTO setComparer(Boolean comparer) {
-        this.comparer = comparer;
-        return update(this);
-    }
-
-    public Boolean getDoor() {
-        return door;
-    }
-
-    public DominionDTO setDoor(Boolean door) {
-        this.door = door;
-        return update(this);
-    }
-
-    public Boolean getDye() {
-        return dye;
-    }
-
-    public DominionDTO setDye(Boolean dye) {
-        this.dye = dye;
-        return update(this);
-    }
-
-    public Boolean getEgg() {
-        return egg;
-    }
-
-    public DominionDTO setEgg(Boolean egg) {
-        this.egg = egg;
-        return update(this);
-    }
-
-    public Boolean getEnchant() {
-        return enchant;
-    }
-
-    public DominionDTO setEnchant(Boolean enchant) {
-        this.enchant = enchant;
-        return update(this);
-    }
-
-    public Boolean getEnderMan() {
-        return enderMan;
-    }
-
-    public DominionDTO setEnderMan(Boolean enderMan) {
-        this.enderMan = enderMan;
-        return update(this);
-    }
-
-    public Boolean getEnderPearl() {
-        return enderPearl;
-    }
-
-    public DominionDTO setEnderPearl(Boolean enderPearl) {
-        this.enderPearl = enderPearl;
-        return update(this);
-    }
-
-    public Boolean getFeed() {
-        return feed;
-    }
-
-    public DominionDTO setFeed(Boolean feed) {
-        this.feed = feed;
-        return update(this);
-    }
-
-    public Boolean getFireSpread() {
-        return fireSpread;
-    }
-
-    public DominionDTO setFireSpread(Boolean fireSpread) {
-        this.fireSpread = fireSpread;
-        return update(this);
-    }
-
-    public Boolean getFlowInProtection() {
-        return flowInProtection;
-    }
-
-    public DominionDTO setFlowInProtection(Boolean flowInProtection) {
-        this.flowInProtection = flowInProtection;
-        return update(this);
-    }
-
-    public Boolean getGlow() {
-        return glow;
-    }
-
-    public DominionDTO setGlow(Boolean glow) {
-        this.glow = glow;
-        return update(this);
-    }
-
-    public Boolean getHoney() {
-        return honey;
-    }
-
-    public DominionDTO setHoney(Boolean honey) {
-        this.honey = honey;
-        return update(this);
-    }
-
-    public Boolean getHook() {
-        return hook;
-    }
-
-    public DominionDTO setHook(Boolean hook) {
-        this.hook = hook;
-        return update(this);
-    }
-
-    public Boolean getHopper() {
-        return hopper;
-    }
-
-    public DominionDTO setHopper(Boolean hopper) {
-        this.hopper = hopper;
-        return update(this);
-    }
-
-    public Boolean getIgnite() {
-        return ignite;
-    }
-
-    public DominionDTO setIgnite(Boolean ignite) {
-        this.ignite = ignite;
-        return update(this);
-    }
-
-    public Boolean getLever() {
-        return lever;
-    }
-
-    public DominionDTO setLever(Boolean lever) {
-        this.lever = lever;
-        return update(this);
-    }
-
-    public Boolean getMobDropItem() {
-        return mobDropItem;
-    }
-
-    public DominionDTO setMobDropItem(Boolean mobDropItem) {
-        this.mobDropItem = mobDropItem;
-        return update(this);
-    }
-
-    public Boolean getMonsterKilling() {
-        return monsterKilling;
-    }
-
-    public DominionDTO setMonsterKilling(Boolean monsterKilling) {
-        this.monsterKilling = monsterKilling;
-        return update(this);
-    }
-
-    public Boolean getMove() {
-        return move;
-    }
-
-    public DominionDTO setMove(Boolean move) {
-        this.move = move;
-        return update(this);
-    }
-
-    public Boolean getPlace() {
-        return place;
-    }
-
-    public DominionDTO setPlace(Boolean place) {
-        this.place = place;
-        return update(this);
-    }
-
-    public Boolean getPressure() {
-        return pressure;
-    }
-
-    public DominionDTO setPressure(Boolean pressure) {
-        this.pressure = pressure;
-        return update(this);
-    }
-
-    public Boolean getRiding() {
-        return riding;
-    }
-
-    public DominionDTO setRiding(Boolean riding) {
-        this.riding = riding;
-        return update(this);
-    }
-
-    public Boolean getRepeater() {
-        return repeater;
-    }
-
-    public DominionDTO setRepeater(Boolean repeater) {
-        this.repeater = repeater;
-        return update(this);
-    }
-
-    public Boolean getShear() {
-        return shear;
-    }
-
-    public DominionDTO setShear(Boolean shear) {
-        this.shear = shear;
-        return update(this);
-    }
-
-    public Boolean getShoot() {
-        return shoot;
-    }
-
-    public DominionDTO setShoot(Boolean shoot) {
-        this.shoot = shoot;
-        return update(this);
-    }
-
-    public Boolean getShowBorder() {
-        return showBorder;
-    }
-
-    public DominionDTO setShowBorder(Boolean showBorder) {
-        this.showBorder = showBorder;
-        return update(this);
-    }
-
-    public Boolean getTeleport() {
-        return teleport;
-    }
-
-    public DominionDTO setTeleport(Boolean teleport) {
-        this.teleport = teleport;
-        return update(this);
-    }
-
-    public Boolean getTntExplode() {
-        return tntExplode;
-    }
-
-    public DominionDTO setTntExplode(Boolean tntExplode) {
-        this.tntExplode = tntExplode;
-        return update(this);
-    }
-
-    public Boolean getTrade() {
-        return trade;
-    }
-
-    public DominionDTO setTrade(Boolean trade) {
-        this.trade = trade;
-        return update(this);
-    }
-
-    public Boolean getTrample() {
-        return trample;
-    }
-
-    public DominionDTO setTrample(Boolean trample) {
-        this.trample = trample;
-        return update(this);
-    }
-
-    public Boolean getVehicleDestroy() {
-        return vehicleDestroy;
-    }
-
-    public DominionDTO setVehicleDestroy(Boolean vehicleDestroy) {
-        this.vehicleDestroy = vehicleDestroy;
-        return update(this);
-    }
-
-    public Boolean getVehicleSpawn() {
-        return vehicleSpawn;
-    }
-
-    public DominionDTO setVehicleSpawn(Boolean vehicleSpawn) {
-        this.vehicleSpawn = vehicleSpawn;
-        return update(this);
-    }
-
-    public Boolean getWitherSpawn() {
-        return witherSpawn;
-    }
-
-    public DominionDTO setWitherSpawn(Boolean witherSpawn) {
-        this.witherSpawn = witherSpawn;
-        return update(this);
-    }
-
-    public Boolean getHarvest() {
-        return harvest;
-    }
-
-    public DominionDTO setHarvest(Boolean harvest) {
-        this.harvest = harvest;
+    public DominionDTO setFlagValue(Flag flag, Boolean value) {
+        flags.put(flag, value);
         return update(this);
     }
 

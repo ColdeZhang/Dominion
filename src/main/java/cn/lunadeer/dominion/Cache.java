@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import net.kyori.adventure.text.Component;
@@ -165,7 +166,7 @@ public class Cache {
         }
         player_current_dominion_id.put(player.getUniqueId(), dominion.getId());
         // show border
-        if (dominion.getShowBorder()) {
+        if (dominion.getFlagValue(Flag.SHOW_BORDER)) {
             ParticleRender.showBoxFace(Dominion.instance, player,
                     dominion.getLocation1(),
                     dominion.getLocation2());
@@ -187,7 +188,7 @@ public class Cache {
         if (privilege != null) {
             player.setGlowing(privilege.getGlow());
         } else {
-            player.setGlowing(dominion.getGlow());
+            player.setGlowing(dominion.getFlagValue(Flag.GLOW));
         }
     }
 
