@@ -165,5 +165,9 @@ public class DatabaseTables {
 
         // 1.21
         Dominion.database.addColumnIfNotExists("dominion", "show_border", "BOOLEAN NOT NULL DEFAULT TRUE");
+
+        // 1.26
+        Dominion.database.addColumnIfNotExists("dominion", "fly", "BOOLEAN NOT NULL DEFAULT FALSE");
+        Dominion.database.addColumnIfNotExists("player_privilege", "fly", "BOOLEAN NOT NULL DEFAULT FALSE");
     }
 }

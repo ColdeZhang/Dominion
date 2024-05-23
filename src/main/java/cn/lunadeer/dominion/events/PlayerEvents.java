@@ -40,6 +40,9 @@ public class PlayerEvents implements Listener {
         Player bukkitPlayer = event.getPlayer();
         PlayerDTO player = PlayerDTO.get(bukkitPlayer);
         player.onJoin(); // update name
+        if (!Flag.FLY.getEnable()) {
+            bukkitPlayer.setAllowFlight(false);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // anchor
@@ -49,7 +52,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        if (checkFlag(dom, Flag.ANCHOR, bukkitPlayer, null)) {
+        if (!checkFlag(dom, Flag.ANCHOR, bukkitPlayer, null)) {
             if (bukkitPlayer.getBedSpawnLocation() != null) {
                 event.setRespawnLocation(bukkitPlayer.getBedSpawnLocation());
             } else {

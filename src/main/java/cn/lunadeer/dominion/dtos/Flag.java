@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.JsonFile;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -32,7 +33,8 @@ public enum Flag {
     ENDER_PEARL("ender_pearl", "投掷末影珍珠", "是否可以使用末影珍珠", false, false, true),
     FEED("feed", "喂养", "是否可以喂养动物", false, false, true),
     FIRE_SPREAD("fire_spread", "火焰蔓延", "是否可以火焰蔓延", false, true, true),
-    FLOW_IN_PROTECTION("flow_in_protection", "外部流体是否可以进入", "包含：岩浆、水", false, true, true),
+    FLOW_IN_PROTECTION("flow_in_protection", "外部流体是否可以进入", "包含：岩浆、水（不会阻止领地内部的流体蔓延）", false, true, true),
+    FLY("fly", "飞行", "不是翅鞘飞行，是类似于创造模式的飞行", false, false, false),
     GLOW("glow", "玩家发光", "类似光灵箭的高亮效果", false, false, true),
     HARVEST("harvest", "收获", "收获庄稼、作物", false, false, true),
     HONEY("honey", "蜂巢交互", "是否可以采蜂蜜", false, false, true),
@@ -177,13 +179,21 @@ public enum Flag {
                 saveToJson();
             }
             JSONObject jsonObject = JsonFile.loadFromFile(flagFile);
+            if (jsonObject == null) {
+                Dominion.logger.warn("读取权限配置失败，已重置");
+                saveToJson();
+            }
             for (Flag flag : getAllFlags()) {
-                JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
-                if (flagJson != null) {
-                    flag.setDisplayName((String) flagJson.get("display_name"));
-                    flag.setDescription((String) flagJson.get("description"));
-                    flag.setDefaultValue((Boolean) flagJson.get("default_value"));
-                    flag.setEnable((Boolean) flagJson.get("enable"));
+                try {
+                    JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
+                    if (flagJson != null) {
+                        flag.setDisplayName((String) flagJson.get("display_name"));
+                        flag.setDescription((String) flagJson.get("description"));
+                        flag.setDefaultValue((Boolean) flagJson.get("default_value"));
+                        flag.setEnable((Boolean) flagJson.get("enable"));
+                    }
+                } catch (Exception e) {
+                    Dominion.logger.warn("读取权限 %s 配置失败：%s，已跳过", flag.getFlagName(), e.getMessage());
                 }
             }
             saveToJson(); // 复写一遍，确保文件中包含所有权限
@@ -203,6 +213,7 @@ public enum Flag {
                 flagJson.put("enable", f.enable);
                 json.put(f.getFlagName(), flagJson);
             }
+            Dominion.logger.debug("保存权限配置：%s", json.toJSONString());
             File flagFile = new File(Dominion.instance.getDataFolder(), "flags.json");
             JsonFile.saveToFile(json, flagFile);
         } catch (Exception e) {

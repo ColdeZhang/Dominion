@@ -63,4 +63,18 @@ public class Apis {
         }
         return false;
     }
+
+    public static boolean checkFlag(DominionDTO dom, Flag flag, Cancellable event) {
+        if (!flag.getEnable()) {
+            return true;
+        }
+        if (dom == null) {
+            return true;
+        }
+        if (dom.getFlagValue(flag)) {
+            return true;
+        }
+        event.setCancelled(true);
+        return false;
+    }
 }

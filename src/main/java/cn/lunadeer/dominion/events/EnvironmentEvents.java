@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Objects;
 
+import static cn.lunadeer.dominion.events.Apis.checkFlag;
 import static org.bukkit.Material.FARMLAND;
 
 public class EnvironmentEvents implements Listener {
@@ -36,13 +37,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(event.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.CREEPER_EXPLODE)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // fire_spread
@@ -53,13 +48,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.FIRE_SPREAD)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.FIRE_SPREAD, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // flow_in_protection
@@ -76,9 +65,7 @@ public class EnvironmentEvents implements Listener {
                 return;
             }
         }
-        if (dom_to.getFlagValue(Flag.FLOW_IN_PROTECTION)) {
-            event.setCancelled(true);
-        }
+        checkFlag(dom_to, Flag.FLOW_IN_PROTECTION, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // mob_drop_item
@@ -89,6 +76,9 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         if (dom == null) {
+            return;
+        }
+        if (!Flag.MOB_DROP_ITEM.getEnable()) {
             return;
         }
         if (dom.getFlagValue(Flag.MOB_DROP_ITEM)) {
@@ -104,13 +94,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(event.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.TNT_EXPLODE)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.TNT_EXPLODE, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // trample
@@ -127,13 +111,7 @@ public class EnvironmentEvents implements Listener {
         }
         Location location = block.getLocation();
         DominionDTO dom = Cache.instance.getDominion(location);
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.TRAMPLE)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.TRAMPLE, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // wither_spawn
@@ -143,13 +121,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.WITHER_SPAWN)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.WITHER_SPAWN, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_man spawn
@@ -159,25 +131,13 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.ENDER_MAN)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.ENDER_MAN, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_man escape
     public void onEnderManEscape(EndermanEscapeEvent event){
         Entity entity = event.getEntity();
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (dom.getFlagValue(Flag.ENDER_MAN)) {
-            return;
-        }
-        event.setCancelled(true);
+        checkFlag(dom, Flag.ENDER_MAN, event);
     }
 }

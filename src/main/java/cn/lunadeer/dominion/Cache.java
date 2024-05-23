@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import net.kyori.adventure.text.Component;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -162,6 +163,7 @@ public class Cache {
 
     private void update_player_current_dominion(Player player, DominionDTO dominion) {
         lightOrNot(player, dominion);   // 发光检查
+        flyOrNot(player, dominion);     // 飞行检查
         if (dominion == null) {
             player_current_dominion_id.put(player.getUniqueId(), null);
             return;
@@ -182,7 +184,35 @@ public class Cache {
      * @param dominion 领地
      */
     private void lightOrNot(Player player, DominionDTO dominion) {
-        player.setGlowing(checkFlag(dominion, Flag.GLOW, player, null));
+        if (!Flag.GLOW.getEnable()) {
+            return;
+        }
+        if (dominion == null) {
+            player.setGlowing(false);
+            return;
+        }
+        PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
+        if (privilege != null) {
+            player.setGlowing(privilege.getFlagValue(Flag.GLOW));
+        } else {
+            player.setGlowing(dominion.getFlagValue(Flag.GLOW));
+        }
+    }
+
+    private void flyOrNot(Player player, DominionDTO dominion) {
+        if (!Flag.FLY.getEnable()) {
+            return;
+        }
+        if (dominion == null) {
+            player.setAllowFlight(false);
+            return;
+        }
+        PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
+        if (privilege != null) {
+            player.setAllowFlight(privilege.getFlagValue(Flag.FLY));
+        } else {
+            player.setAllowFlight(dominion.getFlagValue(Flag.FLY));
+        }
     }
 
     private List<DominionDTO> getDominionsParentAndChildren(Location loc) {
