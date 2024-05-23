@@ -6,7 +6,7 @@
 
     <groupId>cn.lunadeer</groupId>
     <artifactId>Dominion</artifactId>
-    <version>1.26.0-beta</version>
+    <version>1.26.2-beta</version>
     <packaging>jar</packaging>
 
     <name>Dominion</name>
@@ -95,11 +95,6 @@
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>2.0.31</version>
         </dependency>
     </dependencies>
 </project>

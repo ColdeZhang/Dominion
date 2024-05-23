@@ -148,7 +148,7 @@ public class PlayerPrivilegeDTO {
             sql += f.getFlagName() + " = " + player.getFlagValue(f) + ", ";
         }
         sql = sql.substring(0, sql.length() - 2);
-        sql += "WHERE id = " + player.getId() + " " +
+        sql += " WHERE id = " + player.getId() + " " +
                 "RETURNING *;";
         List<PlayerPrivilegeDTO> players = query(sql);
         if (players.size() == 0) return null;

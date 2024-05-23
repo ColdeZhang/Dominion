@@ -16,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static cn.lunadeer.dominion.events.Apis.checkFlag;
-
 public class Cache {
 
     public Cache() {
@@ -201,6 +199,12 @@ public class Cache {
 
     private void flyOrNot(Player player, DominionDTO dominion) {
         if (!Flag.FLY.getEnable()) {
+            return;
+        }
+        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+            return;
+        }
+        if (player.isOp() && Dominion.config.getLimitOpBypass()) {
             return;
         }
         if (dominion == null) {
