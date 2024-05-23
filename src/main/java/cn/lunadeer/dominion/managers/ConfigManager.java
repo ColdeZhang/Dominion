@@ -85,7 +85,7 @@ public class ConfigManager {
         _economy_price = (float) _file.getDouble("Economy.Price", 10.0);
         _economy_only_xz = _file.getBoolean("Economy.OnlyXZ", false);
         _economy_refund = (float) _file.getDouble("Economy.Refund", 0.85);
-        Flag.loadFromJson(_plugin.getDataFolder());
+        Flag.loadFromJson();
     }
 
     public Boolean isDebug() {

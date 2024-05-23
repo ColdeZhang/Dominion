@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.minecraftpluginutils.JsonFile;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -88,6 +89,7 @@ public enum Flag {
     public Boolean getDefaultValue() {
         return default_value;
     }
+
     public Boolean getEnable() {
         return enable;
     }
@@ -168,22 +170,13 @@ public enum Flag {
         }
 */
 
-    public static void loadFromJson(File dataFolder) {
-        File flagFile = new File(dataFolder, "flags.json");
-        if (!flagFile.exists()) {
-            saveToJson(dataFolder);
-        }
-
-        try (FileReader reader = new FileReader(flagFile);
-             BufferedReader bufferedReader = new BufferedReader(reader)) {
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-                stringBuilder.append(System.lineSeparator());
+    public static void loadFromJson() {
+        try {
+            File flagFile = new File(Dominion.instance.getDataFolder(), "flags.json");
+            if (!flagFile.exists()) {
+                saveToJson();
             }
-            String fileContent = stringBuilder.toString();
-            JSONObject jsonObject = (JSONObject) JSONObject.parse(fileContent);
+            JSONObject jsonObject = JsonFile.loadFromFile(flagFile);
             for (Flag flag : getAllFlags()) {
                 JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
                 if (flagJson != null) {
@@ -193,29 +186,27 @@ public enum Flag {
                     flag.setEnable((Boolean) flagJson.get("enable"));
                 }
             }
+            saveToJson(); // 复写一遍，确保文件中包含所有权限
         } catch (Exception e) {
             Dominion.logger.err("读取权限配置失败：%s", e.getMessage());
         }
-        saveToJson(dataFolder); // 复写一遍，确保文件中包含所有权限
     }
 
-    public static void saveToJson(File dataFolder) {
-        JSONObject json = new JSONObject();
-        for (Flag f : getAllFlags()) {
-            JSONObject flagJson = new JSONObject();
-            flagJson.put("display_name", f.getDisplayName());
-            flagJson.put("description", f.getDescription());
-            flagJson.put("default_value", f.getDefaultValue());
-            flagJson.put("enable", f.enable);
-            json.put(f.getFlagName(), flagJson);
-        }
-        File flagFile = new File(dataFolder, "flags.json");
-        // save to file, if exists then overwrite
-        try (FileWriter fileWriter = new FileWriter(flagFile);
-             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write(JSON.toJSONString(json, true));
+    public static void saveToJson() {
+        try {
+            JSONObject json = new JSONObject();
+            for (Flag f : getAllFlags()) {
+                JSONObject flagJson = new JSONObject();
+                flagJson.put("display_name", f.getDisplayName());
+                flagJson.put("description", f.getDescription());
+                flagJson.put("default_value", f.getDefaultValue());
+                flagJson.put("enable", f.enable);
+                json.put(f.getFlagName(), flagJson);
+            }
+            File flagFile = new File(Dominion.instance.getDataFolder(), "flags.json");
+            JsonFile.saveToFile(json, flagFile);
         } catch (Exception e) {
-            Dominion.logger.err("写入权限配置失败：%s", e.getMessage());
+            Dominion.logger.err("保存权限配置失败：%s", e.getMessage());
         }
     }
 }
