@@ -15,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static cn.lunadeer.dominion.events.Apis.checkFlag;
+
 public class Cache {
 
     public Cache() {
@@ -180,16 +182,7 @@ public class Cache {
      * @param dominion 领地
      */
     private void lightOrNot(Player player, DominionDTO dominion) {
-        if (dominion == null) {
-            player.setGlowing(false);
-            return;
-        }
-        PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
-        if (privilege != null) {
-            player.setGlowing(privilege.getGlow());
-        } else {
-            player.setGlowing(dominion.getFlagValue(Flag.GLOW));
-        }
+        player.setGlowing(checkFlag(dominion, Flag.GLOW, player, null));
     }
 
     private List<DominionDTO> getDominionsParentAndChildren(Location loc) {

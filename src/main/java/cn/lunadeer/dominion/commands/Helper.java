@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,45 +16,13 @@ import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 public class Helper {
 
     public static List<String> dominionFlags() {
-        return Arrays.asList(
-                "anchor", "animal_killing", "anvil",
-                "beacon", "bed", "brew", "break", "button",
-                "cake", "container", "craft", "creeper_explode", "comparer",
-                "door", "dye",
-                "egg", "enchant", "ender_man", "ender_pearl",
-                "feed", "fire_spread", "flow_in_protection",
-                "glow",
-                "harvest", "honey", "hook", "hopper",
-                "ignite",
-                "lever",
-                "mob_drop_item", "monster_killing", "move",
-                "place", "pressure",
-                "riding", "repeater",
-                "shear", "shoot", "show_border",
-                "teleport", "tnt_explode", "trade", "trample",
-                "vehicle_destroy",
-                "vehicle_spawn",
-                "wither_spawn");
+        List<Flag> flags = Flag.getDominionFlagsEnabled();
+        return Arrays.asList(flags.stream().map(Flag::getFlagName).toArray(String[]::new));
     }
 
     public static List<String> playerPrivileges() {
-        return Arrays.asList(
-                "admin", "anchor", "animal_killing", "anvil",
-                "beacon", "bed", "brew", "break", "button",
-                "cake", "container", "craft", "comparer",
-                "door", "dye",
-                "egg", "enchant", "ender_pearl",
-                "feed",
-                "glow",
-                "harvest", "honey", "hook", "hopper",
-                "ignite",
-                "lever",
-                "monster_killing", "move",
-                "place", "pressure", "riding", "repeater",
-                "shear", "shoot",
-                "teleport", "trade",
-                "vehicle_destroy",
-                "vehicle_spawn");
+        List<Flag> flags = Flag.getPrivilegeFlagsEnabled();
+        return Arrays.asList(flags.stream().map(Flag::getFlagName).toArray(String[]::new));
     }
 
     /**

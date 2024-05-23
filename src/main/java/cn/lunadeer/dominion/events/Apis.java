@@ -1,14 +1,19 @@
 package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.Inventory;
 
 public class Apis {
-    public static boolean hasPermission(Player player, DominionDTO dom) {
-        if (player.isOp()) {
+    public static boolean canByPass(Player player, DominionDTO dom, PlayerPrivilegeDTO prev) {
+        if (player.isOp() && Dominion.config.getLimitOpBypass()) {
             return true;
         }
         if (dom == null) {
@@ -17,9 +22,8 @@ public class Apis {
         if (dom.getOwner().equals(player.getUniqueId())) {
             return true;
         }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            return privilege.getAdmin();
+        if (prev != null) {
+            return prev.getAdmin();
         }
         return false;
     }
@@ -30,5 +34,30 @@ public class Apis {
         } else {
             return Cache.instance.getDominion(inv.getLocation());
         }
+    }
+
+    public static boolean checkFlag(DominionDTO dom, Flag flag, Player player, Cancellable event) {
+        if (dom == null) {
+            return true;
+        }
+        PlayerPrivilegeDTO prev = Cache.instance.getPlayerPrivilege(player, dom);
+        if (canByPass(player, dom, prev)) {
+            return true;
+        }
+        if (prev != null) {
+            if (prev.getFlagValue(flag)) {
+                return true;
+            }
+        } else {
+            if (dom.getFlagValue(flag)) {
+                return true;
+            }
+        }
+        TextComponent msg = Component.text(String.format("你没有 %s 权限", flag.getDisplayName())).hoverEvent(Component.text(flag.getDescription()));
+        Dominion.notification.error(player, msg);
+        if (event != null) {
+            event.setCancelled(true);
+        }
+        return false;
     }
 }

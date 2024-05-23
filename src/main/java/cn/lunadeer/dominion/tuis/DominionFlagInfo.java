@@ -40,7 +40,7 @@ public class DominionFlagInfo {
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append("权限列表"));
-        for (Flag flag : Flag.getDominionFlags()) {
+        for (Flag flag : Flag.getDominionFlagsEnabled()) {
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }
         view.showOn(player, page);

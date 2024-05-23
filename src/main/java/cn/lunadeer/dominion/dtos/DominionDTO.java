@@ -32,7 +32,7 @@ public class DominionDTO {
                 Integer parentDomId = rs.getInt("parent_dom_id");
                 String tp_location = rs.getString("tp_location");
                 Map<Flag, Boolean> flags = new HashMap<>();
-                for (Flag f : Flag.getDominionFlags()) {
+                for (Flag f : Flag.getDominionFlagsEnabled()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
 
@@ -106,8 +106,17 @@ public class DominionDTO {
 
     public static DominionDTO insert(DominionDTO dominion) {
         String sql = "INSERT INTO dominion (" +
-                "owner, name, world, x1, y1, z1, x2, y2, z2" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
+                "owner, name, world, x1, y1, z1, x2, y2, z2, ";
+        for (Flag f : Flag.getAllDominionFlags()) {
+            sql += f.getFlagName() + ", ";
+        }
+        sql += "tp_location";
+        sql += ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ";
+        for (Flag f : Flag.getAllDominionFlags()) {
+            sql += f.getDefaultValue() + ", ";
+        }
+        sql += "'default'";
+        sql += ") RETURNING *;";
         List<DominionDTO> dominions = query(sql,
                 dominion.getOwner(),
                 dominion.getName(),
@@ -148,7 +157,7 @@ public class DominionDTO {
                 "parent_dom_id = " + dominion.getParentDomId() + ", " +
                 "join_message = ?," +
                 "leave_message = ?,";
-        for (Flag f : Flag.getDominionFlags()) {
+        for (Flag f : Flag.getDominionFlagsEnabled()) {
             sql += f.getFlagName() + " = " + dominion.getFlagValue(f) + ",";
         }
         sql += "tp_location = ?" +
@@ -185,19 +194,7 @@ public class DominionDTO {
         this.joinMessage = joinMessage;
         this.leaveMessage = leaveMessage;
         this.flags.putAll(flags);
-        if (Objects.equals(tp_location, "default")) {
-            this.tp_location = null;
-        } else {
-            // 0:0:0
-            String[] loc = tp_location.split(":");
-            World w = Dominion.instance.getServer().getWorld(world);
-            if (loc.length == 3 && w != null) {
-                this.tp_location = new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
-            } else {
-                Dominion.logger.warn("领地传送点数据异常: %s", tp_location);
-                this.tp_location = null;
-            }
-        }
+        this.tp_location = tp_location;
     }
 
 
@@ -236,7 +233,7 @@ public class DominionDTO {
     private String joinMessage = "欢迎";
     private String leaveMessage = "再见";
     private final Map<Flag, Boolean> flags = new HashMap<>();
-    private Location tp_location = null;
+    private String tp_location;
 
     // getters and setters
     public Integer getId() {
@@ -364,6 +361,7 @@ public class DominionDTO {
     }
 
     public Boolean getFlagValue(Flag flag) {
+        if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
     }
 
@@ -383,11 +381,24 @@ public class DominionDTO {
     }
 
     public Location getTpLocation() {
-        return tp_location;
+        if (Objects.equals(tp_location, "default")) {
+            return null;
+        } else {
+            // 0:0:0
+            String[] loc = tp_location.split(":");
+            World w = Dominion.instance.getServer().getWorld(world);
+            if (loc.length == 3 && w != null) {
+                return new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
+            } else {
+                Dominion.logger.warn("领地传送点数据异常: %s", tp_location);
+                Dominion.logger.debug("world: %s, loc.length: %d", world, loc.length);
+                return null;
+            }
+        }
     }
 
     public DominionDTO setTpLocation(Location loc) {
-        this.tp_location = loc;
+        this.tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
         return update(this);
     }
 

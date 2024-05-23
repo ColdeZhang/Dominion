@@ -3,12 +3,14 @@ package cn.lunadeer.dominion.events;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,8 +28,10 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.material.Button;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+import static cn.lunadeer.dominion.events.Apis.checkFlag;
 import static cn.lunadeer.dominion.events.Apis.getInvDominion;
 
 public class PlayerEvents implements Listener {
@@ -45,34 +49,11 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (!privilege.getAnchor()) {
-                Dominion.notification.error(bukkitPlayer, "你没有锚点重生权限");
-                return;
+        if (checkFlag(dom, Flag.ANCHOR, bukkitPlayer, null)) {
+            if (bukkitPlayer.getBedSpawnLocation() != null) {
+                event.setRespawnLocation(bukkitPlayer.getBedSpawnLocation());
             } else {
-                if (bukkitPlayer.getBedSpawnLocation() != null) {
-                    event.setRespawnLocation(bukkitPlayer.getBedSpawnLocation());
-                } else {
-                    event.setRespawnLocation(bukkitPlayer.getWorld().getSpawnLocation());
-                }
-            }
-        } else {
-            if (dom.getAnchor()) {
-                Dominion.notification.error(bukkitPlayer, "你没有锚点重生权限");
-                return;
-            } else {
-                if (bukkitPlayer.getBedSpawnLocation() != null) {
-                    event.setRespawnLocation(bukkitPlayer.getBedSpawnLocation());
-                } else {
-                    event.setRespawnLocation(bukkitPlayer.getWorld().getSpawnLocation());
-                }
+                event.setRespawnLocation(bukkitPlayer.getWorld().getSpawnLocation());
             }
         }
     }
@@ -88,24 +69,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getDamager();
         DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getAnimalKilling()) {
-                return;
-            }
-        } else {
-            if (dom.getAnimalKilling()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有动物击杀权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.ANIMAL_KILLING, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // anvil
@@ -118,24 +82,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getAnvil()) {
-                return;
-            }
-        } else {
-            if (dom.getAnvil()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用铁砧的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.ANVIL, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // beacon
@@ -148,48 +95,14 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getBeacon()) {
-                return;
-            }
-        } else {
-            if (dom.getBeacon()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用信标的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.BEACON, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // bed
     public void onBedUse(PlayerBedEnterEvent event) {
         Player bukkitPlayer = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(event.getBed().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getBed()) {
-                return;
-            }
-        } else {
-            if (dom.getBed()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用床的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.BED, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // brew
@@ -202,24 +115,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getBrew()) {
-                return;
-            }
-        } else {
-            if (dom.getBrew()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用酿造台的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.BREW, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // break
@@ -251,24 +147,7 @@ public class PlayerEvents implements Listener {
 
     public static boolean onBreak(Player player, Location location) {
         DominionDTO dom = Cache.instance.getDominion(location);
-        if (dom == null) {
-            return true;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return true;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getBreak()) {
-                return true;
-            }
-        } else {
-            if (dom.getBreak()) {
-                return true;
-            }
-        }
-        Dominion.notification.error(player, "你没有破坏方块的权限");
-        return false;
+        return checkFlag(dom, Flag.BREAK_BLOCK, player, null);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // button
@@ -294,24 +173,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getButton()) {
-                return;
-            }
-        } else {
-            if (dom.getButton()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用按钮的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.BUTTON, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // cake
@@ -326,24 +188,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getCake()) {
-                return;
-            }
-        } else {
-            if (dom.getCake()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有吃蛋糕权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.CAKE, player, event);
     }
 
     // 检查是否有容器权限
@@ -354,24 +199,7 @@ public class PlayerEvents implements Listener {
         } else {
             dom = Cache.instance.getDominion(loc);
         }
-        if (dom == null) {
-            return true;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return true;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getContainer()) {
-                return true;
-            }
-        } else {
-            if (dom.getContainer()) {
-                return true;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用容器/盔甲架/展示框的权限");
-        return false;
+        return checkFlag(dom, Flag.CONTAINER, player, null);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // container
@@ -440,24 +268,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, inv);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getCraft()) {
-                return;
-            }
-        } else {
-            if (dom.getCraft()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用工作台的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.CRAFT, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // comparer
@@ -471,24 +282,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getComparer()) {
-                return;
-            }
-        } else {
-            if (dom.getComparer()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用红石比较器的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.COMPARER, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // door
@@ -536,24 +330,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getDoor()) {
-                return;
-            }
-        } else {
-            if (dom.getDoor()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用门的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.DOOR, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dye
@@ -563,24 +340,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getDye()) {
-                return;
-            }
-        } else {
-            if (dom.getDye()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有染色的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.DYE, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // egg
@@ -593,24 +353,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = (Player) event.getEntity().getShooter();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getEgg()) {
-                return;
-            }
-        } else {
-            if (dom.getEgg()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有扔鸡蛋的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.EGG, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // enchant
@@ -623,24 +366,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getEnchant()) {
-                return;
-            }
-        } else {
-            if (dom.getEnchant()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用附魔台的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.ENCHANT, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_pearl
@@ -653,24 +379,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = (Player) event.getEntity().getShooter();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getEnderPearl()) {
-                return;
-            }
-        } else {
-            if (dom.getEnderPearl()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用末影珍珠的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.ENDER_PEARL, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // feed
@@ -680,24 +389,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(event.getRightClicked().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getFeed()) {
-                return;
-            }
-        } else {
-            if (dom.getFeed()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有喂养动物的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.FEED, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // harvest
@@ -723,24 +415,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getHarvest()) {
-                return;
-            }
-        } else {
-            if (dom.getHarvest()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有收获的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.HARVEST, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // honey
@@ -755,24 +430,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getHoney()) {
-                return;
-            }
-        } else {
-            if (dom.getHoney()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有与蜜蜂交互的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.HONEY, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // hook
@@ -783,24 +441,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(caught.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getHook()) {
-                return;
-            }
-        } else {
-            if (dom.getHook()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用钓钩的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.HOOK, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // hopper
@@ -819,24 +460,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getHopper()) {
-                return;
-            }
-        } else {
-            if (dom.getHopper()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有使用漏斗/熔炉/发射器等特殊容器的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.HOPPER, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ignite
@@ -846,24 +470,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getIgnite()) {
-                return;
-            }
-        } else {
-            if (dom.getIgnite()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有点火的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.IGNITE, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // lever
@@ -878,24 +485,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getLever()) {
-                return;
-            }
-        } else {
-            if (dom.getLever()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用拉杆的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.LEVER, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // monster_killing
@@ -910,48 +500,14 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getDamager();
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getMonsterKilling()) {
-                return;
-            }
-        } else {
-            if (dom.getMonsterKilling()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有击杀怪物的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.MONSTER_KILLING, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // move
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getMove()) {
-                return;
-            }
-        } else {
-            if (dom.getMove()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有移动的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.MOVE, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // place
@@ -990,24 +546,7 @@ public class PlayerEvents implements Listener {
 
     public static boolean onPlace(Player player, Location location) {
         DominionDTO dom = Cache.instance.getDominion(location);
-        if (dom == null) {
-            return true;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return true;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getPlace()) {
-                return true;
-            }
-        } else {
-            if (dom.getPlace()) {
-                return true;
-            }
-        }
-        Dominion.notification.error(player, "你没有放置方块的权限");
-        return false;
+        return checkFlag(dom, Flag.PLACE, player, null);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // pressure
@@ -1036,24 +575,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getPressure()) {
-                return;
-            }
-        } else {
-            if (dom.getPressure()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用压力板的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.PRESSURE, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // riding
@@ -1063,24 +585,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = (Player) event.getEntity();
         DominionDTO dom = Cache.instance.getDominion(event.getMount().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getRiding()) {
-                return;
-            }
-        } else {
-            if (dom.getRiding()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有骑乘交通工具的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.RIDING, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // repeater
@@ -1095,48 +600,14 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getRepeater()) {
-                return;
-            }
-        } else {
-            if (dom.getRepeater()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有使用红石中继器的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.REPEATER, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // shear
     public void onShear(PlayerShearEntityEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getShear()) {
-                return;
-            }
-        } else {
-            if (dom.getShear()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有剪羊毛的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.SHEAR, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // shoot
@@ -1151,24 +622,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = (Player) event.getEntity().getShooter();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getShoot()) {
-                return;
-            }
-        } else {
-            if (dom.getShoot()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有发射弓箭、三叉戟或雪球的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.SHOOT, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // trade
@@ -1181,24 +635,7 @@ public class PlayerEvents implements Listener {
         }
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(bukkitPlayer, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(bukkitPlayer, dom);
-        if (privilege != null) {
-            if (privilege.getTrade()) {
-                return;
-            }
-        } else {
-            if (dom.getTrade()) {
-                return;
-            }
-        }
-        Dominion.notification.error(bukkitPlayer, "你没有交易的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.TRADE, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // vehicle_destroy
@@ -1208,24 +645,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = (Player) event.getAttacker();
         DominionDTO dom = Cache.instance.getDominion(event.getVehicle().getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getVehicleDestroy()) {
-                return;
-            }
-        } else {
-            if (dom.getVehicleDestroy()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有破坏交通工具的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.VEHICLE_DESTROY, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // vehicle_spawn
@@ -1239,23 +659,6 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
-        if (dom == null) {
-            return;
-        }
-        if (Apis.hasPermission(player, dom)) {
-            return;
-        }
-        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
-        if (privilege != null) {
-            if (privilege.getVehicleSpawn()) {
-                return;
-            }
-        } else {
-            if (dom.getVehicleSpawn()) {
-                return;
-            }
-        }
-        Dominion.notification.error(player, "你没有放置交通工具的权限");
-        event.setCancelled(true);
+        checkFlag(dom, Flag.VEHICLE_SPAWN, player, event);
     }
 }

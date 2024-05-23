@@ -11,7 +11,7 @@ public enum Flag {
     BEACON("beacon", "信标交互", "是否允许与信标交互", false, false, true),
     BED("bed", "床交互", "是否允许使用床睡觉或设置重生点", false, false, true),
     BREW("brew", "使用酿造台", "是否可以使用酿造台", false, false, true),
-    BREAK_BLOCK("break_block", "破坏方块", "是否可以破坏方块", false, false, true),
+    BREAK_BLOCK("break", "破坏方块", "是否可以破坏方块（包括：一般方块、展示框）", false, false, true),
     BUTTON("button", "使用按钮", "是否可以使用各种材质的按钮", false, false, true),
     CAKE("cake", "吃蛋糕", "是否可以吃蛋糕", false, false, true),
     CONTAINER("container", "一般容器", "包含：箱子/木桶/潜影盒/盔甲架/展示框", false, false, true),
@@ -36,7 +36,8 @@ public enum Flag {
     LEVER("lever", "使用拉杆", "是否可以使用拉杆", false, false, true),
     MOB_DROP_ITEM("mob_drop_item", "生物战利品掉落", "生物死亡时是否产生凋落物", true, true, true),
     MONSTER_KILLING("monster_killing", "对怪物造成伤害", "玩家是否可以对怪物造成伤害", false, false, true),
-    PLACE("place", "放置方块", "是否可以放置方块", false, false, true),
+    MOVE("move", "移动", "是否可以移动", true, false, true),
+    PLACE("place", "放置方块", "是否可以放置方块（包括：一般方块、展示框、岩浆、水）", false, false, true),
     PRESSURE("pressure", "压力板交互", "是否可以触发各种材质的压力板", false, false, true),
     RIDING("riding", "骑乘载具", "是否可以骑乘各种载具", false, false, true),
     REPEATER("repeater", "中继器交互", "是否可以与中继器交互", false, false, true),
@@ -99,7 +100,11 @@ public enum Flag {
         this.enable = enable;
     }
 
-    public static List<Flag> getDominionFlags() {
+    public static List<Flag> getAllFlags() {
+        return Arrays.asList(Flag.values());
+    }
+
+    public static List<Flag> getDominionFlagsEnabled() {
         List<Flag> flags = new ArrayList<>();
         for (Flag flag : Flag.values()) {
             if (!flag.enable) {
@@ -110,13 +115,29 @@ public enum Flag {
         return flags;
     }
 
-    public static List<Flag> getPrivilegeFlags() {
+    public static List<Flag> getAllDominionFlags() {
+        return new ArrayList<>(Arrays.asList(Flag.values()));
+    }
+
+
+    public static List<Flag> getPrivilegeFlagsEnabled() {
         List<Flag> flags = new ArrayList<>();
         for (Flag flag : Flag.values()) {
             if (flag.dominion_only) {
                 continue;
             }
             if (!flag.enable) {
+                continue;
+            }
+            flags.add(flag);
+        }
+        return flags;
+    }
+
+    public static List<Flag> getAllPrivilegeFlags() {
+        List<Flag> flags = new ArrayList<>();
+        for (Flag flag : Flag.values()) {
+            if (flag.dominion_only) {
                 continue;
             }
             flags.add(flag);

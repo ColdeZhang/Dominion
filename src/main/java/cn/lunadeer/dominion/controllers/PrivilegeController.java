@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import org.bukkit.entity.Player;
@@ -98,128 +99,19 @@ public class PrivilegeController {
             privilege = createPlayerPrivilege(operator, player.getUuid(), dominion);
             if (privilege == null) return false;
         }
-        switch (flag) {
-            case "admin":
-                if (notOwner(operator, dominion)) {
-                    Dominion.notification.error(operator, "你不是领地 %s 的拥有者，无法设置其他玩家为管理员", dominionName);
-                    return false;
-                }
-                privilege.setAdmin(value);
-                break;
-            case "anchor":
-                privilege.setAnchor(value);
-                break;
-            case "animal_killing":
-                privilege.setAnimalKilling(value);
-                break;
-            case "anvil":
-                privilege.setAnvil(value);
-                break;
-            case "beacon":
-                privilege.setBeacon(value);
-                break;
-            case "bed":
-                privilege.setBed(value);
-                break;
-            case "brew":
-                privilege.setBrew(value);
-                break;
-            case "break":
-                privilege.setBreak(value);
-                break;
-            case "button":
-                privilege.setButton(value);
-                break;
-            case "cake":
-                privilege.setCake(value);
-                break;
-            case "container":
-                privilege.setContainer(value);
-                break;
-            case "craft":
-                privilege.setCraft(value);
-                break;
-            case "comparer":
-                privilege.setComparer(value);
-                break;
-            case "door":
-                privilege.setDoor(value);
-                break;
-            case "dye":
-                privilege.setDye(value);
-                break;
-            case "egg":
-                privilege.setEgg(value);
-                break;
-            case "enchant":
-                privilege.setEnchant(value);
-                break;
-            case "ender_pearl":
-                privilege.setEnderPearl(value);
-                break;
-            case "feed":
-                privilege.setFeed(value);
-                break;
-            case "glow":
-                privilege.setGlow(value);
-                break;
-            case "harvest":
-                privilege.setHarvest(value);
-                break;
-            case "honey":
-                privilege.setHoney(value);
-                break;
-            case "hook":
-                privilege.setHook(value);
-                break;
-            case "hopper":
-                privilege.setHopper(value);
-                break;
-            case "ignite":
-                privilege.setIgnite(value);
-                break;
-            case "lever":
-                privilege.setLever(value);
-                break;
-            case "monster_killing":
-                privilege.setMonsterKilling(value);
-                break;
-            case "move":
-                privilege.setMove(value);
-                break;
-            case "place":
-                privilege.setPlace(value);
-                break;
-            case "pressure":
-                privilege.setPressure(value);
-                break;
-            case "riding":
-                privilege.setRiding(value);
-                break;
-            case "repeater":
-                privilege.setRepeater(value);
-                break;
-            case "shear":
-                privilege.setShear(value);
-                break;
-            case "shoot":
-                privilege.setShoot(value);
-                break;
-            case "teleport":
-                privilege.setTeleport(value);
-                break;
-            case "trade":
-                privilege.setTrade(value);
-                break;
-            case "vehicle_destroy":
-                privilege.setVehicleDestroy(value);
-                break;
-            case "vehicle_spawn":
-                privilege.setVehicleSpawn(value);
-                break;
-            default:
+        if (flag.equals("admin")) {
+            if (notOwner(operator, dominion)) {
+                Dominion.notification.error(operator, "你不是领地 %s 的拥有者，无法设置其他玩家为管理员", dominionName);
+                return false;
+            }
+            privilege.setAdmin(value);
+        } else {
+            Flag f = Flag.getFlag(flag);
+            if (f == null) {
                 Dominion.notification.error(operator, "未知的领地权限 %s", flag);
                 return false;
+            }
+            privilege.setFlagValue(f, value);
         }
         Dominion.notification.info(operator, "设置玩家在领地 %s 的权限 %s 为 %s", dominionName, flag, value);
         return true;
@@ -255,24 +147,7 @@ public class PrivilegeController {
             Dominion.notification.error(operator, "你不能给自己设置特权");
             return null;
         }
-        PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, dom.getId(),
-                dom.getAnchor(), dom.getAnimalKilling(), dom.getAnvil(),
-                dom.getBeacon(), dom.getBed(), dom.getBrew(), dom.getBreak(), dom.getButton(),
-                dom.getCake(), dom.getContainer(), dom.getCraft(), dom.getComparer(),
-                dom.getDoor(), dom.getDye(),
-                dom.getEgg(), dom.getEnchant(), dom.getEnderPearl(),
-                dom.getFeed(),
-                dom.getGlow(),
-                dom.getHarvest(), dom.getHoney(), dom.getHook(), dom.getHopper(),
-                dom.getIgnite(),
-                dom.getLever(),
-                dom.getMonsterKilling(), dom.getMove(),
-                dom.getPlace(), dom.getPressure(),
-                dom.getRiding(), dom.getRepeater(),
-                dom.getShear(), dom.getShoot(),
-                dom.getTeleport(), dom.getTrade(),
-                dom.getVehicleDestroy(),
-                dom.getVehicleSpawn());
+        PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, dom);
         privilege = PlayerPrivilegeDTO.insert(privilege);
         if (privilege == null) {
             Dominion.notification.error(operator, "创建玩家特权失败，可能是此玩家已存在特权");

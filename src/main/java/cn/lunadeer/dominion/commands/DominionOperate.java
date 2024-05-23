@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import org.bukkit.Location;
@@ -366,12 +367,12 @@ public class DominionOperate {
         }
         PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
         if (privilegeDTO == null) {
-            if (!dominionDTO.getTeleport()) {
+            if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
                 Dominion.notification.error(sender, "此领地禁止传送");
                 return;
             }
         } else {
-            if (!privilegeDTO.getTeleport()) {
+            if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
                 Dominion.notification.error(sender, "你不被允许传送到这个领地");
                 return;
             }
