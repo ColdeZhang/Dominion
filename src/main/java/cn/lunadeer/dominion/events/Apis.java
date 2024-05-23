@@ -37,6 +37,9 @@ public class Apis {
     }
 
     public static boolean checkFlag(DominionDTO dom, Flag flag, Player player, Cancellable event) {
+        if (!flag.getEnable()) {
+            return true;
+        }
         if (dom == null) {
             return true;
         }

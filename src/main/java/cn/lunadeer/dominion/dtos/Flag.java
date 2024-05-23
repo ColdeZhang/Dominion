@@ -1,5 +1,10 @@
 package cn.lunadeer.dominion.dtos;
 
+import cn.lunadeer.dominion.Dominion;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -83,6 +88,9 @@ public enum Flag {
     public Boolean getDefaultValue() {
         return default_value;
     }
+    public Boolean getEnable() {
+        return enable;
+    }
 
     public void setDisplayName(String displayName) {
         this.display_name = displayName;
@@ -147,5 +155,67 @@ public enum Flag {
 
     public static Flag getFlag(String flagName) {
         return Arrays.stream(Flag.values()).filter(flag -> flag.getFlagName().equals(flagName)).findFirst().orElse(null);
+    }
+
+/*
+        {
+            flag_name: {
+                display_name: "",
+                description: "",
+                default_value: true,
+                enable: true
+            }
+        }
+*/
+
+    public static void loadFromJson(File dataFolder) {
+        File flagFile = new File(dataFolder, "flags.json");
+        if (!flagFile.exists()) {
+            saveToJson(dataFolder);
+        }
+
+        try (FileReader reader = new FileReader(flagFile);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(System.lineSeparator());
+            }
+            String fileContent = stringBuilder.toString();
+            JSONObject jsonObject = (JSONObject) JSONObject.parse(fileContent);
+            for (Flag flag : getAllFlags()) {
+                JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
+                if (flagJson != null) {
+                    flag.setDisplayName((String) flagJson.get("display_name"));
+                    flag.setDescription((String) flagJson.get("description"));
+                    flag.setDefaultValue((Boolean) flagJson.get("default_value"));
+                    flag.setEnable((Boolean) flagJson.get("enable"));
+                }
+            }
+        } catch (Exception e) {
+            Dominion.logger.err("读取权限配置失败：%s", e.getMessage());
+        }
+        saveToJson(dataFolder); // 复写一遍，确保文件中包含所有权限
+    }
+
+    public static void saveToJson(File dataFolder) {
+        JSONObject json = new JSONObject();
+        for (Flag f : getAllFlags()) {
+            JSONObject flagJson = new JSONObject();
+            flagJson.put("display_name", f.getDisplayName());
+            flagJson.put("description", f.getDescription());
+            flagJson.put("default_value", f.getDefaultValue());
+            flagJson.put("enable", f.enable);
+            json.put(f.getFlagName(), flagJson);
+        }
+        File flagFile = new File(dataFolder, "flags.json");
+        // save to file, if exists then overwrite
+        try (FileWriter fileWriter = new FileWriter(flagFile);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            bufferedWriter.write(JSON.toJSONString(json, true));
+        } catch (Exception e) {
+            Dominion.logger.err("写入权限配置失败：%s", e.getMessage());
+        }
     }
 }
