@@ -123,11 +123,11 @@ public class Cache {
         if (dominion != null) {
             if (!isInDominion(dominion, player)) {
                 if (dominion.isTopDom()) {
-                    Dominion.notification.info(player, "您已离开领地：%s", dominion.getName());
+                    // Dominion.notification.info(player, "您已离开领地：%s", dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
                     dominion = null;
                 } else {
-                    Dominion.notification.info(player, "您已离开子领地：%s", dominion.getName());
+                    // Dominion.notification.info(player, "您已离开子领地：%s", dominion.getName());
                     player.sendMessage(Component.text(dominion.getLeaveMessage()));
                     dominion = id_dominions.get(dominion.getParentDomId());
                 }
@@ -139,7 +139,7 @@ public class Cache {
                     DominionDTO child = id_dominions.get(child_id);
                     if (isInDominion(child, player)) {
                         dominion = child;
-                        Dominion.notification.info(player, "您正在进入子领地：%s", dominion.getName());
+                        // Dominion.notification.info(player, "您正在进入子领地：%s", dominion.getName());
                         player.sendMessage(Component.text(dominion.getJoinMessage()));
                         update_player_current_dominion(player, dominion);
                         break;
@@ -151,7 +151,7 @@ public class Cache {
             List<DominionDTO> in_dominions = getDominionsParentAndChildren(player.getLocation());
             if (in_dominions.size() != 0) {
                 dominion = in_dominions.get(0);
-                Dominion.notification.info(player, "您正在进入领地：%s", dominion.getName());
+                // Dominion.notification.info(player, "您正在进入领地：%s", dominion.getName());
                 player.sendMessage(Component.text(dominion.getJoinMessage()));
             }
             update_player_current_dominion(player, dominion);
