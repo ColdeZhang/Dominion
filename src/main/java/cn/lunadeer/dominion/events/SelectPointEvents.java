@@ -81,10 +81,19 @@ public class SelectPointEvents implements Listener {
                 Dominion.notification.info(player, "预计领地创建价格为 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
             }
             ParticleRender.showBoxFace(Dominion.instance, player, loc1, loc2);
-            Dominion.notification.info(player, "尺寸： %d x %d x %d", Math.abs(points.get(1).getX() - points.get(0).getX()), Math.abs(points.get(1).getY() - points.get(0).getY()), Math.abs(points.get(1).getZ() - points.get(0).getZ()));
-            Dominion.notification.info(player, "面积： %d", Math.abs(points.get(1).getX() - points.get(0).getX()) * Math.abs(points.get(1).getZ() - points.get(0).getZ()));
-            Dominion.notification.info(player, "高度： %d", Math.abs(points.get(1).getY() - points.get(0).getY()));
-            Dominion.notification.info(player, "体积： %d", Math.abs(points.get(1).getX() - points.get(0).getX()) * Math.abs(points.get(1).getY() - points.get(0).getY()) * Math.abs(points.get(1).getZ() - points.get(0).getZ()));
+            Dominion.notification.info(player, "尺寸： %d x %d x %d",
+                    Math.abs(points.get(1).getBlockX() - points.get(0).getBlockX()),
+                    Math.abs(points.get(1).getBlockY() - points.get(0).getBlockY()),
+                    Math.abs(points.get(1).getBlockZ() - points.get(0).getBlockZ()));
+            Dominion.notification.info(player, "面积： %d",
+                    Math.abs(points.get(1).getBlockX() - points.get(0).getBlockX()) *
+                            Math.abs(points.get(1).getBlockZ() - points.get(0).getBlockZ()));
+            Dominion.notification.info(player, "高度： %d",
+                    Math.abs(points.get(1).getBlockY() - points.get(0).getBlockY()));
+            Dominion.notification.info(player, "体积： %d",
+                    Math.abs(points.get(1).getBlockX() - points.get(0).getBlockX()) *
+                            Math.abs(points.get(1).getBlockY() - points.get(0).getBlockY()) *
+                            Math.abs(points.get(1).getBlockZ() - points.get(0).getBlockZ()));
         }
         Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
