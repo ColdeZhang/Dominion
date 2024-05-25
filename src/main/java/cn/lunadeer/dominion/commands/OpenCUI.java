@@ -21,7 +21,7 @@ public class OpenCUI {
         }
 
         @Override
-        public void run(String input) {
+        public void handleData(String input) {
             Dominion.logger.debug("renameDominionCB.run: %s", input);
             DominionController.rename(sender, oldName, input);
             DominionManage.show(sender, new String[]{"manage", input});
