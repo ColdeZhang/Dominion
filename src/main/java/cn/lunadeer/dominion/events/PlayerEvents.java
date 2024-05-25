@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import io.papermc.paper.event.entity.EntityDyeEvent;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,7 +38,11 @@ public class PlayerEvents implements Listener {
         PlayerDTO player = PlayerDTO.get(bukkitPlayer);
         player.onJoin(); // update name
         if (!Flag.FLY.getEnable()) {
-            bukkitPlayer.setAllowFlight(false);
+            if (bukkitPlayer.isOp() || bukkitPlayer.getGameMode()== GameMode.CREATIVE || bukkitPlayer.getGameMode() == GameMode.SPECTATOR) {
+                // do nothing
+            } else {
+                bukkitPlayer.setAllowFlight(false);
+            }
         }
     }
 
