@@ -34,6 +34,9 @@ public class DominionManage {
         Line set_tp = Line.create()
                 .append(Button.create("设置传送点").setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
                 .append("设置当前位置为此领地传送点");
+        Line rename = Line.create()
+                .append(Button.create("重命名").setExecuteCommand("/dominion cui_rename " + dominion.getName()).build())
+                .append("重命名领地");
         ListView view = ListView.create(10, "/dominion manage " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 管理界面")
                 .navigator(Line.create()
@@ -44,6 +47,7 @@ public class DominionManage {
                 .add(flag_info)
                 .add(privilege_list)
                 .add(set_tp)
+                .add(rename)
                 .showOn(player, 1);
     }
 }

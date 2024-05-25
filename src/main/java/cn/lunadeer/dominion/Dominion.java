@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.minecraftpluginutils.*;
+import cn.lunadeer.minecraftpluginutils.scui.CuiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -57,6 +58,10 @@ public final class Dominion extends JavaPlugin {
                     "zhangyuheng",
                     "Dominion");
         }
+
+        // SCUI 初始化
+        Bukkit.getPluginManager().registerEvents(new CuiManager(this), this);
+        CuiManager.instance.setDebug(config.isDebug());
 
         logger.info("领地插件已启动");
         logger.info("版本：" + this.getPluginMeta().getVersion());
