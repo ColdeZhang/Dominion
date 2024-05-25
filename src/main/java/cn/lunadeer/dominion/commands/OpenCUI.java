@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.tuis.DominionManage;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ public class OpenCUI {
         public void run(String input) {
             Dominion.logger.debug("renameDominionCB.run: %s", input);
             DominionController.rename(sender, oldName, input);
+            DominionManage.show(sender, new String[]{"manage", input});
         }
     }
 
