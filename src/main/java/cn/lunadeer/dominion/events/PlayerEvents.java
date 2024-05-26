@@ -1,9 +1,11 @@
 package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.minecraftpluginutils.Teleport;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -38,7 +40,7 @@ public class PlayerEvents implements Listener {
         PlayerDTO player = PlayerDTO.get(bukkitPlayer);
         player.onJoin(); // update name
         if (!Flag.FLY.getEnable()) {
-            if (bukkitPlayer.isOp() || bukkitPlayer.getGameMode()== GameMode.CREATIVE || bukkitPlayer.getGameMode() == GameMode.SPECTATOR) {
+            if (bukkitPlayer.isOp() || bukkitPlayer.getGameMode() == GameMode.CREATIVE || bukkitPlayer.getGameMode() == GameMode.SPECTATOR) {
                 // do nothing
             } else {
                 bukkitPlayer.setAllowFlight(false);
@@ -511,7 +513,25 @@ public class PlayerEvents implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        checkFlag(dom, Flag.MOVE, player, event);
+        if (!checkFlag(dom, Flag.MOVE, player, null)) {
+            Location to = player.getLocation();
+            int x1 = Math.abs(to.getBlockX() - dom.getX1());
+            int x2 = Math.abs(to.getBlockX() - dom.getX2());
+            int z1 = Math.abs(to.getBlockZ() - dom.getZ1());
+            int z2 = Math.abs(to.getBlockZ() - dom.getZ2());
+            // find min distance
+            int min = Math.min(Math.min(x1, x2), Math.min(z1, z2));
+            if (min == x1) {
+                to.setX(dom.getX1() - 1);
+            } else if (min == x2) {
+                to.setX(dom.getX2() + 1);
+            } else if (min == z1) {
+                to.setZ(dom.getZ1() - 1);
+            } else {
+                to.setZ(dom.getZ2() + 1);
+            }
+            Teleport.doTeleportSafely(Dominion.instance, player, to);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // place
