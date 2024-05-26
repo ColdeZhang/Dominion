@@ -153,6 +153,15 @@ public class Commands implements TabExecutor {
             case "cui_rename":
                 OpenCUI.RenameDominion(sender, args);
                 break;
+            case "cui_edit_join_message":
+                OpenCUI.EditJoinMessage(sender, args);
+                break;
+            case "cui_edit_leave_message":
+                OpenCUI.EditLeaveMessage(sender, args);
+                break;
+            case "cui_create":
+                OpenCUI.CreateDominion(sender, args);
+                break;
             default:
                 return false;
         }

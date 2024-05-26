@@ -37,6 +37,12 @@ public class DominionManage {
         Line rename = Line.create()
                 .append(Button.create("重命名").setExecuteCommand("/dominion cui_rename " + dominion.getName()).build())
                 .append("重命名领地");
+        Line join_msg = Line.create()
+                .append(Button.create("编辑欢迎提示语").setExecuteCommand("/dominion cui_edit_join_message " + dominion.getName()).build())
+                .append("当玩家进入领地时显示的消息");
+        Line leave_msg = Line.create()
+                .append(Button.create("编辑离开提示语").setExecuteCommand("/dominion cui_edit_leave_message " + dominion.getName()).build())
+                .append("当玩家离开领地时显示的消息");
         ListView view = ListView.create(10, "/dominion manage " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 管理界面")
                 .navigator(Line.create()
@@ -48,6 +54,8 @@ public class DominionManage {
                 .add(privilege_list)
                 .add(set_tp)
                 .add(rename)
+                .add(join_msg)
+                .add(leave_msg)
                 .showOn(player, 1);
     }
 }

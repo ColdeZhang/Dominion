@@ -12,6 +12,9 @@ public class Menu {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        Line create = Line.create()
+                .append(Button.create("创建领地").setExecuteCommand("/dominion cui_create").build())
+                .append("以你为中心自动创建一个新的领地");
         Line list = Line.create()
                 .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                 .append("查看我的领地");
@@ -33,6 +36,7 @@ public class Menu {
         ListView view = ListView.create(10, "/dominion");
         view.title("Dominion 领地系统")
                 .navigator(Line.create().append("主菜单"))
+                .add(create)
                 .add(list)
                 .add(help)
                 .add(link);
