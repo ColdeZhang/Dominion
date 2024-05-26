@@ -527,6 +527,10 @@ public class DominionController {
             Dominion.notification.error(operator, "领地名称不能包含空格");
             return;
         }
+        if (Objects.equals(old_name, new_name)) {
+            Dominion.notification.error(operator, "新名称与旧名称相同");
+            return;
+        }
         DominionDTO dominion = getExistDomAndIsOwner(operator, old_name);
         if (dominion == null) {
             return;
