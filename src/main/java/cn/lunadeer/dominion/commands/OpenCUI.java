@@ -2,8 +2,11 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.controllers.PrivilegeController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.tuis.DominionManage;
+import cn.lunadeer.dominion.tuis.DominionPrivilegeList;
+import cn.lunadeer.dominion.tuis.SelectPlayer;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -93,6 +96,26 @@ public class OpenCUI {
         }
     }
 
+    private static class createPrivilegeCB implements CuiTextInput.InputCallback {
+        private final Player sender;
+        private final String dominionName;
+
+        public createPrivilegeCB(Player sender, String dominionName) {
+            this.sender = sender;
+            this.dominionName = dominionName;
+        }
+
+        @Override
+        public void handleData(String input) {
+            XLogger.debug("createPrivilegeCB.run: %s", input);
+            if (PrivilegeController.createPrivilege(sender, input, dominionName)) {
+                DominionPrivilegeList.show(sender, new String[]{"privilege_list", dominionName});
+            } else {
+                SelectPlayer.show(sender, new String[]{"select_player_create_privilege", dominionName});
+            }
+        }
+    }
+
     public static void RenameDominion(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
@@ -132,6 +155,19 @@ public class OpenCUI {
         if (player == null) return;
         CuiTextInput.InputCallback createDominionCB = new createDominionCB(player);
         CuiTextInput view = CuiTextInput.create(createDominionCB).setText("未命名领地").title("输入要创建的领地名称");
+        view.open(player);
+    }
+
+    public static void CreatePrivilege(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        DominionDTO dominion = DominionDTO.select(args[1]);
+        if (dominion == null) {
+            Notification.error(sender, "领地不存在");
+            return;
+        }
+        CuiTextInput.InputCallback createPrivilegeCB = new createPrivilegeCB(player, dominion.getName());
+        CuiTextInput view = CuiTextInput.create(createPrivilegeCB).setText("Steve").title("输入玩家名称以添加为成员");
         view.open(player);
     }
 }

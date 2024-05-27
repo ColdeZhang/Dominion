@@ -34,12 +34,12 @@ public class DominionFlagInfo {
             }
         }
         ListView view = ListView.create(10, "/dominion flag_info " + dominion.getName());
-        view.title("领地 " + dominion.getName() + " 默认权限")
+        view.title("领地 " + dominion.getName() + " 访客权限")
                 .navigator(Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append("权限列表"));
+                        .append("访客权限"));
         for (Flag flag : Flag.getDominionFlagsEnabled()) {
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }

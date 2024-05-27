@@ -26,11 +26,11 @@ public class DominionManage {
                 .append(Button.create("详细信息").setExecuteCommand("/dominion info " + dominion.getName()).build())
                 .append("查看领地详细信息");
         Line flag_info = Line.create()
-                .append(Button.create("权限设置").setExecuteCommand("/dominion flag_info " + dominion.getName()).build())
-                .append("管理领地默认权限");
+                .append(Button.create("访客权限").setExecuteCommand("/dominion flag_info " + dominion.getName()).build())
+                .append("访客在此领地的权限");
         Line privilege_list = Line.create()
-                .append(Button.create("玩家权限").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
-                .append("管理玩家特权");
+                .append(Button.create("成员权限").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
+                .append("管理此领地成员的权限");
         Line set_tp = Line.create()
                 .append(Button.create("设置传送点").setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
                 .append("设置当前位置为此领地传送点");

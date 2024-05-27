@@ -36,22 +36,22 @@ public class DominionPrivilegeList {
         ListView view = ListView.create(10, "/dominion privilege_list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(dominion.getId());
-        view.title("领地 " + dominion.getName() + " 玩家特权列表");
+        view.title("领地 " + dominion.getName() + " 成员列表");
         view.navigator(
                 Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append("特权列表")
+                        .append("成员列表")
         );
-        view.add(Line.create().append(Button.create("选择玩家创建特权").setExecuteCommand("/dominion select_player_create_privilege " + dominion.getName()).build()));
+        view.add(Line.create().append(Button.create("添加成员").setExecuteCommand("/dominion select_player_create_privilege " + dominion.getName()).build()));
         for (PlayerPrivilegeDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
             view.add(Line.create()
                     .append(p_player.getLastKnownName())
-                    .append(Button.createGreen("管理").setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build())
-                    .append(Button.createRed("清除").setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build())
+                    .append(Button.createGreen("配置权限").setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build())
+                    .append(Button.createRed("移除成员").setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build())
             );
         }
         view.showOn(player, page);

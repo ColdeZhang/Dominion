@@ -43,17 +43,17 @@ public class PrivilegeInfo {
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(playerDTO.getUuid(), dominion.getId());
         if (privilege == null) {
-            Notification.warn(sender, "玩家 %s 没有任何特权", playerName);
+            Notification.warn(sender, "玩家 %s 不是领地 %s 的成员", playerName, dominion.getName());
             return;
         }
-        view.title("玩家 " + playerName + " 在领地 " + dominion.getName() + " 的特权信息");
+        view.title("玩家 " + playerName + " 在领地 " + dominion.getName() + " 的权限设置");
         view.navigator(
                 Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("特权列表").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
-                        .append("特权信息")
+                        .append(Button.create("成员列表").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
+                        .append("成员权限")
         );
         if (privilege.getAdmin()) {
             view.add(Line.create()

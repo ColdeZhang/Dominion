@@ -162,6 +162,9 @@ public class Commands implements TabExecutor {
             case "cui_create":
                 OpenCUI.CreateDominion(sender, args);
                 break;
+            case "cui_create_privilege":
+                OpenCUI.CreatePrivilege(sender, args);
+                break;
             default:
                 return false;
         }
