@@ -1,10 +1,10 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -31,19 +31,19 @@ public class PrivilegeInfo {
         }
         String playerName = args[1];
         if (dominion == null) {
-            Dominion.notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
+            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
             return;
         }
         ListView view = ListView.create(10, "/dominion privilege_info " + playerName + " " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         PlayerDTO playerDTO = PlayerDTO.select(playerName);
         if (playerDTO == null) {
-            Dominion.notification.error(sender, "玩家 %s 不存在", playerName);
+            Notification.error(sender, "玩家 %s 不存在", playerName);
             return;
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(playerDTO.getUuid(), dominion.getId());
         if (privilege == null) {
-            Dominion.notification.warn(sender, "玩家 %s 没有任何特权", playerName);
+            Notification.warn(sender, "玩家 %s 没有任何特权", playerName);
             return;
         }
         view.title("玩家 " + playerName + " 在领地 " + dominion.getName() + " 的特权信息");

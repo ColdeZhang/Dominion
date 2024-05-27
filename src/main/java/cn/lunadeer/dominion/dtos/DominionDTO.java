@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -390,8 +391,8 @@ public class DominionDTO {
             if (loc.length == 3 && w != null) {
                 return new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
             } else {
-                Dominion.logger.warn("领地传送点数据异常: %s", tp_location);
-                Dominion.logger.debug("world: %s, loc.length: %d", world, loc.length);
+                XLogger.warn("领地传送点数据异常: %s", tp_location);
+                XLogger.debug("world: %s, loc.length: %d", world, loc.length);
                 return null;
             }
         }

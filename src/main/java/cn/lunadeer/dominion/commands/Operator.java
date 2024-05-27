@@ -4,6 +4,9 @@ import cn.lunadeer.dominion.BlueMapConnect;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
+import cn.lunadeer.minecraftpluginutils.Scheduler;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
@@ -18,22 +21,22 @@ public class Operator {
 
     public static void reloadCache(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
-        Dominion.scheduler.runTaskAsync(() -> {
-            Dominion.notification.info(sender, "正在从数据库重新加载领地缓存...");
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, "正在从数据库重新加载领地缓存...");
             Cache.instance.loadDominions();
-            Dominion.notification.info(sender, "领地缓存已重新加载");
+            Notification.info(sender, "领地缓存已重新加载");
         });
-        Dominion.scheduler.runTaskAsync(() -> {
-            Dominion.notification.info(sender, "正在从数据库重新加载玩家权限缓存...");
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, "正在从数据库重新加载玩家权限缓存...");
             Cache.instance.loadPlayerPrivileges();
-            Dominion.notification.info(sender, "玩家权限缓存已重新加载");
+            Notification.info(sender, "玩家权限缓存已重新加载");
         });
     }
 
     public static void exportMca(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
-        Dominion.scheduler.runTaskAsync(() -> {
-            Dominion.notification.info(sender, "正在导出拥有领地的MCA文件列表...");
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, "正在导出拥有领地的MCA文件列表...");
             Map<String, List<String>> mca_cords = new HashMap<>();
             List<DominionDTO> doms = Cache.instance.getDominions();
             for (DominionDTO dom : doms) {
@@ -62,51 +65,51 @@ public class Operator {
             if (!folder.exists()) {
                 boolean success = folder.mkdirs();
                 if (!success) {
-                    Dominion.notification.error(sender, "创建导出文件夹失败");
+                    Notification.error(sender, "创建导出文件夹失败");
                     return;
                 }
             }
             for (String world : mca_cords.keySet()) {
                 File file = new File(folder, world + ".txt");
-                Dominion.notification.info(sender, "正在导出 %s 的MCA文件列表...", world);
+                Notification.info(sender, "正在导出 %s 的MCA文件列表...", world);
                 try {
                     if (file.exists()) {
                         boolean success = file.delete();
                         if (!success) {
-                            Dominion.notification.error(sender, "删除 %s 的MCA文件列表失败", world);
+                            Notification.error(sender, "删除 %s 的MCA文件列表失败", world);
                             continue;
                         }
                     }
                     boolean success = file.createNewFile();
                     if (!success) {
-                        Dominion.notification.error(sender, "创建 %s 的MCA文件列表失败", world);
+                        Notification.error(sender, "创建 %s 的MCA文件列表失败", world);
                         continue;
                     }
                     List<String> cords = mca_cords.get(world);
                     for (String cord : cords) {
-                        Dominion.logger.debug("正在写入 %s...", cord);
+                        XLogger.debug("正在写入 %s...", cord);
                         try {
                             java.nio.file.Files.write(file.toPath(), (cord + "\n").getBytes(), java.nio.file.StandardOpenOption.APPEND);
                         } catch (Exception e) {
-                            Dominion.notification.error(sender, "写入 %s 失败", cord);
+                            Notification.error(sender, "写入 %s 失败", cord);
                         }
                     }
                 } catch (Exception e) {
-                    Dominion.notification.error(sender, "导出 %s 的MCA文件列表失败", world);
-                    Dominion.notification.error(sender, e.getMessage());
+                    Notification.error(sender, "导出 %s 的MCA文件列表失败", world);
+                    Notification.error(sender, e.getMessage());
                 }
             }
             BlueMapConnect.renderMCA(mca_cords);
-            Dominion.notification.info(sender, "MCA文件列表已导出到 %s", folder.getAbsolutePath());
+            Notification.info(sender, "MCA文件列表已导出到 %s", folder.getAbsolutePath());
         });
     }
 
     public static void reloadConfig(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
-        Dominion.scheduler.runTaskAsync(() -> {
-            Dominion.notification.info(sender, "正在重新加载配置文件...");
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, "正在重新加载配置文件...");
             Dominion.config.reload();
-            Dominion.notification.info(sender, "配置文件已重新加载");
+            Notification.info(sender, "配置文件已重新加载");
         });
     }
 

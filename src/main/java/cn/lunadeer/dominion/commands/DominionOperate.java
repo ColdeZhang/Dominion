@@ -6,7 +6,10 @@ import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
+import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.Teleport;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -29,20 +32,20 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
-            Dominion.notification.error(sender, "用法: /dominion create <领地名称>");
+            Notification.error(sender, "用法: /dominion create <领地名称>");
             return;
         }
         Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
         if (points == null || points.get(0) == null || points.get(1) == null) {
-            Dominion.notification.error(sender, "请先使用工具选择领地的对角线两点，或使用 /dominion auto_create <领地名称> 创建自动领地");
+            Notification.error(sender, "请先使用工具选择领地的对角线两点，或使用 /dominion auto_create <领地名称> 创建自动领地");
             return;
         }
         String name = args[1];
         if (DominionController.create(player, name, points.get(0), points.get(1)) == null) {
-            Dominion.notification.error(sender, "创建领地失败");
+            Notification.error(sender, "创建领地失败");
             return;
         }
-        Dominion.notification.info(sender, "成功创建: %s", name);
+        Notification.info(sender, "成功创建: %s", name);
     }
 
     /**
@@ -56,26 +59,26 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Dominion.notification.error(sender, "用法: /dominion create_sub <子领地名称> [父领地名称]");
+            Notification.error(sender, "用法: /dominion create_sub <子领地名称> [父领地名称]");
             return;
         }
         Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
         if (points == null || points.get(0) == null || points.get(1) == null) {
-            Dominion.notification.error(sender, "请先使用工具选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
+            Notification.error(sender, "请先使用工具选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
             return;
         }
         if (args.length == 2) {
             if (DominionController.create(player, args[1], points.get(0), points.get(1)) != null) {
-                Dominion.notification.info(sender, "成功创建子领地: %s", args[1]);
+                Notification.info(sender, "成功创建子领地: %s", args[1]);
                 return;
             }
         } else {
             if (DominionController.create(player, args[1], points.get(0), points.get(1), args[2]) != null) {
-                Dominion.notification.info(sender, "成功创建子领地: %s", args[1]);
+                Notification.info(sender, "成功创建子领地: %s", args[1]);
                 return;
             }
         }
-        Dominion.notification.error(sender, "创建子领地失败");
+        Notification.error(sender, "创建子领地失败");
     }
 
     /**
@@ -90,11 +93,11 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
-            Dominion.notification.error(sender, "用法: /dominion auto_create <领地名称>");
+            Notification.error(sender, "用法: /dominion auto_create <领地名称>");
             return;
         }
         if (Dominion.config.getAutoCreateRadius() < 0) {
-            Dominion.notification.error(sender, "自动创建领地功能已关闭");
+            Notification.error(sender, "自动创建领地功能已关闭");
             return;
         }
         autoPoints(player);
@@ -113,11 +116,11 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Dominion.notification.error(sender, "用法: /dominion auto_create_sub <子领地名称> [父领地名称]");
+            Notification.error(sender, "用法: /dominion auto_create_sub <子领地名称> [父领地名称]");
             return;
         }
         if (Dominion.config.getAutoCreateRadius() < 0) {
-            Dominion.notification.error(sender, "自动创建领地功能已关闭");
+            Notification.error(sender, "自动创建领地功能已关闭");
             return;
         }
         autoPoints(player);
@@ -135,7 +138,7 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Dominion.notification.error(sender, "用法: /dominion expand [大小] [领地名称]");
+            Notification.error(sender, "用法: /dominion expand [大小] [领地名称]");
             return;
         }
         int size = 10;
@@ -143,11 +146,11 @@ public class DominionOperate {
         try {
             size = Integer.parseInt(args[1]);
         } catch (Exception e) {
-            Dominion.notification.error(sender, "大小格式错误");
+            Notification.error(sender, "大小格式错误");
             return;
         }
         if (size <= 0) {
-            Dominion.notification.error(sender, "大小必须大于0");
+            Notification.error(sender, "大小必须大于0");
             return;
         }
         if (args.length == 3) {
@@ -160,9 +163,9 @@ public class DominionOperate {
             dominionDTO = DominionController.expand(player, size, name);
         }
         if (dominionDTO == null) {
-            Dominion.notification.error(sender, "扩展领地失败");
+            Notification.error(sender, "扩展领地失败");
         } else {
-            Dominion.notification.info(sender, "成功扩展领地: %s %d", dominionDTO.getName(), size);
+            Notification.info(sender, "成功扩展领地: %s %d", dominionDTO.getName(), size);
             sizeInfo(sender, dominionDTO);
         }
     }
@@ -178,7 +181,7 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Dominion.notification.error(sender, "用法: /dominion contract [大小] [领地名称]");
+            Notification.error(sender, "用法: /dominion contract [大小] [领地名称]");
             return;
         }
         int size = 10;
@@ -186,11 +189,11 @@ public class DominionOperate {
         try {
             size = Integer.parseInt(args[1]);
         } catch (Exception e) {
-            Dominion.notification.error(sender, "大小格式错误");
+            Notification.error(sender, "大小格式错误");
             return;
         }
         if (size <= 0) {
-            Dominion.notification.error(sender, "大小必须大于0");
+            Notification.error(sender, "大小必须大于0");
             return;
         }
         if (args.length == 3) {
@@ -203,9 +206,9 @@ public class DominionOperate {
             dominionDTO = DominionController.contract(player, size, name);
         }
         if (dominionDTO == null) {
-            Dominion.notification.error(sender, "缩小领地失败");
+            Notification.error(sender, "缩小领地失败");
         } else {
-            Dominion.notification.info(sender, "成功缩小领地: %s %d", dominionDTO.getName(), size);
+            Notification.info(sender, "成功缩小领地: %s %d", dominionDTO.getName(), size);
             sizeInfo(sender, dominionDTO);
         }
     }
@@ -232,7 +235,7 @@ public class DominionOperate {
                 return;
             }
         }
-        Dominion.notification.error(sender, "用法: /dominion delete <领地名称>");
+        Notification.error(sender, "用法: /dominion delete <领地名称>");
     }
 
     /**
@@ -253,7 +256,7 @@ public class DominionOperate {
             DominionController.setJoinMessage(player, args[1], args[2]);
             return;
         }
-        Dominion.notification.error(sender, "用法: /dominion set_enter_msg <提示语> [领地名称]");
+        Notification.error(sender, "用法: /dominion set_enter_msg <提示语> [领地名称]");
     }
 
     /**
@@ -274,7 +277,7 @@ public class DominionOperate {
             DominionController.setLeaveMessage(player, args[1], args[2]);
             return;
         }
-        Dominion.notification.error(sender, "用法: /dominion set_leave_msg <提示语> [领地名称]");
+        Notification.error(sender, "用法: /dominion set_leave_msg <提示语> [领地名称]");
     }
 
     /**
@@ -295,7 +298,7 @@ public class DominionOperate {
             DominionController.setTpLocation(player, args[1]);
             return;
         }
-        Dominion.notification.error(sender, "用法: /dominion set_tp_location [领地名称]");
+        Notification.error(sender, "用法: /dominion set_tp_location [领地名称]");
     }
 
     /**
@@ -309,7 +312,7 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 3) {
-            Dominion.notification.error(sender, "用法: /dominion rename <原领地名称> <新领地名称>");
+            Notification.error(sender, "用法: /dominion rename <原领地名称> <新领地名称>");
             return;
         }
         DominionController.rename(player, args[1], args[2]);
@@ -339,7 +342,7 @@ public class DominionOperate {
                 return;
             }
         }
-        Dominion.notification.error(sender, "用法: /dominion give <领地名称> <玩家名称>");
+        Notification.error(sender, "用法: /dominion give <领地名称> <玩家名称>");
     }
 
     /**
@@ -353,27 +356,27 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
-            Dominion.notification.error(sender, "用法: /dominion tp <领地名称>");
+            Notification.error(sender, "用法: /dominion tp <领地名称>");
             return;
         }
         if (!Dominion.config.getTpEnable()) {
-            Dominion.notification.error(sender, "管理员没有开启领地传送功能");
+            Notification.error(sender, "管理员没有开启领地传送功能");
             return;
         }
         DominionDTO dominionDTO = DominionDTO.select(args[1]);
         if (dominionDTO == null) {
-            Dominion.notification.error(sender, "领地不存在");
+            Notification.error(sender, "领地不存在");
             return;
         }
         PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
         if (privilegeDTO == null) {
             if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
-                Dominion.notification.error(sender, "此领地禁止传送");
+                Notification.error(sender, "此领地禁止传送");
                 return;
             }
         } else {
             if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
-                Dominion.notification.error(sender, "你不被允许传送到这个领地");
+                Notification.error(sender, "你不被允许传送到这个领地");
                 return;
             }
         }
@@ -383,26 +386,26 @@ public class DominionOperate {
         if (next_time != null) {
             if (now.isBefore(next_time)) {
                 long secs_until_next = now.until(next_time, java.time.temporal.ChronoUnit.SECONDS);
-                Dominion.notification.error(player, "请等待 %d 秒后再传送", secs_until_next);
+                Notification.error(player, "请等待 %d 秒后再传送", secs_until_next);
                 return;
             }
         }
         if (Dominion.config.getTpDelay() > 0) {
-            Dominion.notification.info(player, "传送将在 %d 秒后执行", Dominion.config.getTpDelay());
+            Notification.info(player, "传送将在 %d 秒后执行", Dominion.config.getTpDelay());
         }
         Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
-        Dominion.scheduler.runTaskLater(() -> {
+        Scheduler.runTaskLater(() -> {
             Location location = dominionDTO.getTpLocation();
             if (location == null) {
                 int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
                 int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
                 World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
                 location = new Location(world, x, player.getLocation().getY(), z);
-                Dominion.logger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
+                XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
             }
             if (player.isOnline()) {
-                Teleport.doTeleportSafely(Dominion.instance, player, location);
-                Dominion.notification.info(player, "已将你传送到 " + dominionDTO.getName());
+                Teleport.doTeleportSafely(player, location);
+                Notification.info(player, "已将你传送到 " + dominionDTO.getName());
             }
         }, 20L * Dominion.config.getTpDelay());
     }

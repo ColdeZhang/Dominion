@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.tuis.DominionConfig;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
 import static cn.lunadeer.dominion.commands.Apis.notOpOrConsole;
@@ -11,7 +12,7 @@ public class SetConfig {
     public static void handler(CommandSender sender, String[] args) {
         if (notOpOrConsole(sender)) return;
         if (args.length < 2) {
-            Dominion.notification.error(sender, "参数错误");
+            Notification.error(sender, "参数错误");
             return;
         }
         switch (args[1]) {
@@ -67,7 +68,7 @@ public class SetConfig {
                 setEconomyRefund(sender, args);
                 break;
             default:
-                Dominion.notification.error(sender, "未知参数");
+                Notification.error(sender, "未知参数");
         }
     }
 
@@ -85,7 +86,7 @@ public class SetConfig {
         int size = Integer.parseInt(args[2]);
         if (size < 2) {
             Dominion.config.setAutoCreateRadius(2);
-            Dominion.notification.error(sender, "自动创建半径不能小于2");
+            Notification.error(sender, "自动创建半径不能小于2");
         } else {
             Dominion.config.setAutoCreateRadius(size);
         }
@@ -101,7 +102,7 @@ public class SetConfig {
     private static void setLimitMaxY(CommandSender sender, String[] args) {
         int maxY = Integer.parseInt(args[2]);
         if (maxY <= Dominion.config.getLimitMinY()) {
-            Dominion.notification.error(sender, "最高Y坐标限制不能小于最低Y坐标限制");
+            Notification.error(sender, "最高Y坐标限制不能小于最低Y坐标限制");
             return;
         }
         Dominion.config.setLimitMaxY(maxY);
@@ -112,7 +113,7 @@ public class SetConfig {
     private static void setLimitMinY(CommandSender sender, String[] args) {
         int minY = Integer.parseInt(args[2]);
         if (minY >= Dominion.config.getLimitMaxY()) {
-            Dominion.notification.error(sender, "最低Y坐标限制不能大于最高Y坐标限制");
+            Notification.error(sender, "最低Y坐标限制不能大于最高Y坐标限制");
             return;
         }
         Dominion.config.setLimitMinY(minY);
@@ -124,7 +125,7 @@ public class SetConfig {
         int sizeX = Integer.parseInt(args[2]);
         if (sizeX != -1 && sizeX < 4) {
             Dominion.config.setLimitSizeX(4);
-            Dominion.notification.error(sender, "X轴(东西)最大尺寸不能小于4");
+            Notification.error(sender, "X轴(东西)最大尺寸不能小于4");
         } else {
             Dominion.config.setLimitSizeX(sizeX);
         }
@@ -135,7 +136,7 @@ public class SetConfig {
         int sizeZ = Integer.parseInt(args[2]);
         if (sizeZ != -1 && sizeZ < 4) {
             Dominion.config.setLimitSizeZ(4);
-            Dominion.notification.error(sender, "Z轴(南北)最大尺寸不能小于4");
+            Notification.error(sender, "Z轴(南北)最大尺寸不能小于4");
             return;
         } else {
             Dominion.config.setLimitSizeZ(sizeZ);
@@ -147,7 +148,7 @@ public class SetConfig {
         int sizeY = Integer.parseInt(args[2]);
         if (sizeY != -1 && sizeY < 4) {
             Dominion.config.setLimitSizeY(4);
-            Dominion.notification.error(sender, "Y轴(垂直)最大尺寸不能小于4");
+            Notification.error(sender, "Y轴(垂直)最大尺寸不能小于4");
         } else {
             Dominion.config.setLimitSizeY(sizeY);
         }
@@ -158,7 +159,7 @@ public class SetConfig {
         int amount = Integer.parseInt(args[2]);
         if (amount != -1 && amount < 0) {
             Dominion.config.setLimitAmount(0);
-            Dominion.notification.error(sender, "每个玩家领地数量限制不能小于0");
+            Notification.error(sender, "每个玩家领地数量限制不能小于0");
         } else {
             Dominion.config.setLimitAmount(amount);
         }
@@ -169,7 +170,7 @@ public class SetConfig {
         int depth = Integer.parseInt(args[2]);
         if (depth != -1 && depth < 0) {
             Dominion.config.setLimitDepth(0);
-            Dominion.notification.error(sender, "领地深度限制不能小于0");
+            Notification.error(sender, "领地深度限制不能小于0");
         } else {
             Dominion.config.setLimitDepth(depth);
         }
@@ -199,7 +200,7 @@ public class SetConfig {
         int tpDelay = Integer.parseInt(args[2]);
         if (tpDelay < 0) {
             Dominion.config.setTpDelay(0);
-            Dominion.notification.error(sender, "传送延迟不能小于0");
+            Notification.error(sender, "传送延迟不能小于0");
         } else {
             Dominion.config.setTpDelay(tpDelay);
         }
@@ -210,7 +211,7 @@ public class SetConfig {
         int tpCoolDown = Integer.parseInt(args[2]);
         if (tpCoolDown < 0) {
             Dominion.config.setTpCoolDown(0);
-            Dominion.notification.error(sender, "传送冷却时间不能小于0");
+            Notification.error(sender, "传送冷却时间不能小于0");
         } else {
             Dominion.config.setTpCoolDown(tpCoolDown);
         }
@@ -227,7 +228,7 @@ public class SetConfig {
         float economyPrice = Float.parseFloat(args[2]);
         if (economyPrice < 0) {
             Dominion.config.setEconomyPrice(0.0f);
-            Dominion.notification.error(sender, "每方块单价不能小于0");
+            Notification.error(sender, "每方块单价不能小于0");
         } else {
             Dominion.config.setEconomyPrice(economyPrice);
         }
@@ -244,7 +245,7 @@ public class SetConfig {
         float economyRefund = Float.parseFloat(args[2]);
         if (economyRefund < 0) {
             Dominion.config.setEconomyRefund(0.0f);
-            Dominion.notification.error(sender, "领地退款比例不能小于0");
+            Notification.error(sender, "领地退款比例不能小于0");
         } else {
             Dominion.config.setEconomyRefund(economyRefund);
         }

@@ -1,14 +1,12 @@
 package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import io.papermc.paper.event.entity.EntityDyeEvent;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -206,7 +204,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // container
     public void openContainer(InventoryOpenEvent event) {
         if (event.getInventory() instanceof CraftingInventory) {
-            Dominion.logger.debug("CraftingInventory opened");
+            XLogger.debug("CraftingInventory opened");
             return;
         }
         if (event.getInventory().getType() != InventoryType.CHEST &&
@@ -529,7 +527,7 @@ public class PlayerEvents implements Listener {
             } else {
                 to.setZ(dom.getZ2() + 1);
             }
-            Teleport.doTeleportSafely(Dominion.instance, player, to);
+            Teleport.doTeleportSafely(player, to);
         }
     }
 

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.stui.View;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -20,7 +21,7 @@ public class DominionSizeInfo {
         if (player == null) return;
         DominionDTO dominion = getDominionNameArg_1(player, args);
         if (dominion == null) {
-            Dominion.notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion info <领地名称>");
+            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion info <领地名称>");
             return;
         }
         PlayerDTO owner = PlayerController.getPlayerDTO(dominion.getOwner());

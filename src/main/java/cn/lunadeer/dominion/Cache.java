@@ -4,6 +4,8 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
+import cn.lunadeer.minecraftpluginutils.Scheduler;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -29,15 +31,15 @@ public class Cache {
      */
     public void loadDominions() {
         if (_last_update_dominion.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            Dominion.logger.debug("run loadDominionsExecution directly");
+            XLogger.debug("run loadDominionsExecution directly");
             loadDominionsExecution();
         } else {
             if (_update_dominion_is_scheduled.get()) return;
-            Dominion.logger.debug("schedule loadDominionsExecution");
+            XLogger.debug("schedule loadDominionsExecution");
             _update_dominion_is_scheduled.set(true);
             long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
-            Dominion.scheduler.runTaskLaterAsync(() -> {
-                        Dominion.logger.debug("run loadDominionsExecution scheduled");
+            Scheduler.runTaskLaterAsync(() -> {
+                        XLogger.debug("run loadDominionsExecution scheduled");
                         loadDominionsExecution();
                         _update_dominion_is_scheduled.set(false);
                     },
@@ -80,7 +82,7 @@ public class Cache {
             if (_update_privilege_is_scheduled.get()) return;
             _update_privilege_is_scheduled.set(true);
             long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
-            Dominion.scheduler.runTaskLaterAsync(() -> {
+            Scheduler.runTaskLaterAsync(() -> {
                         loadPlayerPrivilegesExecution();
                         _update_privilege_is_scheduled.set(false);
                     },
@@ -91,7 +93,7 @@ public class Cache {
     private void loadPlayerPrivilegesExecution() {
         List<PlayerPrivilegeDTO> all_privileges = PlayerPrivilegeDTO.selectAll();
         if (all_privileges == null) {
-            Dominion.logger.err("加载玩家特权失败");
+            XLogger.err("加载玩家特权失败");
             return;
         }
         player_uuid_to_privilege = new ConcurrentHashMap<>();

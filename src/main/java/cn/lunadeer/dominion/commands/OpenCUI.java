@@ -4,6 +4,8 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.tuis.DominionManage;
+import cn.lunadeer.minecraftpluginutils.Notification;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -26,7 +28,7 @@ public class OpenCUI {
 
         @Override
         public void handleData(String input) {
-            Dominion.logger.debug("renameDominionCB.run: %s", input);
+            XLogger.debug("renameDominionCB.run: %s", input);
             DominionController.rename(sender, oldName, input);
             DominionManage.show(sender, new String[]{"manage", input});
         }
@@ -43,7 +45,7 @@ public class OpenCUI {
 
         @Override
         public void handleData(String input) {
-            Dominion.logger.debug("editJoinMessageCB.run: %s", input);
+            XLogger.debug("editJoinMessageCB.run: %s", input);
             DominionController.setJoinMessage(sender, input, dominionName);
             DominionManage.show(sender, new String[]{"manage", dominionName});
         }
@@ -60,7 +62,7 @@ public class OpenCUI {
 
         @Override
         public void handleData(String input) {
-            Dominion.logger.debug("editLeaveMessageCB.run: %s", input);
+            XLogger.debug("editLeaveMessageCB.run: %s", input);
             DominionController.setLeaveMessage(sender, input, dominionName);
             DominionManage.show(sender, new String[]{"manage", dominionName});
         }
@@ -75,18 +77,18 @@ public class OpenCUI {
 
         @Override
         public void handleData(String input) {
-            Dominion.logger.debug("createDominionCB.run: %s", input);
+            XLogger.debug("createDominionCB.run: %s", input);
             autoPoints(sender);
             Map<Integer, Location> points = Dominion.pointsSelect.get(sender.getUniqueId());
             if (points == null || points.get(0) == null || points.get(1) == null) {
-                Dominion.notification.error(sender, "自动选点失败");
+                Notification.error(sender, "自动选点失败");
                 return;
             }
             if (DominionController.create(sender, input, points.get(0), points.get(1)) != null) {
-                Dominion.notification.info(sender, "成功创建: %s", input);
+                Notification.info(sender, "成功创建: %s", input);
                 DominionManage.show(sender, new String[]{"list"});
             } else {
-                Dominion.notification.error(sender, "创建领地失败");
+                Notification.error(sender, "创建领地失败");
             }
         }
     }
@@ -104,7 +106,7 @@ public class OpenCUI {
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Dominion.notification.error(sender, "领地不存在");
+            Notification.error(sender, "领地不存在");
             return;
         }
         CuiTextInput.InputCallback editJoinMessageCB = new editJoinMessageCB(player, dominion.getName());
@@ -117,7 +119,7 @@ public class OpenCUI {
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Dominion.notification.error(sender, "领地不存在");
+            Notification.error(sender, "领地不存在");
             return;
         }
         CuiTextInput.InputCallback editLeaveMessageCB = new editLeaveMessageCB(player, dominion.getName());

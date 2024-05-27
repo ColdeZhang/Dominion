@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -63,7 +63,7 @@ public class Apis {
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             PlayerPrivilegeDTO privileges = PlayerPrivilegeDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
-                Dominion.notification.error(player, "你不是领地 %s 的拥有者或管理员，无权访问此页面", dominion.getName());
+                Notification.error(player, "你不是领地 %s 的拥有者或管理员，无权访问此页面", dominion.getName());
                 return true;
             }
         }
