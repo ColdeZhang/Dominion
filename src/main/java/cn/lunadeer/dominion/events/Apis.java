@@ -31,7 +31,7 @@ public class Apis {
 
     public static DominionDTO getInvDominion(Player bukkitPlayer, Inventory inv) {
         if (inv.getLocation() == null) {
-            return Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+            return null;
         } else {
             return Cache.instance.getDominion(inv.getLocation());
         }
