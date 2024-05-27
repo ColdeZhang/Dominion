@@ -44,6 +44,11 @@ Economy:
   # 删除领地退还比例
   Refund: 0.85
 
+# 飞行权限节点 - 拥有以下任意一个权限节点的玩家不会被本插件拦截飞行
+FlyPermissionNodes:
+  - essentials.fly
+  - cmi.command.fly
+
 BlueMap: true
 
 CheckUpdate: true

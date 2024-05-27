@@ -85,7 +85,36 @@ public class ConfigManager {
         _economy_price = (float) _file.getDouble("Economy.Price", 10.0);
         _economy_only_xz = _file.getBoolean("Economy.OnlyXZ", false);
         _economy_refund = (float) _file.getDouble("Economy.Refund", 0.85);
+        _fly_permission_nodes = _file.getStringList("FlyPermissionNodes");
+        saveAll();  // 回写文件 防止文件中的数据不完整
         Flag.loadFromJson();
+    }
+
+    public void saveAll() {
+        _file.set("AutoCreateRadius", _auto_create_radius);
+        _file.set("Limit.SizeX", _limit_size_x);
+        _file.set("Limit.SizeY", _limit_size_y);
+        _file.set("Limit.SizeZ", _limit_size_z);
+        _file.set("BlueMap", _blue_map);
+        _file.set("AutoCleanAfterDays", _auto_clean_after_days);
+        _file.set("Limit.MinY", _limit_min_y);
+        _file.set("Limit.MaxY", _limit_max_y);
+        _file.set("Limit.Amount", _limit_amount);
+        _file.set("Limit.Depth", _limit_depth);
+        _file.set("Limit.Vert", _limit_vert);
+        _file.set("Limit.OpByPass", _limit_op_bypass);
+        _file.set("Limit.WorldBlackList", _world_black_list);
+        _file.set("CheckUpdate", _check_update);
+        _file.set("Teleport.Enable", _tp_enable);
+        _file.set("Teleport.Delay", _tp_delay);
+        _file.set("Teleport.CoolDown", _tp_cool_down);
+        _file.set("Tool", _tool);
+        _file.set("Economy.Enable", _economy_enable);
+        _file.set("Economy.Price", _economy_price);
+        _file.set("Economy.OnlyXZ", _economy_only_xz);
+        _file.set("Economy.Refund", _economy_refund);
+        _file.set("FlyPermissionNodes", _fly_permission_nodes);
+        _plugin.saveConfig();
     }
 
     public Boolean isDebug() {
@@ -353,6 +382,16 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public List<String> getFlyPermissionNodes() {
+        return _fly_permission_nodes;
+    }
+
+    public void setFlyPermissionNodes(List<String> fly_permission_nodes) {
+        _fly_permission_nodes = fly_permission_nodes;
+        _file.set("FlyPermissionNodes", fly_permission_nodes);
+        _plugin.saveConfig();
+    }
+
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;
@@ -390,4 +429,5 @@ public class ConfigManager {
     private Float _economy_price;
     private Boolean _economy_only_xz;
     private Float _economy_refund;
+    private List<String> _fly_permission_nodes;
 }

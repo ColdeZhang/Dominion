@@ -39,13 +39,6 @@ public class PlayerEvents implements Listener {
         Player bukkitPlayer = event.getPlayer();
         PlayerDTO player = PlayerDTO.get(bukkitPlayer);
         player.onJoin(); // update name
-        if (!Flag.FLY.getEnable()) {
-            if (bukkitPlayer.isOp() || bukkitPlayer.getGameMode() == GameMode.CREATIVE || bukkitPlayer.getGameMode() == GameMode.SPECTATOR) {
-                // do nothing
-            } else {
-                bukkitPlayer.setAllowFlight(false);
-            }
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // anchor

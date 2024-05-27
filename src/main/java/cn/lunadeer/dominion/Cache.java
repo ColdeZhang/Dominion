@@ -198,13 +198,19 @@ public class Cache {
     }
 
     private void flyOrNot(Player player, DominionDTO dominion) {
-        if (!Flag.FLY.getEnable()) {
-            return;
+        for (String flyPN : Dominion.config.getFlyPermissionNodes()) {
+            if (player.hasPermission(flyPN)) {
+                return;
+            }
         }
         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
             return;
         }
         if (player.isOp() && Dominion.config.getLimitOpBypass()) {
+            return;
+        }
+        if (!Flag.FLY.getEnable()) {
+            player.setAllowFlight(false);
             return;
         }
         if (dominion == null) {
