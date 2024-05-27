@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Teleport;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,6 +28,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.spigotmc.event.entity.EntityMountEvent;
 
@@ -203,6 +205,10 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // container
     public void openContainer(InventoryOpenEvent event) {
+        if (event.getInventory() instanceof CraftingInventory) {
+            Dominion.logger.debug("CraftingInventory opened");
+            return;
+        }
         if (event.getInventory().getType() != InventoryType.CHEST &&
                 event.getInventory().getType() != InventoryType.BARREL &&
                 event.getInventory().getType() != InventoryType.SHULKER_BOX) {
