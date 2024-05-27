@@ -6,9 +6,7 @@ import cn.lunadeer.dominion.dtos.Flag;
 import com.destroystokyo.paper.event.entity.EndermanEscapeEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -135,9 +133,29 @@ public class EnvironmentEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_man escape
-    public void onEnderManEscape(EndermanEscapeEvent event){
+    public void onEnderManEscape(EndermanEscapeEvent event) {
         Entity entity = event.getEntity();
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.ENDER_MAN, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // monster_spawn
+    public void onMonsterSpawn(CreatureSpawnEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Monster)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        checkFlag(dom, Flag.MONSTER_SPAWN, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // animal_spawn
+    public void onAnimalSpawn(CreatureSpawnEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Animals)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        checkFlag(dom, Flag.ANIMAL_SPAWN, event);
     }
 }

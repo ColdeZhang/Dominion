@@ -12,6 +12,7 @@ import java.util.List;
 public enum Flag {
     ANCHOR("anchor", "重生锚", "是否允许设置重生锚", false, false, true),
     ANIMAL_KILLING("animal_killing", "对动物造成伤害", "是否允许对动物造成伤害", false, false, true),
+    ANIMAL_SPAWN("animal_spawn", "动物生成", "是否允许动物生成", true, true, false),
     ANVIL("anvil", "使用铁砧", "是否允许使用铁砧", false, false, true),
     BEACON("beacon", "信标交互", "是否允许与信标交互", false, false, true),
     BED("bed", "床交互", "是否允许使用床睡觉或设置重生点", false, false, true),
@@ -42,6 +43,7 @@ public enum Flag {
     LEVER("lever", "使用拉杆", "是否可以使用拉杆", false, false, true),
     MOB_DROP_ITEM("mob_drop_item", "生物战利品掉落", "生物死亡时是否产生凋落物", true, true, true),
     MONSTER_KILLING("monster_killing", "对怪物造成伤害", "玩家是否可以对怪物造成伤害", false, false, true),
+    MONSTER_SPAWN("monster_spawn", "怪物生成", "是否可以生成怪物", false, true, false),
     MOVE("move", "移动", "是否可以移动", true, false, true),
     PLACE("place", "放置方块", "是否可以放置方块（包括：一般方块、展示框、岩浆、水）", false, false, true),
     PRESSURE("pressure", "压力板交互", "是否可以触发各种材质的压力板", false, false, true),
