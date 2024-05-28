@@ -334,10 +334,6 @@ public class DominionDTO {
         return parentDomId;
     }
 
-    public boolean isTopDom() {
-        return parentDomId == -1;
-    }
-
     public DominionDTO setParentDomId(Integer parentDomId) {
         this.parentDomId = parentDomId;
         return update(this);

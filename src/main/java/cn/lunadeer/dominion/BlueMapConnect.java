@@ -10,10 +10,7 @@ import de.bluecolored.bluemap.api.markers.MarkerSet;
 import de.bluecolored.bluemap.api.math.Color;
 import de.bluecolored.bluemap.api.math.Shape;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BlueMapConnect {
     public static void render() {
@@ -22,14 +19,20 @@ public class BlueMapConnect {
         }
         try {
             BlueMapAPI.getInstance().ifPresent(api -> {
-                for (Map.Entry<String, List<Integer>> world_dominions : Cache.instance.getWorldDominions().entrySet()) {
-                    api.getWorld(world_dominions.getKey()).ifPresent(world -> {
+                Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
+                for (DominionDTO dominion : Cache.instance.getDominions()) {
+                    if (!world_dominions.containsKey(dominion.getWorld())) {
+                        world_dominions.put(dominion.getWorld(), new ArrayList<>());
+                    }
+                    world_dominions.get(dominion.getWorld()).add(dominion);
+                }
+                for (Map.Entry<String, List<DominionDTO>> d : world_dominions.entrySet()) {
+                    api.getWorld(d.getKey()).ifPresent(world -> {
                         MarkerSet markerSet = MarkerSet.builder()
                                 .label("Dominion")
                                 .build();
 
-                        for (Integer id : world_dominions.getValue()) {
-                            DominionDTO dominion = Cache.instance.getDominion(id);
+                        for (DominionDTO dominion : d.getValue()) {
                             Collection<Vector2d> vectors = new ArrayList<>();
                             vectors.add(new Vector2d(dominion.getX1() + 0.001, dominion.getZ1() + 0.001));
                             vectors.add(new Vector2d(dominion.getX2() - 0.001, dominion.getZ1() + 0.001));
@@ -58,7 +61,7 @@ public class BlueMapConnect {
                         }
 
                         for (BlueMapMap map : world.getMaps()) {
-                            map.getMarkerSets().put(world_dominions.getKey() + "-" + markerSet.getLabel(), markerSet);
+                            map.getMarkerSets().put(d.getKey() + "-" + markerSet.getLabel(), markerSet);
                         }
                     });
                 }
