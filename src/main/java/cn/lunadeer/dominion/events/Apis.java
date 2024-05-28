@@ -8,6 +8,11 @@ import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.Inventory;
@@ -57,8 +62,12 @@ public class Apis {
                 return true;
             }
         }
-        TextComponent msg = Component.text(String.format("你没有 %s (%s) 权限", flag.getDisplayName(), flag.getDescription())).hoverEvent(Component.text(flag.getDescription()));
-        Notification.error(player, msg);
+        TextComponent msg = Component.text(
+                        String.format("你没有 %s (%s) 权限", flag.getDisplayName(), flag.getDescription()),
+                        Style.style(TextColor.color(0xFF0000), TextDecoration.BOLD))
+                .hoverEvent(Component.text(flag.getDescription()));
+        // Notification.error(player, msg);
+        player.sendActionBar(msg);
         if (event != null) {
             event.setCancelled(true);
         }

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Location;
@@ -513,15 +514,23 @@ public class PlayerEvents implements Listener {
             // find min distance
             int min = Math.min(Math.min(x1, x2), Math.min(z1, z2));
             if (min == x1) {
-                to.setX(dom.getX1() - 1);
+                to.setX(dom.getX1() - 2);
             } else if (min == x2) {
-                to.setX(dom.getX2() + 1);
+                to.setX(dom.getX2() + 2);
             } else if (min == z1) {
-                to.setZ(dom.getZ1() - 1);
+                to.setZ(dom.getZ1() - 2);
             } else {
-                to.setZ(dom.getZ2() + 1);
+                to.setZ(dom.getZ2() + 2);
             }
-            Teleport.doTeleportSafely(player, to);
+            Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
+                if (!success) {
+                    Notification.warn(player, "传送失败，你将被传送到复活点");
+                    player.teleportAsync(player.getBedSpawnLocation() == null ?
+                                    player.getWorld().getSpawnLocation() :
+                                    player.getBedSpawnLocation()
+                            , PlayerTeleportEvent.TeleportCause.PLUGIN);
+                }
+            });
         }
     }
 
