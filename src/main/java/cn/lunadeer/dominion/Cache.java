@@ -228,7 +228,8 @@ public class Cache {
     }
 
     private List<DominionDTO> getDominionsParentAndChildren(Location loc) {
-        // todo: 需要进一步优化性能，考虑将领地按照mca文件分组，减少遍历次数
+        // todo: 可能需要进一步优化性能，考虑将领地按照mca文件分组，减少遍历次数
+        long start = System.currentTimeMillis();
         String world = loc.getWorld().getName();
         List<Integer> dominions_id = world_dominions.get(world);
         List<DominionDTO> in_dominions = new ArrayList<>();
@@ -240,6 +241,8 @@ public class Cache {
             }
         }
         in_dominions.sort(Comparator.comparingInt(DominionDTO::getId));
+        long end = System.currentTimeMillis();
+        // XLogger.debug("getDominionsParentAndChildren: %d ms", end - start);
         return in_dominions;
     }
 
