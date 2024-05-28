@@ -228,6 +228,7 @@ public class Cache {
     }
 
     private List<DominionDTO> getDominionsParentAndChildren(Location loc) {
+        // todo: 需要进一步优化性能，考虑将领地按照mca文件分组，减少遍历次数
         String world = loc.getWorld().getName();
         List<Integer> dominions_id = world_dominions.get(world);
         List<DominionDTO> in_dominions = new ArrayList<>();
