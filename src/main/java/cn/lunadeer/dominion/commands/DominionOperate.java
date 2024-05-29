@@ -2,6 +2,8 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.controllers.AbstractOperator;
+import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
@@ -17,6 +19,7 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 import static cn.lunadeer.dominion.commands.Apis.*;
 
@@ -41,11 +44,8 @@ public class DominionOperate {
             return;
         }
         String name = args[1];
-        if (DominionController.create(player, name, points.get(0), points.get(1)) == null) {
-            Notification.error(sender, "创建领地失败");
-            return;
-        }
-        Notification.info(sender, "成功创建: %s", name);
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        DominionController.create(operator, name, points.get(0), points.get(1));
     }
 
     /**
@@ -67,18 +67,12 @@ public class DominionOperate {
             Notification.error(sender, "请先使用工具选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
             return;
         }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length == 2) {
-            if (DominionController.create(player, args[1], points.get(0), points.get(1)) != null) {
-                Notification.info(sender, "成功创建子领地: %s", args[1]);
-                return;
-            }
+            DominionController.create(operator, args[1], points.get(0), points.get(1));
         } else {
-            if (DominionController.create(player, args[1], points.get(0), points.get(1), args[2]) != null) {
-                Notification.info(sender, "成功创建子领地: %s", args[1]);
-                return;
-            }
+            DominionController.create(operator, args[1], points.get(0), points.get(1), args[2]);
         }
-        Notification.error(sender, "创建子领地失败");
     }
 
     /**
@@ -156,17 +150,11 @@ public class DominionOperate {
         if (args.length == 3) {
             name = args[2];
         }
-        DominionDTO dominionDTO;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (name.isEmpty()) {
-            dominionDTO = DominionController.expand(player, size);
+            DominionController.expand(operator, size);
         } else {
-            dominionDTO = DominionController.expand(player, size, name);
-        }
-        if (dominionDTO == null) {
-            Notification.error(sender, "扩展领地失败");
-        } else {
-            Notification.info(sender, "成功扩展领地: %s %d", dominionDTO.getName(), size);
-            sizeInfo(sender, dominionDTO);
+            DominionController.expand(operator, size, name);
         }
     }
 
@@ -199,17 +187,11 @@ public class DominionOperate {
         if (args.length == 3) {
             name = args[2];
         }
-        DominionDTO dominionDTO;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (name.isEmpty()) {
-            dominionDTO = DominionController.contract(player, size);
+            DominionController.contract(operator, size);
         } else {
-            dominionDTO = DominionController.contract(player, size, name);
-        }
-        if (dominionDTO == null) {
-            Notification.error(sender, "缩小领地失败");
-        } else {
-            Notification.info(sender, "成功缩小领地: %s %d", dominionDTO.getName(), size);
-            sizeInfo(sender, dominionDTO);
+            DominionController.contract(operator, size, name);
         }
     }
 
@@ -223,15 +205,16 @@ public class DominionOperate {
     public static void deleteDominion(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length == 2) {
             String name = args[1];
-            DominionController.delete(player, name, false);
+            DominionController.delete(operator, name, false);
             return;
         }
         if (args.length == 3) {
             String name = args[1];
             if (args[2].equals("force")) {
-                DominionController.delete(player, name, true);
+                DominionController.delete(operator, name, true);
                 return;
             }
         }
@@ -248,12 +231,13 @@ public class DominionOperate {
     public static void setEnterMessage(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length == 2) {
-            DominionController.setJoinMessage(player, args[1]);
+            DominionController.setJoinMessage(operator, args[1]);
             return;
         }
         if (args.length == 3) {
-            DominionController.setJoinMessage(player, args[1], args[2]);
+            DominionController.setJoinMessage(operator, args[1], args[2]);
             return;
         }
         Notification.error(sender, "用法: /dominion set_enter_msg <提示语> [领地名称]");
@@ -269,12 +253,13 @@ public class DominionOperate {
     public static void setLeaveMessage(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length == 2) {
-            DominionController.setLeaveMessage(player, args[1]);
+            DominionController.setLeaveMessage(operator, args[1]);
             return;
         }
         if (args.length == 3) {
-            DominionController.setLeaveMessage(player, args[1], args[2]);
+            DominionController.setLeaveMessage(operator, args[1], args[2]);
             return;
         }
         Notification.error(sender, "用法: /dominion set_leave_msg <提示语> [领地名称]");
@@ -290,12 +275,16 @@ public class DominionOperate {
     public static void setTpLocation(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length == 1) {
-            DominionController.setTpLocation(player);
+            DominionController.setTpLocation(operator,
+                    player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
             return;
         }
         if (args.length == 2) {
-            DominionController.setTpLocation(player, args[1]);
+            DominionController.setTpLocation(operator,
+                    player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ(),
+                    args[1]);
             return;
         }
         Notification.error(sender, "用法: /dominion set_tp_location [领地名称]");
@@ -311,11 +300,12 @@ public class DominionOperate {
     public static void renameDominion(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length != 3) {
             Notification.error(sender, "用法: /dominion rename <原领地名称> <新领地名称>");
             return;
         }
-        DominionController.rename(player, args[1], args[2]);
+        DominionController.rename(operator, args[1], args[2]);
     }
 
     /**
@@ -328,17 +318,18 @@ public class DominionOperate {
     public static void giveDominion(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
         if (args.length == 3) {
             String dom_name = args[1];
             String player_name = args[2];
-            DominionController.give(player, dom_name, player_name, false);
+            DominionController.give(operator, dom_name, player_name, false);
             return;
         }
         if (args.length == 4) {
             String dom_name = args[1];
             String player_name = args[2];
             if (args[3].equals("force")) {
-                DominionController.give(player, dom_name, player_name, true);
+                DominionController.give(operator, dom_name, player_name, true);
                 return;
             }
         }

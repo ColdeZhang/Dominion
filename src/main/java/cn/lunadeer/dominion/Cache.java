@@ -250,6 +250,11 @@ public class Cache {
         return player_uuid_to_privilege.get(player.getUniqueId()).get(dominion.getId());
     }
 
+    public PlayerPrivilegeDTO getPlayerPrivilege(UUID player_uuid, DominionDTO dominion) {
+        if (!player_uuid_to_privilege.containsKey(player_uuid)) return null;
+        return player_uuid_to_privilege.get(player_uuid).get(dominion.getId());
+    }
+
     private static boolean isInDominion(@Nullable DominionDTO dominion, Player player) {
         if (dominion == null) return false;
         if (!Objects.equals(dominion.getWorld(), player.getWorld().getName())) return false;
@@ -265,8 +270,7 @@ public class Cache {
         return id_dominions.get(id);
     }
 
-    public int getPlayerDominionCount(Player player) {
-        UUID player_uuid = player.getUniqueId();
+    public int getPlayerDominionCount(UUID player_uuid) {
         int count = 0;
         for (DominionDTO dominion : id_dominions.values()) {
             if (dominion.getOwner().equals(player_uuid)) {

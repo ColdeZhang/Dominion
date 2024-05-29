@@ -33,7 +33,7 @@ public class ListDominion {
         view.add(Line.create().append(Component.text("-= 以下为你拥有管理员权限的领地 =-", ViewStyles.main_color)));
         for (String dominion : admin_dominions) {
             TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + dominion).build();
-            view.add(Line.create().append(dominion).append(manage));
+            view.add(Line.create().append(manage).append(dominion));
         }
         view.showOn(player, page);
     }
@@ -47,7 +47,7 @@ public class ListDominion {
         for (DominionNode node : dominionTree) {
             TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + node.dominion.getName()).build();
             TextComponent delete = Button.createRed("删除").setExecuteCommand("/dominion delete " + node.dominion.getName()).build();
-            Line line = Line.create().append(prefix + node.dominion.getName()).append(manage).append(delete);
+            Line line = Line.create().append(delete).append(manage).append(prefix + node.dominion.getName());
             lines.add(line);
             lines.addAll(BuildTreeLines(node.children, depth + 1));
         }

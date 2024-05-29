@@ -1,6 +1,8 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.controllers.AbstractOperator;
+import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.controllers.PrivilegeController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -15,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.Objects;
 
 import static cn.lunadeer.dominion.commands.Apis.autoPoints;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
@@ -32,7 +35,8 @@ public class OpenCUI {
         @Override
         public void handleData(String input) {
             XLogger.debug("renameDominionCB.run: %s", input);
-            DominionController.rename(sender, oldName, input);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
+            DominionController.rename(operator, oldName, input);
             DominionManage.show(sender, new String[]{"manage", input});
         }
     }
@@ -49,7 +53,8 @@ public class OpenCUI {
         @Override
         public void handleData(String input) {
             XLogger.debug("editJoinMessageCB.run: %s", input);
-            DominionController.setJoinMessage(sender, input, dominionName);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
+            DominionController.setJoinMessage(operator, input, dominionName);
             DominionManage.show(sender, new String[]{"manage", dominionName});
         }
     }
@@ -66,7 +71,8 @@ public class OpenCUI {
         @Override
         public void handleData(String input) {
             XLogger.debug("editLeaveMessageCB.run: %s", input);
-            DominionController.setLeaveMessage(sender, input, dominionName);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
+            DominionController.setLeaveMessage(operator, input, dominionName);
             DominionManage.show(sender, new String[]{"manage", dominionName});
         }
     }
@@ -82,17 +88,18 @@ public class OpenCUI {
         public void handleData(String input) {
             XLogger.debug("createDominionCB.run: %s", input);
             autoPoints(sender);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             Map<Integer, Location> points = Dominion.pointsSelect.get(sender.getUniqueId());
             if (points == null || points.get(0) == null || points.get(1) == null) {
                 Notification.error(sender, "自动选点失败");
                 return;
             }
-            if (DominionController.create(sender, input, points.get(0), points.get(1)) != null) {
-                Notification.info(sender, "成功创建: %s", input);
-                DominionManage.show(sender, new String[]{"list"});
-            } else {
-                Notification.error(sender, "创建领地失败");
-            }
+            operator.getResponse().thenAccept(result -> {
+                if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)){
+                    DominionManage.show(sender, new String[]{"list"});
+                }
+            });
+            DominionController.create(operator, input, points.get(0), points.get(1));
         }
     }
 
@@ -108,11 +115,15 @@ public class OpenCUI {
         @Override
         public void handleData(String input) {
             XLogger.debug("createPrivilegeCB.run: %s", input);
-            if (PrivilegeController.createPrivilege(sender, input, dominionName)) {
-                DominionPrivilegeList.show(sender, new String[]{"privilege_list", dominionName});
-            } else {
-                SelectPlayer.show(sender, new String[]{"select_player_create_privilege", dominionName});
-            }
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
+            PrivilegeController.createPrivilege(operator, input, dominionName);
+            operator.getResponse().thenAccept(result -> {
+                if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)){
+                    DominionPrivilegeList.show(sender, new String[]{"privilege_list", dominionName});
+                } else {
+                    SelectPlayer.show(sender, new String[]{"select_player_create_privilege", dominionName});
+                }
+            });
         }
     }
 

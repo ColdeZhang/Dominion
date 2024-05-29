@@ -48,11 +48,12 @@ public class DominionPrivilegeList {
         for (PlayerPrivilegeDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
-            view.add(Line.create()
+            Line line = Line.create()
                     .append(p_player.getLastKnownName())
-                    .append(Button.createGreen("配置权限").setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build())
-                    .append(Button.createRed("移除成员").setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build())
-            );
+                    .append(Button.createGreen("配置权限").setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build());
+            if (!player.getName().equals(p_player.getLastKnownName()) && !privilege.getAdmin())
+                line.append(Button.createRed("移除成员").setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build());
+            view.add(line);
         }
         view.showOn(player, page);
     }
