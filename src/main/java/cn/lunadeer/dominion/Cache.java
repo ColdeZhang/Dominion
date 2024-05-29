@@ -218,9 +218,7 @@ public class Cache {
     }
 
     public DominionDTO getDominion(Location loc) {
-        List<DominionNode> tree = world_dominion_tree.get(loc.getWorld().getName());
-        if (tree == null) return null;
-        return getLocInDominionDTO(tree, loc);
+        return getLocInDominionDTO(world_dominion_tree.get(loc.getWorld().getName()), loc);
     }
 
     public List<DominionNode> getDominionTreeByPlayer(String player_name) {

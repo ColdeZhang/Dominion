@@ -44,7 +44,9 @@ public class DominionNode {
         return null;
     }
 
-    public static DominionDTO getLocInDominionDTO(@NotNull List<DominionNode> nodes, @NotNull Location loc) {
+    public static DominionDTO getLocInDominionDTO(@Nullable List<DominionNode> nodes, @NotNull Location loc) {
+        if (nodes == null) return null;
+        if (nodes.isEmpty()) return null;
         DominionNode dominionNode = getLocInDominionNode(nodes, loc);
         return dominionNode == null ? null : dominionNode.dominion;
     }
