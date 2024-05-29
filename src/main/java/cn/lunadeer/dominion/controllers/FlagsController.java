@@ -17,10 +17,11 @@ public class FlagsController {
      * @param value    权限值
      * @return 设置后的领地信息
      */
-    public static DominionDTO setFlag(Player operator, String flag, boolean value) {
+    public static void setFlag(AbstractOperator operator, String flag, boolean value) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
-        if (dominion == null) return null;
-        return setFlag(operator, flag, value, dominion.getName());
+        if (dominion == null) return;
+        setFlag(operator, flag, value, dominion.getName());
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置领地权限 %s 为 %s", flag, value));
     }
 
     /**
@@ -32,18 +33,19 @@ public class FlagsController {
      * @param dominionName 领地名称
      * @return 设置后的领地信息
      */
-    public static DominionDTO setFlag(Player operator, String flag, boolean value, String dominionName) {
+    public static void setFlag(AbstractOperator operator, String flag, boolean value, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            Notification.error(operator, "领地 %s 不存在", dominionName);
-            return null;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地 %s 不存在", dominionName));
+            return;
         }
-        if (noAuthToChangeFlags(operator, dominion)) return null;
+        if (noAuthToChangeFlags(operator, dominion)) return;
         Flag f = Flag.getFlag(flag);
         if (f == null) {
-            Notification.error(operator, "未知的领地权限 %s", flag);
-            return null;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "未知的领地权限 %s", flag));
+            return;
         }
-        return dominion.setFlagValue(f, value);
+        dominion.setFlagValue(f, value);
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置领地权限 %s 为 %s", flag, value));
     }
 }

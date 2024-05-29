@@ -49,7 +49,7 @@ public class DominionNode {
         return dominionNode == null ? null : dominionNode.dominion;
     }
 
-    private static boolean isInDominion(@Nullable DominionDTO dominion, Location location) {
+    public static boolean isInDominion(@Nullable DominionDTO dominion, Location location) {
         if (dominion == null) return false;
         if (!Objects.equals(dominion.getWorld(), location.getWorld().getName())) return false;
         double x = location.getX();

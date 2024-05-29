@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -38,7 +39,7 @@ public class Apis {
         if (args.length >= 2) {
             return DominionDTO.select(args[1]);
         } else {
-            return getPlayerCurrentDominion(player);
+            return Cache.instance.getPlayerCurrentDominion(player);
         }
     }
 
@@ -54,7 +55,7 @@ public class Apis {
         if (args.length >= 3) {
             return DominionDTO.select(args[2]);
         } else {
-            return getPlayerCurrentDominion(player);
+            return Cache.instance.getPlayerCurrentDominion(player);
         }
     }
 

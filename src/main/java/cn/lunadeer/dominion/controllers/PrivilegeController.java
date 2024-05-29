@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
@@ -16,47 +17,57 @@ import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 public class PrivilegeController {
 
     /**
-     * 清空玩家特权
+     * 清空玩家成员权限
      *
      * @param operator    操作者
      * @param player_name 玩家
      * @return 是否清空成功
      */
-    public static boolean clearPrivilege(Player operator, String player_name) {
+    public static void clearPrivilege(AbstractOperator operator, String player_name) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            Notification.error(operator, "你不在任何领地内，请指定领地名称 /dominion clear_privilege <玩家名称> <领地名称>");
-            return false;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不在任何领地内，请指定领地名称 /dominion clear_privilege <玩家名称> <领地名称>"));
+            return;
         }
-        return clearPrivilege(operator, player_name, dominion.getName());
+        clearPrivilege(operator, player_name, dominion.getName());
     }
 
     /**
-     * 清空玩家特权
+     * 清空玩家成员权限
      *
      * @param operator     操作者
      * @param player_name  玩家
      * @param dominionName 领地名称
      * @return 是否清空成功
      */
-    public static boolean clearPrivilege(Player operator, String player_name, String dominionName) {
+    public static void clearPrivilege(AbstractOperator operator, String player_name, String dominionName) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "清空玩家 %s 在领地 %s 的权限失败", player_name, dominionName);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            Notification.error(operator, "领地 %s 不存在", dominionName);
-            return false;
+            operator.setResponse(FAIL.appendMessage("领地 %s 不存在", dominionName));
+            return;
         }
-        if (noAuthToChangeFlags(operator, dominion)) return false;
+        if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            Notification.error(operator, "玩家 %s 不存在或没有登录过", player_name);
-            return false;
+            operator.setResponse(FAIL.appendMessage("玩家 %s 不存在或没有登录过", player_name));
+            return;
+        }
+        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        if (privilege == null) {
+            operator.setResponse(FAIL.appendMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
+            return;
+        }
+        if (privilege.getAdmin() && notOwner(operator, dominion)) {
+            operator.setResponse(FAIL.appendMessage("你不是领地 %s 的拥有者，无法移除一个领地管理员", dominionName));
+            return;
         }
         PlayerPrivilegeDTO.delete(player.getUuid(), dominion.getId());
-        return true;
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "清空玩家 %s 在领地 %s 的权限成功", player_name, dominionName));
     }
 
     /**
-     * 设置玩家特权
+     * 设置玩家成员权限
      *
      * @param operator    操作者
      * @param player_name 玩家
@@ -64,17 +75,17 @@ public class PrivilegeController {
      * @param value       权限值
      * @return 是否设置成功
      */
-    public static boolean setPrivilege(Player operator, String player_name, String flag, boolean value) {
+    public static void setPrivilege(AbstractOperator operator, String player_name, String flag, boolean value) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            Notification.error(operator, "你不在任何领地内，请指定领地名称 /dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]");
-            return false;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不在任何领地内，请指定领地名称 /dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]"));
+            return;
         }
-        return setPrivilege(operator, player_name, flag, value, dominion.getName());
+        setPrivilege(operator, player_name, flag, value, dominion.getName());
     }
 
     /**
-     * 设置玩家特权
+     * 设置玩家成员权限
      *
      * @param operator     操作者
      * @param player_name  玩家
@@ -83,75 +94,82 @@ public class PrivilegeController {
      * @param dominionName 领地名称
      * @return 是否设置成功
      */
-    public static boolean setPrivilege(Player operator, String player_name, String flag, boolean value, String dominionName) {
+    public static void setPrivilege(AbstractOperator operator, String player_name, String flag, boolean value, String dominionName) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置玩家 %s 在领地 %s 的权限 %s 为 %s 失败", player_name, dominionName, flag, value);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            Notification.error(operator, "领地 %s 不存在，无法设置特权", dominionName);
-            return false;
+            operator.setResponse(FAIL.appendMessage("领地 %s 不存在", dominionName));
+            return;
         }
-        if (noAuthToChangeFlags(operator, dominion)) return false;
+        if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            Notification.error(operator, "玩家 %s 不存在或没有登录过", player_name);
-            return false;
+            operator.setResponse(FAIL.appendMessage("玩家 %s 不存在或没有登录过", player_name));
+            return;
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
             privilege = createPlayerPrivilege(operator, player.getUuid(), dominion);
-            if (privilege == null) return false;
+            if (privilege == null) return;
         }
         if (flag.equals("admin")) {
             if (notOwner(operator, dominion)) {
-                Notification.error(operator, "你不是领地 %s 的拥有者，无法设置其他玩家为管理员", dominionName);
-                return false;
+                operator.setResponse(FAIL.appendMessage("你不是领地 %s 的拥有者，无法设置/取消其他玩家为管理员", dominionName));
+                return;
             }
             privilege.setAdmin(value);
         } else {
             Flag f = Flag.getFlag(flag);
             if (f == null) {
-                Notification.error(operator, "未知的领地权限 %s", flag);
-                return false;
+                operator.setResponse(FAIL.appendMessage("未知的领地权限 %s", flag));
+                return;
             }
             privilege.setFlagValue(f, value);
         }
-        Notification.info(operator, "设置玩家在领地 %s 的权限 %s 为 %s", dominionName, flag, value);
-        return true;
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置玩家 %s 在领地 %s 的权限 %s 为 %s 成功", player_name, dominionName, flag, value));
     }
 
-    public static boolean createPrivilege(Player operator, String player_name) {
+    public static void createPrivilege(AbstractOperator operator, String player_name) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            Notification.error(operator, "你不在任何领地内，请指定领地名称 /dominion create_privilege <玩家名称> <领地名称>");
-            return false;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不在任何领地内，请指定领地名称 /dominion create_privilege <玩家名称> <领地名称>"));
+            return;
         }
-        return createPrivilege(operator, player_name, dominion.getName());
+        createPrivilege(operator, player_name, dominion.getName());
     }
 
-    public static boolean createPrivilege(Player operator, String player_name, String dominionName) {
+    public static void createPrivilege(AbstractOperator operator, String player_name, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            Notification.error(operator, "领地 %s 不存在，无法创建特权", dominionName);
-            return false;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地 %s 不存在，无法创建成员权限", dominionName));
+            return;
         }
-        if (noAuthToChangeFlags(operator, dominion)) return false;
+        if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            Notification.error(operator, "玩家 %s 不存在或没有登录过", player_name);
-            return false;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "玩家 %s 不存在或没有登录过", player_name));
+            return;
         }
-        return createPlayerPrivilege(operator, player.getUuid(), dominion) != null;
+        if (createPlayerPrivilege(operator, player.getUuid(), dominion) != null) {
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建玩家 %s 在领地 %s 的成员权限成功", player_name, dominionName));
+        }
     }
 
-    private static PlayerPrivilegeDTO createPlayerPrivilege(Player operator, UUID player, DominionDTO dom) {
+    private static PlayerPrivilegeDTO createPlayerPrivilege(AbstractOperator operator, UUID player, DominionDTO dom) {
         XLogger.debug("operator: " + operator.getUniqueId() + " player: " + player);
         if (operator.getUniqueId().equals(player)) {
-            Notification.error(operator, "你不能给自己设置特权");
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不能给自己设置成员权限"));
             return null;
         }
-        PlayerPrivilegeDTO privilege = new PlayerPrivilegeDTO(player, dom);
-        privilege = PlayerPrivilegeDTO.insert(privilege);
+        PlayerDTO playerDTO = PlayerDTO.select(player);
+        PlayerPrivilegeDTO privilege = Cache.instance.getPlayerPrivilege(player, dom);
+        if (privilege != null) {
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建玩家成员权限失败，玩家 %s 已经是领地 %s 的成员", playerDTO.getLastKnownName(), dom.getName()));
+            return null;
+        }
+        privilege = PlayerPrivilegeDTO.insert(new PlayerPrivilegeDTO(player, dom));
         if (privilege == null) {
-            Notification.error(operator, "创建玩家特权失败，可能是此玩家已存在特权");
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建玩家成员权限失败，请联系管理员"));
             return null;
         }
         return privilege;

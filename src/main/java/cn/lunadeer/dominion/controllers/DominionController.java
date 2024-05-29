@@ -2,13 +2,15 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.DominionNode;
+import cn.lunadeer.dominion.commands.OpenCUI;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.utils.Time;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static cn.lunadeer.dominion.DominionNode.isInDominion;
 import static cn.lunadeer.dominion.controllers.Apis.*;
 
 public class DominionController {
@@ -38,7 +41,7 @@ public class DominionController {
      * @return 创建的领地
      */
     public static void create(AbstractOperator operator, String name, Location loc1, Location loc2) {
-        DominionDTO parent = getPlayerCurrentDominion(operator, false);
+        DominionDTO parent = getPlayerCurrentDominion(operator);
         if (parent == null) {
             create(operator, name, loc1, loc2, "");
         } else {
@@ -59,41 +62,40 @@ public class DominionController {
     public static void create(AbstractOperator operator, String name,
                               Location loc1, Location loc2,
                               String parent_dominion_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建领地失败");
         if (name.isEmpty()) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地名称不能为空"));
+            operator.setResponse(FAIL.appendMessage("领地名称不能为空"));
             return;
         }
         if (name.contains(" ")) {
-            Notification.error(operator, "领地名称不能包含空格");
-            return null;
+            operator.setResponse(FAIL.appendMessage("领地名称不能包含空格"));
+            return;
         }
         if (DominionDTO.select(name) != null) {
-            Notification.error(operator, "已经存在名称为 %s 的领地", name);
-            return null;
+            operator.setResponse(FAIL.appendMessage("已经存在名称为 %s 的领地", name));
+            return;
         }
         if (!loc1.getWorld().equals(loc2.getWorld())) {
-            Notification.error(operator, "禁止跨世界操作");
-            return null;
-        }
-        if (!operator.getWorld().equals(loc1.getWorld())) {
-            Notification.error(operator, "禁止跨世界操作");
-            return null;
+            operator.setResponse(FAIL.appendMessage("选点世界不一致"));
+            return;
         }
         // 检查世界是否可以创建
-        if (worldNotValid(operator)) {
-            return null;
+        if (worldNotValid(operator, loc1.getWorld().getName())) {
+            operator.setResponse(FAIL.appendMessage("禁止在世界 %s 创建领地", loc1.getWorld().getName()));
+            return;
         }
         // 检查领地数量是否达到上限
         if (amountNotValid(operator)) {
-            return null;
+            operator.setResponse(FAIL.appendMessage("你的领地数量已达上限(%d个)", Dominion.config.getLimitAmount()));
+            return;
         }
         // 检查领地大小是否合法
         if (sizeNotValid(operator,
                 loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ(),
                 loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ())) {
-            return null;
+            return;
         }
-        DominionDTO dominion = new DominionDTO(operator.getUniqueId(), name, operator.getWorld().getName(),
+        DominionDTO dominion = new DominionDTO(operator.getUniqueId(), name, loc1.getWorld().getName(),
                 (int) Math.min(loc1.getX(), loc2.getX()), (int) Math.min(loc1.getY(), loc2.getY()),
                 (int) Math.min(loc1.getZ(), loc2.getZ()), (int) Math.max(loc1.getX(), loc2.getX()),
                 (int) Math.max(loc1.getY(), loc2.getY()), (int) Math.max(loc1.getZ(), loc2.getZ()));
@@ -104,39 +106,40 @@ public class DominionController {
             parent_dominion = DominionDTO.select(parent_dominion_name);
         }
         if (parent_dominion == null) {
-            Notification.error(operator, "父领地 %s 不存在", parent_dominion_name);
+            operator.setResponse(FAIL.appendMessage("父领地 %s 不存在", parent_dominion_name));
             if (parent_dominion_name.isEmpty()) {
                 XLogger.err("根领地丢失！");
             }
-            return null;
+            return;
         }
         // 是否是父领地的拥有者
         if (parent_dominion.getId() != -1) {
             if (notOwner(operator, parent_dominion)) {
-                return null;
+                operator.setResponse(FAIL.appendMessage("你不是父领地 %s 的拥有者，无法创建子领地", parent_dominion_name));
+                return;
             }
         }
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
-            Notification.error(operator, "禁止跨世界操作");
-            return null;
+            operator.setResponse(FAIL.appendMessage("父领地与子领地不在同一世界。"));
+            return;
         }
         // 检查深度是否达到上限
         if (depthNotValid(operator, parent_dominion)) {
-            return null;
+            return;
         }
         // 检查是否超出父领地范围
         if (!isContained(dominion, parent_dominion)) {
-            Notification.error(operator, "超出父领地 %s 范围", parent_dominion.getName());
-            return null;
+            operator.setResponse(FAIL.appendMessage("超出父领地 %s 范围", parent_dominion.getName()));
+            return;
         }
         // 获取此领地的所有同级领地
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), parent_dominion.getId());
         // 检查是否与其他子领地冲突
         for (DominionDTO sub_dominion : sub_dominions) {
             if (isIntersect(sub_dominion, dominion)) {
-                Notification.error(operator, "与领地 %s 冲突", sub_dominion.getName());
-                return null;
+                operator.setResponse(FAIL.appendMessage("与领地 %s 冲突", sub_dominion.getName()));
+                return;
             }
         }
         // 检查经济
@@ -148,20 +151,23 @@ public class DominionController {
                 count = (loc2.getBlockX() - loc1.getBlockX() + 1) * (loc2.getBlockY() - loc1.getBlockY() + 1) * (loc2.getBlockZ() - loc1.getBlockZ() + 1);
             }
             float price = count * Dominion.config.getEconomyPrice();
-            if (Dominion.vault.getEconomy().getBalance(operator) < price) {
-                Notification.error(operator, "你的余额不足，创建此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
-                return null;
+            if (Dominion.vault.getEconomy().getBalance(operator.getPlayer()) < price) {
+                operator.setResponse(FAIL.appendMessage("你的余额不足，创建此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural()));
+                return;
             }
-            Notification.info(operator, "已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
-            Dominion.vault.getEconomy().withdrawPlayer(operator, price);
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural()));
+            Dominion.vault.getEconomy().withdrawPlayer(operator.getPlayer(), price);
         }
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
-            Notification.error(operator, "创建失败，详细错误请联系管理员查询日志（当前时间：%s）", Time.nowStr());
-            return null;
+            operator.setResponse(FAIL.appendMessage("创建领地失败，数据库错误，请联系管理员"));
+            return;
         }
-        ParticleRender.showBoxFace(Dominion.instance, operator, loc1, loc2);
-        return dominion.setParentDomId(parent_dominion.getId());
+        if (operator instanceof BukkitPlayerOperator) {
+            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(), loc1, loc2);
+        }
+        dominion.setParentDomId(parent_dominion.getId());
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功创建领地 %s", name));
     }
 
     /**
@@ -173,12 +179,13 @@ public class DominionController {
      * @param size     扩展的大小
      * @return 扩展后的领地
      */
-    public static DominionDTO expand(Player operator, Integer size) {
+    public static void expand(AbstractOperator operator, Integer size) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            return null;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "无法获取你所处的领地，请指定名称"));
+            return;
         }
-        return expand(operator, size, dominion.getName());
+        expand(operator, size, dominion.getName());
     }
 
     /**
@@ -189,16 +196,19 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @return 扩展后的领地
      */
-    public static DominionDTO expand(Player operator, Integer size, String dominion_name) {
+    public static void expand(AbstractOperator operator, Integer size, String dominion_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "扩展领地失败");
         Location location = operator.getLocation();
-        BlockFace face = getFace(operator);
+        BlockFace face = operator.getDirection();
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
-            return null;
+            return;
         }
-        if (!location.getWorld().getName().equals(dominion.getWorld())) {
-            Notification.error(operator, "禁止跨世界操作");
-            return null;
+        if (location != null) {
+            if (!location.getWorld().getName().equals(dominion.getWorld())) {
+                operator.setResponse(FAIL.appendMessage("禁止跨世界操作"));
+                return;
+            }
         }
         Integer x1 = dominion.getX1();
         Integer y1 = dominion.getY1();
@@ -226,21 +236,21 @@ public class DominionController {
                 y1 -= size;
                 break;
             default:
-                Notification.error(operator, "无效的方向");
-                return null;
+                operator.setResponse(FAIL.appendMessage("无效的方向"));
+                return;
         }
         if (sizeNotValid(operator, x1, y1, z1, x2, y2, z2)) {
-            return null;
+            return;
         }
         // 校验是否超出父领地范围
         DominionDTO parent_dominion = DominionDTO.select(dominion.getParentDomId());
         if (parent_dominion == null) {
-            Notification.error(operator, "父领地丢失");
-            return null;
+            operator.setResponse(FAIL.appendMessage("父领地丢失"));
+            return;
         }
         if (!isContained(x1, y1, z1, x2, y2, z2, parent_dominion)) {
-            Notification.error(operator, "超出父领地 %s 范围", parent_dominion.getName());
-            return null;
+            operator.setResponse(FAIL.appendMessage("超出父领地 %s 范围", parent_dominion.getName()));
+            return;
         }
         // 获取同世界下的所有同级领地
         List<DominionDTO> exist_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getParentDomId());
@@ -248,10 +258,11 @@ public class DominionController {
             if (isIntersect(exist_dominion, x1, y1, z1, x2, y2, z2)) {
                 // 如果是自己，跳过
                 if (exist_dominion.getId().equals(dominion.getId())) continue;
-                Notification.error(operator, "与 %s 冲突", exist_dominion.getName());
-                return null;
+                operator.setResponse(FAIL.appendMessage("与领地 %s 冲突", exist_dominion.getName()));
+                return;
             }
         }
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功扩展领地 %s %d格", dominion_name, size);
         // 检查经济
         if (Dominion.config.getEconomyEnable()) {
             int count;
@@ -261,17 +272,21 @@ public class DominionController {
                 count = (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1) - dominion.getVolume();
             }
             float price = count * Dominion.config.getEconomyPrice();
-            if (Dominion.vault.getEconomy().getBalance(operator) < price) {
-                Notification.error(operator, "你的余额不足，扩展此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
-                return null;
+            if (Dominion.vault.getEconomy().getBalance(operator.getPlayer()) < price) {
+                operator.setResponse(FAIL.appendMessage("你的余额不足，扩展此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural()));
+                return;
             }
-            Notification.info(operator, "已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
-            Dominion.vault.getEconomy().withdrawPlayer(operator, price);
+            SUCCESS.appendMessage("已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
+            Dominion.vault.getEconomy().withdrawPlayer(operator.getPlayer(), price);
         }
-        ParticleRender.showBoxFace(Dominion.instance, operator,
-                new Location(location.getWorld(), x1, y1, z1),
-                new Location(location.getWorld(), x2, y2, z2));
-        return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
+        if (operator instanceof BukkitPlayerOperator) {
+            World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
+            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(),
+                    new Location(world, x1, y1, z1),
+                    new Location(world, x2, y2, z2));
+        }
+        dominion.setXYZ(x1, y1, z1, x2, y2, z2);
+        operator.setResponse(SUCCESS);
     }
 
     /**
@@ -283,12 +298,13 @@ public class DominionController {
      * @param size     缩小的大小
      * @return 缩小后的领地
      */
-    public static DominionDTO contract(Player operator, Integer size) {
+    public static void contract(AbstractOperator operator, Integer size) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            return null;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "无法获取你所处的领地，请指定名称"));
+            return;
         }
-        return contract(operator, size, dominion.getName());
+        contract(operator, size, dominion.getName());
     }
 
     /**
@@ -299,16 +315,19 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @return 缩小后的领地
      */
-    public static DominionDTO contract(Player operator, Integer size, String dominion_name) {
+    public static void contract(AbstractOperator operator, Integer size, String dominion_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "缩小领地失败");
         Location location = operator.getLocation();
-        BlockFace face = getFace(operator);
+        BlockFace face = operator.getDirection();
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
-            return null;
+            return;
         }
-        if (!location.getWorld().getName().equals(dominion.getWorld())) {
-            Notification.error(operator, "禁止跨世界操作");
-            return null;
+        if (location != null) {
+            if (!location.getWorld().getName().equals(dominion.getWorld())) {
+                operator.setResponse(FAIL.appendMessage("禁止跨世界操作"));
+                return;
+            }
         }
         Integer x1 = dominion.getX1();
         Integer y1 = dominion.getY1();
@@ -336,25 +355,26 @@ public class DominionController {
                 y1 += size;
                 break;
             default:
-                Notification.error(operator, "无效的方向");
-                return null;
+                operator.setResponse(FAIL.appendMessage("无效的方向"));
+                return;
         }
         // 校验第二组坐标是否小于第一组坐标
         if (x1 >= x2 || y1 >= y2 || z1 >= z2) {
-            Notification.error(operator, "缩小后的领地无效");
-            return null;
+            operator.setResponse(FAIL.appendMessage("缩小后的领地大小无效"));
+            return;
         }
         if (sizeNotValid(operator, x1, y1, z1, x2, y2, z2)) {
-            return null;
+            return;
         }
         // 获取所有的子领地
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
         for (DominionDTO sub_dominion : sub_dominions) {
             if (!isContained(sub_dominion, x1, y1, z1, x2, y2, z2)) {
-                Notification.error(operator, "缩小后的领地 %s 无法包含子领地 %s", dominion_name, sub_dominion.getName());
-                return null;
+                operator.setResponse(FAIL.appendMessage("缩小后的领地无法包含子领地 %s", sub_dominion.getName()));
+                return;
             }
         }
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功缩小领地 %s %d格", dominion_name, size);
         // 退还经济
         if (Dominion.config.getEconomyEnable()) {
             int count;
@@ -364,13 +384,17 @@ public class DominionController {
                 count = dominion.getVolume() - (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
             }
             float refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
-            Dominion.vault.getEconomy().depositPlayer(operator, refund);
-            Notification.info(operator, "已经退还 %.2f %s", refund, Dominion.vault.getEconomy().currencyNamePlural());
+            Dominion.vault.getEconomy().depositPlayer(operator.getPlayer(), refund);
+            SUCCESS.appendMessage("已退还 %.2f %s", refund, Dominion.vault.getEconomy().currencyNamePlural());
         }
-        ParticleRender.showBoxFace(Dominion.instance, operator,
-                new Location(location.getWorld(), x1, y1, z1),
-                new Location(location.getWorld(), x2, y2, z2));
-        return dominion.setXYZ(x1, y1, z1, x2, y2, z2);
+        if (operator instanceof BukkitPlayerOperator) {
+            World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
+            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(),
+                    new Location(world, x1, y1, z1),
+                    new Location(world, x2, y2, z2));
+        }
+        dominion.setXYZ(x1, y1, z1, x2, y2, z2);
+        operator.setResponse(SUCCESS);
     }
 
     /**
@@ -380,26 +404,30 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @param force         是否强制删除
      */
-    public static void delete(Player operator, String dominion_name, boolean force) {
+    public static void delete(AbstractOperator operator, String dominion_name, boolean force) {
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
             return;
         }
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
-            Notification.warn(operator, "删除领地 %s 会同时删除其所有子领地，是否继续？", dominion_name);
+            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, "删除领地 %s 会同时删除其所有子领地，是否继续？", dominion_name);
             String sub_names = "";
             for (DominionDTO sub_dominion : sub_dominions) {
                 sub_names = sub_dominion.getName() + ", ";
             }
             if (sub_dominions.size() > 0) {
                 sub_names = sub_names.substring(0, sub_names.length() - 2);
-                Notification.warn(operator, "当前子领地：" + sub_names);
+                WARNING.appendMessage("(子领地：%s)", sub_names);
             }
-            Notification.warn(operator, "输入 /dominion delete %s force 确认删除", dominion_name);
+            if (operator instanceof BukkitPlayerOperator) {
+                Notification.warn(operator.getPlayer(), "输入 /dominion delete %s force 确认删除", dominion_name);
+            }
+            operator.setResponse(WARNING);
             return;
         }
         DominionDTO.delete(dominion);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "领地 %s 及其所有子领地已删除", dominion_name);
         // 退还经济
         if (Dominion.config.getEconomyEnable()) {
             int count = 0;
@@ -413,10 +441,10 @@ public class DominionController {
                 }
             }
             float refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
-            Dominion.vault.getEconomy().depositPlayer(operator, refund);
-            Notification.info(operator, "已经退还 %.2f %s", refund, Dominion.vault.getEconomy().currencyNamePlural());
+            Dominion.vault.getEconomy().depositPlayer(operator.getPlayer(), refund);
+            SUCCESS.appendMessage("已退还 %.2f %s", refund, Dominion.vault.getEconomy().currencyNamePlural());
         }
-        Notification.info(operator, "领地 %s 及其所有子领地已删除", dominion_name);
+        operator.setResponse(SUCCESS);
     }
 
     /**
@@ -425,7 +453,7 @@ public class DominionController {
      * @param operator 操作者
      * @param message  消息
      */
-    public static void setJoinMessage(Player operator, String message) {
+    public static void setJoinMessage(AbstractOperator operator, String message) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
             return;
@@ -440,13 +468,13 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @param message       消息
      */
-    public static void setJoinMessage(Player operator, String message, String dominion_name) {
+    public static void setJoinMessage(AbstractOperator operator, String message, String dominion_name) {
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
             return;
         }
         dominion.setJoinMessage(message);
-        Notification.info(operator, "成功设置领地 %s 的进入消息", dominion_name);
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功设置领地 %s 的进入消息", dominion_name));
     }
 
     /**
@@ -455,7 +483,7 @@ public class DominionController {
      * @param operator 操作者
      * @param message  消息
      */
-    public static void setLeaveMessage(Player operator, String message) {
+    public static void setLeaveMessage(AbstractOperator operator, String message) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
             return;
@@ -470,13 +498,13 @@ public class DominionController {
      * @param dominion_name 领地名称
      * @param message       消息
      */
-    public static void setLeaveMessage(Player operator, String message, String dominion_name) {
+    public static void setLeaveMessage(AbstractOperator operator, String message, String dominion_name) {
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
             return;
         }
         dominion.setLeaveMessage(message);
-        Notification.info(operator, "成功设置领地 %s 的离开消息", dominion_name);
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功设置领地 %s 的离开消息", dominion_name));
     }
 
     /**
@@ -484,12 +512,12 @@ public class DominionController {
      *
      * @param operator 操作者
      */
-    public static void setTpLocation(Player operator) {
+    public static void setTpLocation(AbstractOperator operator, int x, int y, int z) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
             return;
         }
-        setTpLocation(operator, dominion.getName());
+        setTpLocation(operator, x, y, z, dominion.getName());
     }
 
     /**
@@ -498,26 +526,27 @@ public class DominionController {
      * @param operator      操作者
      * @param dominion_name 领地名称
      */
-    public static void setTpLocation(Player operator, String dominion_name) {
+    public static void setTpLocation(AbstractOperator operator, int x, int y, int z, String dominion_name) {
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地 %s 不存在", dominion_name));
             return;
         }
+        World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
+        if (world == null) {
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "世界 %s 不存在", dominion.getWorld()));
+            return;
+        }
+        Location loc = new Location(world, x, y, z);
         // 检查是否在领地内
-        if (operator.getWorld().getName().equals(dominion.getWorld()) &&
-                operator.getLocation().getBlockX() >= dominion.getX1() &&
-                operator.getLocation().getBlockX() <= dominion.getX2() &&
-                operator.getLocation().getBlockY() >= dominion.getY1() &&
-                operator.getLocation().getBlockY() <= dominion.getY2() &&
-                operator.getLocation().getBlockZ() >= dominion.getZ1() &&
-                operator.getLocation().getBlockZ() <= dominion.getZ2()) {
-            Location loc = operator.getLocation();
+        if (isInDominion(dominion, loc)) {
             loc.setY(loc.getY() + 1.5);
             dominion.setTpLocation(loc);
-            Notification.info(operator, "成功设置领地 %s 的传送点，坐标：%d %d %d",
-                    dominion_name, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS,
+                    "成功设置领地 %s 的传送点 %d %d %d", dominion_name
+                    , loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         } else {
-            Notification.error(operator, "你不在领地 %s 内，无法设置传送点", dominion_name);
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "传送点不在领地 %s 内", dominion_name));
         }
     }
 
@@ -528,17 +557,18 @@ public class DominionController {
      * @param old_name 旧名称
      * @param new_name 新名称
      */
-    public static void rename(Player operator, String old_name, String new_name) {
+    public static void rename(AbstractOperator operator, String old_name, String new_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "重命名领地失败");
         if (new_name.isEmpty()) {
-            Notification.error(operator, "新名称不能为空");
+            operator.setResponse(FAIL.appendMessage("新名称不能为空"));
             return;
         }
         if (new_name.contains(" ")) {
-            Notification.error(operator, "领地名称不能包含空格");
+            operator.setResponse(FAIL.appendMessage("领地名称不能包含空格"));
             return;
         }
         if (Objects.equals(old_name, new_name)) {
-            Notification.error(operator, "新名称与旧名称相同");
+            operator.setResponse(FAIL.appendMessage("新名称与旧名称相同"));
             return;
         }
         DominionDTO dominion = getExistDomAndIsOwner(operator, old_name);
@@ -546,11 +576,11 @@ public class DominionController {
             return;
         }
         if (DominionDTO.select(new_name) != null) {
-            Notification.error(operator, "已经存在名称为 %s 的领地", new_name);
+            operator.setResponse(FAIL.appendMessage("已经存在名称为 %s 的领地", new_name));
             return;
         }
         dominion.setName(new_name);
-        Notification.info(operator, "成功将领地 %s 重命名为 %s", old_name, new_name);
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功将领地 %s 重命名为 %s", old_name, new_name));
     }
 
     /**
@@ -561,9 +591,15 @@ public class DominionController {
      * @param player_name 玩家名称
      * @param force       是否强制转让
      */
-    public static void give(Player operator, String dom_name, String player_name, boolean force) {
-        if (Objects.equals(player_name, operator.getName())) {
-            Notification.error(operator, "你不能将领地转让给自己");
+    public static void give(AbstractOperator operator, String dom_name, String player_name, boolean force) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "转让领地失败");
+        PlayerDTO operatorDTO = PlayerDTO.select(operator.getUniqueId());
+        if (operatorDTO == null) {
+            operator.setResponse(FAIL.appendMessage("操作者信息丢失，请联系管理员"));
+            return;
+        }
+        if (Objects.equals(player_name, operatorDTO.getLastKnownName())) {
+            operator.setResponse(FAIL.appendMessage("不能将领地转让给自己"));
             return;
         }
         DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
@@ -572,32 +608,35 @@ public class DominionController {
         }
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            Notification.error(operator, "玩家 %s 不存在", player_name);
+            operator.setResponse(FAIL.appendMessage("玩家 %s 不存在", player_name));
             return;
         }
         if (dominion.getParentDomId() != -1) {
-            Notification.error(operator, "子领地无法转让，你可以通过将玩家设置为管理员来让其管理子领地");
+            operator.setResponse(FAIL.appendMessage("子领地无法转让，你可以通过将 %s 设置为管理员来让其管理领地 %s ", player_name, dom_name));
             return;
         }
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
-            Notification.warn(operator, "转让领地 %s 给 %s 会同时转让其所有子领地，是否继续？", dom_name, player_name);
+            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, "转让领地 %s 给 %s 会同时转让其所有子领地，是否继续？", dom_name, player_name);
             String sub_names = "";
             for (DominionDTO sub_dominion : sub_dominions) {
                 sub_names = sub_dominion.getName() + ", ";
             }
             if (sub_dominions.size() > 0) {
                 sub_names = sub_names.substring(0, sub_names.length() - 2);
-                Notification.warn(operator, "当前子领地：%s", sub_names);
+                WARNING.appendMessage("(子领地：%s)", sub_names);
             }
-            Notification.warn(operator, "输入 /dominion give %s %s force 确认转让", dom_name, player_name);
+            if (operator instanceof BukkitPlayerOperator) {
+                Notification.warn(operator.getPlayer(), "输入 /dominion give %s %s force 确认转让", dom_name, player_name);
+            }
+            operator.setResponse(WARNING);
             return;
         }
         dominion.setOwner(player.getUuid());
         for (DominionDTO sub_dominion : sub_dominions) {
             sub_dominion.setOwner(player.getUuid());
         }
-        Notification.info(operator, "成功将领地 %s 及其所有子领地转让给 %s", dom_name, player_name);
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功将领地 %s 及其所有子领地转让给 %s", dom_name, player_name));
     }
 
     /**
@@ -652,7 +691,8 @@ public class DominionController {
         return sub_dominions;
     }
 
-    private static boolean sizeNotValid(Player operator, int x1, int y1, int z1, int x2, int y2, int z2) {
+    private static boolean sizeNotValid(AbstractOperator operator, int x1, int y1, int z1, int x2, int y2, int z2) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "尺寸不合法");
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
@@ -676,33 +716,34 @@ public class DominionController {
         int y_length = y2 - y1;
         int z_length = z2 - z1;
         if (x_length < 4 || y_length < 4 || z_length < 4) {
-            Notification.error(operator, "领地的任意一边长度不得小于4");
+            operator.setResponse(FAIL.appendMessage("领地的任意一边长度不得小于4"));
             return true;
         }
         if (x_length > Dominion.config.getLimitSizeX() && Dominion.config.getLimitSizeX() > 0) {
-            Notification.error(operator, "领地X方向长度不能超过 %s", Dominion.config.getLimitSizeX());
+            operator.setResponse(FAIL.appendMessage("领地X方向长度不能超过 %s", Dominion.config.getLimitSizeX()));
             return true;
         }
         if (y_length > Dominion.config.getLimitSizeY() && Dominion.config.getLimitSizeY() > 0) {
-            Notification.error(operator, "领地Y方向高度不能超过 %s", Dominion.config.getLimitSizeY());
+            operator.setResponse(FAIL.appendMessage("领地Y方向高度不能超过 %s", Dominion.config.getLimitSizeY()));
             return true;
         }
         if (z_length > Dominion.config.getLimitSizeZ() && Dominion.config.getLimitSizeZ() > 0) {
-            Notification.error(operator, "领地Z方向长度不能超过 %s", Dominion.config.getLimitSizeZ());
+            operator.setResponse(FAIL.appendMessage("领地Z方向长度不能超过 %s", Dominion.config.getLimitSizeZ()));
             return true;
         }
         if (y2 > Dominion.config.getLimitMaxY()) {
-            Notification.error(operator, "领地Y坐标不能超过 %s", Dominion.config.getLimitMaxY());
+            operator.setResponse(FAIL.appendMessage("领地Y坐标不能超过 %s", Dominion.config.getLimitMaxY()));
             return true;
         }
         if (y1 < Dominion.config.getLimitMinY()) {
-            Notification.error(operator, "领地Y坐标不能低于 %s", Dominion.config.getLimitMinY());
+            operator.setResponse(FAIL.appendMessage("领地Y坐标不能低于 %s", Dominion.config.getLimitMinY()));
             return true;
         }
         return false;
     }
 
-    private static boolean depthNotValid(Player operator, DominionDTO parent_dom) {
+    private static boolean depthNotValid(AbstractOperator operator, DominionDTO parent_dom) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "子领地深度不合法");
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
@@ -710,7 +751,7 @@ public class DominionController {
             return false;
         }
         if (parent_dom.getId() != -1 && Dominion.config.getLimitDepth() == 0) {
-            Notification.error(operator, "不允许创建子领地");
+            operator.setResponse(FAIL.appendMessage("不允许创建子领地"));
             return true;
         }
         if (parent_dom.getId() == -1) {
@@ -722,42 +763,35 @@ public class DominionController {
             level++;
         }
         if (level >= Dominion.config.getLimitDepth()) {
-            Notification.error(operator, "子领地嵌套深度不能超过 %s", Dominion.config.getLimitDepth());
+            operator.setResponse(FAIL.appendMessage("子领地嵌套深度不能超过 %s", Dominion.config.getLimitDepth()));
             return true;
         }
         return false;
     }
 
-    private static boolean amountNotValid(Player operator) {
+    private static boolean amountNotValid(AbstractOperator operator) {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        if (Cache.instance.getPlayerDominionCount(operator) >= Dominion.config.getLimitAmount() && Dominion.config.getLimitAmount() != -1) {
-            Notification.error(operator, "你的领地数量已达上限，当前上限为 %s", Dominion.config.getLimitAmount());
-            return true;
-        }
-        return false;
+        return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount() && Dominion.config.getLimitAmount() != -1;
     }
 
-    private static boolean worldNotValid(Player operator) {
+    private static boolean worldNotValid(AbstractOperator operator, String world) {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        if (Dominion.config.getWorldBlackList().contains(operator.getWorld().getName())) {
-            Notification.error(operator, "禁止在世界 %s 创建领地", operator.getWorld().getName());
-            return true;
-        }
-        return false;
+        return Dominion.config.getWorldBlackList().contains(world);
     }
 
-    private static DominionDTO getExistDomAndIsOwner(Player operator, String dominion_name) {
+    private static DominionDTO getExistDomAndIsOwner(AbstractOperator operator, String dominion_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "");
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
-            Notification.error(operator, "领地 %s 不存在", dominion_name);
+            operator.setResponse(FAIL.setMessage("领地 %s 不存在", dominion_name));
             return null;
         }
         if (notOwner(operator, dominion)) {
-            Notification.error(operator, "你不是领地 %s 的拥有者，无法执行此操作", dominion_name);
+            operator.setResponse(FAIL.setMessage("你不是领地 %s 的拥有者", dominion_name));
             return null;
         }
         return dominion;
