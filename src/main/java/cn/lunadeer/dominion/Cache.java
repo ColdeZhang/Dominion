@@ -124,9 +124,11 @@ public class Cache {
         if (last_in_dom_id != null) {
             last_dominion = id_dominions.get(last_in_dom_id);
         }
-        if (last_in_dom_id != null && dominion_children.get(last_in_dom_id).isEmpty() && isInDominion(last_dominion, player)) {
-            // 如果玩家仍在领地内，且领地没有子领地，则直接返回
-            return last_dominion;
+        if (isInDominion(last_dominion, player)) {
+            if (dominion_children.get(last_in_dom_id) == null) {
+                // 如果玩家仍在领地内，且领地没有子领地，则直接返回
+                return last_dominion;
+            }
         }
         DominionDTO current_dominion = getLocInDominionDTO(world_dominion_tree.get(player.getWorld().getName()), player.getLocation());
         int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
