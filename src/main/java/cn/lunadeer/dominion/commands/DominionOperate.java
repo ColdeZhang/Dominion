@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
@@ -41,11 +42,15 @@ public class DominionOperate {
             return;
         }
         String name = args[1];
-        if (DominionController.create(player, name, points.get(0), points.get(1)) == null) {
-            Notification.error(sender, "创建领地失败");
-            return;
-        }
-        Notification.info(sender, "成功创建: %s", name);
+        BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
+        operator.getResponse().thenAccept(result -> {
+            if (result.getStatus() == BukkitPlayerOperator.Result.SUCCESS) {
+                Notification.info(sender, "成功创建: %s", name);
+            } else {
+                Notification.error(sender, result.getMessage());
+            }
+        });
+        DominionController.create(operator, name, points.get(0), points.get(1));
     }
 
     /**
@@ -67,18 +72,19 @@ public class DominionOperate {
             Notification.error(sender, "请先使用工具选择子领地的对角线两点，或使用 /dominion auto_create_sub <子领地名称> [父领地名称] 创建自动子领地");
             return;
         }
+        BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
+        operator.getResponse().thenAccept(result -> {
+            if (result.getStatus() == BukkitPlayerOperator.Result.SUCCESS) {
+                Notification.info(sender, "成功创建子领地: %s", args[1]);
+            } else {
+                Notification.error(sender, "创建子领地失败：%s", result.getMessage());
+            }
+        });
         if (args.length == 2) {
-            if (DominionController.create(player, args[1], points.get(0), points.get(1)) != null) {
-                Notification.info(sender, "成功创建子领地: %s", args[1]);
-                return;
-            }
+            DominionController.create(operator, args[1], points.get(0), points.get(1));
         } else {
-            if (DominionController.create(player, args[1], points.get(0), points.get(1), args[2]) != null) {
-                Notification.info(sender, "成功创建子领地: %s", args[1]);
-                return;
-            }
+            DominionController.create(operator, args[1], points.get(0), points.get(1), args[2]);
         }
-        Notification.error(sender, "创建子领地失败");
     }
 
     /**

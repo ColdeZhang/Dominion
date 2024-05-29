@@ -31,69 +31,69 @@ public class DominionController {
     /**
      * 创建领地
      *
-     * @param owner 拥有者
-     * @param name  领地名称
-     * @param loc1  位置1
-     * @param loc2  位置2
+     * @param operator 拥有者
+     * @param name     领地名称
+     * @param loc1     位置1
+     * @param loc2     位置2
      * @return 创建的领地
      */
-    public static DominionDTO create(Player owner, String name, Location loc1, Location loc2) {
-        DominionDTO parent = getPlayerCurrentDominion(owner, false);
+    public static void create(AbstractOperator operator, String name, Location loc1, Location loc2) {
+        DominionDTO parent = getPlayerCurrentDominion(operator, false);
         if (parent == null) {
-            return create(owner, name, loc1, loc2, "");
+            create(operator, name, loc1, loc2, "");
         } else {
-            return create(owner, name, loc1, loc2, parent.getName());
+            create(operator, name, loc1, loc2, parent.getName());
         }
     }
 
     /**
      * 创建子领地
      *
-     * @param owner                拥有者
+     * @param operator             拥有者
      * @param name                 领地名称
      * @param loc1                 位置1
      * @param loc2                 位置2
      * @param parent_dominion_name 父领地名称
      * @return 创建的领地
      */
-    public static DominionDTO create(Player owner, String name,
-                                     Location loc1, Location loc2,
-                                     String parent_dominion_name) {
+    public static void create(AbstractOperator operator, String name,
+                              Location loc1, Location loc2,
+                              String parent_dominion_name) {
         if (name.isEmpty()) {
-            Notification.error(owner, "领地名称不能为空");
-            return null;
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地名称不能为空"));
+            return;
         }
         if (name.contains(" ")) {
-            Notification.error(owner, "领地名称不能包含空格");
+            Notification.error(operator, "领地名称不能包含空格");
             return null;
         }
         if (DominionDTO.select(name) != null) {
-            Notification.error(owner, "已经存在名称为 %s 的领地", name);
+            Notification.error(operator, "已经存在名称为 %s 的领地", name);
             return null;
         }
         if (!loc1.getWorld().equals(loc2.getWorld())) {
-            Notification.error(owner, "禁止跨世界操作");
+            Notification.error(operator, "禁止跨世界操作");
             return null;
         }
-        if (!owner.getWorld().equals(loc1.getWorld())) {
-            Notification.error(owner, "禁止跨世界操作");
+        if (!operator.getWorld().equals(loc1.getWorld())) {
+            Notification.error(operator, "禁止跨世界操作");
             return null;
         }
         // 检查世界是否可以创建
-        if (worldNotValid(owner)) {
+        if (worldNotValid(operator)) {
             return null;
         }
         // 检查领地数量是否达到上限
-        if (amountNotValid(owner)) {
+        if (amountNotValid(operator)) {
             return null;
         }
         // 检查领地大小是否合法
-        if (sizeNotValid(owner,
+        if (sizeNotValid(operator,
                 loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ(),
                 loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ())) {
             return null;
         }
-        DominionDTO dominion = new DominionDTO(owner.getUniqueId(), name, owner.getWorld().getName(),
+        DominionDTO dominion = new DominionDTO(operator.getUniqueId(), name, operator.getWorld().getName(),
                 (int) Math.min(loc1.getX(), loc2.getX()), (int) Math.min(loc1.getY(), loc2.getY()),
                 (int) Math.min(loc1.getZ(), loc2.getZ()), (int) Math.max(loc1.getX(), loc2.getX()),
                 (int) Math.max(loc1.getY(), loc2.getY()), (int) Math.max(loc1.getZ(), loc2.getZ()));
@@ -104,7 +104,7 @@ public class DominionController {
             parent_dominion = DominionDTO.select(parent_dominion_name);
         }
         if (parent_dominion == null) {
-            Notification.error(owner, "父领地 %s 不存在", parent_dominion_name);
+            Notification.error(operator, "父领地 %s 不存在", parent_dominion_name);
             if (parent_dominion_name.isEmpty()) {
                 XLogger.err("根领地丢失！");
             }
@@ -112,22 +112,22 @@ public class DominionController {
         }
         // 是否是父领地的拥有者
         if (parent_dominion.getId() != -1) {
-            if (notOwner(owner, parent_dominion)) {
+            if (notOwner(operator, parent_dominion)) {
                 return null;
             }
         }
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
-            Notification.error(owner, "禁止跨世界操作");
+            Notification.error(operator, "禁止跨世界操作");
             return null;
         }
         // 检查深度是否达到上限
-        if (depthNotValid(owner, parent_dominion)) {
+        if (depthNotValid(operator, parent_dominion)) {
             return null;
         }
         // 检查是否超出父领地范围
         if (!isContained(dominion, parent_dominion)) {
-            Notification.error(owner, "超出父领地 %s 范围", parent_dominion.getName());
+            Notification.error(operator, "超出父领地 %s 范围", parent_dominion.getName());
             return null;
         }
         // 获取此领地的所有同级领地
@@ -135,7 +135,7 @@ public class DominionController {
         // 检查是否与其他子领地冲突
         for (DominionDTO sub_dominion : sub_dominions) {
             if (isIntersect(sub_dominion, dominion)) {
-                Notification.error(owner, "与领地 %s 冲突", sub_dominion.getName());
+                Notification.error(operator, "与领地 %s 冲突", sub_dominion.getName());
                 return null;
             }
         }
@@ -148,19 +148,19 @@ public class DominionController {
                 count = (loc2.getBlockX() - loc1.getBlockX() + 1) * (loc2.getBlockY() - loc1.getBlockY() + 1) * (loc2.getBlockZ() - loc1.getBlockZ() + 1);
             }
             float price = count * Dominion.config.getEconomyPrice();
-            if (Dominion.vault.getEconomy().getBalance(owner) < price) {
-                Notification.error(owner, "你的余额不足，创建此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
+            if (Dominion.vault.getEconomy().getBalance(operator) < price) {
+                Notification.error(operator, "你的余额不足，创建此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
                 return null;
             }
-            Notification.info(owner, "已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
-            Dominion.vault.getEconomy().withdrawPlayer(owner, price);
+            Notification.info(operator, "已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
+            Dominion.vault.getEconomy().withdrawPlayer(operator, price);
         }
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
-            Notification.error(owner, "创建失败，详细错误请联系管理员查询日志（当前时间：%s）", Time.nowStr());
+            Notification.error(operator, "创建失败，详细错误请联系管理员查询日志（当前时间：%s）", Time.nowStr());
             return null;
         }
-        ParticleRender.showBoxFace(Dominion.instance, owner, loc1, loc2);
+        ParticleRender.showBoxFace(Dominion.instance, operator, loc1, loc2);
         return dominion.setParentDomId(parent_dominion.getId());
     }
 

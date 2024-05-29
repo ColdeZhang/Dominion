@@ -11,10 +11,10 @@ import java.util.List;
 
 public class Apis {
 
-    public static boolean notOwner(Player player, DominionDTO dominion) {
+    public static boolean notOwner(AbstractOperator player, DominionDTO dominion) throws Exception {
         if (player.isOp()) return false;
         if (dominion.getOwner().equals(player.getUniqueId())) return false;
-        Notification.error(player, "你不是领地 %s 的拥有者，无法执行此操作", dominion.getName());
+        player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不是领地 %s 的拥有者，无法执行此操作", dominion.getName()));
         return true;
     }
 
