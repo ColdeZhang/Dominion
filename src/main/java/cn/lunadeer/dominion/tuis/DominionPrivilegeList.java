@@ -51,7 +51,7 @@ public class DominionPrivilegeList {
             Line line = Line.create()
                     .append(p_player.getLastKnownName())
                     .append(Button.createGreen("配置权限").setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build());
-            if (!player.getName().equals(p_player.getLastKnownName()) && !privilege.getAdmin())
+            if ((!player.getName().equals(p_player.getLastKnownName()) && !privilege.getAdmin()) || dominion.getOwner().equals(player.getUniqueId()))
                 line.append(Button.createRed("移除成员").setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build());
             view.add(line);
         }
