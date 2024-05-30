@@ -350,15 +350,30 @@ public class DominionOperate {
             Notification.error(sender, "用法: /dominion tp <领地名称>");
             return;
         }
-        if (!Dominion.config.getTpEnable()) {
-            Notification.error(sender, "管理员没有开启领地传送功能");
-            return;
-        }
         DominionDTO dominionDTO = DominionDTO.select(args[1]);
         if (dominionDTO == null) {
             Notification.error(sender, "领地不存在");
             return;
         }
+        if (player.isOp() && Dominion.config.getLimitOpBypass()) {
+            Notification.warn(sender, "你是OP，将忽略领地传送限制");
+            Location location = dominionDTO.getTpLocation();
+            if (location == null) {
+                int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
+                int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
+                World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
+                location = new Location(world, x, player.getLocation().getY(), z);
+                XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
+            }
+            Teleport.doTeleportSafely(player, location);
+            Notification.info(player, "已将你传送到 " + dominionDTO.getName());
+            return;
+        }
+        if (!Dominion.config.getTpEnable()) {
+            Notification.error(sender, "管理员没有开启领地传送功能");
+            return;
+        }
+
         PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
         if (privilegeDTO == null) {
             if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {

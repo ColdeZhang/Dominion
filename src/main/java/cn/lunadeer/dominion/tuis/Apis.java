@@ -71,6 +71,14 @@ public class Apis {
         return false;
     }
 
+    public static boolean notOp(CommandSender sender) {
+        if (!sender.isOp()) {
+            Notification.error(sender, "你没有权限访问此页面");
+            return true;
+        }
+        return false;
+    }
+
     public static void printHelp(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;

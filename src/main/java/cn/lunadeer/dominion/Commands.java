@@ -149,6 +149,9 @@ public class Commands implements TabExecutor {
             case "set_config":
                 SetConfig.handler(sender, args);
                 break;
+            case "all_dominion":
+                AllDominion.show(sender, args);
+                break;
             // ---===  CUI  ===---
             case "cui_rename":
                 OpenCUI.RenameDominion(sender, args);

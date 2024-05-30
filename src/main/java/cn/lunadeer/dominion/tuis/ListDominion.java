@@ -24,13 +24,15 @@ public class ListDominion {
         if (player == null) return;
         int page = getPage(args);
         ListView view = ListView.create(10, "/dominion list");
-        // 根据id从小到大排序
-        List<String> admin_dominions = playerAdminDominions(sender);
 
         view.title("我的领地列表");
         view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("我的领地"));
         view.addLines(BuildTreeLines(Cache.instance.getDominionTreeByPlayer(player.getName()), 0));
-        view.add(Line.create().append(Component.text("-= 以下为你拥有管理员权限的领地 =-", ViewStyles.main_color)));
+        List<String> admin_dominions = playerAdminDominions(sender);
+        if (admin_dominions.size() != 0) {
+            view.add(Line.create().append(""));
+            view.add(Line.create().append(Component.text("--- 以下为你拥有管理员权限的领地 ---", ViewStyles.main_color)));
+        }
         for (String dominion : admin_dominions) {
             TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + dominion).build();
             view.add(Line.create().append(manage).append(dominion));
@@ -38,7 +40,7 @@ public class ListDominion {
         view.showOn(player, page);
     }
 
-    private static List<Line> BuildTreeLines(List<DominionNode> dominionTree, Integer depth) {
+    public static List<Line> BuildTreeLines(List<DominionNode> dominionTree, Integer depth) {
         List<Line> lines = new ArrayList<>();
         StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < depth; i++) {

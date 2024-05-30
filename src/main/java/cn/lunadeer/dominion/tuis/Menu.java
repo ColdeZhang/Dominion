@@ -1,8 +1,10 @@
 package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
+import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,6 +26,9 @@ public class Menu {
         Line link = Line.create()
                 .append(Button.create("使用文档").setOpenURL("https://ssl.lunadeer.cn:14448/doc/23/").build())
                 .append("在浏览器中打开使用文档");
+        Line all = Line.create()
+                .append(Button.create("所有领地").setExecuteCommand("/dominion all_dominion").build())
+                .append("查看所有领地");
         Line config = Line.create()
                 .append(Button.create("系统配置").setExecuteCommand("/dominion config").build())
                 .append("查看/修改系统配置");
@@ -42,7 +47,8 @@ public class Menu {
                 .add(link);
         if (player.isOp()) {
             view.add(Line.create().append(""));
-            view.add(Line.create().append("---以下选项仅OP可见---"));
+            view.add(Line.create().append(Component.text("--- 以下选项仅OP可见 ---", ViewStyles.main_color)));
+            view.add(all);
             view.add(config);
             view.add(reload_cache);
             view.add(reload_config);

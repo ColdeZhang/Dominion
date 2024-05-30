@@ -13,11 +13,13 @@ import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.tuis.Apis.notOp;
 
 public class DominionConfig {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+        if (notOp(player)) return;
         int page = getPage(args);
         ListView view = ListView.create(10, "/dominion config");
         view.title("系统配置");

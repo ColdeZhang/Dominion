@@ -235,6 +235,14 @@ public class Cache {
         return dominionTree;
     }
 
+    public List<DominionNode> getAllDominionTree() {
+        List<DominionNode> dominionTree = new ArrayList<>();
+        for (List<DominionNode> tree : world_dominion_tree.values()) {
+            dominionTree.addAll(tree);
+        }
+        return dominionTree;
+    }
+
     /**
      * 获取玩家在指定领地的特权
      * 如果玩家不存在特权，则返回null
