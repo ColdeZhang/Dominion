@@ -162,16 +162,50 @@ public enum Flag {
         return Arrays.stream(Flag.values()).filter(flag -> flag.getFlagName().equals(flagName)).findFirst().orElse(null);
     }
 
-/*
-        {
-            flag_name: {
-                display_name: "",
-                description: "",
-                default_value: true,
-                enable: true
+    /*
+            {
+                flag_name: {
+                    display_name: "",
+                    description: "",
+                    default_value: true,
+                    enable: true
+                }
+            }
+    */
+
+    public static JSONObject serializeToJson(Flag flag) {
+        JSONObject json = new JSONObject();
+        json.put("display_name", flag.getDisplayName());
+        json.put("description", flag.getDescription());
+        json.put("default_value", flag.getDefaultValue());
+        json.put("enable", flag.getEnable());
+        return json;
+    }
+
+    public static JSONObject serializeToJson() {
+        JSONObject json = new JSONObject();
+        for (Flag flag : getAllFlags()) {
+            JSONObject flagJson = serializeToJson(flag);
+            json.put(flag.getFlagName(), flagJson);
+        }
+        return json;
+    }
+
+    public static void deserializeFromJson(JSONObject jsonObject) {
+        for (Flag flag : getAllFlags()) {
+            try {
+                JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
+                if (flagJson != null) {
+                    flag.setDisplayName((String) flagJson.get("display_name"));
+                    flag.setDescription((String) flagJson.get("description"));
+                    flag.setDefaultValue((Boolean) flagJson.get("default_value"));
+                    flag.setEnable((Boolean) flagJson.get("enable"));
+                }
+            } catch (Exception e) {
+                XLogger.warn("读取权限 %s 配置失败：%s，已跳过", flag.getFlagName(), e.getMessage());
             }
         }
-*/
+    }
 
     public static void loadFromJson() {
         try {
@@ -184,19 +218,7 @@ public enum Flag {
                 XLogger.warn("读取权限配置失败，已重置");
                 saveToJson();
             }
-            for (Flag flag : getAllFlags()) {
-                try {
-                    JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
-                    if (flagJson != null) {
-                        flag.setDisplayName((String) flagJson.get("display_name"));
-                        flag.setDescription((String) flagJson.get("description"));
-                        flag.setDefaultValue((Boolean) flagJson.get("default_value"));
-                        flag.setEnable((Boolean) flagJson.get("enable"));
-                    }
-                } catch (Exception e) {
-                    XLogger.warn("读取权限 %s 配置失败：%s，已跳过", flag.getFlagName(), e.getMessage());
-                }
-            }
+            deserializeFromJson(jsonObject);
             saveToJson(); // 复写一遍，确保文件中包含所有权限
         } catch (Exception e) {
             XLogger.err("读取权限配置失败：%s", e.getMessage());
@@ -205,15 +227,7 @@ public enum Flag {
 
     public static void saveToJson() {
         try {
-            JSONObject json = new JSONObject();
-            for (Flag f : getAllFlags()) {
-                JSONObject flagJson = new JSONObject();
-                flagJson.put("display_name", f.getDisplayName());
-                flagJson.put("description", f.getDescription());
-                flagJson.put("default_value", f.getDefaultValue());
-                flagJson.put("enable", f.enable);
-                json.put(f.getFlagName(), flagJson);
-            }
+            JSONObject json = serializeToJson();
             XLogger.debug("保存权限配置：%s", json.toJSONString());
             File flagFile = new File(Dominion.instance.getDataFolder(), "flags.json");
             JsonFile.saveToFile(json, flagFile);
