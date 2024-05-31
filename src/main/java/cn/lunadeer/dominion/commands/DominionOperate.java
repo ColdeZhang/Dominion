@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
+import static cn.lunadeer.dominion.DominionNode.isInDominion;
 import static cn.lunadeer.dominion.commands.Apis.*;
 
 public class DominionOperate {
@@ -408,6 +409,12 @@ public class DominionOperate {
                 World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
                 location = new Location(world, x, player.getLocation().getY(), z);
                 XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
+            } else if (!isInDominion(dominionDTO, location)) {
+                int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
+                int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
+                World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
+                location = new Location(world, x, player.getLocation().getY(), z);
+                XLogger.warn("领地 %s 传送点不在领地内，将尝试传送到中心点", dominionDTO.getName());
             }
             if (player.isOnline()) {
                 Teleport.doTeleportSafely(player, location);

@@ -52,7 +52,7 @@ public enum Flag {
     REPEATER("repeater", "中继器交互", "是否可以与中继器交互", false, false, true),
     SHEAR("shear", "剪羊毛", "是否可以剪羊毛", false, false, true),
     SHOOT("shoot", "发射类型武器", "包括：射箭/雪球/三叉戟", false, false, true),
-    SHOW_BORDER("show_border", "显示领地边界", "是否显示领地边界", false, true, true),
+    SHOW_BORDER("show_border", "显示领地边界", "是否显示领地边界", true, true, true),
     TELEPORT("teleport", "领地传送", "是否开启领地传送", false, false, true),
     TNT_EXPLODE("tnt_explode", "TNT爆炸", "TNT是否可以爆炸", false, true, true),
     TRADE("trade", "村民交易", "是否可以与村民交易", false, false, true),

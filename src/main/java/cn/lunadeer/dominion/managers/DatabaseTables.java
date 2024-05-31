@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.dtos.Flag;
 
 public class DatabaseTables {
     public static void migrate() {
@@ -31,46 +32,6 @@ public class DatabaseTables {
                 " join_message TEXT NOT NULL DEFAULT '欢迎', " +
                 " leave_message TEXT NOT NULL DEFAULT '再见', " +
 
-                " anchor BOOLEAN NOT NULL DEFAULT FALSE," +
-                " animal_killing BOOLEAN NOT NULL DEFAULT FALSE," +
-                " anvil BOOLEAN NOT NULL DEFAULT FALSE," +
-                " beacon BOOLEAN NOT NULL DEFAULT FALSE," +
-                " bed BOOLEAN NOT NULL DEFAULT FALSE," +
-                " brew BOOLEAN NOT NULL DEFAULT FALSE," +
-                " break BOOLEAN NOT NULL DEFAULT FALSE," +
-                " button BOOLEAN NOT NULL DEFAULT FALSE," +
-                " cake BOOLEAN NOT NULL DEFAULT FALSE," +
-                " container BOOLEAN NOT NULL DEFAULT FALSE," +
-                " craft BOOLEAN NOT NULL DEFAULT FALSE," +
-                " creeper_explode BOOLEAN NOT NULL DEFAULT FALSE," +
-                " comparer BOOLEAN NOT NULL DEFAULT FALSE," +
-                " door BOOLEAN NOT NULL DEFAULT FALSE," +
-                " dye BOOLEAN NOT NULL DEFAULT FALSE," +
-                " egg BOOLEAN NOT NULL DEFAULT FALSE," +
-                " enchant BOOLEAN NOT NULL DEFAULT FALSE," +
-                " ender_pearl BOOLEAN NOT NULL DEFAULT FALSE," +
-                " feed BOOLEAN NOT NULL DEFAULT FALSE," +
-                " fire_spread BOOLEAN NOT NULL DEFAULT FALSE," +
-                " flow_in_protection BOOLEAN NOT NULL DEFAULT FALSE," +
-                " glow BOOLEAN NOT NULL DEFAULT TRUE," +
-                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
-                " honey BOOLEAN NOT NULL DEFAULT FALSE," +
-                " hook BOOLEAN NOT NULL DEFAULT FALSE," +
-                " ignite BOOLEAN NOT NULL DEFAULT FALSE," +
-                " lever BOOLEAN NOT NULL DEFAULT FALSE," +
-                " monster_killing BOOLEAN NOT NULL DEFAULT FALSE," +
-                " move BOOLEAN NOT NULL DEFAULT TRUE," +
-                " place BOOLEAN NOT NULL DEFAULT FALSE," +
-                " pressure BOOLEAN NOT NULL DEFAULT FALSE," +
-                " riding BOOLEAN NOT NULL DEFAULT FALSE," +
-                " repeater BOOLEAN NOT NULL DEFAULT FALSE," +
-                " shear BOOLEAN NOT NULL DEFAULT FALSE," +
-                " shoot BOOLEAN NOT NULL DEFAULT FALSE," +
-                " tnt_explode BOOLEAN NOT NULL DEFAULT FALSE," +
-                " trade BOOLEAN NOT NULL DEFAULT FALSE," +
-                " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
-                " wither_spawn BOOLEAN NOT NULL DEFAULT FALSE," +
-
                 " FOREIGN KEY (owner) REFERENCES player_name(uuid) ON DELETE CASCADE," +
                 " FOREIGN KEY (parent_dom_id) REFERENCES dominion(id) ON DELETE CASCADE" +
                 ");";
@@ -83,40 +44,6 @@ public class DatabaseTables {
                 " dom_id      INT NOT NULL," +
 
                 " admin BOOLEAN NOT NULL DEFAULT FALSE," +
-                " anchor BOOLEAN NOT NULL DEFAULT FALSE," +
-                " animal_killing BOOLEAN NOT NULL DEFAULT FALSE," +
-                " anvil BOOLEAN NOT NULL DEFAULT FALSE," +
-                " beacon BOOLEAN NOT NULL DEFAULT FALSE," +
-                " bed BOOLEAN NOT NULL DEFAULT FALSE," +
-                " brew BOOLEAN NOT NULL DEFAULT FALSE," +
-                " break BOOLEAN NOT NULL DEFAULT FALSE," +
-                " button BOOLEAN NOT NULL DEFAULT FALSE," +
-                " cake BOOLEAN NOT NULL DEFAULT FALSE," +
-                " container BOOLEAN NOT NULL DEFAULT FALSE," +
-                " craft BOOLEAN NOT NULL DEFAULT FALSE," +
-                " comparer BOOLEAN NOT NULL DEFAULT FALSE," +
-                " door BOOLEAN NOT NULL DEFAULT FALSE," +
-                " dye BOOLEAN NOT NULL DEFAULT FALSE," +
-                " egg BOOLEAN NOT NULL DEFAULT FALSE," +
-                " enchant BOOLEAN NOT NULL DEFAULT FALSE," +
-                " ender_pearl BOOLEAN NOT NULL DEFAULT FALSE," +
-                " feed BOOLEAN NOT NULL DEFAULT FALSE," +
-                " glow BOOLEAN NOT NULL DEFAULT TRUE," +
-                " harvest BOOLEAN NOT NULL DEFAULT FALSE," +
-                " honey BOOLEAN NOT NULL DEFAULT FALSE," +
-                " hook BOOLEAN NOT NULL DEFAULT FALSE," +
-                " ignite BOOLEAN NOT NULL DEFAULT FALSE," +
-                " lever BOOLEAN NOT NULL DEFAULT FALSE," +
-                " monster_killing BOOLEAN NOT NULL DEFAULT FALSE," +
-                " move BOOLEAN NOT NULL DEFAULT TRUE," +
-                " place BOOLEAN NOT NULL DEFAULT FALSE," +
-                " pressure BOOLEAN NOT NULL DEFAULT FALSE," +
-                " riding BOOLEAN NOT NULL DEFAULT FALSE," +
-                " repeater BOOLEAN NOT NULL DEFAULT FALSE," +
-                " shear BOOLEAN NOT NULL DEFAULT FALSE," +
-                " shoot BOOLEAN NOT NULL DEFAULT FALSE," +
-                " trade BOOLEAN NOT NULL DEFAULT FALSE," +
-                " vehicle_destroy BOOLEAN NOT NULL DEFAULT FALSE," +
 
                 " UNIQUE (player_uuid, dom_id)," +
                 " FOREIGN KEY (player_uuid) REFERENCES player_name(uuid) ON DELETE CASCADE," +
@@ -141,37 +68,19 @@ public class DatabaseTables {
                 ") ON CONFLICT DO NOTHING;";
         Dominion.database.query(sql);
 
-        // 1.5.0
-        Dominion.database.addColumnIfNotExists("dominion", "hopper", "BOOLEAN NOT NULL DEFAULT FALSE");
-        Dominion.database.addColumnIfNotExists("player_privilege", "hopper", "BOOLEAN NOT NULL DEFAULT FALSE");
+        for (Flag flag : Flag.getAllDominionFlags()) {
+            Dominion.database.addColumnIfNotExists("dominion",
+                    flag.getFlagName(),
+                    "BOOLEAN NOT NULL DEFAULT " + flag.getDefaultValue());
+        }
 
-        // 1.9.0
-        Dominion.database.addColumnIfNotExists("dominion", "vehicle_spawn", "BOOLEAN NOT NULL DEFAULT FALSE");
-        Dominion.database.addColumnIfNotExists("player_privilege", "vehicle_spawn", "BOOLEAN NOT NULL DEFAULT FALSE");
-
-        // 1.10.0
-        Dominion.database.addColumnIfNotExists("dominion", "trample", "BOOLEAN NOT NULL DEFAULT FALSE");
-
-        // 1.11.0
-        Dominion.database.addColumnIfNotExists("dominion", "mob_drop_item", "BOOLEAN NOT NULL DEFAULT TRUE");
-
-        // 1.12.0
-        Dominion.database.addColumnIfNotExists("dominion", "ender_man", "BOOLEAN NOT NULL DEFAULT FAlSE");
+        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+            Dominion.database.addColumnIfNotExists("player_privilege",
+                    flag.getFlagName(),
+                    "BOOLEAN NOT NULL DEFAULT " + flag.getDefaultValue());
+        }
 
         // 1.18.0
         Dominion.database.addColumnIfNotExists("dominion", "tp_location", "TEXT NOT NULL DEFAULT 'default'");
-        Dominion.database.addColumnIfNotExists("dominion", "teleport", "BOOLEAN NOT NULL DEFAULT FALSE");
-        Dominion.database.addColumnIfNotExists("player_privilege", "teleport", "BOOLEAN NOT NULL DEFAULT FALSE");
-
-        // 1.21
-        Dominion.database.addColumnIfNotExists("dominion", "show_border", "BOOLEAN NOT NULL DEFAULT TRUE");
-
-        // 1.26
-        Dominion.database.addColumnIfNotExists("dominion", "fly", "BOOLEAN NOT NULL DEFAULT FALSE");
-        Dominion.database.addColumnIfNotExists("player_privilege", "fly", "BOOLEAN NOT NULL DEFAULT FALSE");
-
-        // 1.28
-        Dominion.database.addColumnIfNotExists("dominion", "monster_spawn", "BOOLEAN NOT NULL DEFAULT FALSE");
-        Dominion.database.addColumnIfNotExists("dominion", "animal_spawn", "BOOLEAN NOT NULL DEFAULT TRUE");
     }
 }
