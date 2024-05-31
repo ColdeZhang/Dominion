@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,9 @@ public class PlayerController {
     }
 
     public static List<PlayerDTO> allPlayers() {
-        return PlayerDTO.all();
+        List<PlayerDTO> players = PlayerDTO.all();
+        // 按照名字排序
+        players.sort(Comparator.comparing(PlayerDTO::getLastKnownName));
+        return players;
     }
 }
