@@ -6,8 +6,10 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.File;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public enum Flag {
@@ -125,6 +127,8 @@ public enum Flag {
             }
             flags.add(flag);
         }
+        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
+        flags.sort((o1, o2) -> comparator.compare(o1.getDisplayName(), o2.getDisplayName()));
         return flags;
     }
 
@@ -144,6 +148,8 @@ public enum Flag {
             }
             flags.add(flag);
         }
+        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
+        flags.sort((o1, o2) -> comparator.compare(o1.getDisplayName(), o2.getDisplayName()));
         return flags;
     }
 
