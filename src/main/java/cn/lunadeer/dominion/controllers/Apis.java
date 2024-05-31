@@ -3,12 +3,7 @@ package cn.lunadeer.dominion.controllers;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class Apis {
 
@@ -43,7 +38,10 @@ public class Apis {
             return null;
         }
         DominionDTO dominion = Cache.instance.getDominion(location);
-        if (dominion == null || dominion.getParentDomId() != -1) {
+        if (dominion == null) {
+            return null;
+        }
+        if (dominion.getParentDomId() == -1) {
             return dominion;
         } else {
             player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你当前在子领地内，请指定要操作的领地名称"));
