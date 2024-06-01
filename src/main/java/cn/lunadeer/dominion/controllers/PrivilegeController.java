@@ -21,7 +21,6 @@ public class PrivilegeController {
      *
      * @param operator    操作者
      * @param player_name 玩家
-     * @return 是否清空成功
      */
     public static void clearPrivilege(AbstractOperator operator, String player_name) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
@@ -38,28 +37,27 @@ public class PrivilegeController {
      * @param operator     操作者
      * @param player_name  玩家
      * @param dominionName 领地名称
-     * @return 是否清空成功
      */
     public static void clearPrivilege(AbstractOperator operator, String player_name, String dominionName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "清空玩家 %s 在领地 %s 的权限失败", player_name, dominionName);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(FAIL.appendMessage("领地 %s 不存在", dominionName));
+            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            operator.setResponse(FAIL.appendMessage("玩家 %s 不存在或没有登录过", player_name));
+            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
             return;
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.appendMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
+            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
             return;
         }
         if (privilege.getAdmin() && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.appendMessage("你不是领地 %s 的拥有者，无法移除一个领地管理员", dominionName));
+            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法移除一个领地管理员", dominionName));
             return;
         }
         PlayerPrivilegeDTO.delete(player.getUuid(), dominion.getId());
@@ -73,7 +71,6 @@ public class PrivilegeController {
      * @param player_name 玩家
      * @param flag        权限名称
      * @param value       权限值
-     * @return 是否设置成功
      */
     public static void setPrivilege(AbstractOperator operator, String player_name, String flag, boolean value) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
@@ -92,19 +89,18 @@ public class PrivilegeController {
      * @param flag         权限名称
      * @param value        权限值
      * @param dominionName 领地名称
-     * @return 是否设置成功
      */
     public static void setPrivilege(AbstractOperator operator, String player_name, String flag, boolean value, String dominionName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置玩家 %s 在领地 %s 的权限 %s 为 %s 失败", player_name, dominionName, flag, value);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(FAIL.appendMessage("领地 %s 不存在", dominionName));
+            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            operator.setResponse(FAIL.appendMessage("玩家 %s 不存在或没有登录过", player_name));
+            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
             return;
         }
         PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
@@ -114,14 +110,14 @@ public class PrivilegeController {
         }
         if (flag.equals("admin")) {
             if (notOwner(operator, dominion)) {
-                operator.setResponse(FAIL.appendMessage("你不是领地 %s 的拥有者，无法设置/取消其他玩家为管理员", dominionName));
+                operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法设置/取消其他玩家为管理员", dominionName));
                 return;
             }
             privilege.setAdmin(value);
         } else {
             Flag f = Flag.getFlag(flag);
             if (f == null) {
-                operator.setResponse(FAIL.appendMessage("未知的领地权限 %s", flag));
+                operator.setResponse(FAIL.addMessage("未知的领地权限 %s", flag));
                 return;
             }
             privilege.setFlagValue(f, value);

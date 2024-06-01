@@ -73,11 +73,17 @@ public class BukkitPlayerOperator implements AbstractOperator {
         BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
         operator.getResponse().thenAccept(result -> {
             if (Objects.equals(result.getStatus(), BukkitPlayerOperator.Result.SUCCESS)) {
-                Notification.info(player, result.getMessage());
+                for (String msg : result.getMessages()) {
+                    Notification.info(player, msg);
+                }
             } else if (Objects.equals(result.getStatus(), BukkitPlayerOperator.Result.WARNING)) {
-                Notification.warn(player, result.getMessage());
+                for (String msg : result.getMessages()) {
+                    Notification.warn(player, msg);
+                }
             } else {
-                Notification.error(player, result.getMessage());
+                for (String msg : result.getMessages()) {
+                    Notification.error(player, msg);
+                }
             }
         });
         return operator;

@@ -5,6 +5,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -16,21 +18,16 @@ public interface AbstractOperator {
         public static final Integer FAILURE = 2;
 
         private Integer success;
-        private String message;
+        private List<String> messages;
 
         public Result(Integer success, String message, Object... args) {
             this.success = success;
-            this.message = String.format(message, args);
+            this.messages = new ArrayList<>();
+            this.messages.add(String.format(message, args));
         }
 
-        public Result setMessage(String message, Object... args) {
-            this.message = String.format(message, args);
-            return this;
-        }
-
-        public Result appendMessage(String message, Object... args) {
-            this.message += " ";
-            this.message += String.format(message, args);
+        public Result addMessage(String message, Object... args) {
+            this.messages.add(String.format(message, args));
             return this;
         }
 
@@ -38,8 +35,8 @@ public interface AbstractOperator {
             return success;
         }
 
-        public String getMessage() {
-            return message;
+        public List<String> getMessages() {
+            return messages;
         }
     }
 
