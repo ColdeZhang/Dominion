@@ -111,12 +111,12 @@ public class DominionDTO {
         for (Flag f : Flag.getAllDominionFlags()) {
             sql += f.getFlagName() + ", ";
         }
-        sql += "tp_location";
+        sql += "tp_location, join_message, leave_message";
         sql += ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ";
         for (Flag f : Flag.getAllDominionFlags()) {
             sql += f.getDefaultValue() + ", ";
         }
-        sql += "'default'";
+        sql += "'default', ?, ?)";
         sql += ") RETURNING *;";
         List<DominionDTO> dominions = query(sql,
                 dominion.getOwner(),
@@ -127,7 +127,10 @@ public class DominionDTO {
                 dominion.getZ1(),
                 dominion.getX2(),
                 dominion.getY2(),
-                dominion.getZ2());
+                dominion.getZ2(),
+                "欢迎来到 ${DOM_NAME}！",
+                "你正在离开 ${DOM_NAME}，欢迎下次光临～"
+                );
         if (dominions.size() == 0) return null;
         return dominions.get(0);
     }

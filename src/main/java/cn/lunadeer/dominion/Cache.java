@@ -141,14 +141,18 @@ public class Cache {
 //                Notification.info(player, "您已离开领地：%s", last_dominion.getName());
 //             else
 //                Notification.info(player, "您已离开子领地：%s", last_dominion.getName());
-            player.sendActionBar(Component.text(last_dominion.getLeaveMessage()));
+            String msg = last_dominion.getLeaveMessage();
+            msg = msg.replace("${DOM_NAME}", last_dominion.getName());
+            player.sendActionBar(Component.text(msg));
         }
         if (current_dom_id != -1) {
 //            if (current_dominion.getParentDomId() == -1)
 //                Notification.info(player, "您正在进入领地：%s", current_dominion.getName());
 //            else
 //                Notification.info(player, "您正在进入子领地：%s", current_dominion.getName());
-            player.sendActionBar(Component.text(current_dominion.getJoinMessage()));
+            String msg = current_dominion.getJoinMessage();
+            msg = msg.replace("${DOM_NAME}", current_dominion.getName());
+            player.sendActionBar(Component.text(msg));
         }
 
         lightOrNot(player, current_dominion);   // 发光检查
