@@ -146,9 +146,9 @@ public class DominionController {
         if (Dominion.config.getEconomyEnable()) {
             int count;
             if (Dominion.config.getEconomyOnlyXZ()) {
-                count = (loc2.getBlockX() - loc1.getBlockX() + 1) * (loc2.getBlockZ() - loc1.getBlockZ() + 1);
+                count = dominion.getSquare();
             } else {
-                count = (loc2.getBlockX() - loc1.getBlockX() + 1) * (loc2.getBlockY() - loc1.getBlockY() + 1) * (loc2.getBlockZ() - loc1.getBlockZ() + 1);
+                count = dominion.getVolume();
             }
             float price = count * Dominion.config.getEconomyPrice();
             if (Dominion.vault.getEconomy().getBalance(operator.getPlayer()) < price) {

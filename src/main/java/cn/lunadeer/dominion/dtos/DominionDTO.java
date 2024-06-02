@@ -326,11 +326,23 @@ public class DominionDTO {
     }
 
     public Integer getSquare() {
-        return (x2 - x1) * (z2 - z1);
+        return (x2 - x1 + 1) * (z2 - z1 + 1);
     }
 
     public Integer getVolume() {
-        return getSquare() * (y2 - y1);
+        return getSquare() * (y2 - y1 + 1);
+    }
+
+    public Integer getWidthX() {
+        return x2 - x1 + 1;
+    }
+
+    public Integer getHeight() {
+        return y2 - y1 + 1;
+    }
+
+    public Integer getWidthZ() {
+        return z2 - z1 + 1;
     }
 
     public Integer getParentDomId() {

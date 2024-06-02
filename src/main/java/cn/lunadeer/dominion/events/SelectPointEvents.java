@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import org.bukkit.Location;
@@ -71,30 +72,23 @@ public class SelectPointEvents implements Listener {
                 minY = Dominion.config.getLimitMinY();
                 maxY = Dominion.config.getLimitMaxY();
             }
+            DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld().getName(),
+                    minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
                 int count;
                 if (Dominion.config.getEconomyOnlyXZ()) {
-                    count = (maxX - minX) * (maxZ - minZ);
+                    count = dominion.getSquare();
                 } else {
-                    count = (maxX - minX) * (maxY - minY) * (maxZ - minZ);
+                    count = dominion.getVolume();
                 }
                 float price = count * Dominion.config.getEconomyPrice();
                 Notification.info(player, "预计领地创建价格为 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
             }
             ParticleRender.showBoxFace(Dominion.instance, player, loc1, loc2);
-            Notification.info(player, "尺寸： %d x %d x %d",
-                    Math.abs(points.get(1).getBlockX() - points.get(0).getBlockX()),
-                    Math.abs(points.get(1).getBlockY() - points.get(0).getBlockY()),
-                    Math.abs(points.get(1).getBlockZ() - points.get(0).getBlockZ()));
-            Notification.info(player, "面积： %d",
-                    Math.abs(points.get(1).getBlockX() - points.get(0).getBlockX()) *
-                            Math.abs(points.get(1).getBlockZ() - points.get(0).getBlockZ()));
-            Notification.info(player, "高度： %d",
-                    Math.abs(points.get(1).getBlockY() - points.get(0).getBlockY()));
-            Notification.info(player, "体积： %d",
-                    Math.abs(points.get(1).getBlockX() - points.get(0).getBlockX()) *
-                            Math.abs(points.get(1).getBlockY() - points.get(0).getBlockY()) *
-                            Math.abs(points.get(1).getBlockZ() - points.get(0).getBlockZ()));
+            Notification.info(player, "尺寸： %d x %d x %d", dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());
+            Notification.info(player, "面积： %d", dominion.getSquare());
+            Notification.info(player, "高度： %d", dominion.getHeight());
+            Notification.info(player, "体积： %d", dominion.getVolume());
         }
         Dominion.pointsSelect.put(player.getUniqueId(), points);
     }

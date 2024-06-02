@@ -40,6 +40,12 @@ public class PlayerEvents implements Listener {
         player.onJoin(); // update name
     }
 
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player bukkitPlayer = event.getPlayer();
+        Cache.instance.onPlayerQuit(bukkitPlayer);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // anchor
     public void onRespawnAnchor(PlayerRespawnEvent event) {
         Player bukkitPlayer = event.getPlayer();

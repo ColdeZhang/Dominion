@@ -125,7 +125,7 @@ public class Cache {
             last_dominion = id_dominions.get(last_in_dom_id);
         }
         if (isInDominion(last_dominion, player)) {
-            if (dominion_children.get(last_in_dom_id) == null) {
+            if (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).size() == 0) {
                 // 如果玩家仍在领地内，且领地没有子领地，则直接返回
                 return last_dominion;
             }
@@ -169,6 +169,17 @@ public class Cache {
                     current_dominion.getLocation2());
         }
         return current_dominion;
+    }
+
+    /**
+     * 玩家退出时调用 用于清除玩家当前所在领地
+     * 会将玩家当前所在领地设置为null
+     * 这样当玩家下次进入领地时，会重新检查玩家所在位置
+     *
+     * @param player 玩家
+     */
+    public void onPlayerQuit(Player player) {
+        player_current_dominion_id.put(player.getUniqueId(), null);
     }
 
     /**
