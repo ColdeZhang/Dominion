@@ -9,22 +9,25 @@ import java.util.*;
 public class PlayerPrivilegeDTO {
 
     public static PlayerPrivilegeDTO insert(PlayerPrivilegeDTO player) {
-        String sql = "INSERT INTO player_privilege (player_uuid, admin, dom_id, ";
+        StringBuilder sql = new StringBuilder("INSERT INTO player_privilege (player_uuid, admin, dom_id, ");
 
         for (Flag f : Flag.getAllPrivilegeFlags()) {
-            sql += f.getFlagName() + ", ";
+            sql.append(f.getFlagName()).append(", ");
         }
-        sql = sql.substring(0, sql.length() - 2);
+        sql = new StringBuilder(sql.substring(0, sql.length() - 2));
 
-        sql += ") VALUES ('" + player.getPlayerUUID() + "', " + player.getAdmin() + ", " + player.getDomID() + ", ";
+        sql.append(") VALUES ('")
+                .append(player.getPlayerUUID()).append("', ")
+                .append(player.getAdmin()).append(", ")
+                .append(player.getDomID()).append(", ");
 
         for (Flag f : Flag.getAllPrivilegeFlags()) {
-            sql += player.getFlagValue(f) + ", ";
+            sql.append(player.getFlagValue(f)).append(", ");
         }
-        sql = sql.substring(0, sql.length() - 2);
+        sql = new StringBuilder(sql.substring(0, sql.length() - 2));
 
-        sql += ") RETURNING *;";
-        List<PlayerPrivilegeDTO> players = query(sql);
+        sql.append(") RETURNING *;");
+        List<PlayerPrivilegeDTO> players = query(sql.toString());
         if (players.size() == 0) return null;
         return players.get(0);
     }

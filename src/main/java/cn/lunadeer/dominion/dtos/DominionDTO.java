@@ -106,19 +106,19 @@ public class DominionDTO {
     }
 
     public static DominionDTO insert(DominionDTO dominion) {
-        String sql = "INSERT INTO dominion (" +
-                "owner, name, world, x1, y1, z1, x2, y2, z2, ";
+        StringBuilder sql = new StringBuilder("INSERT INTO dominion (" +
+                "owner, name, world, x1, y1, z1, x2, y2, z2, ");
         for (Flag f : Flag.getAllDominionFlags()) {
-            sql += f.getFlagName() + ", ";
+            sql.append(f.getFlagName()).append(", ");
         }
-        sql += "tp_location, join_message, leave_message";
-        sql += ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ";
+        sql.append("tp_location, join_message, leave_message");
+        sql.append(") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ");
         for (Flag f : Flag.getAllDominionFlags()) {
-            sql += f.getDefaultValue() + ", ";
+            sql.append(f.getDefaultValue()).append(", ");
         }
-        sql += "'default', ?, ?)";
-        sql += ") RETURNING *;";
-        List<DominionDTO> dominions = query(sql,
+        sql.append("'default', ?, ?");
+        sql.append(") RETURNING *;");
+        List<DominionDTO> dominions = query(sql.toString(),
                 dominion.getOwner(),
                 dominion.getName(),
                 dominion.getWorld(),
