@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Objects;
@@ -133,8 +134,11 @@ public class EnvironmentEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_man escape
-    public void onEnderManEscape(EndermanEscapeEvent event) {
+    public void onEnderManEscape(EntityTeleportEvent event) {
         Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.ENDERMAN) {
+            return;
+        }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.ENDER_MAN, event);
     }

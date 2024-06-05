@@ -63,7 +63,7 @@ public final class Dominion extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CuiManager(this), this);
 
         XLogger.info("领地插件已启动");
-        XLogger.info("版本：" + this.getPluginMeta().getVersion());
+        XLogger.info("版本：" + this.getDescription().getVersion());
         // http://patorjk.com/software/taag/#p=display&f=Big&t=Dominion
         XLogger.info("  _____                  _       _");
         XLogger.info(" |  __ \\                (_)     (_)");
