@@ -417,8 +417,13 @@ public class DominionOperate {
                 XLogger.warn("领地 %s 传送点不在领地内，将尝试传送到中心点", dominionDTO.getName());
             }
             if (player.isOnline()) {
-                Teleport.doTeleportSafely(player, location);
-                Notification.info(player, "已将你传送到 " + dominionDTO.getName());
+                Teleport.doTeleportSafely(player, location).thenAccept(b -> {
+                    if (b) {
+                        Notification.info(player, "已将你传送到 " + dominionDTO.getName());
+                    } else {
+                        Notification.error(player, "传送失败，请重试");
+                    }
+                });
             }
         }, 20L * Dominion.config.getTpDelay());
     }
