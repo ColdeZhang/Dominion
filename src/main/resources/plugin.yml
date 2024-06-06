@@ -4,6 +4,8 @@ main: cn.lunadeer.dominion.Dominion
 api-version: '1.20'
 load: STARTUP
 folia-supported: true
+loadbefore:
+  - Vault
 commands:
   Dominion:
     description: 领地插件命令

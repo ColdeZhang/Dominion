@@ -37,14 +37,7 @@ public final class Dominion extends JavaPlugin {
         new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();
-
-        if (config.getEconomyEnable()) {
-            vault = new VaultConnect(this);
-            if (vault.getEconomy() == null) {
-                XLogger.err("你没有安装 Vault 前置插件，无法使用经济功能。");
-                config.setEconomyEnable(false);
-            }
-        }
+        new VaultConnect(this);
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
@@ -79,6 +72,7 @@ public final class Dominion extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        database.close();
     }
 
     public static Dominion instance;
@@ -86,5 +80,4 @@ public final class Dominion extends JavaPlugin {
     public static DatabaseManager database;
     public static Map<UUID, Map<Integer, Location>> pointsSelect = new HashMap<>();
     private GiteaReleaseCheck giteaReleaseCheck;
-    public static VaultConnect vault;
 }

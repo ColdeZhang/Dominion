@@ -351,6 +351,8 @@ public class ConfigManager {
 
     public void setEconomyEnable(Boolean economy_enable) {
         _economy_enable = economy_enable;
+        _file.set("Economy.Enable", economy_enable);
+        _plugin.saveConfig();
     }
 
     public Float getEconomyPrice() {

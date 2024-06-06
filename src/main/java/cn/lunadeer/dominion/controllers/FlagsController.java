@@ -2,8 +2,6 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.controllers.Apis.noAuthToChangeFlags;
 

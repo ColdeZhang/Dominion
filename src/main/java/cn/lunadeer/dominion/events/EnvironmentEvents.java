@@ -3,7 +3,6 @@ package cn.lunadeer.dominion.events;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
-import com.destroystokyo.paper.event.entity.EndermanEscapeEvent;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
+import cn.lunadeer.minecraftpluginutils.VaultConnect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -75,6 +76,10 @@ public class SelectPointEvents implements Listener {
             DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld().getName(),
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
+                if (!VaultConnect.instance.economyAvailable()) {
+                    Notification.error(player, "计算价格失败，没有可用的经济插件系统，请联系服主。");
+                    return;
+                }
                 int count;
                 if (Dominion.config.getEconomyOnlyXZ()) {
                     count = dominion.getSquare();
@@ -82,7 +87,7 @@ public class SelectPointEvents implements Listener {
                     count = dominion.getVolume();
                 }
                 float price = count * Dominion.config.getEconomyPrice();
-                Notification.info(player, "预计领地创建价格为 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
+                Notification.info(player, "预计领地创建价格为 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
             }
             ParticleRender.showBoxFace(Dominion.instance, player, loc1, loc2);
             Notification.info(player, "尺寸： %d x %d x %d", dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());

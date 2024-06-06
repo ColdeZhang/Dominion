@@ -2,12 +2,11 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.DominionNode;
-import cn.lunadeer.dominion.commands.OpenCUI;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
+import cn.lunadeer.minecraftpluginutils.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,7 +18,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
-import static cn.lunadeer.dominion.controllers.Apis.*;
+import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
+import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class DominionController {
 
@@ -144,6 +144,10 @@ public class DominionController {
         }
         // 检查经济
         if (Dominion.config.getEconomyEnable()) {
+            if (!VaultConnect.instance.economyAvailable()) {
+                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
+                return;
+            }
             int count;
             if (Dominion.config.getEconomyOnlyXZ()) {
                 count = dominion.getSquare();
@@ -151,12 +155,12 @@ public class DominionController {
                 count = dominion.getVolume();
             }
             float price = count * Dominion.config.getEconomyPrice();
-            if (Dominion.vault.getEconomy().getBalance(operator.getPlayer()) < price) {
-                operator.setResponse(FAIL.addMessage("你的余额不足，创建此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural()));
+            if (VaultConnect.instance.getBalance(operator.getPlayer()) < price) {
+                operator.setResponse(FAIL.addMessage("你的余额不足，创建此领地需要 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
                 return;
             }
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural()));
-            Dominion.vault.getEconomy().withdrawPlayer(operator.getPlayer(), price);
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "已扣除 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
+            VaultConnect.instance.withdrawPlayer(operator.getPlayer(), price);
         }
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
@@ -265,6 +269,10 @@ public class DominionController {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功扩展领地 %s %d格", dominion_name, size);
         // 检查经济
         if (Dominion.config.getEconomyEnable()) {
+            if (!VaultConnect.instance.economyAvailable()) {
+                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
+                return;
+            }
             int count;
             if (Dominion.config.getEconomyOnlyXZ()) {
                 count = (x2 - x1 + 1) * (z2 - z1 + 1) - dominion.getSquare();
@@ -272,12 +280,12 @@ public class DominionController {
                 count = (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1) - dominion.getVolume();
             }
             float price = count * Dominion.config.getEconomyPrice();
-            if (Dominion.vault.getEconomy().getBalance(operator.getPlayer()) < price) {
-                operator.setResponse(FAIL.addMessage("你的余额不足，扩展此领地需要 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural()));
+            if (VaultConnect.instance.getBalance(operator.getPlayer()) < price) {
+                operator.setResponse(FAIL.addMessage("你的余额不足，扩展此领地需要 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
                 return;
             }
-            SUCCESS.addMessage("已扣除 %.2f %s", price, Dominion.vault.getEconomy().currencyNamePlural());
-            Dominion.vault.getEconomy().withdrawPlayer(operator.getPlayer(), price);
+            SUCCESS.addMessage("已扣除 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
+            VaultConnect.instance.withdrawPlayer(operator.getPlayer(), price);
         }
         if (operator instanceof BukkitPlayerOperator) {
             World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
@@ -377,6 +385,10 @@ public class DominionController {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功缩小领地 %s %d格", dominion_name, size);
         // 退还经济
         if (Dominion.config.getEconomyEnable()) {
+            if (!VaultConnect.instance.economyAvailable()) {
+                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
+                return;
+            }
             int count;
             if (Dominion.config.getEconomyOnlyXZ()) {
                 count = dominion.getSquare() - (x2 - x1 + 1) * (z2 - z1 + 1);
@@ -384,8 +396,8 @@ public class DominionController {
                 count = dominion.getVolume() - (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
             }
             float refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
-            Dominion.vault.getEconomy().depositPlayer(operator.getPlayer(), refund);
-            SUCCESS.addMessage("已退还 %.2f %s", refund, Dominion.vault.getEconomy().currencyNamePlural());
+            VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
+            SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
         }
         if (operator instanceof BukkitPlayerOperator) {
             World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
@@ -430,6 +442,10 @@ public class DominionController {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "领地 %s 及其所有子领地已删除", dominion_name);
         // 退还经济
         if (Dominion.config.getEconomyEnable()) {
+            if (!VaultConnect.instance.economyAvailable()) {
+                operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "退款失败，没有可用的经济插件系统，请联系服主。"));
+                return;
+            }
             int count = 0;
             if (Dominion.config.getEconomyOnlyXZ()) {
                 for (DominionDTO sub_dominion : sub_dominions) {
@@ -441,8 +457,8 @@ public class DominionController {
                 }
             }
             float refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
-            Dominion.vault.getEconomy().depositPlayer(operator.getPlayer(), refund);
-            SUCCESS.addMessage("已退还 %.2f %s", refund, Dominion.vault.getEconomy().currencyNamePlural());
+            VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
+            SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
         }
         operator.setResponse(SUCCESS);
     }

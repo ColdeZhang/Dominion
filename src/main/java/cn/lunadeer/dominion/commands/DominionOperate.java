@@ -2,7 +2,6 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -19,10 +18,10 @@ import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Objects;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
-import static cn.lunadeer.dominion.commands.Apis.*;
+import static cn.lunadeer.dominion.commands.Apis.autoPoints;
+import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 
 public class DominionOperate {
     /**
