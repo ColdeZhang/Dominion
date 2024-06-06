@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
@@ -63,8 +64,7 @@ public class Apis {
                         String.format("你没有 %s (%s) 权限", flag.getDisplayName(), flag.getDescription()),
                         Style.style(TextColor.color(0xFF0000), TextDecoration.BOLD))
                 .hoverEvent(Component.text(flag.getDescription()));
-        // Notification.error(player, msg);
-        player.sendActionBar(msg);
+        Notification.actionBar(player, msg);
         if (event != null) {
             event.setCancelled(true);
         }
