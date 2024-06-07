@@ -82,5 +82,23 @@ public class DatabaseTables {
 
         // 1.18.0
         Dominion.database.addColumnIfNotExists("dominion", "tp_location", "TEXT NOT NULL DEFAULT 'default'");
+
+        // 1.31.0
+        sql = "CREATE TABLE IF NOT EXISTS privilege_template (" +
+                " id          SERIAL PRIMARY KEY," +
+                " creator     VARCHAR(36) NOT NULL," +
+                " name        TEXT NOT NULL," +
+                " admin       BOOLEAN NOT NULL DEFAULT FALSE," +
+
+                " UNIQUE (creator, name)," +
+                " FOREIGN KEY (creator) REFERENCES player_name(uuid) ON DELETE CASCADE" +
+                ");";
+        Dominion.database.query(sql);
+
+        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+            Dominion.database.addColumnIfNotExists("privilege_template",
+                    flag.getFlagName(),
+                    "BOOLEAN NOT NULL DEFAULT " + flag.getDefaultValue());
+        }
     }
 }

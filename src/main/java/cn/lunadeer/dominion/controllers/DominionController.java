@@ -2,8 +2,6 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.DominionNode;
-import cn.lunadeer.dominion.commands.OpenCUI;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -19,7 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
-import static cn.lunadeer.dominion.controllers.Apis.*;
+import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
+import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class DominionController {
 

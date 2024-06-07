@@ -14,12 +14,24 @@ public class Menu {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+
+        int page = 1;
+        if (args.length == 2) {
+            try {
+                page = Integer.parseInt(args[1]);
+            } catch (Exception ignored) {
+            }
+        }
+
         Line create = Line.create()
                 .append(Button.create("创建领地").setExecuteCommand("/dominion cui_create").build())
                 .append("以你为中心自动创建一个新的领地");
         Line list = Line.create()
                 .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                 .append("查看我的领地");
+        Line template = Line.create()
+                .append(Button.create("权限模板").setExecuteCommand("/dominion template_list").build())
+                .append("成员权限模板列表");
         Line help = Line.create()
                 .append(Button.create("指令帮助").setExecuteCommand("/dominion help").build())
                 .append("查看指令帮助");
@@ -38,11 +50,12 @@ public class Menu {
         Line reload_config = Line.create()
                 .append(Button.create("重载配置").setExecuteCommand("/dominion reload_config").build())
                 .append("重载配置文件");
-        ListView view = ListView.create(10, "/dominion");
+        ListView view = ListView.create(10, "/dominion menu");
         view.title("Dominion 领地系统")
                 .navigator(Line.create().append("主菜单"))
                 .add(create)
                 .add(list)
+                .add(template)
                 .add(help)
                 .add(link);
         if (player.isOp()) {
@@ -53,6 +66,6 @@ public class Menu {
             view.add(reload_cache);
             view.add(reload_config);
         }
-        view.showOn(player, 1);
+        view.showOn(player, page);
     }
 }

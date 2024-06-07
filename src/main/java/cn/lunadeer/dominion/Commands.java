@@ -2,6 +2,7 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
+import cn.lunadeer.dominion.cuis.*;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.tuis.*;
 import org.bukkit.command.Command;
@@ -152,21 +153,39 @@ public class Commands implements TabExecutor {
             case "all_dominion":
                 AllDominion.show(sender, args);
                 break;
+            case "template_list":
+                TemplateList.show(sender, args);
+                break;
+            case "template_manage":
+                TemplateManage.show(sender, args);
+                break;
+            case "template_delete":
+                Template.deleteTemplate(sender, args);
+                break;
+            case "template_create":
+                Template.createTemplate(sender, args);
+                break;
+            case "template_set_flag":
+                Template.setTemplateFlag(sender, args);
+                break;
             // ---===  CUI  ===---
             case "cui_rename":
-                OpenCUI.RenameDominion(sender, args);
+                RenameDominion.open(sender, args);
                 break;
             case "cui_edit_join_message":
-                OpenCUI.EditJoinMessage(sender, args);
+                EditJoinMessage.open(sender, args);
                 break;
             case "cui_edit_leave_message":
-                OpenCUI.EditLeaveMessage(sender, args);
+                EditLeaveMessage.open(sender, args);
                 break;
             case "cui_create":
-                OpenCUI.CreateDominion(sender, args);
+                CreateDominion.open(sender, args);
                 break;
             case "cui_create_privilege":
-                OpenCUI.CreatePrivilege(sender, args);
+                CreatePrivilege.open(sender, args);
+                break;
+            case "cui_template_create":
+                CreateTemplate.open(sender, args);
                 break;
             default:
                 return false;

@@ -97,6 +97,14 @@ public class PlayerPrivilegeDTO {
         return update(this);
     }
 
+    public PlayerPrivilegeDTO applyTemplate(PrivilegeTemplateDTO template) {
+        this.admin = template.getAdmin();
+        for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
+            this.flags.put(f, template.getFlagValue(f));
+        }
+        return update(this);
+    }
+
     private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<Flag, Boolean> flags) {
         this.id = id;
         this.playerUUID = playerUUID;
