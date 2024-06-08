@@ -65,10 +65,18 @@ public class DominionPrivilegeList {
                 }
             }
 
-            line.append(p_player.getLastKnownName())
-                    .append(Button.createGreen("配置权限").setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build());
-            if ((!player.getName().equals(p_player.getLastKnownName()) && !privilege.getAdmin()) || dominion.getOwner().equals(player.getUniqueId()))
-                line.append(Button.createRed("移除成员").setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build());
+            line.append(Button.createGreen("权限")
+                    .setHoverText("配置成员权限")
+                    .setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build());
+            if ((!player.getName().equals(p_player.getLastKnownName()) && !privilege.getAdmin()) || dominion.getOwner().equals(player.getUniqueId())) {
+                line.append(Button.createRed("移除")
+                        .setHoverText("将此成员移出（变为访客）")
+                        .setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build());
+                line.append(Button.createGreen("模板")
+                        .setHoverText("套用权限模板")
+                        .setExecuteCommand("/dominion select_template " + p_player.getLastKnownName() + " " + dominion.getName() + " " + page).build());
+            }
+            line.append(p_player.getLastKnownName());
             view.add(line);
         }
         view.showOn(player, page);

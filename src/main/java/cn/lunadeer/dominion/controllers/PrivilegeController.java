@@ -1,10 +1,7 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 
 import java.util.UUID;
@@ -106,9 +103,9 @@ public class PrivilegeController {
             privilege = createPlayerPrivilege(operator, player.getUuid(), dominion);
             if (privilege == null) return;
         }
-        if (flag.equals("admin")) {
+        if (flag.equals("admin") || privilege.getAdmin()) {
             if (notOwner(operator, dominion)) {
-                operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法设置/取消其他玩家为管理员", dominionName));
+                operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他管理员的权限", dominionName));
                 return;
             }
             privilege.setAdmin(value);
@@ -167,6 +164,42 @@ public class PrivilegeController {
             return null;
         }
         return privilege;
+    }
+
+    public static void applyTemplate(AbstractOperator operator, String dominionName, String playerName, String templateName) {
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "应用模板 %s 到玩家 %s 在领地 %s 的权限成功", templateName, playerName, dominionName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "应用模板 %s 到玩家 %s 在领地 %s 的权限失败", templateName, playerName, dominionName);
+        DominionDTO dominion = DominionDTO.select(dominionName);
+        if (dominion == null) {
+            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
+            return;
+        }
+        if (noAuthToChangeFlags(operator, dominion)) return;
+        PlayerDTO player = PlayerDTO.select(playerName);
+        if (player == null) {
+            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", playerName));
+            return;
+        }
+        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        if (privilege == null) {
+            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", playerName, dominionName));
+            return;
+        }
+        PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(operator.getUniqueId(), templateName);
+        if (template == null) {
+            operator.setResponse(FAIL.addMessage("模板 %s 不存在", templateName));
+            return;
+        }
+        if (notOwner(operator, dominion) && privilege.getAdmin()) {
+            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他管理员的权限", dominionName));
+            return;
+        }
+        privilege = privilege.applyTemplate(template);
+        if (privilege == null) {
+            operator.setResponse(FAIL);
+        } else {
+            operator.setResponse(SUCCESS);
+        }
     }
 
 }

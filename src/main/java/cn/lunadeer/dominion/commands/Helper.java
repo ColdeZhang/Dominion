@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -73,6 +74,17 @@ public class Helper {
             dominions_name.add(dominion.getName());
         }
         return dominions_name;
+    }
+
+    public static List<String> allTemplates(CommandSender sender) {
+        List<String> templates_name = new ArrayList<>();
+        Player player = playerOnly(sender);
+        if (player == null) return templates_name;
+        List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(player.getUniqueId());
+        for (PrivilegeTemplateDTO template : templates) {
+            templates_name.add(template.getName());
+        }
+        return templates_name;
     }
 
 }

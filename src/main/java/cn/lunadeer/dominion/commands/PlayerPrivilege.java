@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
+import cn.lunadeer.dominion.controllers.PrivilegeController;
 import cn.lunadeer.dominion.tuis.DominionPrivilegeList;
 import cn.lunadeer.dominion.tuis.PrivilegeInfo;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -92,6 +93,34 @@ public class PlayerPrivilege {
             String[] newArgs = new String[3];
             newArgs[0] = "privilege_list";
             newArgs[1] = args[2];
+            DominionPrivilegeList.show(sender, newArgs);
+        }
+    }
+
+    /**
+     * 应用权限模板
+     * /dominion apply_template <玩家名称> <领地名称> <模板名称>
+     *
+     * @param sender 命令发送者
+     * @param args   命令参数
+     */
+    public static void applyTemplate(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length < 4) {
+            Notification.error(sender, "用法: /dominion apply_template <玩家名称> <领地名称> <模板名称>");
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        String playerName = args[1];
+        String dominionName = args[2];
+        String templateName = args[3];
+        PrivilegeController.applyTemplate(operator, dominionName, playerName, templateName);
+        if (args.length == 5) {
+            String[] newArgs = new String[3];
+            newArgs[0] = "privilege_list";
+            newArgs[1] = dominionName;
+            newArgs[2] = args[4];
             DominionPrivilegeList.show(sender, newArgs);
         }
     }

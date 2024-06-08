@@ -168,6 +168,12 @@ public class Commands implements TabExecutor {
             case "template_set_flag":
                 Template.setTemplateFlag(sender, args);
                 break;
+            case "apply_template":
+                PlayerPrivilege.applyTemplate(sender, args);
+                break;
+            case "select_template":
+                SelectTemplate.show(sender, args);
+                break;
             // ---===  CUI  ===---
             case "cui_rename":
                 RenameDominion.open(sender, args);
@@ -221,7 +227,13 @@ public class Commands implements TabExecutor {
                     "reload_cache",
                     "reload_config",
                     "export_mca",
-                    "config"
+                    "config",
+                    "apply_template",
+                    "template_list",
+                    "template_manage",
+                    "template_delete",
+                    "template_create",
+                    "template_set_flag"
             );
         }
         if (args.length == 2) {
@@ -229,6 +241,7 @@ public class Commands implements TabExecutor {
                 case "help":
                 case "list":
                 case "config":
+                case "template_list":
                     return Collections.singletonList("页码(可选)");
                 case "create":
                 case "auto_create":
@@ -250,6 +263,7 @@ public class Commands implements TabExecutor {
                 case "set_privilege":
                 case "clear_privilege":
                 case "privilege_info":
+                case "apply_template":
                     return playerNames();
                 case "expand":
                 case "contract":
@@ -261,6 +275,12 @@ public class Commands implements TabExecutor {
                     return Collections.singletonList("进入提示语内容");
                 case "set_leave_msg":
                     return Collections.singletonList("离开提示语内容");
+                case "template_manage":
+                case "template_delete":
+                case "template_set_flag":
+                    return allTemplates(sender);
+                case "template_create":
+                    return Collections.singletonList("输入模板名称");
             }
         }
         if (args.length == 3) {
@@ -268,6 +288,7 @@ public class Commands implements TabExecutor {
                 case "set":
                     return boolOptions();
                 case "set_privilege":
+                case "template_set_flag":
                     return playerPrivileges();
                 case "expand":
                 case "contract":
@@ -278,11 +299,14 @@ public class Commands implements TabExecutor {
                 case "create_sub":
                 case "set_enter_msg":
                 case "set_leave_msg":
+                case "apply_template":
                     return playerDominions(sender);
                 case "rename":
                     return Collections.singletonList("输入新领地名称");
                 case "give":
                     return playerNames();
+                case "template_manage":
+                    return Collections.singletonList("页码(可选)");
             }
         }
         if (args.length == 4) {
@@ -290,7 +314,10 @@ public class Commands implements TabExecutor {
                 case "set":
                     return playerDominions(sender);
                 case "set_privilege":
+                case "template_set_flag":
                     return boolOptions();
+                case "apply_template":
+                    return allTemplates(sender);
             }
         }
         return null;
