@@ -6,7 +6,6 @@ import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
-import io.papermc.paper.event.entity.EntityDyeEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -338,12 +337,15 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dye
-    public void dyeEvent(EntityDyeEvent event) {
+    public void dyeEvent(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (player == null) {
+        Entity entity = event.getRightClicked();
+        if (!(entity instanceof Sheep)
+                && !(entity instanceof Wolf)
+                && !(entity instanceof Cat)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.DYE, player, event);
     }
 

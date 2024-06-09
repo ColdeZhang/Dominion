@@ -4,10 +4,10 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
-import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -143,7 +143,7 @@ public class Cache {
 //                Notification.info(player, "您已离开子领地：%s", last_dominion.getName());
             String msg = last_dominion.getLeaveMessage();
             msg = msg.replace("${DOM_NAME}", last_dominion.getName());
-            player.sendActionBar(Component.text(msg));
+            Notification.actionBar(player, msg);
         }
         if (current_dom_id != -1) {
 //            if (current_dominion.getParentDomId() == -1)
@@ -152,7 +152,7 @@ public class Cache {
 //                Notification.info(player, "您正在进入子领地：%s", current_dominion.getName());
             String msg = current_dominion.getJoinMessage();
             msg = msg.replace("${DOM_NAME}", current_dominion.getName());
-            player.sendActionBar(Component.text(msg));
+            Notification.actionBar(player, msg);
         }
 
         lightOrNot(player, current_dominion);   // 发光检查
