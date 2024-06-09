@@ -57,7 +57,7 @@
 
 ## 支持版本
 
-- 1.20.1+ (Paper、Folia)
+- 1.20.1+ (Bukkit、Spigot、Paper、Folia)
 
 ## TODO
 

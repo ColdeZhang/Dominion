@@ -35,6 +35,7 @@ public class RenameDominion {
         if (player == null) return;
         CuiTextInput.InputCallback renameDominionCB = new renameDominionCB(player, args[1]);
         CuiTextInput view = CuiTextInput.create(renameDominionCB).setText(args[1]).title("领地重命名");
+        view.setSuggestCommand("/dominion rename <原领地名称> <新领地名称>");
         view.open(player);
     }
 }

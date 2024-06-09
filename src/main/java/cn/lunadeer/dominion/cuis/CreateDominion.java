@@ -51,6 +51,7 @@ public class CreateDominion {
         if (player == null) return;
         CuiTextInput.InputCallback createDominionCB = new createDominionCB(player);
         CuiTextInput view = CuiTextInput.create(createDominionCB).setText("未命名领地").title("输入要创建的领地名称");
+        view.setSuggestCommand("/dominion auto_create <领地名称>");
         view.open(player);
     }
 }

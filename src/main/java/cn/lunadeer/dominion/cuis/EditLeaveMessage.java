@@ -42,6 +42,7 @@ public class EditLeaveMessage {
         }
         CuiTextInput.InputCallback editLeaveMessageCB = new editLeaveMessageCB(player, dominion.getName());
         CuiTextInput view = CuiTextInput.create(editLeaveMessageCB).setText(dominion.getLeaveMessage()).title("编辑离开提示语");
+        view.setSuggestCommand("/dominion set_leave_msg <提示语> [领地名称]");
         view.open(player);
     }
 }

@@ -52,6 +52,7 @@ public class CreatePrivilege {
         }
         CuiTextInput.InputCallback createPrivilegeCB = new createPrivilegeCB(player, dominion.getName());
         CuiTextInput view = CuiTextInput.create(createPrivilegeCB).setText("Steve").title("输入玩家名称以添加为成员");
+        view.setSuggestCommand("/dominion create_privilege <玩家名称> [领地名称]");
         view.open(player);
     }
 

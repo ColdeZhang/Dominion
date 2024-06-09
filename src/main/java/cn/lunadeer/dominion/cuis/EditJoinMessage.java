@@ -42,6 +42,7 @@ public class EditJoinMessage {
         }
         CuiTextInput.InputCallback editJoinMessageCB = new editJoinMessageCB(player, dominion.getName());
         CuiTextInput view = CuiTextInput.create(editJoinMessageCB).setText(dominion.getJoinMessage()).title("编辑欢迎提示语");
+        view.setSuggestCommand("/dominion set_enter_msg <提示语> [领地名称]");
         view.open(player);
     }
 }
