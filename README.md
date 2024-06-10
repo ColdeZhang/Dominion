@@ -8,6 +8,8 @@
 
 ### [统计页面](https://bstats.org/plugin/bukkit/Dominion/21445) | [Hangar](https://hangar.papermc.io/zhangyuheng/Dominion)
 
+[![CodeFactor](https://www.codefactor.io/repository/github/deergiteamirror/dominion/badge/master)](https://www.codefactor.io/repository/github/deergiteamirror/dominion/overview/master)
+
 </div>
 
 ## 简介
