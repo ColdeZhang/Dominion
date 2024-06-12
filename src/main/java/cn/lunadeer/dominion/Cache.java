@@ -71,6 +71,7 @@ public class Cache {
             world_dominion_tree.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
         }
         BlueMapConnect.render();
+        recheckPlayerState = true;
         _last_update_dominion.set(System.currentTimeMillis());
     }
 
@@ -106,6 +107,7 @@ public class Cache {
             }
             player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
         }
+        recheckPlayerState = true;
         _last_update_privilege.set(System.currentTimeMillis());
     }
 
@@ -127,6 +129,11 @@ public class Cache {
         if (isInDominion(last_dominion, player)) {
             if (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).size() == 0) {
                 // 如果玩家仍在领地内，且领地没有子领地，则直接返回
+                if (recheckPlayerState) {
+                    lightOrNot(player, last_dominion);
+                    flyOrNot(player, last_dominion);
+                    recheckPlayerState = false;
+                }
                 return last_dominion;
             }
         }
@@ -137,19 +144,11 @@ public class Cache {
             return last_dominion;
         }
         if (last_dom_id != -1) {
-//            if (last_dominion.getParentDomId() == -1)
-//                Notification.info(player, "您已离开领地：%s", last_dominion.getName());
-//             else
-//                Notification.info(player, "您已离开子领地：%s", last_dominion.getName());
             String msg = last_dominion.getLeaveMessage();
             msg = msg.replace("${DOM_NAME}", last_dominion.getName());
             Notification.actionBar(player, msg);
         }
         if (current_dom_id != -1) {
-//            if (current_dominion.getParentDomId() == -1)
-//                Notification.info(player, "您正在进入领地：%s", current_dominion.getName());
-//            else
-//                Notification.info(player, "您正在进入子领地：%s", current_dominion.getName());
             String msg = current_dominion.getJoinMessage();
             msg = msg.replace("${DOM_NAME}", current_dominion.getName());
             Notification.actionBar(player, msg);
@@ -315,7 +314,7 @@ public class Cache {
     private final AtomicBoolean _update_dominion_is_scheduled = new AtomicBoolean(false);
     private final AtomicLong _last_update_privilege = new AtomicLong(0);
     private final AtomicBoolean _update_privilege_is_scheduled = new AtomicBoolean(false);
-    private static final long UPDATE_INTERVAL = 1000 * 4;
-
+    private static final long UPDATE_INTERVAL = 1000 * 5;
+    private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
 }

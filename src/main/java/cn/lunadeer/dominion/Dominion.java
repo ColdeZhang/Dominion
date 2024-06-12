@@ -37,7 +37,9 @@ public final class Dominion extends JavaPlugin {
         new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();
-        new VaultConnect(this);
+        if (config.getEconomyEnable()) {
+            new VaultConnect(this);
+        }
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
