@@ -116,7 +116,7 @@ public class DominionDTO {
         for (Flag f : Flag.getAllDominionFlags()) {
             sql.append(f.getDefaultValue()).append(", ");
         }
-        sql.append("'default', ?, ?");
+        sql.append("?, ?, ?");
         sql.append(") RETURNING *;");
         List<DominionDTO> dominions = query(sql.toString(),
                 dominion.getOwner(),
@@ -128,8 +128,9 @@ public class DominionDTO {
                 dominion.getX2(),
                 dominion.getY2(),
                 dominion.getZ2(),
-                "欢迎来到 ${DOM_NAME}！",
-                "你正在离开 ${DOM_NAME}，欢迎下次光临～"
+                dominion.tp_location,
+                dominion.getJoinMessage(),
+                dominion.getLeaveMessage()
                 );
         if (dominions.size() == 0) return null;
         return dominions.get(0);
@@ -234,10 +235,10 @@ public class DominionDTO {
     private Integer y2;
     private Integer z2;
     private Integer parentDomId = -1;
-    private String joinMessage = "欢迎";
-    private String leaveMessage = "再见";
+    private String joinMessage = "欢迎来到 ${DOM_NAME}！";
+    private String leaveMessage = "你正在离开 ${DOM_NAME}，欢迎下次光临～";
     private final Map<Flag, Boolean> flags = new HashMap<>();
-    private String tp_location;
+    private String tp_location = "default";
 
     // getters and setters
     public Integer getId() {

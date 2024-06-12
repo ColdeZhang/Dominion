@@ -6,7 +6,7 @@
 
     <groupId>cn.lunadeer</groupId>
     <artifactId>Dominion</artifactId>
-    <version>1.31.1-beta</version>
+    <version>1.32.0-beta</version>
     <packaging>jar</packaging>
 
     <name>Dominion</name>
@@ -89,6 +89,11 @@
             <artifactId>BlueMapAPI</artifactId>
             <version>v2.6.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 </project>

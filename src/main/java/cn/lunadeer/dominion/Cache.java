@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
@@ -27,6 +28,13 @@ public class Cache {
         player_current_dominion_id = new HashMap<>();
         loadDominions();
         loadPlayerPrivileges();
+        List<ResMigration.ResidenceNode> residences = ResMigration.extractFromResidence(Dominion.instance);
+        for (ResMigration.ResidenceNode node : residences) {
+            if (!residence_data.containsKey(node.owner)) {
+                residence_data.put(node.owner, new ArrayList<>());
+            }
+            residence_data.get(node.owner).add(node);
+        }
     }
 
     /**
@@ -301,6 +309,10 @@ public class Cache {
         return count;
     }
 
+    public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
+        return residence_data.get(player_uuid);
+    }
+
     public List<DominionDTO> getDominions() {
         return new ArrayList<>(id_dominions.values());
     }
@@ -318,4 +330,6 @@ public class Cache {
     private static final long UPDATE_INTERVAL = 1000 * 4;
 
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
+
+    private final Map<UUID, List<ResMigration.ResidenceNode>> residence_data = new HashMap<>();
 }
