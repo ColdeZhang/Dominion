@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -347,6 +348,13 @@ public class PlayerEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.DYE, player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // edit sign
+    public void onSignEdit(SignChangeEvent event) {
+        Player player = event.getPlayer();
+        DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
+        checkFlag(dom, Flag.EDIT_SIGN, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // egg
