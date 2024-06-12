@@ -375,15 +375,17 @@ public class DominionOperate {
         }
 
         PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
-        if (privilegeDTO == null) {
-            if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
-                Notification.error(sender, "此领地禁止传送");
-                return;
-            }
-        } else {
-            if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
-                Notification.error(sender, "你不被允许传送到这个领地");
-                return;
+        if (!player.getUniqueId().equals(dominionDTO.getOwner())) { // 领地所有人可以传送到自己的领地
+            if (privilegeDTO == null) {
+                if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
+                    Notification.error(sender, "此领地禁止传送");
+                    return;
+                }
+            } else {
+                if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
+                    Notification.error(sender, "你不被允许传送到这个领地");
+                    return;
+                }
             }
         }
 
