@@ -6,9 +6,11 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 
 public class DominionDTO {
     private static List<DominionDTO> query(String sql, Object... args) {
@@ -36,12 +38,14 @@ public class DominionDTO {
                 for (Flag f : Flag.getDominionFlagsEnabled()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
+                String color = rs.getString("color");
 
                 DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
                         rs.getString("join_message"),
                         rs.getString("leave_message"),
                         flags,
-                        tp_location
+                        tp_location,
+                        color
                 );
                 dominions.add(dominion);
             }
@@ -148,7 +152,7 @@ public class DominionDTO {
             Location loc = dominion.getTpLocation();
             tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
         }
-        String sql = "UPDATE dominion SET " +
+        StringBuilder sql = new StringBuilder("UPDATE dominion SET " +
                 "owner = ?," +
                 "name = ?," +
                 "world = ?," +
@@ -160,19 +164,19 @@ public class DominionDTO {
                 "z2 = " + dominion.getZ2() + ", " +
                 "parent_dom_id = " + dominion.getParentDomId() + ", " +
                 "join_message = ?," +
-                "leave_message = ?,";
+                "leave_message = ?," +
+                "color = ?,");
         for (Flag f : Flag.getDominionFlagsEnabled()) {
-            sql += f.getFlagName() + " = " + dominion.getFlagValue(f) + ",";
+            sql.append(f.getFlagName()).append(" = ").append(dominion.getFlagValue(f)).append(",");
         }
-        sql += "tp_location = ?" +
-                " WHERE id = " + dominion.getId() +
-                " RETURNING *;";
-        List<DominionDTO> dominions = query(sql,
+        sql.append("tp_location = ?" + " WHERE id = ").append(dominion.getId()).append(" RETURNING *;");
+        List<DominionDTO> dominions = query(sql.toString(),
                 dominion.getOwner().toString(),
                 dominion.getName(),
                 dominion.getWorld(),
                 dominion.getJoinMessage(),
                 dominion.getLeaveMessage(),
+                dominion.getColor(),
                 tp_location);
         if (dominions.size() == 0) return null;
         return dominions.get(0);
@@ -183,7 +187,8 @@ public class DominionDTO {
                         Integer parentDomId,
                         String joinMessage, String leaveMessage,
                         Map<Flag, Boolean> flags,
-                        String tp_location) {
+                        String tp_location,
+                        String color) {
         this.id = id;
         this.owner = owner;
         this.name = name;
@@ -199,6 +204,7 @@ public class DominionDTO {
         this.leaveMessage = leaveMessage;
         this.flags.putAll(flags);
         this.tp_location = tp_location;
+        this.color = color;
     }
 
 
@@ -238,6 +244,7 @@ public class DominionDTO {
     private String leaveMessage = "再见";
     private final Map<Flag, Boolean> flags = new HashMap<>();
     private String tp_location;
+    private String color;
 
     // getters and setters
     public Integer getId() {
@@ -420,5 +427,26 @@ public class DominionDTO {
 
     public Location getLocation2() {
         return new Location(Dominion.instance.getServer().getWorld(world), x2, y2, z2);
+    }
+
+    public DominionDTO setColor(String color) {
+        this.color = color;
+        return update(this);
+    }
+
+    public int getColorR() {
+        return Integer.valueOf(color.substring(1, 3), 16);
+    }
+
+    public int getColorG() {
+        return Integer.valueOf(color.substring(3, 5), 16);
+    }
+
+    public int getColorB() {
+        return Integer.valueOf(color.substring(5, 7), 16);
+    }
+
+    public String getColor() {
+        return color;
     }
 }

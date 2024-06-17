@@ -428,4 +428,25 @@ public class DominionOperate {
             }
         }, 20L * Dominion.config.getTpDelay());
     }
+
+    /**
+     * 设置领地卫星地图地块颜色
+     *
+     * @param sender    命令发送者
+     * @param args      命令参数
+     */
+    public static void setMapColor(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion set_map_color <颜色> [领地名称]");
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (args.length == 2) {
+            DominionController.setMapColor(operator, args[1]);
+        } else {
+            DominionController.setMapColor(operator, args[1], args[2]);
+        }
+    }
 }

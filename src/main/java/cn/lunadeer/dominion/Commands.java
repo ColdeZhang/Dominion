@@ -174,6 +174,9 @@ public class Commands implements TabExecutor {
             case "select_template":
                 SelectTemplate.show(sender, args);
                 break;
+            case "set_map_color":
+                DominionOperate.setMapColor(sender, args);
+                break;
             // ---===  CUI  ===---
             case "cui_rename":
                 RenameDominion.open(sender, args);
@@ -192,6 +195,9 @@ public class Commands implements TabExecutor {
                 break;
             case "cui_template_create":
                 CreateTemplate.open(sender, args);
+                break;
+            case "cui_set_map_color":
+                SetMapColor.open(sender, args);
                 break;
             default:
                 return false;
@@ -233,7 +239,9 @@ public class Commands implements TabExecutor {
                     "template_manage",
                     "template_delete",
                     "template_create",
-                    "template_set_flag"
+                    "template_set_flag",
+                    "all_dominion",
+                    "set_map_color"
             );
         }
         if (args.length == 2) {
@@ -281,6 +289,8 @@ public class Commands implements TabExecutor {
                     return allTemplates(sender);
                 case "template_create":
                     return Collections.singletonList("输入模板名称");
+                case "set_map_color":
+                    return Collections.singletonList("输入颜色(16进制)");
             }
         }
         if (args.length == 3) {
@@ -300,6 +310,7 @@ public class Commands implements TabExecutor {
                 case "set_enter_msg":
                 case "set_leave_msg":
                 case "apply_template":
+                case "set_map_color":
                     return playerDominions(sender);
                 case "rename":
                     return Collections.singletonList("输入新领地名称");

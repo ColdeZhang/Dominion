@@ -100,5 +100,8 @@ public class DatabaseTables {
                     flag.getFlagName(),
                     "BOOLEAN NOT NULL DEFAULT " + flag.getDefaultValue());
         }
+
+        // 1.31.6
+        Dominion.database.addColumnIfNotExists("dominion", "color", "TEXT NOT NULL DEFAULT '#00BFFF'");
     }
 }

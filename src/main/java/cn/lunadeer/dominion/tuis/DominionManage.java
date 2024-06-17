@@ -1,10 +1,13 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -43,6 +46,11 @@ public class DominionManage {
         Line leave_msg = Line.create()
                 .append(Button.create("编辑离开提示语").setExecuteCommand("/dominion cui_edit_leave_message " + dominion.getName()).build())
                 .append("当玩家离开领地时显示的消息");
+        Line map_color = Line.create()
+                .append(Button.create("设置颜色").setExecuteCommand("/dominion cui_set_map_color " + dominion.getName()).build())
+                .append(Component.text("设置卫星地图上的地块颜色")
+                        .append(Component.text(dominion.getColor(),
+                                TextColor.color(dominion.getColorR(), dominion.getColorG(), dominion.getColorB()))));
         ListView view = ListView.create(10, "/dominion manage " + dominion.getName());
         view.title("领地 " + dominion.getName() + " 管理界面")
                 .navigator(Line.create()
@@ -55,7 +63,10 @@ public class DominionManage {
                 .add(set_tp)
                 .add(rename)
                 .add(join_msg)
-                .add(leave_msg)
-                .showOn(player, 1);
+                .add(leave_msg);
+        if (Dominion.config.getBlueMap()) {
+            view.add(map_color);
+        }
+        view.showOn(player, 1);
     }
 }

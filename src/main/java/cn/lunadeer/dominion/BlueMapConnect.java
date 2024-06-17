@@ -43,12 +43,12 @@ public class BlueMapConnect {
                             double z = vectors.iterator().next().getY();
                             double y = dominion.getY1();
 
-                            Color line = new Color(0, 191, 255, 0.8F);
-                            Color fill = new Color(0, 191, 255, 0.2F);
-                            if (dominion.getParentDomId() != -1) {  // for children dominion
-                                line = new Color(240, 230, 140, 0.8F);
-                                fill = new Color(240, 230, 140, 0.2F);
-                            }
+                            int r = dominion.getColorR();
+                            int g = dominion.getColorG();
+                            int b = dominion.getColorB();
+
+                            Color line = new Color(r, g, b, 0.8F);
+                            Color fill = new Color(r, g, b, 0.2F);
                             ExtrudeMarker marker = ExtrudeMarker.builder()
                                     .label(dominion.getName())
                                     .position(x, y, z)
