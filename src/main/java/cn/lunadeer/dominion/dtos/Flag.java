@@ -120,6 +120,26 @@ public enum Flag {
         return Arrays.asList(Flag.values());
     }
 
+    public static List<Flag> getDominionOnlyFlagsEnabled() {
+        List<Flag> flags = new ArrayList<>();
+        for (Flag flag : Flag.values()) {
+            if (!flag.dominion_only) {
+                continue;
+            }
+            if (!flag.enable) {
+                continue;
+            }
+            flags.add(flag);
+        }
+        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
+        flags.sort((o1, o2) -> comparator.compare(o1.getDisplayName(), o2.getDisplayName()));
+        return flags;
+    }
+
+    public static boolean isDominionOnlyFlag(String flagName) {
+        return getFlag(flagName).dominion_only;
+    }
+
     public static List<Flag> getDominionFlagsEnabled() {
         List<Flag> flags = new ArrayList<>();
         for (Flag flag : Flag.values()) {

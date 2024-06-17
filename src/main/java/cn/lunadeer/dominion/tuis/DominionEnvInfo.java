@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 
-public class DominionFlagInfo {
+public class DominionEnvInfo {
 
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion flag_info <领地名称> [页码]");
+            Notification.error(sender, "用法: /dominion env_info <领地名称> [页码]");
             return;
         }
         DominionDTO dominion = DominionDTO.select(args[1]);
@@ -33,14 +33,14 @@ public class DominionFlagInfo {
             } catch (Exception ignored) {
             }
         }
-        ListView view = ListView.create(10, "/dominion flag_info " + dominion.getName());
-        view.title("领地 " + dominion.getName() + " 访客权限")
+        ListView view = ListView.create(10, "/dominion env_info " + dominion.getName());
+        view.title("领地 " + dominion.getName() + " 环境设置")
                 .navigator(Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append("访客权限"));
-        for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+                        .append("环境设置"));
+        for (Flag flag : Flag.getDominionOnlyFlagsEnabled()) {
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }
         view.showOn(player, page);
@@ -57,4 +57,5 @@ public class DominionFlagInfo {
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
     }
+
 }

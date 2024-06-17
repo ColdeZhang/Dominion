@@ -28,6 +28,9 @@ public class DominionManage {
         Line size_info = Line.create()
                 .append(Button.create("详细信息").setExecuteCommand("/dominion info " + dominion.getName()).build())
                 .append("查看领地详细信息");
+        Line env_info = Line.create()
+                .append(Button.create("环境设置").setExecuteCommand("/dominion env_info " + dominion.getName()).build())
+                .append("设置领地内的一些非玩家相关效果");
         Line flag_info = Line.create()
                 .append(Button.create("访客权限").setExecuteCommand("/dominion flag_info " + dominion.getName()).build())
                 .append("访客在此领地的权限");
@@ -58,6 +61,7 @@ public class DominionManage {
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(dominion.getName()))
                 .add(size_info)
+                .add(env_info)
                 .add(flag_info)
                 .add(privilege_list)
                 .add(set_tp)

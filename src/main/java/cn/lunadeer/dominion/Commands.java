@@ -177,6 +177,9 @@ public class Commands implements TabExecutor {
             case "set_map_color":
                 DominionOperate.setMapColor(sender, args);
                 break;
+            case "env_info":
+                DominionEnvInfo.show(sender, args);
+                break;
             // ---===  CUI  ===---
             case "cui_rename":
                 RenameDominion.open(sender, args);
