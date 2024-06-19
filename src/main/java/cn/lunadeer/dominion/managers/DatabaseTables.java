@@ -11,9 +11,9 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 public class DatabaseTables {
     public static void migrate() {
         // player name
-        TableColumn player_name_id = new TableColumn("id", FieldType.INT, true, true, true, true, null);
-        TableColumn player_name_uuid = new TableColumn("uuid", FieldType.STRING, false, false, true, true, null);
-        TableColumn player_name_last_known_name = new TableColumn("last_known_name", FieldType.STRING, false, false, true, false, null);
+        TableColumn player_name_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn player_name_uuid = new TableColumn("uuid", FieldType.STRING, false, false, true, true, "''");
+        TableColumn player_name_last_known_name = new TableColumn("last_known_name", FieldType.STRING, false, false, true, false, "'unknown'");
         TableColumn player_name_last_join_at = new TableColumn("last_join_at", FieldType.DATETIME, false, false, true, false, "CURRENT_TIMESTAMP");
         CreateTable player_name = new CreateTable().ifNotExists();
         player_name.table("player_name")
@@ -24,16 +24,16 @@ public class DatabaseTables {
         player_name.execute();
 
         // dominion table
-        TableColumn dominion_id = new TableColumn("id", FieldType.INT, true, true, true, true, null);
-        TableColumn dominion_owner = new TableColumn("owner", FieldType.STRING, false, false, true, false, null);
-        TableColumn dominion_name = new TableColumn("name", FieldType.STRING, false, false, true, false, null);
-        TableColumn dominion_world = new TableColumn("world", FieldType.STRING, false, false, true, false, null);
-        TableColumn dominion_x1 = new TableColumn("x1", FieldType.INT, false, false, true, false, null);
-        TableColumn dominion_y1 = new TableColumn("y1", FieldType.INT, false, false, true, false, null);
-        TableColumn dominion_z1 = new TableColumn("z1", FieldType.INT, false, false, true, false, null);
-        TableColumn dominion_x2 = new TableColumn("x2", FieldType.INT, false, false, true, false, null);
-        TableColumn dominion_y2 = new TableColumn("y2", FieldType.INT, false, false, true, false, null);
-        TableColumn dominion_z2 = new TableColumn("z2", FieldType.INT, false, false, true, false, null);
+        TableColumn dominion_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn dominion_owner = new TableColumn("owner", FieldType.STRING, false, false, true, false, "''");
+        TableColumn dominion_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'未命名'");
+        TableColumn dominion_world = new TableColumn("world", FieldType.STRING, false, false, true, false, "'world'");
+        TableColumn dominion_x1 = new TableColumn("x1", FieldType.INT, false, false, true, false, 0);
+        TableColumn dominion_y1 = new TableColumn("y1", FieldType.INT, false, false, true, false, 0);
+        TableColumn dominion_z1 = new TableColumn("z1", FieldType.INT, false, false, true, false, 0);
+        TableColumn dominion_x2 = new TableColumn("x2", FieldType.INT, false, false, true, false, 0);
+        TableColumn dominion_y2 = new TableColumn("y2", FieldType.INT, false, false, true, false, 0);
+        TableColumn dominion_z2 = new TableColumn("z2", FieldType.INT, false, false, true, false, 0);
         TableColumn dominion_parent_dom_id = new TableColumn("parent_dom_id", FieldType.INT, false, false, true, false, -1);
         TableColumn dominion_join_message = new TableColumn("join_message", FieldType.STRING, false, false, true, false, "'欢迎'");
         TableColumn dominion_leave_message = new TableColumn("leave_message", FieldType.STRING, false, false, true, false, "'再见'");
@@ -59,9 +59,9 @@ public class DatabaseTables {
         dominion.execute();
 
         // player privilege
-        TableColumn player_privilege_id = new TableColumn("id", FieldType.INT, true, true, true, true, null);
-        TableColumn player_privilege_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, false, null);
-        TableColumn player_privilege_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, null);
+        TableColumn player_privilege_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn player_privilege_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, false, "''");
+        TableColumn player_privilege_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
         TableColumn player_privilege_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
         CreateTable.ForeignKey player_privilege_player_uuid_fk = new CreateTable.ForeignKey(player_privilege_player_uuid, "player_name", player_name_uuid, true);
         CreateTable.ForeignKey player_privilege_dom_id_fk = new CreateTable.ForeignKey(player_privilege_dom_id, "dominion", dominion_id, true);
@@ -74,7 +74,7 @@ public class DatabaseTables {
                 .foreignKey(player_privilege_player_uuid_fk)
                 .foreignKey(player_privilege_dom_id_fk)
                 .unique(player_privilege_player_uuid, player_privilege_dom_id);
-        player_name.execute();
+        player_privilege.execute();
 
         // server root player name
         Field server_player_name_id_field = new Field("id", -1);
@@ -131,9 +131,9 @@ public class DatabaseTables {
         new AddColumn(dominion_tp_location).table("dominion").ifNotExists().execute();
 
         // 1.31.0
-        TableColumn privilege_template_id = new TableColumn("id", FieldType.INT, true, true, true, true, null);
-        TableColumn privilege_template_creator = new TableColumn("creator", FieldType.STRING, false, false, true, false, null);
-        TableColumn privilege_template_name = new TableColumn("name", FieldType.STRING, false, false, true, false, null);
+        TableColumn privilege_template_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn privilege_template_creator = new TableColumn("creator", FieldType.STRING, false, false, true, false, "''");
+        TableColumn privilege_template_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'未命名'");
         TableColumn privilege_template_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
         CreateTable.ForeignKey privilege_template_creator_fk = new CreateTable.ForeignKey(privilege_template_creator, "player_name", player_name_uuid, true);
         CreateTable privilege_template = new CreateTable().ifNotExists();

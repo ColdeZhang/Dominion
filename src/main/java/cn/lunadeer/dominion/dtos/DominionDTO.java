@@ -4,14 +4,15 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
+import cn.lunadeer.minecraftpluginutils.databse.Field;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.List;
 
 public class DominionDTO {
     private static List<DominionDTO> query(String sql, Object... args) {
@@ -21,37 +22,43 @@ public class DominionDTO {
                 // 如果是更新操作，重新加载缓存
                 Cache.instance.loadDominions();
             }
-            if (rs == null) return dominions;
-            while (rs.next()) {
-                Integer id = rs.getInt("id");
-                UUID owner = UUID.fromString(rs.getString("owner"));
-                String name = rs.getString("name");
-                String world = rs.getString("world");
-                Integer x1 = rs.getInt("x1");
-                Integer y1 = rs.getInt("y1");
-                Integer z1 = rs.getInt("z1");
-                Integer x2 = rs.getInt("x2");
-                Integer y2 = rs.getInt("y2");
-                Integer z2 = rs.getInt("z2");
-                Integer parentDomId = rs.getInt("parent_dom_id");
-                String tp_location = rs.getString("tp_location");
-                Map<Flag, Boolean> flags = new HashMap<>();
-                for (Flag f : Flag.getDominionFlagsEnabled()) {
-                    flags.put(f, rs.getBoolean(f.getFlagName()));
-                }
-                String color = rs.getString("color");
-
-                DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
-                        rs.getString("join_message"),
-                        rs.getString("leave_message"),
-                        flags,
-                        tp_location,
-                        color
-                );
-                dominions.add(dominion);
-            }
+            return getDTOFromRS(rs);
         } catch (SQLException e) {
-            Dominion.database.handleDatabaseError("数据库操作失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, sql);
+        }
+        return dominions;
+    }
+
+    private static List<DominionDTO> getDTOFromRS(ResultSet rs) throws SQLException {
+        List<DominionDTO> dominions = new ArrayList<>();
+        if (rs == null) return dominions;
+        while (rs.next()) {
+            Integer id = rs.getInt("id");
+            UUID owner = UUID.fromString(rs.getString("owner"));
+            String name = rs.getString("name");
+            String world = rs.getString("world");
+            Integer x1 = rs.getInt("x1");
+            Integer y1 = rs.getInt("y1");
+            Integer z1 = rs.getInt("z1");
+            Integer x2 = rs.getInt("x2");
+            Integer y2 = rs.getInt("y2");
+            Integer z2 = rs.getInt("z2");
+            Integer parentDomId = rs.getInt("parent_dom_id");
+            String tp_location = rs.getString("tp_location");
+            Map<Flag, Boolean> flags = new HashMap<>();
+            for (Flag f : Flag.getDominionFlagsEnabled()) {
+                flags.put(f, rs.getBoolean(f.getFlagName()));
+            }
+            String color = rs.getString("color");
+
+            DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
+                    rs.getString("join_message"),
+                    rs.getString("leave_message"),
+                    flags,
+                    tp_location,
+                    color
+            );
+            dominions.add(dominion);
         }
         return dominions;
     }
@@ -111,33 +118,34 @@ public class DominionDTO {
     }
 
     public static DominionDTO insert(DominionDTO dominion) {
-        StringBuilder sql = new StringBuilder("INSERT INTO dominion (" +
-                "owner, name, world, x1, y1, z1, x2, y2, z2, ");
-        for (Flag f : Flag.getAllDominionFlags()) {
-            sql.append(f.getFlagName()).append(", ");
+        Field owner = new Field("owner", dominion.getOwner().toString());
+        Field name = new Field("name", dominion.getName());
+        Field world = new Field("world", dominion.getWorld());
+        Field x1 = new Field("x1", dominion.getX1());
+        Field y1 = new Field("y1", dominion.getY1());
+        Field z1 = new Field("z1", dominion.getZ1());
+        Field x2 = new Field("x2", dominion.getX2());
+        Field y2 = new Field("y2", dominion.getY2());
+        Field z2 = new Field("z2", dominion.getZ2());
+        Field parentDomId = new Field("parent_dom_id", dominion.getParentDomId());
+        Field joinMessage = new Field("join_message", "欢迎来到 ${DOM_NAME}！");
+        Field leaveMessage = new Field("leave_message", "你正在离开 ${DOM_NAME}，欢迎下次光临～");
+        Field tpLocation = new Field("tp_location", "default");
+        InsertRow insert = new InsertRow().returningAll().table("dominion").onConflictDoNothing(new Field("id", null));
+        insert.field(owner).field(name).field(world).field(x1).field(y1).field(z1).field(x2).field(y2).field(z2)
+                .field(parentDomId).field(joinMessage).field(leaveMessage).field(tpLocation);
+        for (Flag f : Flag.getDominionFlagsEnabled()) {
+            insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
-        sql.append("tp_location, join_message, leave_message");
-        sql.append(") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-        for (Flag f : Flag.getAllDominionFlags()) {
-            sql.append(f.getDefaultValue()).append(", ");
+        try (ResultSet rs = insert.execute()) {
+            Cache.instance.loadDominions();
+            List<DominionDTO> dominions = getDTOFromRS(rs);
+            if (dominions.size() == 0) return null;
+            return dominions.get(0);
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, insert.toString());
+            return null;
         }
-        sql.append("'default', ?, ?");
-        sql.append(") RETURNING *;");
-        List<DominionDTO> dominions = query(sql.toString(),
-                dominion.getOwner(),
-                dominion.getName(),
-                dominion.getWorld(),
-                dominion.getX1(),
-                dominion.getY1(),
-                dominion.getZ1(),
-                dominion.getX2(),
-                dominion.getY2(),
-                dominion.getZ2(),
-                "欢迎来到 ${DOM_NAME}！",
-                "你正在离开 ${DOM_NAME}，欢迎下次光临～"
-                );
-        if (dominions.size() == 0) return null;
-        return dominions.get(0);
     }
 
     public static void delete(DominionDTO dominion) {
@@ -153,34 +161,36 @@ public class DominionDTO {
             Location loc = dominion.getTpLocation();
             tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
         }
-        StringBuilder sql = new StringBuilder("UPDATE dominion SET " +
-                "owner = ?," +
-                "name = ?," +
-                "world = ?," +
-                "x1 = " + dominion.getX1() + ", " +
-                "y1 = " + dominion.getY1() + ", " +
-                "z1 = " + dominion.getZ1() + ", " +
-                "x2 = " + dominion.getX2() + ", " +
-                "y2 = " + dominion.getY2() + ", " +
-                "z2 = " + dominion.getZ2() + ", " +
-                "parent_dom_id = " + dominion.getParentDomId() + ", " +
-                "join_message = ?," +
-                "leave_message = ?," +
-                "color = ?,");
+        Field owner = new Field("owner", dominion.getOwner().toString());
+        Field name = new Field("name", dominion.getName());
+        Field world = new Field("world", dominion.getWorld());
+        Field x1 = new Field("x1", dominion.getX1());
+        Field y1 = new Field("y1", dominion.getY1());
+        Field z1 = new Field("z1", dominion.getZ1());
+        Field x2 = new Field("x2", dominion.getX2());
+        Field y2 = new Field("y2", dominion.getY2());
+        Field z2 = new Field("z2", dominion.getZ2());
+        Field parentDomId = new Field("parent_dom_id", dominion.getParentDomId());
+        Field joinMessage = new Field("join_message", dominion.getJoinMessage());
+        Field leaveMessage = new Field("leave_message", dominion.getLeaveMessage());
+        Field tpLocation = new Field("tp_location", tp_location);
+        Field color = new Field("color", dominion.getColor());
+        Field id = new Field("id", dominion.getId());
+        UpdateRow update = new UpdateRow().returningAll(id).table("dominion").where("id = ?", id.value);
         for (Flag f : Flag.getDominionFlagsEnabled()) {
-            sql.append(f.getFlagName()).append(" = ").append(dominion.getFlagValue(f)).append(",");
+            update.field(new Field(f.getFlagName(), dominion.getFlagValue(f)));
         }
-        sql.append("tp_location = ?" + " WHERE id = ").append(dominion.getId()).append(" RETURNING *;");
-        List<DominionDTO> dominions = query(sql.toString(),
-                dominion.getOwner().toString(),
-                dominion.getName(),
-                dominion.getWorld(),
-                dominion.getJoinMessage(),
-                dominion.getLeaveMessage(),
-                dominion.getColor(),
-                tp_location);
-        if (dominions.size() == 0) return null;
-        return dominions.get(0);
+        update.field(owner).field(name).field(world).field(x1).field(y1).field(z1).field(x2).field(y2).field(z2)
+                .field(parentDomId).field(joinMessage).field(leaveMessage).field(tpLocation).field(color);
+        try {
+            List<DominionDTO> dominions = getDTOFromRS(update.execute());
+            Cache.instance.loadDominions();
+            if (dominions.size() == 0) return null;
+            return dominions.get(0);
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, update.toString());
+            return null;
+        }
     }
 
     private DominionDTO(Integer id, UUID owner, String name, String world,

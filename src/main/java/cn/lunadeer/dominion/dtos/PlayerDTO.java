@@ -1,10 +1,15 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
+import cn.lunadeer.minecraftpluginutils.databse.Field;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,18 +35,24 @@ public class PlayerDTO {
 
     private static List<PlayerDTO> query(String sql, Object... params) {
         List<PlayerDTO> players = new ArrayList<>();
-        try (ResultSet rs = Dominion.database.query(sql, params)) {
-            if (rs == null) return players;
-            while (rs.next()) {
-                Integer id = rs.getInt("id");
-                UUID uuid = UUID.fromString(rs.getString("uuid"));
-                String lastKnownName = rs.getString("last_known_name");
-                Long lastJoinAt = rs.getTimestamp("last_join_at").getTime();
-                PlayerDTO player = new PlayerDTO(id, uuid, lastKnownName, lastJoinAt);
-                players.add(player);
-            }
+        try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
+            return getDTOFromRS(rs);
         } catch (SQLException e) {
-            Dominion.database.handleDatabaseError("查询玩家信息失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("查询玩家信息失败: ", e, sql);
+        }
+        return players;
+    }
+
+    private static List<PlayerDTO> getDTOFromRS(ResultSet rs) throws SQLException {
+        List<PlayerDTO> players = new ArrayList<>();
+        if (rs == null) return players;
+        while (rs.next()) {
+            Integer id = rs.getInt("id");
+            UUID uuid = UUID.fromString(rs.getString("uuid"));
+            String lastKnownName = rs.getString("last_known_name");
+            Long lastJoinAt = rs.getTimestamp("last_join_at").getTime();
+            PlayerDTO player = new PlayerDTO(id, uuid, lastKnownName, lastJoinAt);
+            players.add(player);
         }
         return players;
     }
@@ -72,24 +83,44 @@ public class PlayerDTO {
     }
 
     private static PlayerDTO insert(PlayerDTO player) {
-        String sql = "INSERT INTO player_name (uuid, last_known_name, last_join_at) " +
-                "VALUES" +
-                " (?, ?, CURRENT_TIMESTAMP) " +
-                "RETURNING *;";
-        List<PlayerDTO> players = query(sql, player.getUuid().toString(), player.getLastKnownName());
-        if (players.size() == 0) return null;
-        return players.get(0);
+        Field uuid = new Field("uuid", player.getUuid().toString());
+        Field lastKnownName = new Field("last_known_name", player.getLastKnownName());
+        Field lastJoinAt = new Field("last_join_at", Timestamp.valueOf(LocalDateTime.now()));
+        InsertRow insertRow = new InsertRow()
+                .table("player_name")
+                .field(uuid)
+                .field(lastKnownName)
+                .field(lastJoinAt)
+                .returningAll()
+                .onConflictOverwrite(new Field("id", null));
+        try (ResultSet rs = insertRow.execute()) {
+            List<PlayerDTO> players = getDTOFromRS(rs);
+            if (players.size() == 0) return null;
+            return players.get(0);
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("插入玩家信息失败: ", e, insertRow.toString());
+            return null;
+        }
     }
 
     private static PlayerDTO update(PlayerDTO player) {
-        String sql = "UPDATE player_name SET " +
-                "last_known_name = ?, " +
-                "last_join_at = CURRENT_TIMESTAMP " +
-                "WHERE uuid = ? " +
-                "RETURNING *;";
-        List<PlayerDTO> players = query(sql, player.getLastKnownName(), player.getUuid().toString());
-        if (players.size() == 0) return null;
-        return players.get(0);
+        Field lastKnownName = new Field("last_known_name", player.getLastKnownName());
+        Field uuid = new Field("uuid", player.getUuid().toString());
+        Field lastJoinAt = new Field("last_join_at", Timestamp.valueOf(LocalDateTime.now()));
+        UpdateRow updateRow = new UpdateRow()
+                .table("player_name")
+                .field(lastKnownName)
+                .field(lastJoinAt)
+                .where("uuid = ?", uuid.value)
+                .returningAll(uuid);
+        try (ResultSet rs = updateRow.execute()) {
+            List<PlayerDTO> players = getDTOFromRS(rs);
+            if (players.size() == 0) return null;
+            return players.get(0);
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("更新玩家信息失败: ", e, updateRow.toString());
+            return null;
+        }
     }
 
     private PlayerDTO(Integer id, UUID uuid, String lastKnownName, Long lastJoinAt) {
