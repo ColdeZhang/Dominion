@@ -61,6 +61,21 @@ public class PrivilegeTemplateDTO {
         }
     }
 
+    private PrivilegeTemplateDTO doUpdate(UpdateRow updateRow) {
+        Field id = new Field("id", this.id);
+        updateRow.returningAll(id)
+                .table("privilege_template")
+                .where("id = ?", id.value);
+        try (ResultSet rs = updateRow.execute()) {
+            List<PrivilegeTemplateDTO> templates = getDTOFromRS(rs);
+            if (templates.size() == 0) return null;
+            return templates.get(0);
+        } catch (Exception e) {
+            DatabaseManager.handleDatabaseError("更新权限模版失败: ", e, null);
+            return null;
+        }
+    }
+
     public static PrivilegeTemplateDTO select(UUID creator, String name) {
         String sql = "SELECT * FROM privilege_template WHERE creator = ? AND name = ?;";
         List<PrivilegeTemplateDTO> templates = query(sql, creator.toString(), name);
@@ -116,34 +131,12 @@ public class PrivilegeTemplateDTO {
 
     public PrivilegeTemplateDTO setFlagValue(Flag flag, Boolean value) {
         flags.put(flag, value);
-        return update(this);
+        return doUpdate(new UpdateRow().field(new Field(flag.getFlagName(), value)));
     }
 
     public PrivilegeTemplateDTO setAdmin(Boolean admin) {
         this.admin = admin;
-        return update(this);
-    }
-
-    private static PrivilegeTemplateDTO update(PrivilegeTemplateDTO template) {
-        Field name = new Field("name", template.getName());
-        Field admin = new Field("admin", template.getAdmin());
-        Field id = new Field("id", template.getId());
-        UpdateRow updateRow = new UpdateRow().table("privilege_template")
-                .field(name)
-                .field(admin)
-                .returningAll(id)
-                .where("id = ?", id.value);
-        for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
-            updateRow.field(new Field(f.getFlagName(), template.getFlagValue(f)));
-        }
-        try (ResultSet rs = updateRow.execute()) {
-            List<PrivilegeTemplateDTO> templates = getDTOFromRS(rs);
-            if (templates.size() == 0) return null;
-            return templates.get(0);
-        } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("更新权限模版失败: ", e, updateRow.toString());
-            return null;
-        }
+        return doUpdate(new UpdateRow().field(new Field("admin", admin)));
     }
 
 }

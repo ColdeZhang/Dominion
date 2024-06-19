@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
@@ -35,22 +36,15 @@ public class PlayerPrivilegeDTO {
         return players;
     }
 
-    private static PlayerPrivilegeDTO update(PlayerPrivilegeDTO player) {
-        Field admin = new Field("admin", player.getAdmin());
-        Field domID = new Field("dom_id", player.getDomID());
-        Field id = new Field("id", player.getId());
-        UpdateRow updateRow = new UpdateRow().returningAll(id)
+    private PlayerPrivilegeDTO doUpdate(UpdateRow updateRow) {
+        Field id = new Field("id", this.id);
+        updateRow.returningAll(id)
                 .table("player_privilege")
-                .field(admin)
-                .field(domID)
                 .where("id = ?", id.value);
-        for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
-            updateRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
-        }
         try (ResultSet rs = updateRow.execute()) {
-            Cache.instance.loadPlayerPrivileges();
             List<PlayerPrivilegeDTO> players = getDTOFromRS(rs);
             if (players.size() == 0) return null;
+            Cache.instance.loadPlayerPrivileges();
             return players.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新玩家权限失败: ", e, "");
@@ -138,20 +132,27 @@ public class PlayerPrivilegeDTO {
 
     public PlayerPrivilegeDTO setFlagValue(Flag flag, Boolean value) {
         flags.put(flag, value);
-        return update(this);
+        Field f = new Field(flag.getFlagName(), value);
+        UpdateRow updateRow = new UpdateRow().field(f);
+        XLogger.debug("setFlagValue: " + updateRow.toString());
+        return doUpdate(updateRow);
     }
 
     public PlayerPrivilegeDTO setAdmin(Boolean admin) {
         this.admin = admin;
-        return update(this);
+        Field f = new Field("admin", admin);
+        UpdateRow updateRow = new UpdateRow().field(f);
+        return doUpdate(updateRow);
     }
 
     public PlayerPrivilegeDTO applyTemplate(PrivilegeTemplateDTO template) {
         this.admin = template.getAdmin();
+        UpdateRow updateRow = new UpdateRow().field(new Field("admin", admin));
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, template.getFlagValue(f));
+            updateRow.field(new Field(f.getFlagName(), template.getFlagValue(f)));
         }
-        return update(this);
+        return doUpdate(updateRow);
     }
 
     private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<Flag, Boolean> flags) {

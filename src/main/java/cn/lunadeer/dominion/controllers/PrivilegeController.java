@@ -103,12 +103,17 @@ public class PrivilegeController {
             privilege = createPlayerPrivilege(operator, player.getUuid(), dominion);
             if (privilege == null) return;
         }
-        if (flag.equals("admin") || privilege.getAdmin()) {
+        if (privilege.getAdmin()) {
             if (notOwner(operator, dominion)) {
                 operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他管理员的权限", dominionName));
                 return;
             }
-            privilege.setAdmin(value);
+            if (flag.equals("admin")) {
+                privilege.setAdmin(value);
+            } else {
+                operator.setResponse(FAIL.addMessage("管理员拥有所有权限，无需单独设置权限"));
+                return;
+            }
         } else {
             Flag f = Flag.getFlag(flag);
             if (f == null) {

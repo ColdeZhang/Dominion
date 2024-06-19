@@ -63,9 +63,9 @@ public class PrivilegeInfo {
             view.add(Line.create()
                     .append(Button.createRed("☐").setExecuteCommand("/dominion set_privilege " + playerName + " admin true " + dominion.getName() + " " + page).build())
                     .append("管理员"));
-        }
-        for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
-            view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
+            for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+                view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
+            }
         }
         view.showOn(player, page);
     }
