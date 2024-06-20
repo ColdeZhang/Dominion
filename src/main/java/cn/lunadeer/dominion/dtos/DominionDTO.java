@@ -155,7 +155,7 @@ public class DominionDTO {
                         String tp_location,
                         String color) {
         this.id.value = id;
-        this.owner.value = owner;
+        this.owner.value = owner.toString();
         this.name.value = name;
         this.world.value = world;
         this.x1.value = x1;
@@ -177,7 +177,7 @@ public class DominionDTO {
                         Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2,
                         Integer parentDomId) {
         this.id.value = id;
-        this.owner.value = owner;
+        this.owner.value = owner.toString();
         this.name.value = name;
         this.world.value = world;
         this.x1.value = x1;
@@ -222,7 +222,6 @@ public class DominionDTO {
     }
 
     private DominionDTO doUpdate(UpdateRow updateRow) {
-        Field id = new Field("id", this.id);
         updateRow.returningAll(id)
                 .table("dominion")
                 .where("id = ?", id.value);

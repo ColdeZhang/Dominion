@@ -51,6 +51,7 @@ public class Cache {
     }
 
     private void loadDominionsExecution() {
+        long start = System.currentTimeMillis();
         id_dominions = new ConcurrentHashMap<>();
         world_dominion_tree = new ConcurrentHashMap<>();
         dominion_children = new ConcurrentHashMap<>();
@@ -73,6 +74,7 @@ public class Cache {
         BlueMapConnect.render();
         recheckPlayerState = true;
         _last_update_dominion.set(System.currentTimeMillis());
+        XLogger.debug("loadDominionsExecution cost: %d ms", System.currentTimeMillis() - start);
     }
 
     /**
@@ -94,6 +96,7 @@ public class Cache {
     }
 
     private void loadPlayerPrivilegesExecution() {
+        long start = System.currentTimeMillis();
         List<PlayerPrivilegeDTO> all_privileges = PlayerPrivilegeDTO.selectAll();
         if (all_privileges == null) {
             XLogger.err("加载玩家特权失败");
@@ -109,6 +112,7 @@ public class Cache {
         }
         recheckPlayerState = true;
         _last_update_privilege.set(System.currentTimeMillis());
+        XLogger.debug("loadPlayerPrivilegesExecution cost: %d ms", System.currentTimeMillis() - start);
     }
 
     /**
