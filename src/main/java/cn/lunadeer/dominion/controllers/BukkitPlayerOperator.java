@@ -45,8 +45,8 @@ public class BukkitPlayerOperator implements AbstractOperator {
 
     @Override
     public BlockFace getDirection() {
-        float yaw = player.getYaw();
-        float pitch = player.getPitch();
+        float yaw = player.getLocation().getYaw();
+        float pitch = player.getLocation().getPitch();
         if (pitch > -45 && pitch < 45) {
             if (yaw > -45 && yaw < 45) {
                 return BlockFace.SOUTH;
