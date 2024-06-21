@@ -8,8 +8,16 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class DominionNode {
-    public DominionDTO dominion;
-    public List<DominionNode> children = new ArrayList<>();
+    private Integer dominion_id;
+    private List<DominionNode> children = new ArrayList<>();
+
+    public DominionDTO getDominion() {
+        return Cache.instance.getDominion(dominion_id);
+    }
+
+    public List<DominionNode> getChildren() {
+        return children;
+    }
 
     public static List<DominionNode> BuildNodeTree(Integer rootId, List<DominionDTO> dominions) {
         // 映射父节点ID到其子节点列表
@@ -31,7 +39,7 @@ public class DominionNode {
         if (children != null) {
             for (DominionDTO dominion : children) {
                 DominionNode node = new DominionNode();
-                node.dominion = dominion;
+                node.dominion_id = dominion.getId();
                 node.children = buildTree(dominion.getId(), parentToChildrenMap);
                 dominionTree.add(node);
             }
@@ -42,7 +50,7 @@ public class DominionNode {
 
     public static DominionNode getLocInDominionNode(@NotNull List<DominionNode> nodes, @NotNull Location loc) {
         for (DominionNode node : nodes) {
-            if (isInDominion(node.dominion, loc)) {
+            if (isInDominion(node.getDominion(), loc)) {
                 if (node.children.isEmpty()) {
                     return node;
                 } else {
@@ -62,7 +70,7 @@ public class DominionNode {
         if (nodes == null) return null;
         if (nodes.isEmpty()) return null;
         DominionNode dominionNode = getLocInDominionNode(nodes, loc);
-        return dominionNode == null ? null : dominionNode.dominion;
+        return dominionNode == null ? null : dominionNode.getDominion();
     }
 
     public static boolean isInDominion(@Nullable DominionDTO dominion, Location location) {

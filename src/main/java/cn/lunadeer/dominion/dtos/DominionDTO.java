@@ -19,10 +19,6 @@ public class DominionDTO {
     private static List<DominionDTO> query(String sql, Object... args) {
         List<DominionDTO> dominions = new ArrayList<>();
         try (ResultSet rs = DatabaseManager.instance.query(sql, args)) {
-            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
-                // 如果是更新操作，重新加载缓存
-                Cache.instance.loadDominions();
-            }
             return getDTOFromRS(rs);
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("数据库操作失败: ", e, sql);
@@ -145,6 +141,7 @@ public class DominionDTO {
     public static void delete(DominionDTO dominion) {
         String sql = "DELETE FROM dominion WHERE id = ?;";
         query(sql, dominion.getId());
+        Cache.instance.loadDominions();
     }
 
     private DominionDTO(Integer id, UUID owner, String name, String world,
@@ -228,7 +225,7 @@ public class DominionDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.size() == 0) return null;
-            Cache.instance.loadDominions();
+            Cache.instance.loadDominions((Integer) id.value);
             return dominions.get(0);
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("更新领地信息失败: ", e, updateRow.toString());

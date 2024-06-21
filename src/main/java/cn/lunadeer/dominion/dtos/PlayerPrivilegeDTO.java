@@ -12,6 +12,16 @@ import java.util.*;
 
 public class PlayerPrivilegeDTO {
 
+    private static List<PlayerPrivilegeDTO> query(String sql, Object... params) {
+        List<PlayerPrivilegeDTO> players = new ArrayList<>();
+        try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
+            return getDTOFromRS(rs);
+        } catch (Exception e) {
+            DatabaseManager.handleDatabaseError("查询玩家权限失败: ", e, sql);
+        }
+        return players;
+    }
+
     private static List<PlayerPrivilegeDTO> getDTOFromRS(ResultSet rs) {
         List<PlayerPrivilegeDTO> players = new ArrayList<>();
         if (rs == null) return players;
@@ -90,6 +100,7 @@ public class PlayerPrivilegeDTO {
     public static void delete(UUID player, Integer domID) {
         String sql = "DELETE FROM player_privilege WHERE player_uuid = ? AND dom_id = ?;";
         query(sql, player.toString(), domID);
+        Cache.instance.loadPlayerPrivileges(player);
     }
 
     public static List<PlayerPrivilegeDTO> selectAll() {
@@ -170,20 +181,6 @@ public class PlayerPrivilegeDTO {
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, dom.getFlagValue(f));
         }
-    }
-
-    private static List<PlayerPrivilegeDTO> query(String sql, Object... params) {
-        List<PlayerPrivilegeDTO> players = new ArrayList<>();
-        try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
-            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
-                // 如果是更新操作，重新加载缓存
-                Cache.instance.loadPlayerPrivileges();
-            }
-            return getDTOFromRS(rs);
-        } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("查询玩家权限失败: ", e, sql);
-        }
-        return players;
     }
 
 }
