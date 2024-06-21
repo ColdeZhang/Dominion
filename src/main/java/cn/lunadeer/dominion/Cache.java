@@ -111,12 +111,16 @@ public class Cache {
     private void loadPlayerPrivilegesExecution(UUID player_to_update) {
         Scheduler.runTaskAsync(() -> {
             long start = System.currentTimeMillis();
-            List<PlayerPrivilegeDTO> all_privileges = new ArrayList<>();
+            List<PlayerPrivilegeDTO> all_privileges;
             if (player_to_update == null) {
                 all_privileges = PlayerPrivilegeDTO.selectAll();
                 player_uuid_to_privilege = new ConcurrentHashMap<>();
             } else {
                 all_privileges = PlayerPrivilegeDTO.selectAll(player_to_update);
+                if (!player_uuid_to_privilege.containsKey(player_to_update)) {
+                    player_uuid_to_privilege.put(player_to_update, new ConcurrentHashMap<>());
+                }
+                player_uuid_to_privilege.get(player_to_update).clear();
             }
             for (PlayerPrivilegeDTO privilege : all_privileges) {
                 UUID player_uuid = privilege.getPlayerUUID();
