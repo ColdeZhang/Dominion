@@ -44,7 +44,7 @@ public class PlayerPrivilegeDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<PlayerPrivilegeDTO> players = getDTOFromRS(rs);
             if (players.size() == 0) return null;
-            Cache.instance.loadPlayerPrivileges();
+            Cache.instance.loadPlayerPrivileges(playerUUID);
             return players.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新玩家权限失败: ", e, "");
@@ -65,7 +65,7 @@ public class PlayerPrivilegeDTO {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
         try (ResultSet rs = insertRow.execute()) {
-            Cache.instance.loadPlayerPrivileges();
+            Cache.instance.loadPlayerPrivileges(player.getPlayerUUID());
             List<PlayerPrivilegeDTO> players = getDTOFromRS(rs);
             if (players.size() == 0) return null;
             return players.get(0);
@@ -134,7 +134,6 @@ public class PlayerPrivilegeDTO {
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
-        XLogger.debug("setFlagValue: " + updateRow.toString());
         return doUpdate(updateRow);
     }
 
