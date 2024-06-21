@@ -24,7 +24,8 @@ public class PlayerDTO {
         return query(sql);
     }
 
-    public PlayerDTO onJoin() {
+    public PlayerDTO onJoin(String name) {
+        this.setLastKnownName(name);
         return update(this);
     }
 

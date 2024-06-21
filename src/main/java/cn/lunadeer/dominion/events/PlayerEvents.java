@@ -37,7 +37,7 @@ public class PlayerEvents implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();
         PlayerDTO player = PlayerDTO.get(bukkitPlayer);
-        player.onJoin(); // update name
+        player.onJoin(bukkitPlayer.getName()); // update name
     }
 
     @EventHandler
