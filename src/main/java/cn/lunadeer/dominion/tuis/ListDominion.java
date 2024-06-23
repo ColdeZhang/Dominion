@@ -47,11 +47,11 @@ public class ListDominion {
             prefix.append(" | ");
         }
         for (DominionNode node : dominionTree) {
-            TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + node.dominion.getName()).build();
-            TextComponent delete = Button.createRed("删除").setExecuteCommand("/dominion delete " + node.dominion.getName()).build();
-            Line line = Line.create().append(delete).append(manage).append(prefix + node.dominion.getName());
+            TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + node.getDominion().getName()).build();
+            TextComponent delete = Button.createRed("删除").setExecuteCommand("/dominion delete " + node.getDominion().getName()).build();
+            Line line = Line.create().append(delete).append(manage).append(prefix + node.getDominion().getName());
             lines.add(line);
-            lines.addAll(BuildTreeLines(node.children, depth + 1));
+            lines.addAll(BuildTreeLines(node.getChildren(), depth + 1));
         }
         return lines;
     }

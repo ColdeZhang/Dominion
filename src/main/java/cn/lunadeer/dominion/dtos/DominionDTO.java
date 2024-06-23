@@ -3,54 +3,59 @@ package cn.lunadeer.dominion.dtos;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
+import cn.lunadeer.minecraftpluginutils.databse.Field;
+import cn.lunadeer.minecraftpluginutils.databse.FieldType;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.List;
 
 public class DominionDTO {
     private static List<DominionDTO> query(String sql, Object... args) {
         List<DominionDTO> dominions = new ArrayList<>();
-        try (ResultSet rs = Dominion.database.query(sql, args)) {
-            if (sql.contains("UPDATE") || sql.contains("DELETE") || sql.contains("INSERT")) {
-                // 如果是更新操作，重新加载缓存
-                Cache.instance.loadDominions();
-            }
-            if (rs == null) return dominions;
-            while (rs.next()) {
-                Integer id = rs.getInt("id");
-                UUID owner = UUID.fromString(rs.getString("owner"));
-                String name = rs.getString("name");
-                String world = rs.getString("world");
-                Integer x1 = rs.getInt("x1");
-                Integer y1 = rs.getInt("y1");
-                Integer z1 = rs.getInt("z1");
-                Integer x2 = rs.getInt("x2");
-                Integer y2 = rs.getInt("y2");
-                Integer z2 = rs.getInt("z2");
-                Integer parentDomId = rs.getInt("parent_dom_id");
-                String tp_location = rs.getString("tp_location");
-                Map<Flag, Boolean> flags = new HashMap<>();
-                for (Flag f : Flag.getDominionFlagsEnabled()) {
-                    flags.put(f, rs.getBoolean(f.getFlagName()));
-                }
-                String color = rs.getString("color");
-
-                DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
-                        rs.getString("join_message"),
-                        rs.getString("leave_message"),
-                        flags,
-                        tp_location,
-                        color
-                );
-                dominions.add(dominion);
-            }
+        try (ResultSet rs = DatabaseManager.instance.query(sql, args)) {
+            return getDTOFromRS(rs);
         } catch (SQLException e) {
-            Dominion.database.handleDatabaseError("数据库操作失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, sql);
+        }
+        return dominions;
+    }
+
+    private static List<DominionDTO> getDTOFromRS(ResultSet rs) throws SQLException {
+        List<DominionDTO> dominions = new ArrayList<>();
+        if (rs == null) return dominions;
+        while (rs.next()) {
+            Integer id = rs.getInt("id");
+            UUID owner = UUID.fromString(rs.getString("owner"));
+            String name = rs.getString("name");
+            String world = rs.getString("world");
+            Integer x1 = rs.getInt("x1");
+            Integer y1 = rs.getInt("y1");
+            Integer z1 = rs.getInt("z1");
+            Integer x2 = rs.getInt("x2");
+            Integer y2 = rs.getInt("y2");
+            Integer z2 = rs.getInt("z2");
+            Integer parentDomId = rs.getInt("parent_dom_id");
+            String tp_location = rs.getString("tp_location");
+            Map<Flag, Boolean> flags = new HashMap<>();
+            for (Flag f : Flag.getDominionFlagsEnabled()) {
+                flags.put(f, rs.getBoolean(f.getFlagName()));
+            }
+            String color = rs.getString("color");
+
+            DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
+                    rs.getString("join_message"),
+                    rs.getString("leave_message"),
+                    flags,
+                    tp_location,
+                    color
+            );
+            dominions.add(dominion);
         }
         return dominions;
     }
@@ -110,76 +115,33 @@ public class DominionDTO {
     }
 
     public static DominionDTO insert(DominionDTO dominion) {
-        StringBuilder sql = new StringBuilder("INSERT INTO dominion (" +
-                "owner, name, world, x1, y1, z1, x2, y2, z2, ");
-        for (Flag f : Flag.getAllDominionFlags()) {
-            sql.append(f.getFlagName()).append(", ");
+        InsertRow insert = new InsertRow().returningAll().table("dominion").onConflictDoNothing(new Field("id", null));
+        insert.field(dominion.owner)
+                .field(dominion.name)
+                .field(dominion.world)
+                .field(dominion.x1).field(dominion.y1).field(dominion.z1)
+                .field(dominion.x2).field(dominion.y2).field(dominion.z2)
+                .field(dominion.parentDomId)
+                .field(dominion.joinMessage).field(dominion.leaveMessage)
+                .field(dominion.tp_location);
+        for (Flag f : Flag.getDominionFlagsEnabled()) {
+            insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
-        sql.append("tp_location, join_message, leave_message");
-        sql.append(") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ");
-        for (Flag f : Flag.getAllDominionFlags()) {
-            sql.append(f.getDefaultValue()).append(", ");
+        try (ResultSet rs = insert.execute()) {
+            Cache.instance.loadDominions();
+            List<DominionDTO> dominions = getDTOFromRS(rs);
+            if (dominions.size() == 0) return null;
+            return dominions.get(0);
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, insert.toString());
+            return null;
         }
-        sql.append("'default', ?, ?");
-        sql.append(") RETURNING *;");
-        List<DominionDTO> dominions = query(sql.toString(),
-                dominion.getOwner(),
-                dominion.getName(),
-                dominion.getWorld(),
-                dominion.getX1(),
-                dominion.getY1(),
-                dominion.getZ1(),
-                dominion.getX2(),
-                dominion.getY2(),
-                dominion.getZ2(),
-                "欢迎来到 ${DOM_NAME}！",
-                "你正在离开 ${DOM_NAME}，欢迎下次光临～"
-                );
-        if (dominions.size() == 0) return null;
-        return dominions.get(0);
     }
 
     public static void delete(DominionDTO dominion) {
         String sql = "DELETE FROM dominion WHERE id = ?;";
         query(sql, dominion.getId());
-    }
-
-    private static DominionDTO update(DominionDTO dominion) {
-        String tp_location;
-        if (dominion.getTpLocation() == null) {
-            tp_location = "default";
-        } else {
-            Location loc = dominion.getTpLocation();
-            tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
-        }
-        StringBuilder sql = new StringBuilder("UPDATE dominion SET " +
-                "owner = ?," +
-                "name = ?," +
-                "world = ?," +
-                "x1 = " + dominion.getX1() + ", " +
-                "y1 = " + dominion.getY1() + ", " +
-                "z1 = " + dominion.getZ1() + ", " +
-                "x2 = " + dominion.getX2() + ", " +
-                "y2 = " + dominion.getY2() + ", " +
-                "z2 = " + dominion.getZ2() + ", " +
-                "parent_dom_id = " + dominion.getParentDomId() + ", " +
-                "join_message = ?," +
-                "leave_message = ?," +
-                "color = ?,");
-        for (Flag f : Flag.getDominionFlagsEnabled()) {
-            sql.append(f.getFlagName()).append(" = ").append(dominion.getFlagValue(f)).append(",");
-        }
-        sql.append("tp_location = ?" + " WHERE id = ").append(dominion.getId()).append(" RETURNING *;");
-        List<DominionDTO> dominions = query(sql.toString(),
-                dominion.getOwner().toString(),
-                dominion.getName(),
-                dominion.getWorld(),
-                dominion.getJoinMessage(),
-                dominion.getLeaveMessage(),
-                dominion.getColor(),
-                tp_location);
-        if (dominions.size() == 0) return null;
-        return dominions.get(0);
+        Cache.instance.loadDominions();
     }
 
     private DominionDTO(Integer id, UUID owner, String name, String world,
@@ -189,39 +151,39 @@ public class DominionDTO {
                         Map<Flag, Boolean> flags,
                         String tp_location,
                         String color) {
-        this.id = id;
-        this.owner = owner;
-        this.name = name;
-        this.world = world;
-        this.x1 = x1;
-        this.y1 = y1;
-        this.z1 = z1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.z2 = z2;
-        this.parentDomId = parentDomId;
-        this.joinMessage = joinMessage;
-        this.leaveMessage = leaveMessage;
+        this.id.value = id;
+        this.owner.value = owner.toString();
+        this.name.value = name;
+        this.world.value = world;
+        this.x1.value = x1;
+        this.y1.value = y1;
+        this.z1.value = z1;
+        this.x2.value = x2;
+        this.y2.value = y2;
+        this.z2.value = z2;
+        this.parentDomId.value = parentDomId;
+        this.joinMessage.value = joinMessage;
+        this.leaveMessage.value = leaveMessage;
         this.flags.putAll(flags);
-        this.tp_location = tp_location;
-        this.color = color;
+        this.tp_location.value = tp_location;
+        this.color.value = color;
     }
 
 
     private DominionDTO(Integer id, UUID owner, String name, String world,
                         Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2,
                         Integer parentDomId) {
-        this.id = id;
-        this.owner = owner;
-        this.name = name;
-        this.world = world;
-        this.x1 = x1;
-        this.y1 = y1;
-        this.z1 = z1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.z2 = z2;
-        this.parentDomId = parentDomId;
+        this.id.value = id;
+        this.owner.value = owner.toString();
+        this.name.value = name;
+        this.world.value = world;
+        this.x1.value = x1;
+        this.y1.value = y1;
+        this.z1.value = z1;
+        this.x2.value = x2;
+        this.y2.value = y2;
+        this.z2.value = z2;
+        this.parentDomId.value = parentDomId;
     }
 
     public DominionDTO(UUID owner, String name, String world,
@@ -229,154 +191,165 @@ public class DominionDTO {
         this(null, owner, name, world, x1, y1, z1, x2, y2, z2, -1);
     }
 
-    private Integer id;
-    private UUID owner;
-    private String name;
-    private final String world;
-    private Integer x1;
-    private Integer y1;
-    private Integer z1;
-    private Integer x2;
-    private Integer y2;
-    private Integer z2;
-    private Integer parentDomId = -1;
-    private String joinMessage = "欢迎";
-    private String leaveMessage = "再见";
+    private final Field id = new Field("id", FieldType.INT);
+    private final Field owner = new Field("owner", FieldType.STRING);
+    private final Field name = new Field("name", FieldType.STRING);
+    private final Field world = new Field("world", FieldType.STRING);
+    private final Field x1 = new Field("x1", FieldType.INT);
+    private final Field y1 = new Field("y1", FieldType.INT);
+    private final Field z1 = new Field("z1", FieldType.INT);
+    private final Field x2 = new Field("x2", FieldType.INT);
+    private final Field y2 = new Field("y2", FieldType.INT);
+    private final Field z2 = new Field("z2", FieldType.INT);
+    private final Field parentDomId = new Field("parent_dom_id", -1);
+    private final Field joinMessage = new Field("join_message", "欢迎来到 ${DOM_NAME}！");
+    private final Field leaveMessage = new Field("leave_message", "你正在离开 ${DOM_NAME}，欢迎下次光临～");
     private final Map<Flag, Boolean> flags = new HashMap<>();
-    private String tp_location;
-    private String color;
+    private final Field tp_location = new Field("tp_location", "default");
+    private final Field color = new Field("color", "#00BFFF");
+
 
     // getters and setters
     public Integer getId() {
-        return id;
-    }
-
-    public DominionDTO setId(Integer id) {
-        this.id = id;
-        return update(this);
+        return (Integer) id.value;
     }
 
     public UUID getOwner() {
-        return owner;
+        return UUID.fromString((String) owner.value);
+    }
+
+    private DominionDTO doUpdate(UpdateRow updateRow) {
+        updateRow.returningAll(id)
+                .table("dominion")
+                .where("id = ?", id.value);
+        try (ResultSet rs = updateRow.execute()) {
+            List<DominionDTO> dominions = getDTOFromRS(rs);
+            if (dominions.size() == 0) return null;
+            Cache.instance.loadDominions((Integer) id.value);
+            return dominions.get(0);
+        } catch (SQLException e) {
+            DatabaseManager.handleDatabaseError("更新领地信息失败: ", e, updateRow.toString());
+            return null;
+        }
     }
 
     public DominionDTO setOwner(UUID owner) {
-        this.owner = owner;
-        return update(this);
+        this.owner.value = owner.toString();
+        return doUpdate(new UpdateRow().field(this.owner));
     }
 
     public String getName() {
-        return name;
+        return (String) name.value;
     }
 
     public DominionDTO setName(String name) {
-        this.name = name;
-        return update(this);
+        this.name.value = name;
+        return doUpdate(new UpdateRow().field(this.name));
     }
 
     public String getWorld() {
-        return world;
+        return (String) world.value;
     }
 
     public Integer getX1() {
-        return x1;
+        return (Integer) x1.value;
     }
 
     public DominionDTO setX1(Integer x1) {
-        this.x1 = x1;
-        return update(this);
+        this.x1.value = x1;
+        return doUpdate(new UpdateRow().field(this.x1));
     }
 
     public Integer getY1() {
-        return y1;
+        return (Integer) y1.value;
     }
 
     public DominionDTO setY1(Integer y1) {
-        this.y1 = y1;
-        return update(this);
+        this.y1.value = y1;
+        return doUpdate(new UpdateRow().field(this.y1));
     }
 
     public Integer getZ1() {
-        return z1;
+        return (Integer) z1.value;
     }
 
     public DominionDTO setZ1(Integer z1) {
-        this.z1 = z1;
-        return update(this);
+        this.z1.value = z1;
+        return doUpdate(new UpdateRow().field(this.z1));
     }
 
     public Integer getX2() {
-        return x2;
+        return (Integer) x2.value;
     }
 
     public DominionDTO setX2(Integer x2) {
-        this.x2 = x2;
-        return update(this);
+        this.x2.value = x2;
+        return doUpdate(new UpdateRow().field(this.x2));
     }
 
     public Integer getY2() {
-        return y2;
+        return (Integer) y2.value;
     }
 
     public DominionDTO setY2(Integer y2) {
-        this.y2 = y2;
-        return update(this);
+        this.y2.value = y2;
+        return doUpdate(new UpdateRow().field(this.y2));
     }
 
     public Integer getZ2() {
-        return z2;
+        return (Integer) z2.value;
     }
 
     public DominionDTO setZ2(Integer z2) {
-        this.z2 = z2;
-        return update(this);
+        this.z2.value = z2;
+        return doUpdate(new UpdateRow().field(this.z2));
     }
 
     public Integer getSquare() {
-        return (x2 - x1 + 1) * (z2 - z1 + 1);
+        return (getX2() - getX1() + 1) * (getZ2() - getZ1() + 1);
     }
 
     public Integer getVolume() {
-        return getSquare() * (y2 - y1 + 1);
+        return getSquare() * (getY2() - getY1() + 1);
     }
 
     public Integer getWidthX() {
-        return x2 - x1 + 1;
+        return getX2() - getX1() + 1;
     }
 
     public Integer getHeight() {
-        return y2 - y1 + 1;
+        return getY2() - getY1() + 1;
     }
 
     public Integer getWidthZ() {
-        return z2 - z1 + 1;
+        return getZ2() - getZ1() + 1;
     }
 
     public Integer getParentDomId() {
-        return parentDomId;
+        return (Integer) parentDomId.value;
     }
 
     public DominionDTO setParentDomId(Integer parentDomId) {
-        this.parentDomId = parentDomId;
-        return update(this);
+        this.parentDomId.value = parentDomId;
+        return doUpdate(new UpdateRow().field(this.parentDomId));
     }
 
     public String getJoinMessage() {
-        return joinMessage;
+        return (String) joinMessage.value;
     }
 
     public DominionDTO setJoinMessage(String joinMessage) {
-        this.joinMessage = joinMessage;
-        return update(this);
+        this.joinMessage.value = joinMessage;
+        return doUpdate(new UpdateRow().field(this.joinMessage));
     }
 
     public String getLeaveMessage() {
-        return leaveMessage;
+        return (String) leaveMessage.value;
     }
 
     public DominionDTO setLeaveMessage(String leaveMessage) {
-        this.leaveMessage = leaveMessage;
-        return update(this);
+        this.leaveMessage.value = leaveMessage;
+        return doUpdate(new UpdateRow().field(this.leaveMessage));
     }
 
     public Boolean getFlagValue(Flag flag) {
@@ -386,17 +359,18 @@ public class DominionDTO {
 
     public DominionDTO setFlagValue(Flag flag, Boolean value) {
         flags.put(flag, value);
-        return update(this);
+        Field flagField = new Field(flag.getFlagName(), value);
+        return doUpdate(new UpdateRow().field(flagField));
     }
 
     public DominionDTO setXYZ(Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.z1 = z1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.z2 = z2;
-        return update(this);
+        this.x1.value = x1;
+        this.y1.value = y1;
+        this.z1.value = z1;
+        this.x2.value = x2;
+        this.y2.value = y2;
+        this.z2.value = z2;
+        return doUpdate(new UpdateRow().field(this.x1).field(this.y1).field(this.z1).field(this.x2).field(this.y2).field(this.z2));
     }
 
     public Location getTpLocation() {
@@ -404,8 +378,8 @@ public class DominionDTO {
             return null;
         } else {
             // 0:0:0
-            String[] loc = tp_location.split(":");
-            World w = Dominion.instance.getServer().getWorld(world);
+            String[] loc = ((String) tp_location.value).split(":");
+            World w = Dominion.instance.getServer().getWorld(getWorld());
             if (loc.length == 3 && w != null) {
                 return new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
             } else {
@@ -417,36 +391,36 @@ public class DominionDTO {
     }
 
     public DominionDTO setTpLocation(Location loc) {
-        this.tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
-        return update(this);
+        this.tp_location.value = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+        return doUpdate(new UpdateRow().field(tp_location));
     }
 
     public Location getLocation1() {
-        return new Location(Dominion.instance.getServer().getWorld(world), x1, y1, z1);
+        return new Location(Dominion.instance.getServer().getWorld(getWorld()), getX1(), getY1(), getZ1());
     }
 
     public Location getLocation2() {
-        return new Location(Dominion.instance.getServer().getWorld(world), x2, y2, z2);
+        return new Location(Dominion.instance.getServer().getWorld(getWorld()), getX2(), getY2(), getZ2());
     }
 
     public DominionDTO setColor(String color) {
-        this.color = color;
-        return update(this);
+        this.color.value = color;
+        return doUpdate(new UpdateRow().field(this.color));
     }
 
     public int getColorR() {
-        return Integer.valueOf(color.substring(1, 3), 16);
+        return Integer.valueOf(getColor().substring(1, 3), 16);
     }
 
     public int getColorG() {
-        return Integer.valueOf(color.substring(3, 5), 16);
+        return Integer.valueOf(getColor().substring(3, 5), 16);
     }
 
     public int getColorB() {
-        return Integer.valueOf(color.substring(5, 7), 16);
+        return Integer.valueOf(getColor().substring(5, 7), 16);
     }
 
     public String getColor() {
-        return color;
+        return (String) color.value;
     }
 }
