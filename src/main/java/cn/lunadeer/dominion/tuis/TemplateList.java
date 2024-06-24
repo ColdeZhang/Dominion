@@ -4,7 +4,6 @@ import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
