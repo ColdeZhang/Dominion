@@ -25,6 +25,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.material.Colorable;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 import static cn.lunadeer.dominion.events.Apis.checkFlag;
@@ -316,9 +317,7 @@ public class PlayerEvents implements Listener {
     public void dyeEvent(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
-        if (!(entity instanceof Sheep)
-                && !(entity instanceof Wolf)
-                && !(entity instanceof Cat)) {
+        if (!(entity instanceof Colorable)) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
@@ -392,6 +391,10 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // feed
     public void onFeedAnimal(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Animals)) {
+            return;
+        }
+        // if shearing sheep instead
+        if (event.getPlayer().getInventory().getItem(event.getHand()).getType() == Material.SHEARS) {
             return;
         }
         Player player = event.getPlayer();
@@ -687,5 +690,18 @@ public class PlayerEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.VEHICLE_SPAWN, player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)  // villager_killing
+    public void onVillagerKilling(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Villager)) {
+            return;
+        }
+        Player player = (Player) event.getDamager();
+        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
+        checkFlag(dom, Flag.VILLAGER_KILLING, player, event);
     }
 }

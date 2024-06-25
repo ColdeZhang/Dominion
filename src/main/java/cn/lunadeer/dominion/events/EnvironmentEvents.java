@@ -160,4 +160,14 @@ public class EnvironmentEvents implements Listener {
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.ANIMAL_SPAWN, event);
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // villager_spawn
+    public void onVillagerSpawn(CreatureSpawnEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.VILLAGER) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        checkFlag(dom, Flag.VILLAGER_SPAWN, event);
+    }
 }
