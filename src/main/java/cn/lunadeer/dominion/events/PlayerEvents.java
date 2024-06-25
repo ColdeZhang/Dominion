@@ -103,9 +103,32 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // bed
-    public void onBedUse(PlayerBedEnterEvent event) {
+    public void onBedUse(PlayerInteractEvent event) {
         Player bukkitPlayer = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getBed().getLocation());
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        Material clicked = block.getType();
+        if (clicked != Material.RED_BED &&
+                clicked != Material.ORANGE_BED &&
+                clicked != Material.YELLOW_BED &&
+                clicked != Material.LIME_BED &&
+                clicked != Material.GREEN_BED &&
+                clicked != Material.LIGHT_BLUE_BED &&
+                clicked != Material.CYAN_BED &&
+                clicked != Material.BLUE_BED &&
+                clicked != Material.PURPLE_BED &&
+                clicked != Material.MAGENTA_BED &&
+                clicked != Material.PINK_BED &&
+                clicked != Material.WHITE_BED &&
+                clicked != Material.LIGHT_GRAY_BED &&
+                clicked != Material.GRAY_BED &&
+                clicked != Material.BLACK_BED &&
+                clicked != Material.BROWN_BED) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         checkFlag(dom, Flag.BED, bukkitPlayer, event);
     }
 
