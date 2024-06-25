@@ -5,7 +5,11 @@ import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -38,29 +42,32 @@ public class MigrateList {
         if (res_data == null) {
             view.add(Line.create().append("你没有可迁移的数据"));
         } else {
-            view.addLines(BuildTreeLines(res_data, 0));
+            view.addLines(BuildTreeLines(res_data, 0, page));
         }
 
         view.showOn(player, page);
     }
 
-    public static List<Line> BuildTreeLines(List<ResMigration.ResidenceNode> dominionTree, Integer depth) {
+    public static List<Line> BuildTreeLines(List<ResMigration.ResidenceNode> dominionTree, Integer depth, int page) {
         List<Line> lines = new ArrayList<>();
         StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < depth; i++) {
             prefix.append(" | ");
         }
         for (ResMigration.ResidenceNode node : dominionTree) {
-            TextComponent migrate = Button.create("迁移").setExecuteCommand("/dominion migrate " + node.name).build();
+            TextComponent migrate = Button.create("迁移").setExecuteCommand("/dominion migrate " + node.name + " " + page).build();
             Line line = Line.create();
             if (depth == 0) {
                 line.append(migrate);
             } else {
-                line.append("    ");
+                line.append(Component.text("[迁移]",
+                                Style.style(TextColor.color(190, 190, 190),
+                                        TextDecoration.STRIKETHROUGH))
+                        .hoverEvent(Component.text("子领地无法手动迁移，会随父领地自动迁移")));
             }
             line.append(prefix + node.name);
             lines.add(line);
-            lines.addAll(BuildTreeLines(node.children, depth + 1));
+            lines.addAll(BuildTreeLines(node.children, depth + 1, page));
         }
         return lines;
     }

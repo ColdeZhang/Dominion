@@ -7,7 +7,6 @@ public class Residence {
     public Map<String, Residence> Subzones;
     public int Messages;
     public Permission Permissions;
-    public long CreatedOn;
     public Map<String, String> Areas;
 
     // getters and setters
@@ -42,14 +41,6 @@ public class Residence {
 
     public void setPermissions(Permission permissions) {
         Permissions = permissions;
-    }
-
-    public long getCreatedOn() {
-        return CreatedOn;
-    }
-
-    public void setCreatedOn(long createdOn) {
-        CreatedOn = createdOn;
     }
 
     public Map<String, String> getAreas() {

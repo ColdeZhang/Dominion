@@ -178,7 +178,7 @@ public class Commands implements TabExecutor {
             case "migrate_list":
                 MigrateList.show(sender, args);
                 break;
-            case "migration":
+            case "migrate":
                 Migration.migrate(sender, args);
                 break;
             // ---===  CUI  ===---

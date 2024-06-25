@@ -28,13 +28,6 @@ public class Cache {
         player_current_dominion_id = new HashMap<>();
         loadDominions();
         loadPlayerPrivileges();
-        List<ResMigration.ResidenceNode> residences = ResMigration.extractFromResidence(Dominion.instance);
-        for (ResMigration.ResidenceNode node : residences) {
-            if (!residence_data.containsKey(node.owner)) {
-                residence_data.put(node.owner, new ArrayList<>());
-            }
-            residence_data.get(node.owner).add(node);
-        }
     }
 
     /**
@@ -310,6 +303,21 @@ public class Cache {
     }
 
     public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
+        if (residence_data == null) {
+            residence_data = new HashMap<>();
+            List<ResMigration.ResidenceNode> residences = ResMigration.extractFromResidence(Dominion.instance);
+            for (ResMigration.ResidenceNode node : residences) {
+                if (node == null) {
+                    continue;
+                }
+                if (!residence_data.containsKey(node.owner)) {
+                    XLogger.debug("residence_data put %s", node.owner);
+                    residence_data.put(node.owner, new ArrayList<>());
+                }
+                residence_data.get(node.owner).add(node);
+            }
+            XLogger.debug("residence_data: %d", residence_data.size());
+        }
         return residence_data.get(player_uuid);
     }
 
@@ -331,5 +339,5 @@ public class Cache {
 
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
 
-    private final Map<UUID, List<ResMigration.ResidenceNode>> residence_data = new HashMap<>();
+    private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
 }

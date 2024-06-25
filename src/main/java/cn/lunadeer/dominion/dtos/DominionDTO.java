@@ -411,7 +411,11 @@ public class DominionDTO {
     }
 
     public DominionDTO setTpLocation(Location loc) {
-        this.tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+        if (loc != null) {
+            this.tp_location = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+        } else {
+            this.tp_location = "default";
+        }
         return update(this);
     }
 
