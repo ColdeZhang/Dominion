@@ -160,7 +160,8 @@ public class PlayerEvents implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
+        Block block = event.getClickedBlock();
+        Material clicked = block.getType();
         if (clicked != Material.STONE_BUTTON &&
                 clicked != Material.BAMBOO_BUTTON &&
                 clicked != Material.OAK_BUTTON &&
@@ -176,7 +177,7 @@ public class PlayerEvents implements Listener {
                 clicked != Material.CHERRY_BUTTON) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         checkFlag(dom, Flag.BUTTON, player, event);
     }
 
