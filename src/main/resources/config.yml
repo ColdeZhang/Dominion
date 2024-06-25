@@ -49,6 +49,9 @@ FlyPermissionNodes:
   - essentials.fly
   - cmi.command.fly
 
+# 是否允许玩家从 Residence 迁移领地数据
+ResidenceMigration: false
+
 BlueMap: true
 
 CheckUpdate: true

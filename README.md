@@ -39,6 +39,7 @@
 - 支持基础价格系统；
 - 领地区域可视化；
 - 管理员可在游戏内使用TUI配置领地系统；
+- 支持[从 Residence 迁移](https://ssl.lunadeer.cn:14448/doc/73/)领地数据；
 
 <div style="text-align: center;">
 

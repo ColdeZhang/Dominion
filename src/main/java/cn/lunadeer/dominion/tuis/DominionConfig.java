@@ -151,6 +151,15 @@ public class DominionConfig {
                     .append(NumChanger.create(Dominion.config.getEconomyRefund(), "/dominion set_config economy_refund", 0.01).setPageNumber(page).build());
             view.add(refund);
         }
+        if (Dominion.config.getResidenceMigration()) {
+            view.add(Line.create()
+                    .append("是否允许从Residence迁移数据")
+                    .append(Button.createGreen("☑").setExecuteCommand("/dominion set_config residence_migration false " + page).build()));
+        } else {
+            view.add(Line.create()
+                    .append("是否允许从Residence迁移数据")
+                    .append(Button.createRed("☐").setExecuteCommand("/dominion set_config residence_migration true " + page).build()));
+        }
         view.showOn(player, page);
     }
 }

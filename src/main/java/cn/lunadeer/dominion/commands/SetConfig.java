@@ -67,6 +67,9 @@ public class SetConfig {
             case "economy_refund":
                 setEconomyRefund(sender, args);
                 break;
+            case "residence_migration":
+                setResidenceMigration(sender, args);
+                break;
             default:
                 Notification.error(sender, "未知参数");
         }
@@ -249,5 +252,11 @@ public class SetConfig {
         } else {
             Dominion.config.setEconomyRefund(economyRefund);
         }
+    }
+
+    private static void setResidenceMigration(CommandSender sender, String[] args) {
+        boolean residenceMigration = Boolean.parseBoolean(args[2]);
+        Dominion.config.setResidenceMigration(residenceMigration);
+        refreshPageOrNot(sender, args);
     }
 }

@@ -19,38 +19,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 public class ResMigration {
-
-
-    /*
-Residences:
-  '03':
-    TPLoc: -3967.62:48.0:-1988.87:4.8:-5.08
-    Messages: 1
-    Permissions:
-      PlayerFlags:
-        3244b8fb-3cf9-433e-8f4a-bb90bf6d4f54: 1
-        8075e1ae-62fc-482f-b3af-3fc5b2770a2c: 2
-        0a23b4e5-f18e-4f8b-947d-558444bb27ca: 3
-      AreaFlags: 4
-      OwnerUUID: 8075e1ae-62fc-482f-b3af-3fc5b2770a2c
-      OwnerLastKnownName: guajn
-    CreatedOn: 1630491137410
-    Areas:
-      main: -3998:0:-2014:-3939:255:-1955
-  '04':
-    TPLoc: -5640.7:189.0:-2029.38:40.35:-96.3
-    Messages: 1
-    Permissions:
-      PlayerFlags:
-        8075e1ae-62fc-482f-b3af-3fc5b2770a2c: 2
-        0a23b4e5-f18e-4f8b-947d-558444bb27ca: 1
-      AreaFlags: 5
-      OwnerUUID: 8075e1ae-62fc-482f-b3af-3fc5b2770a2c
-      OwnerLastKnownName: guajn
-    CreatedOn: 1641656609270
-    Areas:
-      main: -5673:0:-2055:-5609:255:-2005
-     */
     public static class ResidenceNode {
         public UUID owner;
         public World world;

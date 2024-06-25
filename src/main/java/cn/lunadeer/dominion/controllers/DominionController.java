@@ -38,7 +38,6 @@ public class DominionController {
      * @param name     领地名称
      * @param loc1     位置1
      * @param loc2     位置2
-     * @return 创建的领地
      */
     public static void create(AbstractOperator operator, String name, Location loc1, Location loc2) {
         DominionDTO parent = getPlayerCurrentDominion(operator);
@@ -57,11 +56,26 @@ public class DominionController {
      * @param loc1                 位置1
      * @param loc2                 位置2
      * @param parent_dominion_name 父领地名称
-     * @return 创建的领地
      */
     public static void create(AbstractOperator operator, String name,
                               Location loc1, Location loc2,
                               String parent_dominion_name) {
+        create(operator, name, loc1, loc2, parent_dominion_name, false);
+    }
+
+    /**
+     * 创建子领地
+     *
+     * @param operator             拥有者
+     * @param name                 领地名称
+     * @param loc1                 位置1
+     * @param loc2                 位置2
+     * @param parent_dominion_name 父领地名称
+     * @param skipEco              是否跳过经济检查
+     */
+    public static void create(AbstractOperator operator, String name,
+                              Location loc1, Location loc2,
+                              String parent_dominion_name, boolean skipEco) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建领地失败");
         if (name.isEmpty()) {
             operator.setResponse(FAIL.addMessage("领地名称不能为空"));
@@ -143,7 +157,7 @@ public class DominionController {
             }
         }
         // 检查经济
-        if (Dominion.config.getEconomyEnable()) {
+        if (Dominion.config.getEconomyEnable() && !skipEco) {
             if (!VaultConnect.instance.economyAvailable()) {
                 operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
                 return;
@@ -181,7 +195,6 @@ public class DominionController {
      *
      * @param operator 操作者
      * @param size     扩展的大小
-     * @return 扩展后的领地
      */
     public static void expand(AbstractOperator operator, Integer size) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
@@ -198,7 +211,6 @@ public class DominionController {
      * @param operator      操作者
      * @param size          扩展的大小
      * @param dominion_name 领地名称
-     * @return 扩展后的领地
      */
     public static void expand(AbstractOperator operator, Integer size, String dominion_name) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "扩展领地失败");
@@ -304,7 +316,6 @@ public class DominionController {
      *
      * @param operator 操作者
      * @param size     缩小的大小
-     * @return 缩小后的领地
      */
     public static void contract(AbstractOperator operator, Integer size) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
@@ -321,7 +332,6 @@ public class DominionController {
      * @param operator      操作者
      * @param size          缩小的大小
      * @param dominion_name 领地名称
-     * @return 缩小后的领地
      */
     public static void contract(AbstractOperator operator, Integer size, String dominion_name) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "缩小领地失败");

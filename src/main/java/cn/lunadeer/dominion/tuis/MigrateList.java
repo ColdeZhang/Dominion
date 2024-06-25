@@ -1,7 +1,9 @@
 package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.ResMigration;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -23,6 +25,11 @@ public class MigrateList {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
+
+        if (!Dominion.config.getResidenceMigration()) {
+            Notification.error(sender, "Residence 迁移功能没有开启");
+            return;
+        }
 
         int page = 1;
         if (args.length == 2) {

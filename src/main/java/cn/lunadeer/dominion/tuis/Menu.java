@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -60,8 +61,10 @@ public class Menu {
                 .add(list)
                 .add(template)
                 .add(help)
-                .add(link)
-                .add(migrate);
+                .add(link);
+        if (Dominion.config.getResidenceMigration()) {
+            view.add(migrate);
+        }
         if (player.isOp()) {
             view.add(Line.create().append(""));
             view.add(Line.create().append(Component.text("--- 以下选项仅OP可见 ---", ViewStyles.main_color)));

@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -21,6 +22,12 @@ public class Migration {
         try {
             Player player = playerOnly(sender);
             if (player == null) return;
+
+            if (!Dominion.config.getResidenceMigration()) {
+                Notification.error(sender, "Residence 迁移功能没有开启");
+                return;
+            }
+
             if (args.length < 2) {
                 Notification.error(sender, "用法: /dominion migrate <res领地名称>");
                 return;
@@ -83,6 +90,6 @@ public class Migration {
                 }
             }
         });
-        DominionController.create(operator, node.name, node.loc1, node.loc2, parentName);
+        DominionController.create(operator, node.name, node.loc1, node.loc2, parentName, true);
     }
 }
