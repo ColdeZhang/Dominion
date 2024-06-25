@@ -8,15 +8,13 @@ import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -104,28 +102,15 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // bed
     public void onBedUse(PlayerInteractEvent event) {
+        if (!event.getAction().isRightClick()) {
+            return;
+        }
         Player bukkitPlayer = event.getPlayer();
         Block block = event.getClickedBlock();
         if (block == null) {
             return;
         }
-        Material clicked = block.getType();
-        if (clicked != Material.RED_BED &&
-                clicked != Material.ORANGE_BED &&
-                clicked != Material.YELLOW_BED &&
-                clicked != Material.LIME_BED &&
-                clicked != Material.GREEN_BED &&
-                clicked != Material.LIGHT_BLUE_BED &&
-                clicked != Material.CYAN_BED &&
-                clicked != Material.BLUE_BED &&
-                clicked != Material.PURPLE_BED &&
-                clicked != Material.MAGENTA_BED &&
-                clicked != Material.PINK_BED &&
-                clicked != Material.WHITE_BED &&
-                clicked != Material.LIGHT_GRAY_BED &&
-                clicked != Material.GRAY_BED &&
-                clicked != Material.BLACK_BED &&
-                clicked != Material.BROWN_BED) {
+        if (!(Tag.BEDS.isTagged(block.getType()))) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
@@ -179,25 +164,15 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // button
     public void onButton(PlayerInteractEvent event) {
+        if (!event.getAction().isRightClick()) {
+            return;
+        }
         Player player = event.getPlayer();
         if (event.getClickedBlock() == null) {
             return;
         }
         Block block = event.getClickedBlock();
-        Material clicked = block.getType();
-        if (clicked != Material.STONE_BUTTON &&
-                clicked != Material.BAMBOO_BUTTON &&
-                clicked != Material.OAK_BUTTON &&
-                clicked != Material.SPRUCE_BUTTON &&
-                clicked != Material.BIRCH_BUTTON &&
-                clicked != Material.JUNGLE_BUTTON &&
-                clicked != Material.ACACIA_BUTTON &&
-                clicked != Material.DARK_OAK_BUTTON &&
-                clicked != Material.CRIMSON_BUTTON &&
-                clicked != Material.WARPED_BUTTON &&
-                clicked != Material.POLISHED_BLACKSTONE_BUTTON &&
-                clicked != Material.MANGROVE_BUTTON &&
-                clicked != Material.CHERRY_BUTTON) {
+        if (!Tag.BUTTONS.isTagged(block.getType())) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominion(block.getLocation());
@@ -206,10 +181,13 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // cake
     public void eatCake(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
+        if (!event.getAction().isRightClick()) {
             return;
         }
         Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
         Material clicked = block.getType();
         if (clicked != Material.CAKE) {
             return;
@@ -301,7 +279,11 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // comparer
     public void comparerChange(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
+        if (!event.getAction().isRightClick()) {
+            return;
+        }
+        Block block = event.getClickedBlock();
+        if (block == null) {
             return;
         }
         Material clicked = event.getClickedBlock().getType();
@@ -315,45 +297,14 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // door
     public void doorUse(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
+        if (!event.getAction().isRightClick()) {
             return;
         }
-        Material clicked = event.getClickedBlock().getType();
-        if (clicked != Material.IRON_DOOR &&
-                clicked != Material.OAK_DOOR &&
-                clicked != Material.SPRUCE_DOOR &&
-                clicked != Material.BIRCH_DOOR &&
-                clicked != Material.JUNGLE_DOOR &&
-                clicked != Material.ACACIA_DOOR &&
-                clicked != Material.CHERRY_DOOR &&
-                clicked != Material.DARK_OAK_DOOR &&
-                clicked != Material.MANGROVE_DOOR &&
-                clicked != Material.BAMBOO_DOOR &&
-                clicked != Material.CRIMSON_DOOR &&
-                clicked != Material.WARPED_DOOR &&
-                clicked != Material.IRON_TRAPDOOR &&
-                clicked != Material.OAK_TRAPDOOR &&
-                clicked != Material.SPRUCE_TRAPDOOR &&
-                clicked != Material.BIRCH_TRAPDOOR &&
-                clicked != Material.JUNGLE_TRAPDOOR &&
-                clicked != Material.ACACIA_TRAPDOOR &&
-                clicked != Material.CHERRY_TRAPDOOR &&
-                clicked != Material.DARK_OAK_TRAPDOOR &&
-                clicked != Material.MANGROVE_TRAPDOOR &&
-                clicked != Material.BAMBOO_TRAPDOOR &&
-                clicked != Material.CRIMSON_TRAPDOOR &&
-                clicked != Material.WARPED_TRAPDOOR &&
-                clicked != Material.OAK_FENCE_GATE &&
-                clicked != Material.SPRUCE_FENCE_GATE &&
-                clicked != Material.BIRCH_FENCE_GATE &&
-                clicked != Material.JUNGLE_FENCE_GATE &&
-                clicked != Material.ACACIA_FENCE_GATE &&
-                clicked != Material.CHERRY_FENCE_GATE &&
-                clicked != Material.DARK_OAK_FENCE_GATE &&
-                clicked != Material.MANGROVE_FENCE_GATE &&
-                clicked != Material.BAMBOO_FENCE_GATE &&
-                clicked != Material.CRIMSON_FENCE_GATE &&
-                clicked != Material.WARPED_FENCE_GATE) {
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        if (!Tag.DOORS.isTagged(block.getType())) {
             return;
         }
         Player player = event.getPlayer();
@@ -375,9 +326,27 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // edit sign
+    public void onSignOpen(PlayerInteractEvent event) {
+        if (!event.getAction().isRightClick()) {
+            return;
+        }
+        Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        if (!(Tag.SIGNS.isTagged(block.getType()))) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        checkFlag(dom, Flag.EDIT_SIGN, player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // edit sign
     public void onSignEdit(SignChangeEvent event) {
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
+        Block block = event.getBlock();
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         checkFlag(dom, Flag.EDIT_SIGN, player, event);
     }
 
@@ -458,10 +427,13 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // honey
     public void honeyInteractive(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
+        if (!event.getAction().isRightClick()) {
             return;
         }
         Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
         Material clicked = block.getType();
         if (clicked != Material.BEEHIVE && clicked != Material.BEE_NEST) {
             return;
@@ -513,10 +485,13 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // lever
     public void onLever(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
+        if (!event.getAction().isRightClick()) {
             return;
         }
         Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
         Material clicked = block.getType();
         if (clicked != Material.LEVER) {
             return;
@@ -615,26 +590,14 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // pressure
     public void onPressure(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
+        if (event.getAction() != Action.PHYSICAL) {
             return;
         }
         Block block = event.getClickedBlock();
-        Material clicked = block.getType();
-        if (clicked != Material.STONE_PRESSURE_PLATE &&
-                clicked != Material.LIGHT_WEIGHTED_PRESSURE_PLATE &&
-                clicked != Material.HEAVY_WEIGHTED_PRESSURE_PLATE &&
-                clicked != Material.OAK_PRESSURE_PLATE &&
-                clicked != Material.SPRUCE_PRESSURE_PLATE &&
-                clicked != Material.BIRCH_PRESSURE_PLATE &&
-                clicked != Material.JUNGLE_PRESSURE_PLATE &&
-                clicked != Material.ACACIA_PRESSURE_PLATE &&
-                clicked != Material.DARK_OAK_PRESSURE_PLATE &&
-                clicked != Material.CRIMSON_PRESSURE_PLATE &&
-                clicked != Material.WARPED_PRESSURE_PLATE &&
-                clicked != Material.POLISHED_BLACKSTONE_PRESSURE_PLATE &&
-                clicked != Material.MANGROVE_PRESSURE_PLATE &&
-                clicked != Material.CHERRY_PRESSURE_PLATE &&
-                clicked != Material.BAMBOO_PRESSURE_PLATE) {
+        if (block == null) {
+            return;
+        }
+        if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
             return;
         }
         Player player = event.getPlayer();
