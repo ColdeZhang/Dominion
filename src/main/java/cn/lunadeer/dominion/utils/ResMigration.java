@@ -79,7 +79,7 @@ public class ResMigration {
         dominionNode.loc2 = new Location(world, Double.parseDouble(loc[3]), Double.parseDouble(loc[4]), Double.parseDouble(loc[5]));
         if (res.TPLoc != null) {
             String[] tpLocStr = res.TPLoc.split(":");
-            if (tpLocStr.length == 3) {
+            if (tpLocStr.length >= 3) {
                 dominionNode.tpLoc = new Location(world, Double.parseDouble(tpLocStr[0]), Double.parseDouble(tpLocStr[1]), Double.parseDouble(tpLocStr[2]));
             }
         }
