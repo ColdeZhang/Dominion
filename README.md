@@ -39,7 +39,7 @@
 - 支持经济系统（需要 Vault 前置）；
 - 领地区域可视化；
 - 管理员可在游戏内使用TUI配置领地系统；
-- 支持[从 Residence 迁移](https://ssl.lunadeer.cn:14448/doc/73/)领地数据；
+- 支持[从 Residence 迁移](https://ssl.lunadeer.cn:14448/doc/73/)领地数据（1.33.7+）；
 
 <div style="text-align: center;">
 
