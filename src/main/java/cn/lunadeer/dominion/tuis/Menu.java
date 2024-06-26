@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.tuis;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -38,6 +39,9 @@ public class Menu {
         Line link = Line.create()
                 .append(Button.create("使用文档").setOpenURL("https://ssl.lunadeer.cn:14448/doc/23/").build())
                 .append("在浏览器中打开使用文档");
+        Line migrate = Line.create()
+                .append(Button.create("迁移数据").setExecuteCommand("/dominion migrate_list").build())
+                .append("把你的领地从Residence迁移到Dominion");
         Line all = Line.create()
                 .append(Button.create("所有领地").setExecuteCommand("/dominion all_dominion").build())
                 .append("查看所有领地");
@@ -58,6 +62,9 @@ public class Menu {
                 .add(template)
                 .add(help)
                 .add(link);
+        if (Dominion.config.getResidenceMigration()) {
+            view.add(migrate);
+        }
         if (player.isOp()) {
             view.add(Line.create().append(""));
             view.add(Line.create().append(Component.text("--- 以下选项仅OP可见 ---", ViewStyles.main_color)));

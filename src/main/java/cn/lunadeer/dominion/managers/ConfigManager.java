@@ -83,6 +83,7 @@ public class ConfigManager {
         _economy_only_xz = _file.getBoolean("Economy.OnlyXZ", false);
         _economy_refund = (float) _file.getDouble("Economy.Refund", 0.85);
         _fly_permission_nodes = _file.getStringList("FlyPermissionNodes");
+        _residence_migration = _file.getBoolean("ResidenceMigration", false);
         saveAll();  // 回写文件 防止文件中的数据不完整
         Flag.loadFromJson();
     }
@@ -111,6 +112,7 @@ public class ConfigManager {
         _file.set("Economy.OnlyXZ", _economy_only_xz);
         _file.set("Economy.Refund", _economy_refund);
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
+        _file.set("ResidenceMigration", _residence_migration);
         _plugin.saveConfig();
     }
 
@@ -388,6 +390,16 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Boolean getResidenceMigration() {
+        return _residence_migration;
+    }
+
+    public void setResidenceMigration(Boolean residence_migration) {
+        _residence_migration = residence_migration;
+        _file.set("ResidenceMigration", residence_migration);
+        _plugin.saveConfig();
+    }
+
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;
@@ -426,4 +438,5 @@ public class ConfigManager {
     private Boolean _economy_only_xz;
     private Float _economy_refund;
     private List<String> _fly_permission_nodes;
+    private Boolean _residence_migration;
 }

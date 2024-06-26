@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.cuis.*;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.tuis.*;
+import cn.lunadeer.dominion.tuis.MigrateList;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -173,6 +174,12 @@ public class Commands implements TabExecutor {
                 break;
             case "select_template":
                 SelectTemplate.show(sender, args);
+                break;
+            case "migrate_list":
+                MigrateList.show(sender, args);
+                break;
+            case "migrate":
+                Migration.migrate(sender, args);
                 break;
             case "set_map_color":
                 DominionOperate.setMapColor(sender, args);

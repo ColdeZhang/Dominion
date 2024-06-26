@@ -4,8 +4,11 @@ import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import cn.lunadeer.dominion.Dominion;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -17,6 +20,17 @@ import java.util.UUID;
 public class PlayerDTO {
 
     public static PlayerDTO get(Player player) {
+        PlayerDTO re = select(player.getUniqueId());
+        if (re == null) {
+            re = insert(new PlayerDTO(player.getUniqueId(), player.getName(), System.currentTimeMillis()));
+        }
+        return re;
+    }
+
+    public static @Nullable PlayerDTO get(OfflinePlayer player) {
+        if (player.getName() == null) {
+            return null;
+        }
         PlayerDTO re = select(player.getUniqueId());
         if (re == null) {
             re = insert(new PlayerDTO(player.getUniqueId(), player.getName(), System.currentTimeMillis()));
