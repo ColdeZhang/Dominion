@@ -97,6 +97,9 @@ public class EnvironmentEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // trample
     public void onFarmlandTrample(PlayerInteractEvent event) {
+        if (event.getAction() != Action.PHYSICAL) {
+            return;
+        }
         Block block = event.getClickedBlock();
         if (block == null) {
             return;
@@ -104,11 +107,7 @@ public class EnvironmentEvents implements Listener {
         if (block.getType() != FARMLAND) {
             return;
         }
-        if (event.getAction() != Action.PHYSICAL) {
-            return;
-        }
-        Location location = block.getLocation();
-        DominionDTO dom = Cache.instance.getDominion(location);
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
         checkFlag(dom, Flag.TRAMPLE, event);
     }
 
@@ -160,5 +159,15 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
         checkFlag(dom, Flag.ANIMAL_SPAWN, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // villager_spawn
+    public void onVillagerSpawn(CreatureSpawnEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.VILLAGER) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        checkFlag(dom, Flag.VILLAGER_SPAWN, event);
     }
 }

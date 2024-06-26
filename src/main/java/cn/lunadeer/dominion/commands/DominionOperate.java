@@ -375,15 +375,17 @@ public class DominionOperate {
         }
 
         PlayerPrivilegeDTO privilegeDTO = PlayerPrivilegeDTO.select(player.getUniqueId(), dominionDTO.getId());
-        if (privilegeDTO == null) {
-            if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
-                Notification.error(sender, "此领地禁止传送");
-                return;
-            }
-        } else {
-            if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
-                Notification.error(sender, "你不被允许传送到这个领地");
-                return;
+        if (!player.getUniqueId().equals(dominionDTO.getOwner())) { // 领地所有人可以传送到自己的领地
+            if (privilegeDTO == null) {
+                if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
+                    Notification.error(sender, "此领地禁止传送");
+                    return;
+                }
+            } else {
+                if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
+                    Notification.error(sender, "你不被允许传送到这个领地");
+                    return;
+                }
             }
         }
 
@@ -425,5 +427,26 @@ public class DominionOperate {
                 });
             }
         }, 20L * Dominion.config.getTpDelay());
+    }
+
+    /**
+     * 设置领地卫星地图地块颜色
+     *
+     * @param sender    命令发送者
+     * @param args      命令参数
+     */
+    public static void setMapColor(CommandSender sender, String[] args) {
+        Player player = playerOnly(sender);
+        if (player == null) return;
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion set_map_color <颜色> [领地名称]");
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (args.length == 2) {
+            DominionController.setMapColor(operator, args[1]);
+        } else {
+            DominionController.setMapColor(operator, args[1], args[2]);
+        }
     }
 }

@@ -666,6 +666,48 @@ public class DominionController {
     }
 
     /**
+     * 设置领地的卫星地图地块颜色
+     *
+     * @param operator 操作者
+     * @param color    16进制颜色 例如 #ff0000
+     * @param dom_name 领地名称
+     */
+    public static void setMapColor(AbstractOperator operator, String color, String dom_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置领地地图颜色失败");
+        DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
+        if (dominion == null) {
+            return;
+        }
+        if (notOwner(operator, dominion)) {
+            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者", dom_name));
+            return;
+        }
+        color = color.toUpperCase();    // 转换为大写
+        if (!color.matches("^#[0-9a-fA-F]{6}$")) {
+            operator.setResponse(FAIL.addMessage("颜色格式不正确"));
+            return;
+        }
+        dominion.setColor(color);
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功设置领地 %s 的卫星地图颜色为 %s", dom_name, color));
+    }
+
+    /**
+     * 设置领地的卫星地图地块颜色
+     *
+     * @param operator 操作者
+     * @param color    16进制颜色 例如 #ff0000
+     */
+    public static void setMapColor(AbstractOperator operator, String color) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置领地地图颜色失败");
+        DominionDTO dominion = getPlayerCurrentDominion(operator);
+        if (dominion == null) {
+            operator.setResponse(FAIL.addMessage("无法获取你所处的领地，请指定名称"));
+            return;
+        }
+        setMapColor(operator, color, dominion.getName());
+    }
+
+    /**
      * 判断两个领地是否相交
      */
     private static boolean isIntersect(DominionDTO a, DominionDTO b) {

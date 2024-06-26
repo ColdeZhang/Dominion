@@ -4,7 +4,6 @@ import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +30,7 @@ public class TemplateList {
         view.add(Line.create().append(create.build()));
 
         for (PrivilegeTemplateDTO template : templates) {
-            Button manage = Button.createGreen("管理").setExecuteCommand("/dominion template_manage " + template.getName());
+            Button manage = Button.createGreen("配置").setExecuteCommand("/dominion template_manage " + template.getName());
             Button delete = Button.createRed("删除").setExecuteCommand("/dominion template_delete " + template.getName());
             Line line = Line.create()
                     .append(delete.build())

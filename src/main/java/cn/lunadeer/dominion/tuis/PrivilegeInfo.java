@@ -59,13 +59,14 @@ public class PrivilegeInfo {
             view.add(Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion set_privilege " + playerName + " admin false " + dominion.getName() + " " + page).build())
                     .append("管理员"));
+            view.add(createOption(Flag.GLOW, privilege.getFlagValue(Flag.GLOW), playerName, dominion.getName(), page));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐").setExecuteCommand("/dominion set_privilege " + playerName + " admin true " + dominion.getName() + " " + page).build())
                     .append("管理员"));
-        }
-        for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
-            view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
+            for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+                view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
+            }
         }
         view.showOn(player, page);
     }

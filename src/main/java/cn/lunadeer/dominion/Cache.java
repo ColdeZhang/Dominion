@@ -32,11 +32,14 @@ public class Cache {
 
     /**
      * 从数据库加载所有领地
+     * 如果idToLoad为null，则加载所有领地
+     *
+     * @param idToLoad 领地ID
      */
-    public void loadDominions() {
+    public void loadDominions(Integer idToLoad) {
         if (_last_update_dominion.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
             XLogger.debug("run loadDominionsExecution directly");
-            loadDominionsExecution();
+            loadDominionsExecution(idToLoad);
         } else {
             if (_update_dominion_is_scheduled.get()) return;
             XLogger.debug("schedule loadDominionsExecution");
@@ -44,70 +47,113 @@ public class Cache {
             long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
             Scheduler.runTaskLaterAsync(() -> {
                         XLogger.debug("run loadDominionsExecution scheduled");
-                        loadDominionsExecution();
+                        loadDominionsExecution(idToLoad);
                         _update_dominion_is_scheduled.set(false);
                     },
                     delay_tick);
         }
     }
 
-    private void loadDominionsExecution() {
-        id_dominions = new ConcurrentHashMap<>();
-        world_dominion_tree = new ConcurrentHashMap<>();
-        dominion_children = new ConcurrentHashMap<>();
-        List<DominionDTO> dominions = DominionDTO.selectAll();
-        Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
-        for (DominionDTO d : dominions) {
-            if (!world_dominions.containsKey(d.getWorld())) {
-                world_dominions.put(d.getWorld(), new ArrayList<>());
+    public void loadDominions() {
+        loadDominions(null);
+    }
+
+    private void loadDominionsExecution(Integer idToLoad) {
+        Scheduler.runTaskAsync(() -> {
+            long start = System.currentTimeMillis();
+            int count = 0;
+            if (idToLoad == null) {
+                id_dominions = new ConcurrentHashMap<>();
+                world_dominion_tree = new ConcurrentHashMap<>();
+                dominion_children = new ConcurrentHashMap<>();
+                List<DominionDTO> dominions = DominionDTO.selectAll();
+                count = dominions.size();
+                Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
+                for (DominionDTO d : dominions) {
+                    if (!world_dominions.containsKey(d.getWorld())) {
+                        world_dominions.put(d.getWorld(), new ArrayList<>());
+                    }
+                    world_dominions.get(d.getWorld()).add(d);
+                    id_dominions.put(d.getId(), d);
+                    if (!dominion_children.containsKey(d.getParentDomId())) {
+                        dominion_children.put(d.getParentDomId(), new ArrayList<>());
+                    }
+                    dominion_children.get(d.getParentDomId()).add(d.getId());
+                }
+                for (Map.Entry<String, List<DominionDTO>> entry : world_dominions.entrySet()) {
+                    world_dominion_tree.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+                }
+            } else {
+                DominionDTO dominion = DominionDTO.select(idToLoad);
+                if (dominion == null && id_dominions.containsKey(idToLoad)) {
+                    id_dominions.remove(idToLoad);
+                } else if (dominion != null) {
+                    id_dominions.put(idToLoad, dominion);
+                    count = 1;
+                }
             }
-            world_dominions.get(d.getWorld()).add(d);
-            id_dominions.put(d.getId(), d);
-            if (!dominion_children.containsKey(d.getParentDomId())) {
-                dominion_children.put(d.getParentDomId(), new ArrayList<>());
-            }
-            dominion_children.get(d.getParentDomId()).add(d.getId());
-        }
-        for (Map.Entry<String, List<DominionDTO>> entry : world_dominions.entrySet()) {
-            world_dominion_tree.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-        }
-        BlueMapConnect.render();
-        _last_update_dominion.set(System.currentTimeMillis());
+            BlueMapConnect.render();
+            recheckPlayerState = true;
+            _last_update_dominion.set(System.currentTimeMillis());
+            XLogger.debug("loadDominionsExecution cost: %d ms for %d dominions"
+                    , System.currentTimeMillis() - start, count);
+        });
     }
 
     /**
      * 从数据库加载所有玩家特权
+     * 如果player_uuid为null，则加载所有玩家的特权
+     *
+     * @param player_uuid 玩家UUID
      */
-    public void loadPlayerPrivileges() {
+    public void loadPlayerPrivileges(UUID player_uuid) {
         if (_last_update_privilege.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            loadPlayerPrivilegesExecution();
+            XLogger.debug("run loadPlayerPrivilegesExecution directly");
+            loadPlayerPrivilegesExecution(player_uuid);
         } else {
             if (_update_privilege_is_scheduled.get()) return;
+            XLogger.debug("schedule loadPlayerPrivilegesExecution");
             _update_privilege_is_scheduled.set(true);
-            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
+            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_privilege.get())) / 1000 * 20L;
             Scheduler.runTaskLaterAsync(() -> {
-                        loadPlayerPrivilegesExecution();
+                        XLogger.debug("run loadPlayerPrivilegesExecution scheduled");
+                        loadPlayerPrivilegesExecution(player_uuid);
                         _update_privilege_is_scheduled.set(false);
                     },
                     delay_tick);
         }
     }
 
-    private void loadPlayerPrivilegesExecution() {
-        List<PlayerPrivilegeDTO> all_privileges = PlayerPrivilegeDTO.selectAll();
-        if (all_privileges == null) {
-            XLogger.err("加载玩家特权失败");
-            return;
-        }
-        player_uuid_to_privilege = new ConcurrentHashMap<>();
-        for (PlayerPrivilegeDTO privilege : all_privileges) {
-            UUID player_uuid = privilege.getPlayerUUID();
-            if (!player_uuid_to_privilege.containsKey(player_uuid)) {
-                player_uuid_to_privilege.put(player_uuid, new ConcurrentHashMap<>());
+    public void loadPlayerPrivileges() {
+        loadPlayerPrivileges(null);
+    }
+
+    private void loadPlayerPrivilegesExecution(UUID player_to_update) {
+        Scheduler.runTaskAsync(() -> {
+            long start = System.currentTimeMillis();
+            List<PlayerPrivilegeDTO> all_privileges;
+            if (player_to_update == null) {
+                all_privileges = PlayerPrivilegeDTO.selectAll();
+                player_uuid_to_privilege = new ConcurrentHashMap<>();
+            } else {
+                all_privileges = PlayerPrivilegeDTO.selectAll(player_to_update);
+                if (!player_uuid_to_privilege.containsKey(player_to_update)) {
+                    player_uuid_to_privilege.put(player_to_update, new ConcurrentHashMap<>());
+                }
+                player_uuid_to_privilege.get(player_to_update).clear();
             }
-            player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
-        }
-        _last_update_privilege.set(System.currentTimeMillis());
+            for (PlayerPrivilegeDTO privilege : all_privileges) {
+                UUID player_uuid = privilege.getPlayerUUID();
+                if (!player_uuid_to_privilege.containsKey(player_uuid)) {
+                    player_uuid_to_privilege.put(player_uuid, new ConcurrentHashMap<>());
+                }
+                player_uuid_to_privilege.get(player_uuid).put(privilege.getDomID(), privilege);
+            }
+            recheckPlayerState = true;
+            _last_update_privilege.set(System.currentTimeMillis());
+            XLogger.debug("loadPlayerPrivilegesExecution cost: %d ms for %d privileges"
+                    , System.currentTimeMillis() - start, all_privileges.size());
+        });
     }
 
     /**
@@ -128,6 +174,11 @@ public class Cache {
         if (isInDominion(last_dominion, player)) {
             if (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).size() == 0) {
                 // 如果玩家仍在领地内，且领地没有子领地，则直接返回
+                if (recheckPlayerState) {
+                    lightOrNot(player, last_dominion);
+                    flyOrNot(player, last_dominion);
+                    recheckPlayerState = false;
+                }
                 return last_dominion;
             }
         }
@@ -138,19 +189,11 @@ public class Cache {
             return last_dominion;
         }
         if (last_dom_id != -1) {
-//            if (last_dominion.getParentDomId() == -1)
-//                Notification.info(player, "您已离开领地：%s", last_dominion.getName());
-//             else
-//                Notification.info(player, "您已离开子领地：%s", last_dominion.getName());
             String msg = last_dominion.getLeaveMessage();
             msg = msg.replace("${DOM_NAME}", last_dominion.getName());
             Notification.actionBar(player, msg);
         }
         if (current_dom_id != -1) {
-//            if (current_dominion.getParentDomId() == -1)
-//                Notification.info(player, "您正在进入领地：%s", current_dominion.getName());
-//            else
-//                Notification.info(player, "您正在进入子领地：%s", current_dominion.getName());
             String msg = current_dominion.getJoinMessage();
             msg = msg.replace("${DOM_NAME}", current_dominion.getName());
             Notification.actionBar(player, msg);
@@ -243,7 +286,7 @@ public class Cache {
         if (player == null) return dominionTree;
         for (List<DominionNode> tree : world_dominion_tree.values()) {
             for (DominionNode node : tree) {
-                if (node.dominion.getOwner().equals(player.getUuid())) {
+                if (node.getDominion().getOwner().equals(player.getUuid())) {
                     dominionTree.add(node);
                 }
             }
@@ -336,7 +379,7 @@ public class Cache {
     private final AtomicLong _last_update_privilege = new AtomicLong(0);
     private final AtomicBoolean _update_privilege_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
-
+    private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
 
     private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;

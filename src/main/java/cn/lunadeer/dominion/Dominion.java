@@ -6,6 +6,8 @@ import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.minecraftpluginutils.*;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseType;
 import cn.lunadeer.minecraftpluginutils.scui.CuiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,8 +28,8 @@ public final class Dominion extends JavaPlugin {
         new XLogger(this);
         config = new ConfigManager(this);
         XLogger.setDebug(config.isDebug());
-        database = new DatabaseManager(this,
-                config.getDbType().equals("pgsql") ? DatabaseManager.TYPE.POSTGRESQL : DatabaseManager.TYPE.SQLITE,
+        new DatabaseManager(this,
+                DatabaseType.valueOf(config.getDbType().toUpperCase()),
                 config.getDbHost(),
                 config.getDbPort(),
                 config.getDbName(),
@@ -37,7 +39,9 @@ public final class Dominion extends JavaPlugin {
         new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();
-        new VaultConnect(this);
+        if (config.getEconomyEnable()) {
+            new VaultConnect(this);
+        }
 
         Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
@@ -72,12 +76,11 @@ public final class Dominion extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        database.close();
+        DatabaseManager.instance.close();
     }
 
     public static Dominion instance;
     public static ConfigManager config;
-    public static DatabaseManager database;
     public static Map<UUID, Map<Integer, Location>> pointsSelect = new HashMap<>();
     private GiteaReleaseCheck giteaReleaseCheck;
 }
