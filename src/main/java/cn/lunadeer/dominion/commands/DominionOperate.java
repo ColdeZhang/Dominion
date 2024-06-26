@@ -400,21 +400,33 @@ public class DominionOperate {
         }
         if (Dominion.config.getTpDelay() > 0) {
             Notification.info(player, "传送将在 %d 秒后执行", Dominion.config.getTpDelay());
+            Scheduler.runTaskAsync(() -> {
+                int i = Dominion.config.getTpDelay();
+                while (i > 0) {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    Notification.actionBar(player, "传送倒计时 %d 秒", i);
+                    i--;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        XLogger.err(e.getMessage());
+                    }
+                }
+            });
         }
         Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
         Scheduler.runTaskLater(() -> {
             Location location = dominionDTO.getTpLocation();
+            int center_x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
+            int center_z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
+            World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
             if (location == null) {
-                int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
-                int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
-                World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
-                location = new Location(world, x, player.getLocation().getY(), z);
+                location = new Location(world, center_x, player.getLocation().getY(), center_z);
                 XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
             } else if (!isInDominion(dominionDTO, location)) {
-                int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
-                int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
-                World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
-                location = new Location(world, x, player.getLocation().getY(), z);
+                location = new Location(world, center_x, player.getLocation().getY(), center_z);
                 XLogger.warn("领地 %s 传送点不在领地内，将尝试传送到中心点", dominionDTO.getName());
             }
             if (player.isOnline()) {
@@ -432,8 +444,8 @@ public class DominionOperate {
     /**
      * 设置领地卫星地图地块颜色
      *
-     * @param sender    命令发送者
-     * @param args      命令参数
+     * @param sender 命令发送者
+     * @param args   命令参数
      */
     public static void setMapColor(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
