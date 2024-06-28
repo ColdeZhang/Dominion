@@ -41,7 +41,8 @@ public class GroupManage {
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("权限组列表").setExecuteCommand("/dominion group_list" + dominion.getName()).build())
+                        .append(Button.create("权限组列表").setExecuteCommand("/dominion group_list " + dominion.getName()).build())
+                        .append("权限组管理")
         );
         Button rename_btn = Button.create("重命名")
                 .setHoverText("重命名权限组 " + group.getName())
@@ -57,7 +58,7 @@ public class GroupManage {
             view.add(createOption(Flag.GLOW, group.getFlagValue(Flag.GLOW), dominion.getName(), group.getName(), page));
         } else {
             view.add(Line.create()
-                    .append(Button.createGreen("☐")
+                    .append(Button.createRed("☐")
                             .setExecuteCommand(String.format("/dominion set_group_flag %s %s admin true %s", dominion.getName(), group.getName(), page))
                             .build())
                     .append("管理员"));

@@ -36,7 +36,7 @@ public class DominionManage {
                 .append(Button.create("访客权限").setExecuteCommand("/dominion flag_info " + dominion.getName()).build())
                 .append("访客在此领地的权限");
         Line privilege_list = Line.create()
-                .append(Button.create("成员权限").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
+                .append(Button.create("成员管理").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
                 .append("管理此领地成员的权限");
         Line group_list = Line.create()
                 .append(Button.create("权限组").setExecuteCommand("/dominion group_list " + dominion.getName()).build())

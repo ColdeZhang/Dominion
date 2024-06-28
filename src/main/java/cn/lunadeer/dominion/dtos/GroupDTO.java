@@ -64,7 +64,7 @@ public class GroupDTO {
     public static GroupDTO create(String name, DominionDTO dominionDTO) {
         GroupDTO group = new GroupDTO(name, dominionDTO.getId());
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null));
-        insertRow.table("group")
+        insertRow.table("dominion_group")
                 .field(group.domID)
                 .field(group.name)
                 .field(group.admin);
@@ -86,7 +86,7 @@ public class GroupDTO {
     }
 
     public static void delete(Integer id) {
-        String sql = "DELETE FROM group WHERE id = ?;";
+        String sql = "DELETE FROM dominion_group WHERE id = ?;";
         DatabaseManager.instance.query(sql, id);
         Cache.instance.loadGroup(id);
         List<PlayerPrivilegeDTO> players = PlayerPrivilegeDTO.selectByGroupId(id);
@@ -96,26 +96,26 @@ public class GroupDTO {
     }
 
     public static GroupDTO select(Integer id) {
-        String sql = "SELECT * FROM group WHERE id = ?;";
+        String sql = "SELECT * FROM dominion_group WHERE id = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, id));
         if (groups.size() == 0) return null;
         return groups.get(0);
     }
 
     public static GroupDTO select(Integer domID, String name) {
-        String sql = "SELECT * FROM group WHERE dom_id = ? AND name = ?;";
+        String sql = "SELECT * FROM dominion_group WHERE dom_id = ? AND name = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, domID, name));
         if (groups.size() == 0) return null;
         return groups.get(0);
     }
 
     public static List<GroupDTO> selectAll() {
-        String sql = "SELECT * FROM group;";
+        String sql = "SELECT * FROM dominion_group;";
         return getDTOFromRS(DatabaseManager.instance.query(sql));
     }
 
     public static List<GroupDTO> selectByDominionId(Integer domID) {
-        String sql = "SELECT * FROM group WHERE dom_id = ?;";
+        String sql = "SELECT * FROM dominion_group WHERE dom_id = ?;";
         return getDTOFromRS(DatabaseManager.instance.query(sql, domID));
     }
 
@@ -162,7 +162,7 @@ public class GroupDTO {
 
     private GroupDTO doUpdate(UpdateRow updateRow) {
         updateRow.returningAll(id)
-                .table("group")
+                .table("dominion_group")
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);

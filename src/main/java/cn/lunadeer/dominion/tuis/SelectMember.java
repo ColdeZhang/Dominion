@@ -51,5 +51,6 @@ public class SelectMember {
                             .setExecuteCommand("/dominion group_add_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + backPage)
                             .build()));
         }
+        view.showOn(player, backPage);
     }
 }

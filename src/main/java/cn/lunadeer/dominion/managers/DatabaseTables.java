@@ -166,7 +166,7 @@ public class DatabaseTables {
         TableColumn group_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
         CreateTable.ForeignKey group_dom_id_fk = new CreateTable.ForeignKey(group_dom_id, "dominion", dominion_id, true);
         CreateTable group = new CreateTable().ifNotExists();
-        group.table("group")
+        group.table("dominion_group")
                 .field(group_id)
                 .field(group_dom_id)
                 .field(group_name)
@@ -176,7 +176,7 @@ public class DatabaseTables {
         group.execute();
         for (Flag flag : Flag.getAllPrivilegeFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
-            new AddColumn(column).table("group").ifNotExists().execute();
+            new AddColumn(column).table("dominion_group").ifNotExists().execute();
         }
     }
 }
