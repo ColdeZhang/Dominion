@@ -187,6 +187,33 @@ public class Commands implements TabExecutor {
             case "env_info":
                 DominionEnvInfo.show(sender, args);
                 break;
+            case "create_group":
+                Group.createGroup(sender, args);
+                break;
+            case "delete_group":
+                Group.deleteGroup(sender, args);
+                break;
+            case "rename_group":
+                Group.renameGroup(sender, args);
+                break;
+            case "set_group_flag":
+                Group.setGroupFlag(sender, args);
+                break;
+            case "group_add_member":
+                Group.addMember(sender, args);
+                break;
+            case "group_remove_member":
+                Group.removeMember(sender, args);
+                break;
+            case "group_list":
+                DominionGroupList.show(sender, args);
+                break;
+            case "select_member_add_group":
+                SelectMember.show(sender, args);
+                break;
+            case "group_manage":
+                GroupManage.show(sender, args);
+                break;
             // ---===  CUI  ===---
             case "cui_rename":
                 RenameDominion.open(sender, args);
@@ -208,6 +235,12 @@ public class Commands implements TabExecutor {
                 break;
             case "cui_set_map_color":
                 SetMapColor.open(sender, args);
+                break;
+            case "cui_create_group":
+                CreateGroup.open(sender, args);
+                break;
+            case "cui_rename_group":
+                RenameGroup.open(sender, args);
                 break;
             default:
                 return false;
@@ -251,7 +284,8 @@ public class Commands implements TabExecutor {
                     "template_create",
                     "template_set_flag",
                     "all_dominion",
-                    "set_map_color"
+                    "set_map_color",
+                    "create_group", "delete_group", "rename_group", "set_group_flag", "group_add_member", "group_remove_member"
             );
         }
         if (args.length == 2) {
@@ -272,6 +306,12 @@ public class Commands implements TabExecutor {
                 case "rename":
                 case "give":
                 case "set_tp_location":
+                case "create_group":
+                case "delete_group":
+                case "rename_group":
+                case "set_group_flag":
+                case "group_add_member":
+                case "group_remove_member":
                     return playerDominions(sender);
                 case "tp":
                     return allDominions();
@@ -328,6 +368,14 @@ public class Commands implements TabExecutor {
                     return playerNames();
                 case "template_manage":
                     return Collections.singletonList("页码(可选)");
+                case "create_group":
+                    return Collections.singletonList("输入要创建的权限组名称");
+                case "delete_group":
+                case "rename_group":
+                case "set_group_flag":
+                case "group_add_member":
+                case "group_remove_member":
+                    return dominionGroups(args[1]);
             }
         }
         if (args.length == 4) {
@@ -339,6 +387,20 @@ public class Commands implements TabExecutor {
                     return boolOptions();
                 case "apply_template":
                     return allTemplates(sender);
+                case "rename_group":
+                    return Collections.singletonList("输入新的权限组名称");
+                case "set_group_flag":
+                    return playerPrivileges();
+                case "group_add_member":
+                    return playerNames();
+                case "group_remove_member":
+                    return groupPlayers(args[1], args[2]);
+            }
+        }
+        if (args.length == 5) {
+            switch (args[0]) {
+                case "set_group_flag":
+                    return boolOptions();
             }
         }
         return null;

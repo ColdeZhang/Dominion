@@ -13,8 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_2;
-import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
+import static cn.lunadeer.dominion.tuis.Apis.*;
 
 public class PrivilegeInfo {
     // /dominion privilege_info <玩家名称> [领地名称] [页码]
@@ -22,13 +21,7 @@ public class PrivilegeInfo {
         Player player = playerOnly(sender);
         if (player == null) return;
         DominionDTO dominion = getDominionNameArg_2(player, args);
-        int page = 1;
-        if (args.length == 4) {
-            try {
-                page = Integer.parseInt(args[3]);
-            } catch (Exception ignored) {
-            }
-        }
+        int page = getPage(args, 3);
         String playerName = args[1];
         if (dominion == null) {
             Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
@@ -55,6 +48,9 @@ public class PrivilegeInfo {
                         .append(Button.create("成员列表").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
                         .append("成员权限")
         );
+        view.add(Line.create().append(Button.createGreen("套用模板")
+                .setHoverText("选择一个权限模板套用")
+                .setExecuteCommand("/dominion select_template " + playerName + " " + dominion.getName()).build()));
         if (privilege.getAdmin()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion set_privilege " + playerName + " admin false " + dominion.getName() + " " + page).build())

@@ -118,9 +118,9 @@ public class PlayerPrivilege {
         PrivilegeController.applyTemplate(operator, dominionName, playerName, templateName);
         if (args.length == 5) {
             String[] newArgs = new String[3];
-            newArgs[0] = "privilege_list";
-            newArgs[1] = dominionName;
-            newArgs[2] = args[4];
+            newArgs[0] = "privilege_info";
+            newArgs[1] = playerName;
+            newArgs[2] = dominionName;
             DominionPrivilegeList.show(sender, newArgs);
         }
     }

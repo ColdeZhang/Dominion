@@ -26,6 +26,18 @@ public class Apis {
         return page;
     }
 
+    public static int getPage(String[] args, int pos) {
+        int page = 1;
+        if (args.length > pos) {
+            try {
+                page = Integer.parseInt(args[pos]);
+            } catch (Exception e) {
+                return 1;
+            }
+        }
+        return page;
+    }
+
     /**
      * 尝试从 arg[1] 获取领地名称
      * 如果没有此参数则会尝试获取玩家当前所在位置

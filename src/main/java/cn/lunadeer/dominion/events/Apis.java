@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import net.kyori.adventure.text.Component;
@@ -52,8 +53,18 @@ public class Apis {
             return true;
         }
         if (prev != null) {
-            if (prev.getFlagValue(flag)) {
-                return true;
+            if (prev.getGroupId() != -1) {
+                if (prev.getFlagValue(flag)) {
+                    return true;
+                }
+            } else {
+                GroupDTO group = Cache.instance.getGroup(prev.getGroupId());
+                if (group == null) {
+                    return false;
+                }
+                if (group.getFlagValue(flag)) {
+                    return true;
+                }
             }
         } else {
             if (dom.getFlagValue(flag)) {

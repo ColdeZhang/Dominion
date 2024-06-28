@@ -1,10 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
+import cn.lunadeer.dominion.dtos.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,6 +36,32 @@ public class Helper {
         dominions_name.addAll(playerOwnDominions(sender));
         dominions_name.addAll(playerAdminDominions(sender));
         return dominions_name;
+    }
+
+    public static List<String> dominionGroups(String dominionName) {
+        List<String> groups_name = new ArrayList<>();
+        DominionDTO dominion = DominionDTO.select(dominionName);
+        if (dominion == null) return groups_name;
+        List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
+        for (GroupDTO group : groups) {
+            groups_name.add(group.getName());
+        }
+        return groups_name;
+    }
+
+    public static List<String> groupPlayers(String domName, String groupName) {
+        List<String> players_name = new ArrayList<>();
+        DominionDTO dominion = DominionDTO.select(domName);
+        if (dominion == null) return players_name;
+        GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
+        if (group == null) return players_name;
+        List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.selectByGroupId(group.getId());
+        for (PlayerPrivilegeDTO privilege : privileges) {
+            PlayerDTO player = PlayerDTO.select(privilege.getPlayerUUID());
+            if (player == null) continue;
+            players_name.add(player.getLastKnownName());
+        }
+        return players_name;
     }
 
     public static List<String> playerOwnDominions(CommandSender sender) {

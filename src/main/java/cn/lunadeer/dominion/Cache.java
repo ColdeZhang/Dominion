@@ -1,9 +1,6 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
@@ -28,6 +25,7 @@ public class Cache {
         player_current_dominion_id = new HashMap<>();
         loadDominions();
         loadPlayerPrivileges();
+        loadGroup();
     }
 
     /**
@@ -153,6 +151,51 @@ public class Cache {
             _last_update_privilege.set(System.currentTimeMillis());
             XLogger.debug("loadPlayerPrivilegesExecution cost: %d ms for %d privileges"
                     , System.currentTimeMillis() - start, all_privileges.size());
+        });
+    }
+
+    public void loadGroup() {
+        loadGroup(null);
+    }
+
+    public void loadGroup(Integer groupId) {
+        if (_last_update_group.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            XLogger.debug("run loadGroupExecution directly");
+            loadGroupExecution(groupId);
+        } else {
+            if (_update_group_is_scheduled.get()) return;
+            XLogger.debug("schedule loadGroupExecution");
+            _update_group_is_scheduled.set(true);
+            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_group.get())) / 1000 * 20L;
+            Scheduler.runTaskLaterAsync(() -> {
+                        XLogger.debug("run loadGroupExecution scheduled");
+                        loadGroupExecution(groupId);
+                        _update_group_is_scheduled.set(false);
+                    },
+                    delay_tick);
+        }
+    }
+
+    private void loadGroupExecution(Integer groupId) {
+        Scheduler.runTaskAsync(() -> {
+            long start = System.currentTimeMillis();
+            if (groupId == null) {
+                id_groups = new ConcurrentHashMap<>();
+                List<GroupDTO> groups = GroupDTO.selectAll();
+                for (GroupDTO group : groups) {
+                    id_groups.put(group.getId(), group);
+                }
+            } else {
+                GroupDTO group = GroupDTO.select(groupId);
+                if (group == null && id_groups.containsKey(groupId)) {
+                    id_groups.remove(groupId);
+                } else if (group != null) {
+                    id_groups.put(groupId, group);
+                }
+            }
+            recheckPlayerState = true;
+            _last_update_group.set(System.currentTimeMillis());
+            XLogger.debug("loadGroupExecution cost: %d ms", System.currentTimeMillis() - start);
         });
     }
 
@@ -302,6 +345,10 @@ public class Cache {
         return dominionTree;
     }
 
+    public GroupDTO getGroup(Integer id) {
+        return id_groups.get(id);
+    }
+
     /**
      * 获取玩家在指定领地的特权
      * 如果玩家不存在特权，则返回null
@@ -371,6 +418,7 @@ public class Cache {
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
     private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree;
+    private ConcurrentHashMap<Integer, GroupDTO> id_groups;
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, PlayerPrivilegeDTO>> player_uuid_to_privilege;   // 玩家所有的特权
     private final Map<UUID, Integer> player_current_dominion_id;                         // 玩家当前所在领地
     private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
@@ -378,6 +426,8 @@ public class Cache {
     private final AtomicBoolean _update_dominion_is_scheduled = new AtomicBoolean(false);
     private final AtomicLong _last_update_privilege = new AtomicLong(0);
     private final AtomicBoolean _update_privilege_is_scheduled = new AtomicBoolean(false);
+    private final AtomicLong _last_update_group = new AtomicLong(0);
+    private final AtomicBoolean _update_group_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
     private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();

@@ -155,5 +155,28 @@ public class DatabaseTables {
         // 1.31.6
         TableColumn dominion_color = new TableColumn("color", FieldType.STRING, false, false, true, false, "'#00BFFF'");
         new AddColumn(dominion_color).table("dominion").ifNotExists().execute();
+
+        // 1.34.0
+        TableColumn player_privilege_group_id = new TableColumn("group_id", FieldType.INT, false, false, true, false, -1);
+        new AddColumn(player_privilege_group_id).table("player_privilege").ifNotExists().execute();
+
+        TableColumn group_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn group_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
+        TableColumn group_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'未命名'");
+        TableColumn group_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
+        CreateTable.ForeignKey group_dom_id_fk = new CreateTable.ForeignKey(group_dom_id, "dominion", dominion_id, true);
+        CreateTable group = new CreateTable().ifNotExists();
+        group.table("group")
+                .field(group_id)
+                .field(group_dom_id)
+                .field(group_name)
+                .field(group_admin)
+                .foreignKey(group_dom_id_fk)
+                .unique(group_dom_id, group_name);
+        group.execute();
+        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+            TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
+            new AddColumn(column).table("group").ifNotExists().execute();
+        }
     }
 }

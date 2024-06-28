@@ -20,7 +20,6 @@ public class SelectTemplate {
 
         String playerName = args[1];
         String dominionName = args[2];
-        String backPage = args[3];
 
         int page = 1;
         if (args.length == 5) {
@@ -32,18 +31,18 @@ public class SelectTemplate {
 
         List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(player.getUniqueId());
 
-        ListView view = ListView.create(10, "/dominion select_template " + playerName + " " + dominionName + " " + backPage);
+        ListView view = ListView.create(10, "/dominion select_template " + playerName + " " + dominionName);
         view.title("选择一个模板");
         Line sub = Line.create()
                 .append("套用在领地 " + dominionName + " 的成员 " + playerName + " 身上")
-                .append(Button.create("返回").setExecuteCommand("/dominion privilege_list " + dominionName + " " + backPage).build());
+                .append(Button.create("返回").setExecuteCommand("/dominion privilege_info " + playerName + " " + dominionName).build());
         view.subtitle(sub);
 
         for (PrivilegeTemplateDTO template : templates) {
             // /dominion apply_template <玩家名称> <领地名称> <模板名称>
             view.add(Line.create()
                     .append(Button.create("选择")
-                            .setExecuteCommand("/dominion apply_template " + playerName + " " + dominionName + " " + template.getName() + " " + backPage)
+                            .setExecuteCommand("/dominion apply_template " + playerName + " " + dominionName + " " + template.getName())
                             .build())
                     .append(Component.text(template.getName())));
         }

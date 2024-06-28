@@ -25,6 +25,7 @@ public class DominionManage {
             return;
         }
         if (noAuthToManage(player, dominion)) return;
+        int page = Apis.getPage(args, 2);
         Line size_info = Line.create()
                 .append(Button.create("详细信息").setExecuteCommand("/dominion info " + dominion.getName()).build())
                 .append("查看领地详细信息");
@@ -37,6 +38,9 @@ public class DominionManage {
         Line privilege_list = Line.create()
                 .append(Button.create("成员权限").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
                 .append("管理此领地成员的权限");
+        Line group_list = Line.create()
+                .append(Button.create("权限组").setExecuteCommand("/dominion group_list " + dominion.getName()).build())
+                .append("管理此领地的权限组");
         Line set_tp = Line.create()
                 .append(Button.create("设置传送点").setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
                 .append("设置当前位置为此领地传送点");
@@ -64,6 +68,7 @@ public class DominionManage {
                 .add(env_info)
                 .add(flag_info)
                 .add(privilege_list)
+                .add(group_list)
                 .add(set_tp)
                 .add(rename)
                 .add(join_msg)
@@ -71,6 +76,6 @@ public class DominionManage {
         if (Dominion.config.getBlueMap()) {
             view.add(map_color);
         }
-        view.showOn(player, 1);
+        view.showOn(player, page);
     }
 }

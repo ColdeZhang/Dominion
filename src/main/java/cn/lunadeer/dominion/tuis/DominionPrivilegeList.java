@@ -1,9 +1,7 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -53,9 +51,12 @@ public class DominionPrivilegeList {
         for (PlayerPrivilegeDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
+            GroupDTO group = Cache.instance.getGroup(privilege.getGroupId());
             Line line = Line.create();
 
-            if (privilege.getAdmin()) {
+            if (group != null) {
+                line.append(groupTag);
+            } else if (privilege.getAdmin()) {
                 line.append(adminTag);
             } else {
                 if (!privilege.getFlagValue(Flag.MOVE)) {
@@ -65,17 +66,34 @@ public class DominionPrivilegeList {
                 }
             }
 
-            line.append(Button.createGreen("权限")
+            Button prev = Button.createGreen("权限")
                     .setHoverText("配置成员权限")
-                    .setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName()).build());
-            if ((!player.getName().equals(p_player.getLastKnownName()) && !privilege.getAdmin()) || dominion.getOwner().equals(player.getUniqueId())) {
-                line.append(Button.createRed("移除")
-                        .setHoverText("将此成员移出（变为访客）")
-                        .setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b").build());
-                line.append(Button.createGreen("模板")
-                        .setHoverText("套用权限模板")
-                        .setExecuteCommand("/dominion select_template " + p_player.getLastKnownName() + " " + dominion.getName() + " " + page).build());
+                    .setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName());
+            Button remove = Button.createRed("移除")
+                    .setHoverText("将此成员移出（变为访客）")
+                    .setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b");
+
+            if (!player.getUniqueId().equals(dominion.getOwner())) {
+                boolean disable = false;
+                if (group == null) {
+                    if (privilege.getAdmin()) {
+                        disable = true;
+                    }
+                } else {
+                    if (group.getAdmin()) {
+                        disable = true;
+                    }
+                }
+                if (disable) {
+                    prev.setDisabled("你不是领地主人，无法编辑管理员权限");
+                    remove.setDisabled("你不是领地主人，无法移除管理员");
+                }
             }
+            if (group != null) {
+                prev.setDisabled(String.format("此成员属于权限组 %s 无法单独编辑权限", group.getName()));
+            }
+            line.append(remove.build());
+            line.append(prev.build());
             line.append(p_player.getLastKnownName());
             view.add(line);
         }
@@ -88,4 +106,6 @@ public class DominionPrivilegeList {
             .hoverEvent(Component.text("这是一个普通成员"));
     private static final TextComponent banTag = Component.text("[B]", Style.style(TextColor.color(255, 67, 0)))
             .hoverEvent(Component.text("这是一个黑名单成员"));
+    private static final TextComponent groupTag = Component.text("[G]", Style.style(TextColor.color(0, 185, 153)))
+            .hoverEvent(Component.text("这个成员在一个权限组里"));
 }

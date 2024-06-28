@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.dtos;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
+import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 
@@ -35,7 +36,8 @@ public class PlayerPrivilegeDTO {
                         UUID.fromString(rs.getString("player_uuid")),
                         rs.getBoolean("admin"),
                         rs.getInt("dom_id"),
-                        flags
+                        flags,
+                        rs.getInt("group_id")
                 );
                 players.add(player);
             }
@@ -46,14 +48,13 @@ public class PlayerPrivilegeDTO {
     }
 
     private PlayerPrivilegeDTO doUpdate(UpdateRow updateRow) {
-        Field id = new Field("id", this.id);
         updateRow.returningAll(id)
                 .table("player_privilege")
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
             List<PlayerPrivilegeDTO> players = getDTOFromRS(rs);
             if (players.size() == 0) return null;
-            Cache.instance.loadPlayerPrivileges(playerUUID);
+            Cache.instance.loadPlayerPrivileges(getPlayerUUID());
             return players.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新玩家权限失败: ", e, "");
@@ -62,14 +63,11 @@ public class PlayerPrivilegeDTO {
     }
 
     public static PlayerPrivilegeDTO insert(PlayerPrivilegeDTO player) {
-        Field playerUUID = new Field("player_uuid", player.getPlayerUUID().toString());
-        Field admin = new Field("admin", player.getAdmin());
-        Field domID = new Field("dom_id", player.getDomID());
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null))
                 .table("player_privilege")
-                .field(playerUUID)
-                .field(admin)
-                .field(domID);
+                .field(player.playerUUID)
+                .field(player.admin)
+                .field(player.domID);
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
@@ -112,25 +110,35 @@ public class PlayerPrivilegeDTO {
         return query(sql, player.toString());
     }
 
-    private final Integer id;
-    private final UUID playerUUID;
-    private Boolean admin;
-    private final Integer domID;
+    public static List<PlayerPrivilegeDTO> selectByGroupId(Integer groupId) {
+        String sql = "SELECT * FROM player_privilege WHERE group_id = ?;";
+        return query(sql, groupId);
+    }
+
+    Field id = new Field("id", FieldType.INT);
+    Field playerUUID = new Field("player_uuid", FieldType.STRING);
+    Field admin = new Field("admin", FieldType.BOOLEAN);
+    Field domID = new Field("dom_id", FieldType.INT);
+    Field groupId = new Field("group_id", FieldType.INT);
 
     public Integer getId() {
-        return id;
+        return (Integer) id.value;
     }
 
     public UUID getPlayerUUID() {
-        return playerUUID;
+        return UUID.fromString((String) playerUUID.value);
     }
 
     public Boolean getAdmin() {
-        return admin;
+        return (Boolean) admin.value;
     }
 
     public Integer getDomID() {
-        return domID;
+        return (Integer) domID.value;
+    }
+
+    public Integer getGroupId() {
+        return (Integer) groupId.value;
     }
 
     private final Map<Flag, Boolean> flags = new HashMap<>();
@@ -148,14 +156,19 @@ public class PlayerPrivilegeDTO {
     }
 
     public PlayerPrivilegeDTO setAdmin(Boolean admin) {
-        this.admin = admin;
-        Field f = new Field("admin", admin);
-        UpdateRow updateRow = new UpdateRow().field(f);
+        this.admin.value = admin;
+        UpdateRow updateRow = new UpdateRow().field(this.admin);
+        return doUpdate(updateRow);
+    }
+
+    public PlayerPrivilegeDTO setGroupId(Integer groupId) {
+        this.groupId.value = groupId;
+        UpdateRow updateRow = new UpdateRow().field(this.groupId);
         return doUpdate(updateRow);
     }
 
     public PlayerPrivilegeDTO applyTemplate(PrivilegeTemplateDTO template) {
-        this.admin = template.getAdmin();
+        this.admin.value = template.getAdmin();
         UpdateRow updateRow = new UpdateRow().field(new Field("admin", admin));
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, template.getFlagValue(f));
@@ -164,19 +177,20 @@ public class PlayerPrivilegeDTO {
         return doUpdate(updateRow);
     }
 
-    private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<Flag, Boolean> flags) {
-        this.id = id;
-        this.playerUUID = playerUUID;
-        this.admin = admin;
-        this.domID = domID;
+    private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<Flag, Boolean> flags, Integer groupId) {
+        this.id.value = id;
+        this.playerUUID.value = playerUUID.toString();
+        this.admin.value = admin;
+        this.domID.value = domID;
+        this.groupId.value = groupId;
         this.flags.putAll(flags);
     }
 
     public PlayerPrivilegeDTO(UUID playerUUID, DominionDTO dom) {
-        this.id = null;
-        this.playerUUID = playerUUID;
-        this.admin = false;
-        this.domID = dom.getId();
+        this.id.value = null;
+        this.playerUUID.value = playerUUID.toString();
+        this.admin.value = false;
+        this.domID.value = dom.getId();
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, dom.getFlagValue(f));
         }
