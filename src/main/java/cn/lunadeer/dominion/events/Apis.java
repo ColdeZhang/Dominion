@@ -53,7 +53,7 @@ public class Apis {
             return true;
         }
         if (prev != null) {
-            if (prev.getGroupId() != -1) {
+            if (prev.getGroupId() == -1) {
                 if (prev.getFlagValue(flag)) {
                     return true;
                 }
