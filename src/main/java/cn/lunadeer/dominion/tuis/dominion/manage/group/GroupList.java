@@ -10,6 +10,9 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -68,13 +71,15 @@ public class GroupList {
             for (PlayerPrivilegeDTO playerPrivilege : players) {
                 PlayerDTO p = PlayerDTO.select(playerPrivilege.getPlayerUUID());
                 if (p == null) continue;
-                Button remove = Button.createRed("移出权限组")
+                Button remove = Button.createRed("-")
                         .setHoverText("把 " + p.getLastKnownName() + " 移出权限组 " + group.getName())
                         .setExecuteCommand("/dominion group_remove_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + page);
-                Line playerLine = new Line();
-                playerLine.append(remove.build()).append(" | " + p.getLastKnownName());
+                Line playerLine = new Line().setDivider("");
+                playerLine.append(Component.text("        "));
+                playerLine.append(remove.build()).append(" |  " + p.getLastKnownName());
                 view.add(playerLine);
             }
+            view.add(new Line().append(""));
         }
         view.showOn(player, page);
     }
