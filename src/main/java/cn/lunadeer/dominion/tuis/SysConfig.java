@@ -15,13 +15,13 @@ import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 import static cn.lunadeer.dominion.tuis.Apis.notOp;
 
-public class DominionConfig {
+public class SysConfig {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (notOp(player)) return;
         int page = getPage(args);
-        ListView view = ListView.create(10, "/dominion config");
+        ListView view = ListView.create(10, "/dominion sys_config");
         view.title("系统配置");
         view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("系统配置"));
 

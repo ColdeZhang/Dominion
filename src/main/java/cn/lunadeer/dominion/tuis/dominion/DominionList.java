@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
@@ -18,7 +18,7 @@ import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.commands.Helper.playerAdminDominions;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
-public class ListDominion {
+public class DominionList {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;

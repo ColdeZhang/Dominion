@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.PlayerController;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
 
-public class DominionSizeInfo {
+public class SizeInfo {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
@@ -47,7 +47,7 @@ public class DominionSizeInfo {
                 ))
                 .actionBar(Line.create()
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("权限列表").setExecuteCommand("/dominion flag_info " + dominion.getName()).build()))
+                        .append(Button.create("访客权限").setExecuteCommand("/dominion guest_setting " + dominion.getName()).build()))
                 .showOn(player);
         ParticleRender.showBoxFace(Dominion.instance, player,
                 dominion.getLocation1(),

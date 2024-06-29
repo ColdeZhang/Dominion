@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.tuis.DominionManage;
+import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
 import org.bukkit.command.CommandSender;

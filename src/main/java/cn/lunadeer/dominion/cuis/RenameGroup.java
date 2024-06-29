@@ -3,8 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.tuis.DominionGroupList;
-import cn.lunadeer.dominion.tuis.GroupManage;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -36,7 +35,7 @@ public class RenameGroup {
             newArgs[0] = "group_manage";
             newArgs[1] = dominionName;
             newArgs[2] = input;
-            GroupManage.show(sender, newArgs);
+            GroupSetting.show(sender, newArgs);
         }
     }
 

@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage.group;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
@@ -19,11 +19,12 @@ import static cn.lunadeer.dominion.tuis.Apis.*;
 public class SelectMember {
     public static void show(CommandSender sender, String[] args) {
         if (args.length < 3) {
+            Notification.error(sender, "用法: /dominion select_member_add_group <领地名称> <权限组名称> [页码]");
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominionNameArg_1(player, args);
+        DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
             Notification.error(sender, "领地不存在");
             return;

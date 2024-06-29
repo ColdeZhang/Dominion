@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.template;
 
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;

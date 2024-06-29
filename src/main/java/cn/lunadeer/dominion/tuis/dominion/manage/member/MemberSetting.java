@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage.member;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
@@ -15,19 +15,23 @@ import org.bukkit.entity.Player;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.*;
 
-public class PrivilegeInfo {
-    // /dominion privilege_info <玩家名称> [领地名称] [页码]
+public class MemberSetting {
+    // /dominion member_setting <玩家名称> [领地名称] [页码]
     public static void show(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion member_setting <玩家名称> [领地名称] [页码]");
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         DominionDTO dominion = getDominionNameArg_2(player, args);
-        int page = getPage(args, 3);
-        String playerName = args[1];
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_info <玩家名称> [领地名称]");
+            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion member_setting <玩家名称> [领地名称]");
             return;
         }
-        ListView view = ListView.create(10, "/dominion privilege_info " + playerName + " " + dominion.getName());
+        int page = getPage(args, 3);
+        String playerName = args[1];
+        ListView view = ListView.create(10, "/dominion member_setting " + playerName + " " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         PlayerDTO playerDTO = PlayerDTO.select(playerName);
         if (playerDTO == null) {
@@ -45,7 +49,7 @@ public class PrivilegeInfo {
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("成员列表").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
+                        .append(Button.create("成员列表").setExecuteCommand("/dominion member_list " + dominion.getName()).build())
                         .append("成员权限")
         );
         view.add(Line.create().append(Button.createGreen("套用模板")

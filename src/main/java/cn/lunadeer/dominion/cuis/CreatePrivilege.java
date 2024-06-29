@@ -4,8 +4,8 @@ import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.PrivilegeController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.tuis.DominionPrivilegeList;
-import cn.lunadeer.dominion.tuis.SelectPlayer;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberList;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectPlayer;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -33,7 +33,7 @@ public class CreatePrivilege {
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             operator.getResponse().thenAccept(result -> {
                 if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)){
-                    DominionPrivilegeList.show(sender, new String[]{"privilege_list", dominionName});
+                    MemberList.show(sender, new String[]{"privilege_list", dominionName});
                 } else {
                     SelectPlayer.show(sender, new String[]{"select_player_create_privilege", dominionName});
                 }

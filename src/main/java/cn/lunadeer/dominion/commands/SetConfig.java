@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.tuis.DominionConfig;
+import cn.lunadeer.dominion.tuis.SysConfig;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
@@ -81,7 +81,7 @@ public class SetConfig {
             String[] newArgs = new String[2];
             newArgs[0] = "config";
             newArgs[1] = String.valueOf(page);
-            DominionConfig.show(sender, newArgs);
+            SysConfig.show(sender, newArgs);
         }
     }
 

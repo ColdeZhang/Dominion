@@ -6,6 +6,18 @@ import cn.lunadeer.dominion.cuis.*;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.tuis.*;
 import cn.lunadeer.dominion.tuis.MigrateList;
+import cn.lunadeer.dominion.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.tuis.dominion.DominionList;
+import cn.lunadeer.dominion.tuis.dominion.manage.*;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupList;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.SelectMember;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberList;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberSetting;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectPlayer;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectTemplate;
+import cn.lunadeer.dominion.tuis.template.TemplateList;
+import cn.lunadeer.dominion.tuis.template.TemplateManage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -20,24 +32,6 @@ import java.util.List;
 import static cn.lunadeer.dominion.commands.Helper.*;
 
 public class Commands implements TabExecutor {
-    /*
-    创建领地： /dominion create <领地名称>
-    自动创建领地： /dominion auto_create <领地名称>
-    创建子领地： /dominion create_sub <子领地名称> [父领地名称]
-    自动创建子领地： /dominion auto_create_sub <子领地名称> [父领地名称]
-    扩张领地： /dominion expand [大小] [领地名称]
-    缩小领地： /dominion contract [大小] [领地名称]
-    删除领地： /dominion delete <领地名称> [force]
-    设置领地权限： /dominion set <权限名称> <true/false> [领地名称]
-    设置玩家权限： /dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]
-    重置玩家权限： /dominion clear_privilege <玩家名称> [领地名称]
-    创建权限组： /dominion create_group <权限组名称>
-    删除权限组： /dominion delete_group <权限组名称>
-    设置权限组权限： /dominion set_group <权限组名称> <权限名称> <true/false>
-    设置玩家在某个领地归属的权限组： /dominion add_player <玩家名称> <权限组名称> [领地名称]
-    删除玩家在某个领地归属的权限组： /dominion remove_player <玩家名称> <权限组名称> [领地名称]
-     */
-
 
     /**
      * Executes the given command, returning its success.
@@ -62,19 +56,19 @@ public class Commands implements TabExecutor {
                 Menu.show(sender, args);
                 break;
             case "list":
-                ListDominion.show(sender, args);
+                DominionList.show(sender, args);
                 break;
             case "help":
                 cn.lunadeer.dominion.tuis.Apis.printHelp(sender, args);
                 break;
             case "info":
-                DominionSizeInfo.show(sender, args);
+                SizeInfo.show(sender, args);
                 break;
             case "manage":
                 DominionManage.show(sender, args);
                 break;
-            case "flag_info":
-                DominionFlagInfo.show(sender, args);
+            case "guest_setting":
+                GuestSetting.show(sender, args);
                 break;
             case "create":
                 DominionOperate.createDominion(sender, args);
@@ -109,11 +103,11 @@ public class Commands implements TabExecutor {
             case "clear_privilege":
                 PlayerPrivilege.clearPlayerPrivilege(sender, args);
                 break;
-            case "privilege_list":
-                DominionPrivilegeList.show(sender, args);
+            case "member_list":
+                MemberList.show(sender, args);
                 break;
-            case "privilege_info":
-                PrivilegeInfo.show(sender, args);
+            case "member_setting":
+                MemberSetting.show(sender, args);
                 break;
             case "select_player_create_privilege":
                 SelectPlayer.show(sender, args);
@@ -145,8 +139,8 @@ public class Commands implements TabExecutor {
             case "export_mca":
                 Operator.exportMca(sender, args);
                 break;
-            case "config":
-                DominionConfig.show(sender, args);
+            case "sys_config":
+                SysConfig.show(sender, args);
                 break;
             case "set_config":
                 SetConfig.handler(sender, args);
@@ -184,8 +178,8 @@ public class Commands implements TabExecutor {
             case "set_map_color":
                 DominionOperate.setMapColor(sender, args);
                 break;
-            case "env_info":
-                DominionEnvInfo.show(sender, args);
+            case "env_setting":
+                EnvSetting.show(sender, args);
                 break;
             case "create_group":
                 Group.createGroup(sender, args);
@@ -206,13 +200,13 @@ public class Commands implements TabExecutor {
                 Group.removeMember(sender, args);
                 break;
             case "group_list":
-                DominionGroupList.show(sender, args);
+                GroupList.show(sender, args);
                 break;
             case "select_member_add_group":
                 SelectMember.show(sender, args);
                 break;
-            case "group_manage":
-                GroupManage.show(sender, args);
+            case "group_setting":
+                GroupSetting.show(sender, args);
                 break;
             // ---===  CUI  ===---
             case "cui_rename":
@@ -264,9 +258,9 @@ public class Commands implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("menu", "help", "info", "manage", "flag_info", "privilege_list",
+            return Arrays.asList("menu", "help", "info", "manage", "guest_setting", "member_list",
                     "create", "auto_create", "create_sub", "auto_create_sub", "expand", "contract", "delete", "set",
-                    "create_privilege", "set_privilege", "clear_privilege", "list", "privilege_info",
+                    "create_privilege", "set_privilege", "clear_privilege", "list", "member_setting",
                     "set_enter_msg",
                     "set_leave_msg",
                     "set_tp_location",
@@ -276,7 +270,7 @@ public class Commands implements TabExecutor {
                     "reload_cache",
                     "reload_config",
                     "export_mca",
-                    "config",
+                    "sys_config",
                     "apply_template",
                     "template_list",
                     "template_manage",
@@ -292,7 +286,7 @@ public class Commands implements TabExecutor {
             switch (args[0]) {
                 case "help":
                 case "list":
-                case "config":
+                case "sys_config":
                 case "template_list":
                     return Collections.singletonList("页码(可选)");
                 case "create":
@@ -301,8 +295,8 @@ public class Commands implements TabExecutor {
                 case "delete":
                 case "info":
                 case "manage":
-                case "flag_info":
-                case "privilege_list":
+                case "guest_setting":
+                case "member_list":
                 case "rename":
                 case "give":
                 case "set_tp_location":
@@ -320,7 +314,7 @@ public class Commands implements TabExecutor {
                 case "create_privilege":
                 case "set_privilege":
                 case "clear_privilege":
-                case "privilege_info":
+                case "member_setting":
                 case "apply_template":
                     return playerNames();
                 case "expand":
@@ -354,7 +348,7 @@ public class Commands implements TabExecutor {
                 case "contract":
                 case "clear_privilege":
                 case "create_privilege":
-                case "privilege_info":
+                case "member_setting":
                 case "auto_create_sub":
                 case "create_sub":
                 case "set_enter_msg":

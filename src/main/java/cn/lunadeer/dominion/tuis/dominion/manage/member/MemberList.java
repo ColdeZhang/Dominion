@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage.member;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.*;
@@ -16,27 +16,24 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
-import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
+import static cn.lunadeer.dominion.tuis.Apis.*;
 
-public class DominionPrivilegeList {
+public class MemberList {
 
     public static void show(CommandSender sender, String[] args) {
-        int page = 1;
-        if (args.length == 3) {
-            try {
-                page = Integer.parseInt(args[2]);
-            } catch (Exception ignored) {
-            }
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion member_list <领地名称> [页码]");
+            return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominionNameArg_1(player, args);
+        DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion privilege_list <领地名称>");
+            Notification.error(sender, "领地 %s 不存在", args[1]);
             return;
         }
-        ListView view = ListView.create(10, "/dominion privilege_list " + dominion.getName());
+        int page = getPage(args, 2);
+        ListView view = ListView.create(10, "/dominion member_list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(dominion.getId());
         view.title("领地 " + dominion.getName() + " 成员列表");
@@ -68,7 +65,7 @@ public class DominionPrivilegeList {
 
             Button prev = Button.createGreen("权限")
                     .setHoverText("配置成员权限")
-                    .setExecuteCommand("/dominion privilege_info " + p_player.getLastKnownName() + " " + dominion.getName());
+                    .setExecuteCommand("/dominion member_setting " + p_player.getLastKnownName() + " " + dominion.getName());
             Button remove = Button.createRed("移除")
                     .setHoverText("将此成员移出（变为访客）")
                     .setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b");

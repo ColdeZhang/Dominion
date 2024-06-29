@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.PrivilegeController;
-import cn.lunadeer.dominion.tuis.DominionPrivilegeList;
-import cn.lunadeer.dominion.tuis.PrivilegeInfo;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberList;
+import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class PlayerPrivilege {
             String[] newArgs = new String[2];
             newArgs[0] = "privilege_list";
             newArgs[1] = args[2];
-            DominionPrivilegeList.show(sender, newArgs);
+            MemberList.show(sender, newArgs);
         }
     }
 
@@ -63,7 +63,7 @@ public class PlayerPrivilege {
             newArgs[1] = args[1];
             newArgs[2] = args[4];
             newArgs[3] = args[5];
-            PrivilegeInfo.show(sender, newArgs);
+            MemberSetting.show(sender, newArgs);
         } else {
             Notification.error(sender, "用法: /dominion set_privilege <玩家名称> <权限名称> <true/false> [领地名称]");
         }
@@ -93,7 +93,7 @@ public class PlayerPrivilege {
             String[] newArgs = new String[3];
             newArgs[0] = "privilege_list";
             newArgs[1] = args[2];
-            DominionPrivilegeList.show(sender, newArgs);
+            MemberList.show(sender, newArgs);
         }
     }
 
@@ -116,13 +116,11 @@ public class PlayerPrivilege {
         String dominionName = args[2];
         String templateName = args[3];
         PrivilegeController.applyTemplate(operator, dominionName, playerName, templateName);
-        if (args.length == 5) {
-            String[] newArgs = new String[3];
-            newArgs[0] = "privilege_info";
-            newArgs[1] = playerName;
-            newArgs[2] = dominionName;
-            DominionPrivilegeList.show(sender, newArgs);
-        }
+        String[] newArgs = new String[3];
+        newArgs[0] = "member_setting";
+        newArgs[1] = playerName;
+        newArgs[2] = dominionName;
+        MemberSetting.show(sender, newArgs);
     }
 
 }

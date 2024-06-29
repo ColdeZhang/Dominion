@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.tuis.DominionGroupList;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -32,7 +32,7 @@ public class CreateGroup {
             String[] newArgs = new String[2];
             newArgs[0] = "group_list";
             newArgs[1] = dominionName;
-            DominionGroupList.show(sender, newArgs);
+            GroupList.show(sender, newArgs);
         }
     }
 

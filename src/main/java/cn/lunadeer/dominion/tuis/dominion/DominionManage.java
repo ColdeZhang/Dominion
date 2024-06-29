@@ -1,7 +1,8 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.tuis.Apis;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -30,13 +31,13 @@ public class DominionManage {
                 .append(Button.create("详细信息").setExecuteCommand("/dominion info " + dominion.getName()).build())
                 .append("查看领地详细信息");
         Line env_info = Line.create()
-                .append(Button.create("环境设置").setExecuteCommand("/dominion env_info " + dominion.getName()).build())
+                .append(Button.create("环境设置").setExecuteCommand("/dominion env_setting " + dominion.getName()).build())
                 .append("设置领地内的一些非玩家相关效果");
         Line flag_info = Line.create()
-                .append(Button.create("访客权限").setExecuteCommand("/dominion flag_info " + dominion.getName()).build())
+                .append(Button.create("访客权限").setExecuteCommand("/dominion guest_setting " + dominion.getName()).build())
                 .append("访客在此领地的权限");
         Line privilege_list = Line.create()
-                .append(Button.create("成员管理").setExecuteCommand("/dominion privilege_list " + dominion.getName()).build())
+                .append(Button.create("成员管理").setExecuteCommand("/dominion member_list " + dominion.getName()).build())
                 .append("管理此领地成员的权限");
         Line group_list = Line.create()
                 .append(Button.create("权限组").setExecuteCommand("/dominion group_list " + dominion.getName()).build())

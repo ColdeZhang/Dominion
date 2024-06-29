@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.TemplateController;
-import cn.lunadeer.dominion.tuis.TemplateList;
-import cn.lunadeer.dominion.tuis.TemplateManage;
+import cn.lunadeer.dominion.tuis.template.TemplateList;
+import cn.lunadeer.dominion.tuis.template.TemplateManage;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

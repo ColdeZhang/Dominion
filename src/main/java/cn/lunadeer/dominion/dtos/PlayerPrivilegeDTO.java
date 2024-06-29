@@ -169,7 +169,7 @@ public class PlayerPrivilegeDTO {
 
     public PlayerPrivilegeDTO applyTemplate(PrivilegeTemplateDTO template) {
         this.admin.value = template.getAdmin();
-        UpdateRow updateRow = new UpdateRow().field(new Field("admin", admin));
+        UpdateRow updateRow = new UpdateRow().field(admin);
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, template.getFlagValue(f));
             updateRow.field(new Field(f.getFlagName(), template.getFlagValue(f)));

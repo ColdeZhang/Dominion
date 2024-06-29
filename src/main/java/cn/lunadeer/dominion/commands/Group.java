@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
-import cn.lunadeer.dominion.tuis.DominionGroupList;
-import cn.lunadeer.dominion.tuis.GroupManage;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupList;
+import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +31,7 @@ public class Group {
         String[] newArgs = new String[2];
         newArgs[0] = "group_list";
         newArgs[1] = dominionName;
-        DominionGroupList.show(sender, newArgs);
+        GroupList.show(sender, newArgs);
     }
 
     /**
@@ -53,7 +53,7 @@ public class Group {
         String[] newArgs = new String[2];
         newArgs[0] = "group_list";
         newArgs[1] = dominionName;
-        DominionGroupList.show(sender, newArgs);
+        GroupList.show(sender, newArgs);
     }
 
     /**
@@ -77,7 +77,7 @@ public class Group {
         newArgs[0] = "group_manage";
         newArgs[1] = dominionName;
         newArgs[2] = newGroupName;
-        GroupManage.show(sender, newArgs);
+        GroupSetting.show(sender, newArgs);
     }
 
     /**
@@ -103,7 +103,7 @@ public class Group {
         newArgs[1] = dominionName;
         newArgs[2] = groupName;
         newArgs[3] = String.valueOf(getPage(args, 5));
-        GroupManage.show(sender, newArgs);
+        GroupSetting.show(sender, newArgs);
     }
 
     /**
@@ -127,7 +127,7 @@ public class Group {
         newArgs[0] = "group_list";
         newArgs[1] = dominionName;
         newArgs[2] = String.valueOf(getPage(args, 4));
-        DominionGroupList.show(sender, newArgs);
+        GroupList.show(sender, newArgs);
     }
 
     /**
@@ -151,7 +151,7 @@ public class Group {
         newArgs[0] = "group_list";
         newArgs[1] = dominionName;
         newArgs[2] = String.valueOf(getPage(args, 4));
-        DominionGroupList.show(sender, newArgs);
+        GroupList.show(sender, newArgs);
     }
 
 }

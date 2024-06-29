@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
@@ -11,36 +11,31 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
-public class DominionEnvInfo {
+public class GuestSetting {
 
     public static void show(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
         if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion env_info <领地名称> [页码]");
+            Notification.error(sender, "用法: /dominion guest_setting <领地名称> [页码]");
             return;
         }
+        Player player = playerOnly(sender);
+        if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
             Notification.error(sender, "领地 %s 不存在", args[1]);
             return;
         }
-        int page = 1;
-        if (args.length == 3) {
-            try {
-                page = Integer.parseInt(args[2]);
-            } catch (Exception ignored) {
-            }
-        }
-        ListView view = ListView.create(10, "/dominion env_info " + dominion.getName());
-        view.title("领地 " + dominion.getName() + " 环境设置")
+        int page = getPage(args, 2);
+        ListView view = ListView.create(10, "/dominion guest_setting " + dominion.getName());
+        view.title("领地 " + dominion.getName() + " 访客权限")
                 .navigator(Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append("环境设置"));
-        for (Flag flag : Flag.getDominionOnlyFlagsEnabled()) {
+                        .append("访客权限"));
+        for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }
         view.showOn(player, page);
@@ -57,5 +52,4 @@ public class DominionEnvInfo {
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
     }
-
 }

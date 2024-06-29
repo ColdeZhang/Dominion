@@ -1,10 +1,12 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage.group;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.tuis.Apis;
 import cn.lunadeer.minecraftpluginutils.Notification;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -14,17 +16,20 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
 import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
-public class DominionGroupList {
+public class GroupList {
 
     public static void show(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion group_list <领地名称> [页码]");
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominionNameArg_1(player, args);
+        DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion group_list <领地名称>");
+            Notification.error(sender, "领地 %s 不存在", args[1]);
             return;
         }
         if (noAuthToManage(player, dominion)) return;
@@ -52,13 +57,14 @@ public class DominionGroupList {
                     .setExecuteCommand("/dominion delete_group " + dominion.getName() + " " + group.getName());
             Button edit = Button.create("编辑")
                     .setHoverText("编辑权限组 " + group.getName())
-                    .setExecuteCommand("/dominion group_manage " + dominion.getName() + " " + group.getName());
+                    .setExecuteCommand("/dominion group_setting " + dominion.getName() + " " + group.getName());
             Button add = Button.createGreen("+")
                     .setHoverText("添加成员到权限组 " + group.getName())
                     .setExecuteCommand("/dominion select_member_add_group " + dominion.getName() + " " + group.getName() + " " + page);
             line.append(del.build()).append(edit.build()).append(group.getName()).append(add.build());
             view.add(line);
             List<PlayerPrivilegeDTO> players = PlayerPrivilegeDTO.selectByGroupId(group.getId());
+            XLogger.debug("players: " + players.size());
             for (PlayerPrivilegeDTO playerPrivilege : players) {
                 PlayerDTO p = PlayerDTO.select(playerPrivilege.getPlayerUUID());
                 if (p == null) continue;
@@ -67,6 +73,7 @@ public class DominionGroupList {
                         .setExecuteCommand("/dominion group_remove_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + page);
                 Line playerLine = new Line();
                 playerLine.append(remove.build()).append(" | " + p.getLastKnownName());
+                view.add(playerLine);
             }
         }
         view.showOn(player, page);

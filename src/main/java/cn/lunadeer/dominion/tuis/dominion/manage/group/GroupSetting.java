@@ -1,8 +1,9 @@
-package cn.lunadeer.dominion.tuis;
+package cn.lunadeer.dominion.tuis.dominion.manage.group;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.tuis.Apis;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -14,9 +15,10 @@ import org.bukkit.entity.Player;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
-public class GroupManage {
+public class GroupSetting {
     public static void show(CommandSender sender, String[] args) {
         if (args.length < 3) {
+            Notification.error(sender, "用法: /dominion group_setting <领地名称> <权限组名称> [页码]");
             return;
         }
         Player player = playerOnly(sender);
@@ -34,7 +36,7 @@ public class GroupManage {
             return;
         }
 
-        ListView view = ListView.create(10, "/dominion group_manage " + dominion.getName() + " " + group.getName());
+        ListView view = ListView.create(10, "/dominion group_setting " + dominion.getName() + " " + group.getName());
         view.title("权限组 " + group.getName() + " 管理");
         view.navigator(
                 Line.create()

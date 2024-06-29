@@ -13,7 +13,7 @@ import java.util.List;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 import static cn.lunadeer.dominion.tuis.Apis.notOp;
-import static cn.lunadeer.dominion.tuis.ListDominion.BuildTreeLines;
+import static cn.lunadeer.dominion.tuis.dominion.DominionList.BuildTreeLines;
 
 public class AllDominion {
 

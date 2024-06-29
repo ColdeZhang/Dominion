@@ -3,8 +3,8 @@ package cn.lunadeer.dominion.commands;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.FlagsController;
 import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.tuis.DominionEnvInfo;
-import cn.lunadeer.dominion.tuis.DominionFlagInfo;
+import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
+import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,9 +35,9 @@ public class DominionFlag {
             newArgs[1] = args[3];
             newArgs[2] = args[4];
             if (Flag.isDominionOnlyFlag(args[1])) {
-                DominionEnvInfo.show(sender, newArgs);
+                EnvSetting.show(sender, newArgs);
             } else {
-                DominionFlagInfo.show(sender, newArgs);
+                GuestSetting.show(sender, newArgs);
             }
 
         } else {

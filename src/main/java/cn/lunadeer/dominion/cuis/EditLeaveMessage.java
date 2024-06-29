@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.tuis.DominionManage;
+import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
