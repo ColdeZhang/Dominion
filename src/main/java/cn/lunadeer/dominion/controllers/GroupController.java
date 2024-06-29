@@ -12,6 +12,10 @@ public class GroupController {
     public static void createGroup(AbstractOperator operator, String domName, String groupName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建权限组 %s 失败", groupName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建权限组 %s 成功", groupName);
+        if (groupName.contains(" ")) {
+            operator.setResponse(FAIL.addMessage("权限组名称不能包含空格"));
+            return;
+        }
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
             operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
@@ -99,6 +103,10 @@ public class GroupController {
     public static void renameGroup(AbstractOperator operator, String domName, String oldName, String newName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "重命名权限组 %s 为 %s 失败", oldName, newName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "重命名权限组 %s 为 %s 成功", oldName, newName);
+        if (newName.contains(" ")) {
+            operator.setResponse(FAIL.addMessage("权限组名称不能包含空格"));
+            return;
+        }
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
             operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));

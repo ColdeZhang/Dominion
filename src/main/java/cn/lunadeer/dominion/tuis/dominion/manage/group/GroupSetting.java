@@ -46,7 +46,7 @@ public class GroupSetting {
                         .append(Button.create("权限组列表").setExecuteCommand("/dominion group_list " + dominion.getName()).build())
                         .append("权限组管理")
         );
-        Button rename_btn = Button.create("重命名")
+        Button rename_btn = Button.create("重命名此权限组")
                 .setHoverText("重命名权限组 " + group.getName())
                 .setExecuteCommand("/dominion cui_rename_group " + dominion.getName() + " " + group.getName());
         view.add(Line.create().append(rename_btn.build()));

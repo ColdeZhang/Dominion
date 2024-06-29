@@ -10,10 +10,14 @@ public class TemplateController {
     public static void createTemplate(AbstractOperator operator, String templateName) {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建成功");
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建失败");
+        if (templateName.contains(" ")) {
+            operator.setResponse(FAIL.addMessage("模板名称不能包含空格"));
+            return;
+        }
         List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(operator.getUniqueId());
         for (PrivilegeTemplateDTO template : templates) {
             if (template.getName().equals(templateName)) {
-                operator.setResponse(FAIL.addMessage("已经存在名为" + templateName + "的权限模板"));
+                operator.setResponse(FAIL.addMessage("已经存在名为 %s 的权限模板", templateName));
                 return;
             }
         }
@@ -22,7 +26,7 @@ public class TemplateController {
             operator.setResponse(FAIL.addMessage("可能是数据库错误，请联系管理员"));
             return;
         }
-        operator.setResponse(SUCCESS.addMessage("成功创建名为" + templateName + "的权限模板"));
+        operator.setResponse(SUCCESS.addMessage("成功创建名为 %s 的权限模板", templateName));
     }
 
     public static void deleteTemplate(AbstractOperator operator, String templateName) {
