@@ -37,11 +37,9 @@ public class SelectMember {
         int backPage = getPage(args, 3);
         ListView view = ListView.create(10, "/dominion select_member_add_group " + dominion.getName() + " " + group.getName() + " " + backPage);
         view.title("选择成员");
-        view.navigator(
-                Line.create()
-                        .append("添加到权限组 " + group.getName())
-                        .append(Button.create("返回").setExecuteCommand("/dominion group_list " + dominion.getName() + " " + backPage).build())
-        );
+        Line sub = Line.create().append("选择成员添加到权限组 " + group.getName())
+                .append(Button.create("返回").setExecuteCommand("/dominion group_list " + dominion.getName() + " " + backPage).build());
+        view.subtitle(sub);
         List<PlayerPrivilegeDTO> members = PlayerPrivilegeDTO.selectByGroupId(-1);
         for (PlayerPrivilegeDTO member : members) {
             PlayerDTO p = PlayerDTO.select(member.getPlayerUUID());
