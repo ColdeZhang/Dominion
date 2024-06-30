@@ -14,11 +14,19 @@ import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
 public class TemplateList {
 
+    public static void show(CommandSender sender) {
+        show(sender, 1);
+    }
+
+    public static void show(CommandSender sender, int page) {
+        show(sender, new String[]{"", "", String.valueOf(page)});
+    }
+
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
-        int page = getPage(args);
-        ListView view = ListView.create(10, "/dominion template_list");
+        int page = getPage(args, 2);
+        ListView view = ListView.create(10, "/dominion template list");
 
         List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(player.getUniqueId());
         view.title("成员权限模板列表");
@@ -30,8 +38,8 @@ public class TemplateList {
         view.add(Line.create().append(create.build()));
 
         for (PrivilegeTemplateDTO template : templates) {
-            Button manage = Button.createGreen("配置").setExecuteCommand("/dominion template_manage " + template.getName());
-            Button delete = Button.createRed("删除").setExecuteCommand("/dominion template_delete " + template.getName());
+            Button manage = Button.createGreen("配置").setExecuteCommand("/dominion template setting " + template.getName());
+            Button delete = Button.createRed("删除").setExecuteCommand("/dominion template delete " + template.getName());
             Line line = Line.create()
                     .append(delete.build())
                     .append(manage.build())

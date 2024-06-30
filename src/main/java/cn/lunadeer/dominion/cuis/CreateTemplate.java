@@ -23,10 +23,8 @@ public class CreateTemplate {
         public void handleData(String input) {
             XLogger.debug("createTemplateCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            operator.getResponse().thenAccept(result -> {
-                TemplateList.show(sender, new String[]{"template_list"});
-            });
             TemplateController.createTemplate(operator, input);
+            TemplateList.show(sender);
         }
     }
 
@@ -35,7 +33,7 @@ public class CreateTemplate {
         if (player == null) return;
         CuiTextInput.InputCallback createTemplateCB = new createTemplateCB(player);
         CuiTextInput view = CuiTextInput.create(createTemplateCB).setText("未命名模板").title("输入模板名称");
-        view.setSuggestCommand("/dominion template_create <模板名称>");
+        view.setSuggestCommand("/dominion template create <模板名称>");
         view.open(player);
     }
 

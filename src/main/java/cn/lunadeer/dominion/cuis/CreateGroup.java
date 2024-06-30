@@ -29,10 +29,7 @@ public class CreateGroup {
             XLogger.debug("createGroupCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             GroupController.createGroup(operator, dominionName, input);
-            String[] newArgs = new String[2];
-            newArgs[0] = "group_list";
-            newArgs[1] = dominionName;
-            GroupList.show(sender, newArgs);
+            GroupList.show(sender, dominionName);
         }
     }
 
@@ -46,7 +43,7 @@ public class CreateGroup {
         }
         CuiTextInput.InputCallback createGroupCB = new createGroupCB(player, dominion.getName());
         CuiTextInput view = CuiTextInput.create(createGroupCB).setText("未命名权限组").title("输入要创建的权限组名称");
-        view.setSuggestCommand("/dominion create_group <领地名称> <权限组名称>");
+        view.setSuggestCommand("/dominion group create <领地名称> <权限组名称>");
         view.open(player);
     }
 

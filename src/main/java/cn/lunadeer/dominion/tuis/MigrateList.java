@@ -31,13 +31,7 @@ public class MigrateList {
             return;
         }
 
-        int page = 1;
-        if (args.length == 2) {
-            try {
-                page = Integer.parseInt(args[1]);
-            } catch (Exception ignored) {
-            }
-        }
+        int page = Apis.getPage(args, 1);
 
         ListView view = ListView.create(10, "/dominion migrate_list");
 

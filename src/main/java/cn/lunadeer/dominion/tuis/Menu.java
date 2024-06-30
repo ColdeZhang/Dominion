@@ -31,7 +31,7 @@ public class Menu {
                 .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                 .append("查看我的领地");
         Line template = Line.create()
-                .append(Button.create("模板列表").setExecuteCommand("/dominion template_list").build())
+                .append(Button.create("模板列表").setExecuteCommand("/dominion template list").build())
                 .append("成员权限模板列表");
         Line help = Line.create()
                 .append(Button.create("指令帮助").setExecuteCommand("/dominion help").build())

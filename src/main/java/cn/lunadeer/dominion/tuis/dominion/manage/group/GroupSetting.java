@@ -16,34 +16,42 @@ import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
 public class GroupSetting {
+    public static void show(CommandSender sender, String dominionName, String groupName) {
+        show(sender, new String[]{"", "", dominionName, groupName});
+    }
+
+    public static void show(CommandSender sender, String dominionName, String groupName, Integer page) {
+        show(sender, new String[]{"", "", dominionName, groupName, page.toString()});
+    }
+
     public static void show(CommandSender sender, String[] args) {
-        if (args.length < 3) {
-            Notification.error(sender, "用法: /dominion group_setting <领地名称> <权限组名称> [页码]");
+        if (args.length < 4) {
+            Notification.error(sender, "用法: /dominion group setting <领地名称> <权限组名称> [页码]");
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[1]);
+        DominionDTO dominion = DominionDTO.select(args[2]);
         if (dominion == null) {
-            Notification.error(sender, "领地 %s 不存在", args[1]);
+            Notification.error(sender, "领地 %s 不存在", args[2]);
             return;
         }
         if (noAuthToManage(player, dominion)) return;
-        int page = Apis.getPage(args, 3);
-        GroupDTO group = GroupDTO.select(dominion.getId(), args[2]);
+        int page = Apis.getPage(args, 4);
+        GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
         if (group == null) {
-            Notification.error(sender, "权限组 %s 不存在", args[2]);
+            Notification.error(sender, "权限组 %s 不存在", args[3]);
             return;
         }
 
-        ListView view = ListView.create(10, "/dominion group_setting " + dominion.getName() + " " + group.getName());
+        ListView view = ListView.create(10, "/dominion group setting " + dominion.getName() + " " + group.getName());
         view.title("权限组 " + group.getName() + " 管理");
         view.navigator(
                 Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("权限组列表").setExecuteCommand("/dominion group_list " + dominion.getName()).build())
+                        .append(Button.create("权限组列表").setExecuteCommand("/dominion group list " + dominion.getName()).build())
                         .append("权限组管理")
         );
         Button rename_btn = Button.create("重命名此权限组")
@@ -54,14 +62,14 @@ public class GroupSetting {
         if (group.getAdmin()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑")
-                            .setExecuteCommand(String.format("/dominion set_group_flag %s %s admin false %s", dominion.getName(), group.getName(), page))
+                            .setExecuteCommand(parseCommand(dominion.getName(), group.getName(), "admin", false, page))
                             .build())
                     .append("管理员"));
             view.add(createOption(Flag.GLOW, group.getFlagValue(Flag.GLOW), dominion.getName(), group.getName(), page));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐")
-                            .setExecuteCommand(String.format("/dominion set_group_flag %s %s admin true %s", dominion.getName(), group.getName(), page))
+                            .setExecuteCommand(parseCommand(dominion.getName(), group.getName(), "admin", true, page))
                             .build())
                     .append("管理员"));
             for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
@@ -75,15 +83,19 @@ public class GroupSetting {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑")
-                            .setExecuteCommand(String.format("/dominion set_group_flag %s %s %s false %s", DominionName, groupName, flag.getFlagName(), page))
+                            .setExecuteCommand(parseCommand(DominionName, groupName, flag.getFlagName(), false, page))
                             .build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         } else {
             return Line.create()
                     .append(Button.createRed("☐")
-                            .setExecuteCommand(String.format("/dominion set_group_flag %s %s %s true %s", DominionName, groupName, flag.getFlagName(), page))
+                            .setExecuteCommand(parseCommand(DominionName, groupName, flag.getFlagName(), true, page))
                             .build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
+    }
+
+    private static String parseCommand(String dominionName, String groupName, String flagName, boolean value, int page) {
+        return String.format("/dominion group set_flag %s %s %s %s %d", dominionName, groupName, flagName, value, page);
     }
 }

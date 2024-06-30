@@ -11,31 +11,34 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
-public class TemplateManage {
+public class TemplateSetting {
 
-    // /dominion template_manage <模板名称> [页码]
+    // /dominion template setting <模板名称> [页码]
+    public static void show(CommandSender sender, String templateName, int page) {
+        show(sender, new String[]{"", "", templateName, String.valueOf(page)});
+    }
+
+    public static void show(CommandSender sender, String templateName) {
+        show(sender, new String[]{"", "", templateName});
+    }
+
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
-        int page = 1;
-        if (args.length == 3) {
-            try {
-                page = Integer.parseInt(args[2]);
-            } catch (Exception ignored) {
-            }
-        }
-        PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[1]);
+        int page = getPage(args, 3);
+        PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[2]);
         if (template == null) {
-            Notification.error(sender, "模板 %s 不存在", args[1]);
+            Notification.error(sender, "模板 %s 不存在", args[2]);
             return;
         }
 
-        ListView view = ListView.create(10, "/dominion template_manage " + template.getName());
+        ListView view = ListView.create(10, "/dominion template manage " + template.getName());
         view.title("模板 " + args[1] + " 权限管理");
         view.navigator(Line.create()
                 .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
-                .append(Button.create("模板列表").setExecuteCommand("/dominion template_list").build())
+                .append(Button.create("模板列表").setExecuteCommand("/dominion template list").build())
                 .append("模板管理")
         );
 
@@ -43,11 +46,11 @@ public class TemplateManage {
 
         if (template.getAdmin()) {
             view.add(Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion template_set_flag " + template.getName() + " admin false " + page).build())
+                    .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + template.getName() + " admin false " + page).build())
                     .append("管理员"));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion template_set_flag " + template.getName() + " admin true " + page).build())
+                    .append(Button.createRed("☐").setExecuteCommand("/dominion template set_flag " + template.getName() + " admin true " + page).build())
                     .append("管理员"));
         }
         for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
@@ -59,11 +62,11 @@ public class TemplateManage {
     private static Line createOption(Flag flag, boolean value, String templateName, int page) {
         if (value) {
             return Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion template_set_flag " + templateName + " " + flag.getFlagName() + " false " + page).build())
+                    .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + templateName + " " + flag.getFlagName() + " false " + page).build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         } else {
             return Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion template_set_flag " + templateName + " " + flag.getFlagName() + " true " + page).build())
+                    .append(Button.createRed("☐").setExecuteCommand("/dominion template set_flag " + templateName + " " + flag.getFlagName() + " true " + page).build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
     }

@@ -21,7 +21,7 @@ public class AllDominion {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (notOp(player)) return;
-        int page = getPage(args);
+        int page = getPage(args, 1);
 
         List<DominionNode> allDominions = Cache.instance.getAllDominionTree();
 

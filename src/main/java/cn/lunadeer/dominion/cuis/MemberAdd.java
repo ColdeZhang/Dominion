@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.cuis;
 
 import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.PrivilegeController;
+import cn.lunadeer.dominion.controllers.MemberController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberList;
 import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectPlayer;
@@ -16,13 +16,13 @@ import java.util.Objects;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 
-public class CreatePrivilege {
+public class MemberAdd {
 
-    private static class createPrivilegeCB implements CuiTextInput.InputCallback {
+    private static class memberAddCB implements CuiTextInput.InputCallback {
         private final Player sender;
         private final String dominionName;
 
-        public createPrivilegeCB(Player sender, String dominionName) {
+        public memberAddCB(Player sender, String dominionName) {
             this.sender = sender;
             this.dominionName = dominionName;
         }
@@ -32,13 +32,13 @@ public class CreatePrivilege {
             XLogger.debug("createPrivilegeCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             operator.getResponse().thenAccept(result -> {
-                if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)){
-                    MemberList.show(sender, new String[]{"privilege_list", dominionName});
+                if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)) {
+                    MemberList.show(sender, dominionName);
                 } else {
-                    SelectPlayer.show(sender, new String[]{"select_player_create_privilege", dominionName});
+                    SelectPlayer.show(sender, dominionName, 1);
                 }
             });
-            PrivilegeController.createPrivilege(operator, input, dominionName);
+            MemberController.memberAdd(operator, dominionName, input);
         }
     }
 
@@ -50,9 +50,9 @@ public class CreatePrivilege {
             Notification.error(sender, "领地不存在");
             return;
         }
-        CuiTextInput.InputCallback createPrivilegeCB = new createPrivilegeCB(player, dominion.getName());
+        CuiTextInput.InputCallback createPrivilegeCB = new memberAddCB(player, dominion.getName());
         CuiTextInput view = CuiTextInput.create(createPrivilegeCB).setText("Steve").title("输入玩家名称以添加为成员");
-        view.setSuggestCommand("/dominion create_privilege <玩家名称> [领地名称]");
+        view.setSuggestCommand("/dominion member add <领地名称> <玩家名称>");
         view.open(player);
     }
 

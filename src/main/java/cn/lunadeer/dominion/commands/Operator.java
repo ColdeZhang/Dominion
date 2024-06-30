@@ -31,6 +31,11 @@ public class Operator {
             Cache.instance.loadPlayerPrivileges();
             Notification.info(sender, "玩家权限缓存已重新加载");
         });
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, "正在从数据库重新加载权限组缓存...");
+            Cache.instance.loadGroup();
+            Notification.info(sender, "权限组缓存已重新加载");
+        });
     }
 
     public static void exportMca(CommandSender sender, String[] args) {

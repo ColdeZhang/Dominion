@@ -31,11 +31,7 @@ public class RenameGroup {
             XLogger.debug("renameGroupCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             GroupController.renameGroup(operator, dominionName, oldName, input);
-            String[] newArgs = new String[3];
-            newArgs[0] = "group_manage";
-            newArgs[1] = dominionName;
-            newArgs[2] = input;
-            GroupSetting.show(sender, newArgs);
+            GroupSetting.show(sender, dominionName, input);
         }
     }
 
@@ -49,7 +45,7 @@ public class RenameGroup {
         }
         CuiTextInput.InputCallback renameGroupCB = new renameGroupCB(player, dominion.getName(), args[2]);
         CuiTextInput view = CuiTextInput.create(renameGroupCB).setText(args[2]).title("输入新的权限组名称");
-        view.setSuggestCommand("/dominion rename_group <领地名称> <权限组旧名称> <新名称>");
+        view.setSuggestCommand("/dominion group rename <领地名称> <权限组旧名称> <新名称>");
         view.open(player);
     }
 

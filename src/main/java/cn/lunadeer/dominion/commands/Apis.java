@@ -62,4 +62,8 @@ public class Apis {
         return false;
     }
 
+    public static String CommandParser(String command, Object... args) {
+        return String.format(command, args);
+    }
+
 }

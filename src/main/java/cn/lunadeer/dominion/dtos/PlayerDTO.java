@@ -4,7 +4,6 @@ import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
-import cn.lunadeer.dominion.Dominion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

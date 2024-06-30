@@ -13,26 +13,34 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.*;
+import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
 public class MemberSetting {
-    // /dominion member_setting <玩家名称> [领地名称] [页码]
+    public static void show(CommandSender sender, String dominionName, String playerName, Integer page) {
+        show(sender, new String[]{"", "", dominionName, playerName, page.toString()});
+    }
+
+    public static void show(CommandSender sender, String dominionName, String playerName) {
+        show(sender, new String[]{"", "", dominionName, playerName});
+    }
+
     public static void show(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion member_setting <玩家名称> [领地名称] [页码]");
+        if (args.length < 3) {
+            Notification.error(sender, "用法: /dominion member setting <领地名称> <玩家名称> [页码]");
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = getDominionNameArg_2(player, args);
+        DominionDTO dominion = DominionDTO.select(args[2]);
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion member_setting <玩家名称> [领地名称]");
+            Notification.error(sender, "领地 %s 不存在", args[2]);
             return;
         }
-        int page = getPage(args, 3);
-        String playerName = args[1];
-        ListView view = ListView.create(10, "/dominion member_setting " + playerName + " " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
+        int page = getPage(args, 4);
+        String playerName = args[3];
+        ListView view = ListView.create(10, "/dominion member setting " + dominion.getName() + " " + playerName);
         PlayerDTO playerDTO = PlayerDTO.select(playerName);
         if (playerDTO == null) {
             Notification.error(sender, "玩家 %s 不存在", playerName);
@@ -49,20 +57,24 @@ public class MemberSetting {
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
                         .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("成员列表").setExecuteCommand("/dominion member_list " + dominion.getName()).build())
+                        .append(Button.create("成员列表").setExecuteCommand("/dominion member list " + dominion.getName()).build())
                         .append("成员权限")
         );
         view.add(Line.create().append(Button.createGreen("套用模板")
                 .setHoverText("选择一个权限模板套用")
-                .setExecuteCommand("/dominion select_template " + playerName + " " + dominion.getName()).build()));
+                .setExecuteCommand("/dominion member select_template " + dominion.getName() + " " + playerName).build()));
         if (privilege.getAdmin()) {
             view.add(Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion set_privilege " + playerName + " admin false " + dominion.getName() + " " + page).build())
+                    .append(Button.createGreen("☑").setExecuteCommand(
+                            parseCommand(dominion.getName(), playerName, "admin", false, page)
+                    ).build())
                     .append("管理员"));
             view.add(createOption(Flag.GLOW, privilege.getFlagValue(Flag.GLOW), playerName, dominion.getName(), page));
         } else {
             view.add(Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion set_privilege " + playerName + " admin true " + dominion.getName() + " " + page).build())
+                    .append(Button.createRed("☐").setExecuteCommand(
+                            parseCommand(dominion.getName(), playerName, "admin", true, page)
+                    ).build())
                     .append("管理员"));
             for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
                 view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
@@ -74,12 +86,20 @@ public class MemberSetting {
     private static Line createOption(Flag flag, boolean value, String player_name, String dominion_name, int page) {
         if (value) {
             return Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion set_privilege " + player_name + " " + flag.getFlagName() + " false " + dominion_name + " " + page).build())
+                    .append(Button.createGreen("☑").setExecuteCommand(
+                            parseCommand(dominion_name, player_name, flag.getFlagName(), false, page)
+                    ).build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         } else {
             return Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion set_privilege " + player_name + " " + flag.getFlagName() + " true " + dominion_name + " " + page).build())
+                    .append(Button.createRed("☐").setExecuteCommand(
+                            parseCommand(dominion_name, player_name, flag.getFlagName(), true, page)
+                    ).build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
+    }
+
+    private static String parseCommand(String dominionName, String playerName, String flagName, boolean value, int page) {
+        return String.format("/dominion member set_flag %s %s %s %s %d", dominionName, playerName, flagName, value, page);
     }
 }

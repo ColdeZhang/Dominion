@@ -74,6 +74,7 @@ public class GroupDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.size() == 0) return null;
+            Cache.instance.loadGroup(groups.get(0).getId());
             return groups.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("创建权限组失败: ", e, "");

@@ -15,25 +15,35 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+import static cn.lunadeer.dominion.commands.Apis.CommandParser;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.*;
+import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 
 public class MemberList {
 
+    public static void show(CommandSender sender, String dominionName, Integer page) {
+        show(sender, new String[]{"", "", dominionName, page.toString()});
+    }
+
+    public static void show(CommandSender sender, String dominionName) {
+        show(sender, new String[]{"", "", dominionName});
+    }
+
     public static void show(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion member_list <领地名称> [页码]");
+        if (args.length < 3) {
+            Notification.error(sender, "用法: /dominion member list <领地名称> [页码]");
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[1]);
+        DominionDTO dominion = DominionDTO.select(args[2]);
         if (dominion == null) {
-            Notification.error(sender, "领地 %s 不存在", args[1]);
+            Notification.error(sender, "领地 %s 不存在", args[2]);
             return;
         }
-        int page = getPage(args, 2);
-        ListView view = ListView.create(10, "/dominion member_list " + dominion.getName());
+        int page = getPage(args, 3);
+        ListView view = ListView.create(10, "/dominion member list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(dominion.getId());
         view.title("领地 " + dominion.getName() + " 成员列表");
@@ -44,7 +54,8 @@ public class MemberList {
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append("成员列表")
         );
-        view.add(Line.create().append(Button.create("添加成员").setExecuteCommand("/dominion select_player_create_privilege " + dominion.getName()).build()));
+        view.add(Line.create().append(Button.create("添加成员")
+                .setExecuteCommand(CommandParser("/dominion member select_player %s", dominion.getName())).build()));
         for (PlayerPrivilegeDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
@@ -65,10 +76,10 @@ public class MemberList {
 
             Button prev = Button.createGreen("权限")
                     .setHoverText("配置成员权限")
-                    .setExecuteCommand("/dominion member_setting " + p_player.getLastKnownName() + " " + dominion.getName());
+                    .setExecuteCommand(CommandParser("/dominion member setting %s %s", dominion.getName(), p_player.getLastKnownName()));
             Button remove = Button.createRed("移除")
                     .setHoverText("将此成员移出（变为访客）")
-                    .setExecuteCommand("/dominion clear_privilege " + p_player.getLastKnownName() + " " + dominion.getName() + " b");
+                    .setExecuteCommand(CommandParser("/dominion member remove %s %s", dominion.getName(), p_player.getLastKnownName()));
 
             if (!player.getUniqueId().equals(dominion.getOwner())) {
                 boolean disable = false;

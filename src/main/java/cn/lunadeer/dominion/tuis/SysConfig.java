@@ -20,7 +20,7 @@ public class SysConfig {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (notOp(player)) return;
-        int page = getPage(args);
+        int page = getPage(args, 1);
         ListView view = ListView.create(10, "/dominion sys_config");
         view.title("系统配置");
         view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("系统配置"));

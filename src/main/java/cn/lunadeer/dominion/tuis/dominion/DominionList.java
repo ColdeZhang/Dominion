@@ -22,7 +22,7 @@ public class DominionList {
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
-        int page = getPage(args);
+        int page = getPage(args, 1);
         ListView view = ListView.create(10, "/dominion list");
 
         view.title("我的领地列表");

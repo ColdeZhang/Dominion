@@ -2,7 +2,6 @@ package cn.lunadeer.dominion.tuis.dominion;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.tuis.Apis;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -13,8 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
-import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
+import static cn.lunadeer.dominion.tuis.Apis.*;
 
 public class DominionManage {
     public static void show(CommandSender sender, String[] args) {
@@ -26,7 +24,7 @@ public class DominionManage {
             return;
         }
         if (noAuthToManage(player, dominion)) return;
-        int page = Apis.getPage(args, 2);
+        int page = getPage(args, 2);
         Line size_info = Line.create()
                 .append(Button.create("详细信息").setExecuteCommand("/dominion info " + dominion.getName()).build())
                 .append("查看领地详细信息");
@@ -37,10 +35,10 @@ public class DominionManage {
                 .append(Button.create("访客权限").setExecuteCommand("/dominion guest_setting " + dominion.getName()).build())
                 .append("访客在此领地的权限");
         Line privilege_list = Line.create()
-                .append(Button.create("成员管理").setExecuteCommand("/dominion member_list " + dominion.getName()).build())
+                .append(Button.create("成员管理").setExecuteCommand("/dominion member list " + dominion.getName()).build())
                 .append("管理此领地成员的权限");
         Line group_list = Line.create()
-                .append(Button.create("权限组").setExecuteCommand("/dominion group_list " + dominion.getName()).build())
+                .append(Button.create("权限组").setExecuteCommand("/dominion group list " + dominion.getName()).build())
                 .append("管理此领地的权限组");
         Line set_tp = Line.create()
                 .append(Button.create("设置传送点").setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
