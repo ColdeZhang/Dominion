@@ -20,7 +20,7 @@ import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
 public class SelectMember {
     public static void show(CommandSender sender, String[] args) {
         if (args.length < 4) {
-            Notification.error(sender, "用法: /dominion group select_member <领地名称> <权限组名称> [页码]");
+            Notification.error(sender, "用法: /dominion group select_member <领地名称> <权限组名称> [回显页码] [页码]");
             return;
         }
         Player player = playerOnly(sender);
@@ -37,6 +37,7 @@ public class SelectMember {
             return;
         }
         int backPage = getPage(args, 4);
+        int page = getPage(args, 5);
         ListView view = ListView.create(10, "/dominion group select_member " + dominion.getName() + " " + group.getName() + " " + backPage);
         view.title("选择成员");
         Line sub = Line.create().append("选择成员添加到权限组 " + group.getName())
@@ -51,6 +52,6 @@ public class SelectMember {
                             .setExecuteCommand("/dominion group add_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + backPage)
                             .build()));
         }
-        view.showOn(player, backPage);
+        view.showOn(player, page);
     }
 }
