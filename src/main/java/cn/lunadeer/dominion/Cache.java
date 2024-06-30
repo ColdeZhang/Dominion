@@ -285,7 +285,16 @@ public class Cache {
         }
         PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
         if (privilege != null) {
-            player.setGlowing(privilege.getFlagValue(Flag.GLOW));
+            if (privilege.getGroupId() == -1) {
+                player.setGlowing(privilege.getFlagValue(Flag.GLOW));
+            } else {
+                GroupDTO group = getGroup(privilege.getGroupId());
+                if (group != null) {
+                    player.setGlowing(group.getFlagValue(Flag.GLOW));
+                } else {
+                    player.setGlowing(dominion.getFlagValue(Flag.GLOW));
+                }
+            }
         } else {
             player.setGlowing(dominion.getFlagValue(Flag.GLOW));
         }
@@ -313,7 +322,16 @@ public class Cache {
         }
         PlayerPrivilegeDTO privilege = getPlayerPrivilege(player, dominion);
         if (privilege != null) {
-            player.setAllowFlight(privilege.getFlagValue(Flag.FLY));
+            if (privilege.getGroupId() == -1) {
+                player.setAllowFlight(privilege.getFlagValue(Flag.FLY));
+            } else {
+                GroupDTO group = getGroup(privilege.getGroupId());
+                if (group != null) {
+                    player.setAllowFlight(group.getFlagValue(Flag.FLY));
+                } else {
+                    player.setAllowFlight(dominion.getFlagValue(Flag.FLY));
+                }
+            }
         } else {
             player.setAllowFlight(dominion.getFlagValue(Flag.FLY));
         }
