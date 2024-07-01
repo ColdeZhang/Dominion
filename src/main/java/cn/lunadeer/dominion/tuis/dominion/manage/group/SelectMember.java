@@ -43,7 +43,7 @@ public class SelectMember {
         Line sub = Line.create().append("选择成员添加到权限组 " + group.getName())
                 .append(Button.create("返回").setExecuteCommand("/dominion group list " + dominion.getName() + " " + backPage).build());
         view.subtitle(sub);
-        List<PlayerPrivilegeDTO> members = PlayerPrivilegeDTO.selectByGroupId(-1);
+        List<PlayerPrivilegeDTO> members = PlayerPrivilegeDTO.selectByDomGroupId(dominion.getId(), -1);
         for (PlayerPrivilegeDTO member : members) {
             PlayerDTO p = PlayerDTO.select(member.getPlayerUUID());
             if (p == null) continue;

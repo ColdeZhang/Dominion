@@ -55,7 +55,7 @@ public class Helper {
         if (dominion == null) return players_name;
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) return players_name;
-        List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.selectByGroupId(group.getId());
+        List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.selectByDomGroupId(dominion.getId(), group.getId());
         for (PlayerPrivilegeDTO privilege : privileges) {
             PlayerDTO player = PlayerDTO.select(privilege.getPlayerUUID());
             if (player == null) continue;

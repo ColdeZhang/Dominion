@@ -115,6 +115,11 @@ public class PlayerPrivilegeDTO {
         return query(sql, groupId);
     }
 
+    public static List<PlayerPrivilegeDTO> selectByDomGroupId(Integer domId, Integer groupId) {
+        String sql = "SELECT * FROM player_privilege WHERE group_id = ? AND dom_id = ?;";
+        return query(sql, groupId, domId);
+    }
+
     Field id = new Field("id", FieldType.INT);
     Field playerUUID = new Field("player_uuid", FieldType.STRING);
     Field admin = new Field("admin", FieldType.BOOLEAN);
