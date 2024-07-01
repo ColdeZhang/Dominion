@@ -76,10 +76,6 @@ public class MemberController {
         if (flag.equals("admin")) {
             privilege.setAdmin(value);
         } else {
-            if (privilege.getAdmin()) {
-                operator.setResponse(FAIL.addMessage("管理员拥有所有权限，无需单独设置权限"));
-                return;
-            }
             Flag f = Flag.getFlag(flag);
             if (f == null) {
                 operator.setResponse(FAIL.addMessage("未知的领地权限 %s", flag));

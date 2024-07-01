@@ -82,10 +82,6 @@ public class GroupController {
         if (flag.equals("admin")) {
             group = group.setAdmin(value);
         } else {
-            if (group.getAdmin()) {
-                operator.setResponse(FAIL.addMessage("管理员拥有所有权限，无需单独设置权限"));
-                return;
-            }
             Flag f = Flag.getFlag(flag);
             if (f == null) {
                 operator.setResponse(FAIL.addMessage("未知的权限 %s", flag));
