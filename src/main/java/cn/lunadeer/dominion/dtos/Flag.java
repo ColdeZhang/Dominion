@@ -28,6 +28,7 @@ public enum Flag {
     CREEPER_EXPLODE("creeper_explode", "实体爆炸", "包含：苦力怕/凋零头颅/水晶爆炸", false, true, true),
     COMPARER("comparer", "比较器交互", "是否可以修改比较器状态", false, false, true),
     DOOR("door", "门交互", "是否可以使用各种材质的门（包括活板门）", false, false, true),
+    DRAGON_EGG("dragon_egg", "触碰龙蛋", "是否可以触碰龙蛋", false, false, true),
     DYE("dye", "染色", "是否可以使用染料（对羊、狗项圈、猫项圈）染色", false, false, true),
     EDIT_SIGN("edit_sign", "编辑告示牌", "是否可以编辑告示牌", false, false, true),
     EGG("egg", "扔鸡蛋", "是否可以扔鸡蛋", false, false, true),

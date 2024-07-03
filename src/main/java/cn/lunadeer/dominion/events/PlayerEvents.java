@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
+import io.papermc.paper.event.block.DragonEggFormEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -311,6 +312,20 @@ public class PlayerEvents implements Listener {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
         checkFlag(dom, Flag.DOOR, player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // dragon_egg
+    public void touchDragonEdd(PlayerInteractEvent event) {
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        if (block.getType() != Material.DRAGON_EGG) {
+            return;
+        }
+        Player player = event.getPlayer();
+        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        checkFlag(dom, Flag.DRAGON_EGG, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dye
