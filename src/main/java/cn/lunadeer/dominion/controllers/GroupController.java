@@ -151,7 +151,7 @@ public class GroupController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在", playerName));
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员，无法直接加入权限组", playerName, domName));
             return;
@@ -198,7 +198,7 @@ public class GroupController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在", playerName));
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", playerName, domName));
             return;

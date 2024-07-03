@@ -74,7 +74,7 @@ public class GroupDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.size() == 0) return null;
-            Cache.instance.loadGroup(groups.get(0).getId());
+            Cache.instance.loadGroups(groups.get(0).getId());
             return groups.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("创建权限组失败: ", e, "");
@@ -89,9 +89,9 @@ public class GroupDTO {
     public static void delete(Integer id) {
         String sql = "DELETE FROM dominion_group WHERE id = ?;";
         DatabaseManager.instance.query(sql, id);
-        Cache.instance.loadGroup(id);
-        List<PlayerPrivilegeDTO> players = PlayerPrivilegeDTO.selectByGroupId(id);
-        for (PlayerPrivilegeDTO player : players) {
+        Cache.instance.loadGroups(id);
+        List<MemberDTO> players = MemberDTO.selectByGroupId(id);
+        for (MemberDTO player : players) {
             player.setGroupId(-1);
         }
     }
@@ -168,7 +168,7 @@ public class GroupDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.size() == 0) return null;
-            Cache.instance.loadGroup((Integer) id.value);
+            Cache.instance.loadGroups((Integer) id.value);
             return groups.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新权限组失败: ", e, "");

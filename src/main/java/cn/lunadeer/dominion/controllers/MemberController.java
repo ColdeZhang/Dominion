@@ -28,7 +28,7 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
             return;
@@ -37,7 +37,7 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法移除一个领地管理员", dominionName));
             return;
         }
-        PlayerPrivilegeDTO.delete(player.getUuid(), dominion.getId());
+        MemberDTO.delete(player.getUuid(), dominion.getId());
         operator.setResponse(SUCCESS);
     }
 
@@ -64,7 +64,7 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
             return;
@@ -100,7 +100,12 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.insert(new PlayerPrivilegeDTO(player.getUuid(), dominion));
+        MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
+        if (privilege != null) {
+            operator.setResponse(FAIL.addMessage("玩家 %s 已经是领地 %s 的成员", player_name, dominionName));
+            return;
+        }
+        privilege = MemberDTO.insert(new MemberDTO(player.getUuid(), dominion));
         if (privilege == null) {
             operator.setResponse(FAIL);
         } else {
@@ -122,7 +127,7 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", playerName));
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(player.getUuid(), dominion.getId());
+        MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", playerName, dominionName));
             return;

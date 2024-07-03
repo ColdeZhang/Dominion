@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.dtos.MemberDTO;
 import org.bukkit.Location;
 
 public class Apis {
@@ -15,7 +15,7 @@ public class Apis {
     public static boolean noAuthToChangeFlags(AbstractOperator player, DominionDTO dominion) {
         if (player.isOp()) return false;
         if (!dominion.getOwner().equals(player.getUniqueId())) {
-            PlayerPrivilegeDTO privileges = PlayerPrivilegeDTO.select(player.getUniqueId(), dominion.getId());
+            MemberDTO privileges = MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
                 player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不是领地 %s 的拥有者或管理员，无权修改权限", dominion.getName()));
                 return true;

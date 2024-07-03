@@ -5,7 +5,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
+import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -17,7 +17,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.Inventory;
 
 public class Apis {
-    public static boolean canByPass(Player player, DominionDTO dom, PlayerPrivilegeDTO prev) {
+    public static boolean canByPass(Player player, DominionDTO dom, MemberDTO prev) {
         if (player.isOp() && Dominion.config.getLimitOpBypass()) {
             return true;
         }
@@ -48,7 +48,7 @@ public class Apis {
         if (dom == null) {
             return true;
         }
-        PlayerPrivilegeDTO prev = Cache.instance.getPlayerPrivilege(player, dom);
+        MemberDTO prev = Cache.instance.getMember(player, dom);
         if (canByPass(player, dom, prev)) {
             return true;
         }

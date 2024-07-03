@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.tuis.dominion.manage.group;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -43,8 +43,8 @@ public class SelectMember {
         Line sub = Line.create().append("选择成员添加到权限组 " + group.getName())
                 .append(Button.create("返回").setExecuteCommand("/dominion group list " + dominion.getName() + " " + backPage).build());
         view.subtitle(sub);
-        List<PlayerPrivilegeDTO> members = PlayerPrivilegeDTO.selectByDomGroupId(dominion.getId(), -1);
-        for (PlayerPrivilegeDTO member : members) {
+        List<MemberDTO> members = MemberDTO.selectByDomGroupId(dominion.getId(), -1);
+        for (MemberDTO member : members) {
             PlayerDTO p = PlayerDTO.select(member.getPlayerUUID());
             if (p == null) continue;
             view.add(Line.create()

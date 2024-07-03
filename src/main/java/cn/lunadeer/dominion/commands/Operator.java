@@ -28,12 +28,12 @@ public class Operator {
         });
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, "正在从数据库重新加载玩家权限缓存...");
-            Cache.instance.loadPlayerPrivileges();
+            Cache.instance.loadMembers();
             Notification.info(sender, "玩家权限缓存已重新加载");
         });
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, "正在从数据库重新加载权限组缓存...");
-            Cache.instance.loadGroup();
+            Cache.instance.loadGroups();
             Notification.info(sender, "权限组缓存已重新加载");
         });
     }

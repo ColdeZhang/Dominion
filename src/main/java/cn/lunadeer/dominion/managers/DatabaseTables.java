@@ -1,12 +1,12 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.minecraftpluginutils.databse.Field;
-import cn.lunadeer.minecraftpluginutils.databse.FieldType;
-import cn.lunadeer.minecraftpluginutils.databse.TableColumn;
+import cn.lunadeer.minecraftpluginutils.databse.*;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.AddColumn;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
+
+import java.sql.ResultSet;
 
 public class DatabaseTables {
     public static void migrate() {
@@ -58,23 +58,35 @@ public class DatabaseTables {
                 .foreignKey(dominion_parent_dom_id_fk);
         dominion.execute();
 
+        for (Flag flag : Flag.getAllDominionFlags()) {
+            TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
+            new AddColumn(column).table("dominion").ifNotExists().execute();
+        }
+
         // player privilege
-        TableColumn player_privilege_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
-        TableColumn player_privilege_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, false, "''");
-        TableColumn player_privilege_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
-        TableColumn player_privilege_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
-        CreateTable.ForeignKey player_privilege_player_uuid_fk = new CreateTable.ForeignKey(player_privilege_player_uuid, "player_name", player_name_uuid, true);
-        CreateTable.ForeignKey player_privilege_dom_id_fk = new CreateTable.ForeignKey(player_privilege_dom_id, "dominion", dominion_id, true);
-        CreateTable player_privilege = new CreateTable().ifNotExists();
-        player_privilege.table("player_privilege")
-                .field(player_privilege_id)
-                .field(player_privilege_player_uuid)
-                .field(player_privilege_dom_id)
-                .field(player_privilege_admin)
-                .foreignKey(player_privilege_player_uuid_fk)
-                .foreignKey(player_privilege_dom_id_fk)
-                .unique(player_privilege_player_uuid, player_privilege_dom_id);
-        player_privilege.execute();
+        if (!Common.IsTableExist("dominion_member")) {
+            TableColumn player_privilege_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+            TableColumn player_privilege_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, false, "''");
+            TableColumn player_privilege_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
+            TableColumn player_privilege_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
+            CreateTable.ForeignKey player_privilege_player_uuid_fk = new CreateTable.ForeignKey(player_privilege_player_uuid, "player_name", player_name_uuid, true);
+            CreateTable.ForeignKey player_privilege_dom_id_fk = new CreateTable.ForeignKey(player_privilege_dom_id, "dominion", dominion_id, true);
+            CreateTable player_privilege = new CreateTable().ifNotExists();
+            player_privilege.table("player_privilege")
+                    .field(player_privilege_id)
+                    .field(player_privilege_player_uuid)
+                    .field(player_privilege_dom_id)
+                    .field(player_privilege_admin)
+                    .foreignKey(player_privilege_player_uuid_fk)
+                    .foreignKey(player_privilege_dom_id_fk)
+                    .unique(player_privilege_player_uuid, player_privilege_dom_id);
+            player_privilege.execute();
+
+            for (Flag flag : Flag.getAllPrivilegeFlags()) {
+                TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
+                new AddColumn(column).table("player_privilege").ifNotExists().execute();
+            }
+        }
 
         // server root player name
         Field server_player_name_id_field = new Field("id", -1);
@@ -116,21 +128,11 @@ public class DatabaseTables {
                 .field(server_dom_leave_message_field);
         insert_server_dom.execute();
 
-        for (Flag flag : Flag.getAllDominionFlags()) {
-            TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
-            new AddColumn(column).table("dominion").ifNotExists().execute();
-        }
-
-        for (Flag flag : Flag.getAllPrivilegeFlags()) {
-            TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
-            new AddColumn(column).table("player_privilege").ifNotExists().execute();
-        }
-
-        // 1.18.0
+        // 1.18.0   dominion add tp_location
         TableColumn dominion_tp_location = new TableColumn("tp_location", FieldType.STRING, false, false, true, false, "'default'");
         new AddColumn(dominion_tp_location).table("dominion").ifNotExists().execute();
 
-        // 1.31.0
+        // 1.31.0   add privilege_template
         TableColumn privilege_template_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
         TableColumn privilege_template_creator = new TableColumn("creator", FieldType.STRING, false, false, true, false, "''");
         TableColumn privilege_template_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'未命名'");
@@ -152,31 +154,82 @@ public class DatabaseTables {
             new AddColumn(column).table("privilege_template").ifNotExists().execute();
         }
 
-        // 1.31.6
+        // 1.31.6   dominion add blue-map tile color
         TableColumn dominion_color = new TableColumn("color", FieldType.STRING, false, false, true, false, "'#00BFFF'");
         new AddColumn(dominion_color).table("dominion").ifNotExists().execute();
 
-        // 1.34.0
-        TableColumn player_privilege_group_id = new TableColumn("group_id", FieldType.INT, false, false, true, false, -1);
-        new AddColumn(player_privilege_group_id).table("player_privilege").ifNotExists().execute();
+        // 1.34.0   add dominion_group
+        if (!Common.IsTableExist("dominion_member")) {
+            TableColumn player_privilege_group_id = new TableColumn("group_id", FieldType.INT, false, false, true, false, -1);
+            new AddColumn(player_privilege_group_id).table("player_privilege").ifNotExists().execute();
+        }
 
-        TableColumn group_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
-        TableColumn group_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
-        TableColumn group_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'未命名'");
-        TableColumn group_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
-        CreateTable.ForeignKey group_dom_id_fk = new CreateTable.ForeignKey(group_dom_id, "dominion", dominion_id, true);
+        TableColumn dominion_group_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn dominion_group_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
+        TableColumn dominion_group_name = new TableColumn("name", FieldType.STRING, false, false, true, false, "'未命名'");
+        TableColumn dominion_group_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
+        CreateTable.ForeignKey group_dom_id_fk = new CreateTable.ForeignKey(dominion_group_dom_id, "dominion", dominion_id, true);
         CreateTable group = new CreateTable().ifNotExists();
         group.table("dominion_group")
-                .field(group_id)
-                .field(group_dom_id)
-                .field(group_name)
-                .field(group_admin)
+                .field(dominion_group_id)
+                .field(dominion_group_dom_id)
+                .field(dominion_group_name)
+                .field(dominion_group_admin)
                 .foreignKey(group_dom_id_fk)
-                .unique(group_dom_id, group_name);
+                .unique(dominion_group_dom_id, dominion_group_name);
         group.execute();
         for (Flag flag : Flag.getAllPrivilegeFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("dominion_group").ifNotExists().execute();
+        }
+
+        // 1.35.0 migrate player_privilege -> dominion_member
+        TableColumn dominion_member_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
+        TableColumn dominion_member_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, false, "''");
+        TableColumn dominion_member_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
+        TableColumn dominion_member_admin = new TableColumn("admin", FieldType.BOOLEAN, false, false, true, false, false);
+        TableColumn dominion_member_group_id = new TableColumn("group_id", FieldType.INT, false, false, true, false, -1);
+        CreateTable.ForeignKey dominion_member_player_uuid_fk = new CreateTable.ForeignKey(dominion_member_player_uuid, "player_name", player_name_uuid, true);
+        CreateTable.ForeignKey dominion_member_dom_id_fk = new CreateTable.ForeignKey(dominion_member_dom_id, "dominion", dominion_id, true);
+        CreateTable dominion_member = new CreateTable().ifNotExists();
+        dominion_member.table("dominion_member")
+                .field(dominion_member_id)
+                .field(dominion_member_player_uuid)
+                .field(dominion_member_dom_id)
+                .field(dominion_member_admin)
+                .field(dominion_member_group_id)
+                .foreignKey(dominion_member_player_uuid_fk)
+                .foreignKey(dominion_member_dom_id_fk)
+                .unique(dominion_member_player_uuid, dominion_member_dom_id);
+        dominion_member.execute();
+        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+            TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
+            new AddColumn(column).table("dominion_member").ifNotExists().execute();
+        }
+        if (Common.IsTableExist("player_privilege")) {
+            // migrate from player_privilege to dominion_member
+            String sql = "SELECT * FROM player_privilege;";
+            try (ResultSet rs = DatabaseManager.instance.query(sql)) {
+                while (rs.next()) {
+                    String player_uuid = rs.getString("player_uuid");
+                    int dom_id = rs.getInt("dom_id");
+                    boolean admin = rs.getBoolean("admin");
+                    int group_id = rs.getInt("group_id");
+                    InsertRow insert = new InsertRow().table("dominion_member")
+                            .field(new Field("player_uuid", player_uuid))
+                            .field(new Field("dom_id", dom_id))
+                            .field(new Field("group_id", group_id))
+                            .field(new Field("admin", admin));
+                    for (Flag flag : Flag.getAllPrivilegeFlags()) {
+                        insert.field(new Field(flag.getFlagName(), rs.getBoolean(flag.getFlagName())));
+                    }
+                    insert.execute();
+                }
+                sql = "DROP TABLE player_privilege;";
+                DatabaseManager.instance.query(sql);
+            } catch (Exception e) {
+                DatabaseManager.handleDatabaseError("迁移 player_privilege 到 dominion_member 失败", e, sql);
+            }
         }
     }
 }

@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.tuis.dominion.manage.member;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -46,7 +46,7 @@ public class MemberSetting {
             Notification.error(sender, "玩家 %s 不存在", playerName);
             return;
         }
-        PlayerPrivilegeDTO privilege = PlayerPrivilegeDTO.select(playerDTO.getUuid(), dominion.getId());
+        MemberDTO privilege = MemberDTO.select(playerDTO.getUuid(), dominion.getId());
         if (privilege == null) {
             Notification.warn(sender, "玩家 %s 不是领地 %s 的成员", playerName, dominion.getName());
             return;

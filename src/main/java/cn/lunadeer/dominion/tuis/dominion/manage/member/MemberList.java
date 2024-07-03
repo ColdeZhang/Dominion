@@ -45,7 +45,7 @@ public class MemberList {
         int page = getPage(args, 3);
         ListView view = ListView.create(10, "/dominion member list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
-        List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.select(dominion.getId());
+        List<MemberDTO> privileges = MemberDTO.select(dominion.getId());
         view.title("领地 " + dominion.getName() + " 成员列表");
         view.navigator(
                 Line.create()
@@ -56,7 +56,7 @@ public class MemberList {
         );
         view.add(Line.create().append(Button.create("添加成员")
                 .setExecuteCommand(CommandParser("/dominion member select_player %s", dominion.getName())).build()));
-        for (PlayerPrivilegeDTO privilege : privileges) {
+        for (MemberDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
             GroupDTO group = Cache.instance.getGroup(privilege.getGroupId());

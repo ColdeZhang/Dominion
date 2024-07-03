@@ -55,8 +55,8 @@ public class Helper {
         if (dominion == null) return players_name;
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) return players_name;
-        List<PlayerPrivilegeDTO> privileges = PlayerPrivilegeDTO.selectByDomGroupId(dominion.getId(), group.getId());
-        for (PlayerPrivilegeDTO privilege : privileges) {
+        List<MemberDTO> privileges = MemberDTO.selectByDomGroupId(dominion.getId(), group.getId());
+        for (MemberDTO privilege : privileges) {
             PlayerDTO player = PlayerDTO.select(privilege.getPlayerUUID());
             if (player == null) continue;
             players_name.add(player.getLastKnownName());
@@ -79,8 +79,8 @@ public class Helper {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
-        List<PlayerPrivilegeDTO> dominions_admin = PlayerPrivilegeDTO.selectAll(player.getUniqueId());
-        for (PlayerPrivilegeDTO privilege : dominions_admin) {
+        List<MemberDTO> dominions_admin = MemberDTO.selectAll(player.getUniqueId());
+        for (MemberDTO privilege : dominions_admin) {
             if (privilege.getAdmin()) {
                 DominionDTO dom = DominionDTO.select(privilege.getDomID());
                 if (dom == null) continue;

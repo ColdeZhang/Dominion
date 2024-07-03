@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.tuis.dominion.manage.group;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.PlayerPrivilegeDTO;
 import cn.lunadeer.dominion.tuis.Apis;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -72,9 +72,9 @@ public class GroupList {
                     .setExecuteCommand("/dominion group select_member " + dominion.getName() + " " + group.getName() + " " + page);
             line.append(del.build()).append(edit.build()).append(group.getName()).append(add.build());
             view.add(line);
-            List<PlayerPrivilegeDTO> players = PlayerPrivilegeDTO.selectByGroupId(group.getId());
+            List<MemberDTO> players = MemberDTO.selectByGroupId(group.getId());
             XLogger.debug("players: " + players.size());
-            for (PlayerPrivilegeDTO playerPrivilege : players) {
+            for (MemberDTO playerPrivilege : players) {
                 PlayerDTO p = PlayerDTO.select(playerPrivilege.getPlayerUUID());
                 if (p == null) continue;
                 Button remove = Button.createRed("-")

@@ -10,10 +10,10 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import java.sql.ResultSet;
 import java.util.*;
 
-public class PlayerPrivilegeDTO {
+public class MemberDTO {
 
-    private static List<PlayerPrivilegeDTO> query(String sql, Object... params) {
-        List<PlayerPrivilegeDTO> players = new ArrayList<>();
+    private static List<MemberDTO> query(String sql, Object... params) {
+        List<MemberDTO> players = new ArrayList<>();
         try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
             return getDTOFromRS(rs);
         } catch (Exception e) {
@@ -22,8 +22,8 @@ public class PlayerPrivilegeDTO {
         return players;
     }
 
-    private static List<PlayerPrivilegeDTO> getDTOFromRS(ResultSet rs) {
-        List<PlayerPrivilegeDTO> players = new ArrayList<>();
+    private static List<MemberDTO> getDTOFromRS(ResultSet rs) {
+        List<MemberDTO> players = new ArrayList<>();
         if (rs == null) return players;
         try {
             while (rs.next()) {
@@ -31,7 +31,7 @@ public class PlayerPrivilegeDTO {
                 for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
-                PlayerPrivilegeDTO player = new PlayerPrivilegeDTO(
+                MemberDTO player = new MemberDTO(
                         rs.getInt("id"),
                         UUID.fromString(rs.getString("player_uuid")),
                         rs.getBoolean("admin"),
@@ -47,14 +47,14 @@ public class PlayerPrivilegeDTO {
         return players;
     }
 
-    private PlayerPrivilegeDTO doUpdate(UpdateRow updateRow) {
+    private MemberDTO doUpdate(UpdateRow updateRow) {
         updateRow.returningAll(id)
-                .table("player_privilege")
+                .table("dominion_member")
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
-            List<PlayerPrivilegeDTO> players = getDTOFromRS(rs);
+            List<MemberDTO> players = getDTOFromRS(rs);
             if (players.size() == 0) return null;
-            Cache.instance.loadPlayerPrivileges(getPlayerUUID());
+            Cache.instance.loadMembers(getPlayerUUID());
             return players.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新玩家权限失败: ", e, "");
@@ -62,9 +62,9 @@ public class PlayerPrivilegeDTO {
         }
     }
 
-    public static PlayerPrivilegeDTO insert(PlayerPrivilegeDTO player) {
+    public static MemberDTO insert(MemberDTO player) {
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null))
-                .table("player_privilege")
+                .table("dominion_member")
                 .field(player.playerUUID)
                 .field(player.admin)
                 .field(player.domID);
@@ -72,8 +72,8 @@ public class PlayerPrivilegeDTO {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
         try (ResultSet rs = insertRow.execute()) {
-            Cache.instance.loadPlayerPrivileges(player.getPlayerUUID());
-            List<PlayerPrivilegeDTO> players = getDTOFromRS(rs);
+            Cache.instance.loadMembers(player.getPlayerUUID());
+            List<MemberDTO> players = getDTOFromRS(rs);
             if (players.size() == 0) return null;
             return players.get(0);
         } catch (Exception e) {
@@ -82,41 +82,41 @@ public class PlayerPrivilegeDTO {
         }
     }
 
-    public static PlayerPrivilegeDTO select(UUID playerUUID, Integer dom_id) {
-        String sql = "SELECT * FROM player_privilege WHERE player_uuid = ? AND dom_id = ?;";
-        List<PlayerPrivilegeDTO> p = query(sql, playerUUID.toString(), dom_id);
+    public static MemberDTO select(UUID playerUUID, Integer dom_id) {
+        String sql = "SELECT * FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
+        List<MemberDTO> p = query(sql, playerUUID.toString(), dom_id);
         if (p.size() == 0) return null;
         return p.get(0);
     }
 
-    public static List<PlayerPrivilegeDTO> select(Integer dom_id) {
-        String sql = "SELECT * FROM player_privilege WHERE dom_id = ?;";
+    public static List<MemberDTO> select(Integer dom_id) {
+        String sql = "SELECT * FROM dominion_member WHERE dom_id = ?;";
         return query(sql, dom_id);
     }
 
     public static void delete(UUID player, Integer domID) {
-        String sql = "DELETE FROM player_privilege WHERE player_uuid = ? AND dom_id = ?;";
+        String sql = "DELETE FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
         query(sql, player.toString(), domID);
-        Cache.instance.loadPlayerPrivileges(player);
+        Cache.instance.loadMembers(player);
     }
 
-    public static List<PlayerPrivilegeDTO> selectAll() {
-        String sql = "SELECT * FROM player_privilege;";
+    public static List<MemberDTO> selectAll() {
+        String sql = "SELECT * FROM dominion_member;";
         return query(sql);
     }
 
-    public static List<PlayerPrivilegeDTO> selectAll(UUID player) {
-        String sql = "SELECT * FROM player_privilege WHERE player_uuid = ?;";
+    public static List<MemberDTO> selectAll(UUID player) {
+        String sql = "SELECT * FROM dominion_member WHERE player_uuid = ?;";
         return query(sql, player.toString());
     }
 
-    public static List<PlayerPrivilegeDTO> selectByGroupId(Integer groupId) {
-        String sql = "SELECT * FROM player_privilege WHERE group_id = ?;";
+    public static List<MemberDTO> selectByGroupId(Integer groupId) {
+        String sql = "SELECT * FROM dominion_member WHERE group_id = ?;";
         return query(sql, groupId);
     }
 
-    public static List<PlayerPrivilegeDTO> selectByDomGroupId(Integer domId, Integer groupId) {
-        String sql = "SELECT * FROM player_privilege WHERE group_id = ? AND dom_id = ?;";
+    public static List<MemberDTO> selectByDomGroupId(Integer domId, Integer groupId) {
+        String sql = "SELECT * FROM dominion_member WHERE group_id = ? AND dom_id = ?;";
         return query(sql, groupId, domId);
     }
 
@@ -153,26 +153,26 @@ public class PlayerPrivilegeDTO {
         return flags.get(flag);
     }
 
-    public PlayerPrivilegeDTO setFlagValue(Flag flag, Boolean value) {
+    public MemberDTO setFlagValue(Flag flag, Boolean value) {
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
         return doUpdate(updateRow);
     }
 
-    public PlayerPrivilegeDTO setAdmin(Boolean admin) {
+    public MemberDTO setAdmin(Boolean admin) {
         this.admin.value = admin;
         UpdateRow updateRow = new UpdateRow().field(this.admin);
         return doUpdate(updateRow);
     }
 
-    public PlayerPrivilegeDTO setGroupId(Integer groupId) {
+    public MemberDTO setGroupId(Integer groupId) {
         this.groupId.value = groupId;
         UpdateRow updateRow = new UpdateRow().field(this.groupId);
         return doUpdate(updateRow);
     }
 
-    public PlayerPrivilegeDTO applyTemplate(PrivilegeTemplateDTO template) {
+    public MemberDTO applyTemplate(PrivilegeTemplateDTO template) {
         this.admin.value = template.getAdmin();
         UpdateRow updateRow = new UpdateRow().field(admin);
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
@@ -182,7 +182,7 @@ public class PlayerPrivilegeDTO {
         return doUpdate(updateRow);
     }
 
-    private PlayerPrivilegeDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<Flag, Boolean> flags, Integer groupId) {
+    private MemberDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<Flag, Boolean> flags, Integer groupId) {
         this.id.value = id;
         this.playerUUID.value = playerUUID.toString();
         this.admin.value = admin;
@@ -191,7 +191,7 @@ public class PlayerPrivilegeDTO {
         this.flags.putAll(flags);
     }
 
-    public PlayerPrivilegeDTO(UUID playerUUID, DominionDTO dom) {
+    public MemberDTO(UUID playerUUID, DominionDTO dom) {
         this.id.value = null;
         this.playerUUID.value = playerUUID.toString();
         this.admin.value = false;
