@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
@@ -382,9 +383,17 @@ public class DominionOperate {
                     return;
                 }
             } else {
-                if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
-                    Notification.error(sender, "你不被允许传送到这个领地");
-                    return;
+                if (privilegeDTO.getGroupId() == -1) {
+                    if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
+                        Notification.error(sender, "你不被允许传送到这个领地");
+                        return;
+                    }
+                } else {
+                    GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
+                    if (!groupDTO.getFlagValue(Flag.TELEPORT)) {
+                        Notification.error(sender, "你所在的权限组组不被允许传送到这个领地");
+                        return;
+                    }
                 }
             }
         }
