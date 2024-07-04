@@ -831,7 +831,7 @@ public class DominionController {
             level++;
         }
         if (level >= Dominion.config.getLimitDepth()) {
-            operator.setResponse(FAIL.addMessage("子领地嵌套深度不能超过 %s", Dominion.config.getLimitDepth()));
+            operator.setResponse(FAIL.addMessage("子领地嵌套深度不能超过 %d", Dominion.config.getLimitDepth()));
             return true;
         }
         return false;
