@@ -30,12 +30,11 @@ public class CreateDominion {
         @Override
         public void handleData(String input) {
             XLogger.debug("createDominionCB.run: %s", input);
-            autoPoints(sender);
+
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             Map<Integer, Location> points = Dominion.pointsSelect.get(sender.getUniqueId());
             if (points == null || points.get(0) == null || points.get(1) == null) {
-                Notification.error(sender, "自动选点失败");
-                return;
+                points = autoPoints(sender);
             }
             operator.getResponse().thenAccept(result -> {
                 if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)) {

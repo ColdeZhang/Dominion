@@ -36,7 +36,7 @@ public class Apis {
         Notification.info(sender, "  领地的对角点坐标： x1=%d y1=%d z1=%d, x2=%d y2=%d z2=%d", x1, y1, z1, x2, y2, z2);
     }
 
-    public static void autoPoints(Player player) {
+    public static Map<Integer, Location> autoPoints(Player player) {
         Integer size = Dominion.config.getAutoCreateRadius();
         Location location = player.getLocation();
         Location location1 = new Location(location.getWorld(), location.getX() - size, location.getY() - size, location.getZ() - size);
@@ -49,6 +49,7 @@ public class Apis {
         points.put(0, location1);
         points.put(1, location2);
         Dominion.pointsSelect.put(player.getUniqueId(), points);
+        return points;
     }
 
     public static boolean notOpOrConsole(CommandSender sender) {

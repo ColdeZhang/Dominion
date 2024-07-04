@@ -191,6 +191,11 @@ public class DominionDTO {
         this(null, owner, name, world, x1, y1, z1, x2, y2, z2, -1);
     }
 
+    public static DominionDTO create(UUID owner, String name, String world,
+                                     Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
+        return new DominionDTO(null, owner, name, world, x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
+    }
+
     private final Field id = new Field("id", FieldType.INT);
     private final Field owner = new Field("owner", FieldType.STRING);
     private final Field name = new Field("name", FieldType.STRING);
@@ -327,11 +332,6 @@ public class DominionDTO {
 
     public Integer getParentDomId() {
         return (Integer) parentDomId.value;
-    }
-
-    public DominionDTO setParentDomId(Integer parentDomId) {
-        this.parentDomId.value = parentDomId;
-        return doUpdate(new UpdateRow().field(this.parentDomId));
     }
 
     public String getJoinMessage() {

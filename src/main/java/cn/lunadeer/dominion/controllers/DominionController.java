@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,12 +71,12 @@ public class DominionController {
      * @param name                 领地名称
      * @param loc1                 位置1
      * @param loc2                 位置2
-     * @param parent_dominion_name 父领地名称
+     * @param parent_dominion_name 父领地名称(留空表示为根领地)
      * @param skipEco              是否跳过经济检查
      */
     public static void create(AbstractOperator operator, String name,
                               Location loc1, Location loc2,
-                              String parent_dominion_name, boolean skipEco) {
+                              @NotNull String parent_dominion_name, boolean skipEco) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建领地失败");
         if (name.isEmpty()) {
             operator.setResponse(FAIL.addMessage("领地名称不能为空"));
@@ -109,12 +110,8 @@ public class DominionController {
                 loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ())) {
             return;
         }
-        DominionDTO dominion = new DominionDTO(operator.getUniqueId(), name, loc1.getWorld().getName(),
-                (int) Math.min(loc1.getX(), loc2.getX()), (int) Math.min(loc1.getY(), loc2.getY()),
-                (int) Math.min(loc1.getZ(), loc2.getZ()), (int) Math.max(loc1.getX(), loc2.getX()),
-                (int) Math.max(loc1.getY(), loc2.getY()), (int) Math.max(loc1.getZ(), loc2.getZ()));
         DominionDTO parent_dominion;
-        if (parent_dominion_name.isEmpty()) {
+        if (parent_dominion_name.isEmpty() || parent_dominion_name.equals("root")) {
             parent_dominion = DominionDTO.select(-1);
         } else {
             parent_dominion = DominionDTO.select(parent_dominion_name);
@@ -133,6 +130,11 @@ public class DominionController {
                 return;
             }
         }
+        // 创建 dominion (此步骤不会写入数据)
+        DominionDTO dominion = DominionDTO.create(operator.getUniqueId(), name, loc1.getWorld().getName(),
+                (int) Math.min(loc1.getX(), loc2.getX()), (int) Math.min(loc1.getY(), loc2.getY()),
+                (int) Math.min(loc1.getZ(), loc2.getZ()), (int) Math.max(loc1.getX(), loc2.getX()),
+                (int) Math.max(loc1.getY(), loc2.getY()), (int) Math.max(loc1.getZ(), loc2.getZ()), parent_dominion);
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
             operator.setResponse(FAIL.addMessage("父领地与子领地不在同一世界。"));
@@ -176,7 +178,7 @@ public class DominionController {
             operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "已扣除 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
             VaultConnect.instance.withdrawPlayer(operator.getPlayer(), price);
         }
-        dominion = DominionDTO.insert(dominion);
+        dominion = DominionDTO.insert(dominion);    // 写入数据
         if (dominion == null) {
             operator.setResponse(FAIL.addMessage("创建领地失败，数据库错误，请联系管理员"));
             return;
@@ -184,7 +186,6 @@ public class DominionController {
         if (operator instanceof BukkitPlayerOperator) {
             ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(), loc1, loc2);
         }
-        dominion.setParentDomId(parent_dominion.getId());
         operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功创建领地 %s", name));
     }
 
