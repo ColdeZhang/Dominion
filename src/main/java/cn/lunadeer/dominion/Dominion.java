@@ -49,6 +49,8 @@ public final class Dominion extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
+        metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> config.getDbType()));
+
         if (config.getCheckUpdate()) {
             giteaReleaseCheck = new GiteaReleaseCheck(this,
                     "https://ssl.lunadeer.cn:14446",
