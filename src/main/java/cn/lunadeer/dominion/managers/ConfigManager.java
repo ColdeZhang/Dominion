@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.minecraftpluginutils.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -82,6 +83,9 @@ public class ConfigManager {
         _economy_price = (float) _file.getDouble("Economy.Price", 10.0);
         _economy_only_xz = _file.getBoolean("Economy.OnlyXZ", false);
         _economy_refund = (float) _file.getDouble("Economy.Refund", 0.85);
+        if (getEconomyEnable()) {
+            new VaultConnect(this._plugin);
+        }
         _fly_permission_nodes = _file.getStringList("FlyPermissionNodes");
         _residence_migration = _file.getBoolean("ResidenceMigration", false);
         saveAll();  // 回写文件 防止文件中的数据不完整
