@@ -103,7 +103,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // bed
     public void onBedUse(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Player bukkitPlayer = event.getPlayer();
@@ -165,7 +165,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // button
     public void onButton(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Player player = event.getPlayer();
@@ -182,7 +182,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // cake
     public void eatCake(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Block block = event.getClickedBlock();
@@ -280,7 +280,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // comparer
     public void comparerChange(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Block block = event.getClickedBlock();
@@ -298,7 +298,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // door
     public void doorUse(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Block block = event.getClickedBlock();
@@ -340,7 +340,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // edit sign
     public void onSignOpen(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Player player = event.getPlayer();
@@ -444,7 +444,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // honey
     public void honeyInteractive(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Block block = event.getClickedBlock();
@@ -502,7 +502,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // lever
     public void onLever(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
         Block block = event.getClickedBlock();
