@@ -433,10 +433,10 @@ public class DominionOperate {
             World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
             if (location == null) {
                 location = new Location(world, center_x, player.getLocation().getY(), center_z);
-                XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
+                Notification.warn(player, "领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
             } else if (!isInDominion(dominionDTO, location)) {
                 location = new Location(world, center_x, player.getLocation().getY(), center_z);
-                XLogger.warn("领地 %s 传送点不在领地内，将尝试传送到中心点", dominionDTO.getName());
+                Notification.warn(player, "领地 %s 传送点不在领地内，将尝试传送到中心点", dominionDTO.getName());
             }
             if (player.isOnline()) {
                 Teleport.doTeleportSafely(player, location).thenAccept(b -> {
