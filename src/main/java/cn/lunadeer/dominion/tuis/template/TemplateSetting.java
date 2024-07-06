@@ -34,7 +34,7 @@ public class TemplateSetting {
             return;
         }
 
-        ListView view = ListView.create(10, "/dominion template manage " + template.getName());
+        ListView view = ListView.create(10, "/dominion template setting " + template.getName());
         view.title("模板 " + args[1] + " 权限管理");
         view.navigator(Line.create()
                 .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
