@@ -374,7 +374,7 @@ public class DominionDTO {
     }
 
     public Location getTpLocation() {
-        if (Objects.equals(tp_location, "default")) {
+        if (Objects.equals(tp_location.value, "default")) {
             return null;
         } else {
             // 0:0:0
