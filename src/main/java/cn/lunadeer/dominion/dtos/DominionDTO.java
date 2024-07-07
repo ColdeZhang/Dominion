@@ -373,6 +373,16 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.x1).field(this.y1).field(this.z1).field(this.x2).field(this.y2).field(this.z2));
     }
 
+    public DominionDTO setXYZ(int[] cords) {
+        if (cords.length == 6) {
+            return setXYZ(cords[0], cords[1], cords[2], cords[3], cords[4], cords[5]);
+        } else {
+            XLogger.warn("领地坐标数据异常: %s", (Object) cords);
+            return null;
+        }
+    }
+
+
     public Location getTpLocation() {
         if (Objects.equals(tp_location.value, "default")) {
             return null;

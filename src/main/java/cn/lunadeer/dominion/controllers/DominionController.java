@@ -29,6 +29,10 @@ public class DominionController {
         return DominionDTO.selectAll(owner.getUniqueId());
     }
 
+    public static List<DominionDTO> all() {
+        return DominionDTO.selectAll();
+    }
+
     /**
      * 创建领地
      *
