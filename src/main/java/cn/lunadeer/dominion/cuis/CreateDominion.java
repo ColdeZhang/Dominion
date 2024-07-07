@@ -1,11 +1,9 @@
 package cn.lunadeer.dominion.cuis;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
-import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
 import org.bukkit.Location;
@@ -32,10 +30,7 @@ public class CreateDominion {
             XLogger.debug("createDominionCB.run: %s", input);
 
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            Map<Integer, Location> points = Dominion.pointsSelect.get(sender.getUniqueId());
-            if (points == null || points.get(0) == null || points.get(1) == null) {
-                points = autoPoints(sender);
-            }
+            Map<Integer, Location> points = autoPoints(sender);
             operator.getResponse().thenAccept(result -> {
                 if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)) {
                     DominionManage.show(sender, new String[]{"list"});
