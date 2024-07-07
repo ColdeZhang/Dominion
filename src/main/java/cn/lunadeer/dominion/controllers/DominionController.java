@@ -14,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,10 +27,6 @@ public class DominionController {
 
     public static List<DominionDTO> all(Player owner) {
         return DominionDTO.selectAll(owner.getUniqueId());
-    }
-
-    public static List<DominionDTO> all() {
-        return DominionDTO.selectAll();
     }
 
     /**
@@ -78,12 +75,13 @@ public class DominionController {
                               Location loc1, Location loc2,
                               @NotNull String parent_dominion_name, boolean skipEco) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建领地失败");
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功创建领地 %s", name);
         if (name.isEmpty()) {
             operator.setResponse(FAIL.addMessage("领地名称不能为空"));
             return;
         }
-        if (name.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("领地名称不能包含空格"));
+        if (name.contains(" ") || name.contains(".")) {
+            operator.setResponse(FAIL.addMessage("领地名称不能包含空格或点"));
             return;
         }
         if (DominionDTO.select(name) != null) {
@@ -159,34 +157,16 @@ public class DominionController {
             }
         }
         // 检查经济
-        if (Dominion.config.getEconomyEnable() && !skipEco) {
-            if (!VaultConnect.instance.economyAvailable()) {
-                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
-                return;
-            }
-            int count;
-            if (Dominion.config.getEconomyOnlyXZ()) {
-                count = dominion.getSquare();
-            } else {
-                count = dominion.getVolume();
-            }
-            float price = count * Dominion.config.getEconomyPrice();
-            if (VaultConnect.instance.getBalance(operator.getPlayer()) < price) {
-                operator.setResponse(FAIL.addMessage("你的余额不足，创建此领地需要 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
-                return;
-            }
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "已扣除 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
-            VaultConnect.instance.withdrawPlayer(operator.getPlayer(), price);
-        }
-        dominion = DominionDTO.insert(dominion);    // 写入数据
+        if (!skipEco)
+            handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS);
+        dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
             operator.setResponse(FAIL.addMessage("创建领地失败，数据库错误，请联系管理员"));
             return;
         }
-        if (operator instanceof BukkitPlayerOperator) {
-            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(), loc1, loc2);
-        }
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功创建领地 %s", name));
+        // 显示粒子效果
+        handleParticle(operator, dominion.getWorld(), dominion.getX1(), dominion.getY1(), dominion.getZ1(), dominion.getX2(), dominion.getY2(), dominion.getZ2(), FAIL);
+        operator.setResponse(SUCCESS);
     }
 
     /**
@@ -215,48 +195,12 @@ public class DominionController {
      */
     public static void expand(AbstractOperator operator, Integer size, String dominion_name) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "扩展领地失败");
-        Location location = operator.getLocation();
-        BlockFace face = operator.getDirection();
-        DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
+        DominionDTO dominion = expandContractPreCheck(operator, getExistDomAndIsOwner(operator, dominion_name), FAIL);
         if (dominion == null) {
             return;
         }
-        if (location != null) {
-            if (!location.getWorld().getName().equals(dominion.getWorld())) {
-                operator.setResponse(FAIL.addMessage("禁止跨世界操作"));
-                return;
-            }
-        }
-        Integer x1 = dominion.getX1();
-        Integer y1 = dominion.getY1();
-        Integer z1 = dominion.getZ1();
-        Integer x2 = dominion.getX2();
-        Integer y2 = dominion.getY2();
-        Integer z2 = dominion.getZ2();
-        switch (face) {
-            case NORTH:
-                z1 -= size;
-                break;
-            case SOUTH:
-                z2 += size;
-                break;
-            case WEST:
-                x1 -= size;
-                break;
-            case EAST:
-                x2 += size;
-                break;
-            case UP:
-                y2 += size;
-                break;
-            case DOWN:
-                y1 -= size;
-                break;
-            default:
-                operator.setResponse(FAIL.addMessage("无效的方向"));
-                return;
-        }
-        if (sizeNotValid(operator, x1, y1, z1, x2, y2, z2)) {
+        int[] newCords = expandContractSizeChange(operator, dominion, true, size, FAIL);
+        if (newCords == null) {
             return;
         }
         // 校验是否超出父领地范围
@@ -265,14 +209,14 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("父领地丢失"));
             return;
         }
-        if (!isContained(x1, y1, z1, x2, y2, z2, parent_dominion)) {
+        if (!isContained(newCords, parent_dominion)) {
             operator.setResponse(FAIL.addMessage("超出父领地 %s 范围", parent_dominion.getName()));
             return;
         }
         // 获取同世界下的所有同级领地
         List<DominionDTO> exist_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getParentDomId());
         for (DominionDTO exist_dominion : exist_dominions) {
-            if (isIntersect(exist_dominion, x1, y1, z1, x2, y2, z2)) {
+            if (isIntersect(exist_dominion, newCords)) {
                 // 如果是自己，跳过
                 if (exist_dominion.getId().equals(dominion.getId())) continue;
                 operator.setResponse(FAIL.addMessage("与领地 %s 冲突", exist_dominion.getName()));
@@ -281,32 +225,11 @@ public class DominionController {
         }
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功扩展领地 %s %d格", dominion_name, size);
         // 检查经济
-        if (Dominion.config.getEconomyEnable()) {
-            if (!VaultConnect.instance.economyAvailable()) {
-                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
-                return;
-            }
-            int count;
-            if (Dominion.config.getEconomyOnlyXZ()) {
-                count = (x2 - x1 + 1) * (z2 - z1 + 1) - dominion.getSquare();
-            } else {
-                count = (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1) - dominion.getVolume();
-            }
-            float price = count * Dominion.config.getEconomyPrice();
-            if (VaultConnect.instance.getBalance(operator.getPlayer()) < price) {
-                operator.setResponse(FAIL.addMessage("你的余额不足，扩展此领地需要 %.2f %s", price, VaultConnect.instance.currencyNamePlural()));
-                return;
-            }
-            SUCCESS.addMessage("已扣除 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
-            VaultConnect.instance.withdrawPlayer(operator.getPlayer(), price);
-        }
-        if (operator instanceof BukkitPlayerOperator) {
-            World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
-            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(),
-                    new Location(world, x1, y1, z1),
-                    new Location(world, x2, y2, z2));
-        }
-        dominion.setXYZ(x1, y1, z1, x2, y2, z2);
+        handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
+                , false, FAIL, SUCCESS);
+        // 显示粒子效果
+        handleParticle(operator, dominion.getWorld(), newCords, FAIL);
+        dominion.setXYZ(newCords);
         operator.setResponse(SUCCESS);
     }
 
@@ -336,88 +259,46 @@ public class DominionController {
      */
     public static void contract(AbstractOperator operator, Integer size, String dominion_name) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "缩小领地失败");
-        Location location = operator.getLocation();
-        BlockFace face = operator.getDirection();
-        DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
+        DominionDTO dominion = expandContractPreCheck(operator, getExistDomAndIsOwner(operator, dominion_name), FAIL);
         if (dominion == null) {
             return;
         }
-        if (location != null) {
-            if (!location.getWorld().getName().equals(dominion.getWorld())) {
-                operator.setResponse(FAIL.addMessage("禁止跨世界操作"));
-                return;
-            }
-        }
-        Integer x1 = dominion.getX1();
-        Integer y1 = dominion.getY1();
-        Integer z1 = dominion.getZ1();
-        Integer x2 = dominion.getX2();
-        Integer y2 = dominion.getY2();
-        Integer z2 = dominion.getZ2();
-        switch (face) {
-            case SOUTH:
-                z2 -= size;
-                break;
-            case NORTH:
-                z1 += size;
-                break;
-            case EAST:
-                x2 -= size;
-                break;
-            case WEST:
-                x1 += size;
-                break;
-            case UP:
-                y2 -= size;
-                break;
-            case DOWN:
-                y1 += size;
-                break;
-            default:
-                operator.setResponse(FAIL.addMessage("无效的方向"));
-                return;
-        }
-        // 校验第二组坐标是否小于第一组坐标
-        if (x1 >= x2 || y1 >= y2 || z1 >= z2) {
-            operator.setResponse(FAIL.addMessage("缩小后的领地大小无效"));
-            return;
-        }
-        if (sizeNotValid(operator, x1, y1, z1, x2, y2, z2)) {
+        int[] newCords = expandContractSizeChange(operator, dominion, false, size, FAIL);
+        if (newCords == null) {
             return;
         }
         // 获取所有的子领地
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
         for (DominionDTO sub_dominion : sub_dominions) {
-            if (!isContained(sub_dominion, x1, y1, z1, x2, y2, z2)) {
+            if (!isContained(sub_dominion, newCords)) {
                 operator.setResponse(FAIL.addMessage("缩小后的领地无法包含子领地 %s", sub_dominion.getName()));
                 return;
             }
         }
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功缩小领地 %s %d格", dominion_name, size);
         // 退还经济
-        if (Dominion.config.getEconomyEnable()) {
-            if (!VaultConnect.instance.economyAvailable()) {
-                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
-                return;
-            }
-            int count;
-            if (Dominion.config.getEconomyOnlyXZ()) {
-                count = dominion.getSquare() - (x2 - x1 + 1) * (z2 - z1 + 1);
-            } else {
-                count = dominion.getVolume() - (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
-            }
-            float refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
-            VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
-            SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
-        }
-        if (operator instanceof BukkitPlayerOperator) {
-            World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
-            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(),
-                    new Location(world, x1, y1, z1),
-                    new Location(world, x2, y2, z2));
-        }
-        dominion.setXYZ(x1, y1, z1, x2, y2, z2);
+        handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
+                , false, FAIL, SUCCESS);
+        // 显示粒子效果
+        handleParticle(operator, dominion.getWorld(), newCords, FAIL);
+        dominion.setXYZ(newCords);
         operator.setResponse(SUCCESS);
+    }
+
+    private static int vol(int x1, int y1, int z1, int x2, int y2, int z2) {
+        return (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
+    }
+
+    private static int vol(int[] cords) {
+        return vol(cords[0], cords[1], cords[2], cords[3], cords[4], cords[5]);
+    }
+
+    private static int sqr(int x1, int z1, int x2, int z2) {
+        return (x2 - x1 + 1) * (z2 - z1 + 1);
+    }
+
+    private static int sqr(int[] cords) {
+        return sqr(cords[0], cords[2], cords[3], cords[5]);
     }
 
     /**
@@ -428,6 +309,8 @@ public class DominionController {
      * @param force         是否强制删除
      */
     public static void delete(AbstractOperator operator, String dominion_name, boolean force) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "删除领地失败");
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "领地 %s 及其所有子领地已删除", dominion_name);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
             return;
@@ -435,14 +318,7 @@ public class DominionController {
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
             AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, "删除领地 %s 会同时删除其所有子领地，是否继续？", dominion_name);
-            String sub_names = "";
-            for (DominionDTO sub_dominion : sub_dominions) {
-                sub_names = sub_dominion.getName() + ", ";
-            }
-            if (sub_dominions.size() > 0) {
-                sub_names = sub_names.substring(0, sub_names.length() - 2);
-                WARNING.addMessage("(子领地：%s)", sub_names);
-            }
+            showSubNamesWarning(sub_dominions, WARNING);
             if (operator instanceof BukkitPlayerOperator) {
                 Notification.warn(operator.getPlayer(), "输入 /dominion delete %s force 确认删除", dominion_name);
             }
@@ -450,27 +326,18 @@ public class DominionController {
             return;
         }
         DominionDTO.delete(dominion);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "领地 %s 及其所有子领地已删除", dominion_name);
         // 退还经济
-        if (Dominion.config.getEconomyEnable()) {
-            if (!VaultConnect.instance.economyAvailable()) {
-                operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "退款失败，没有可用的经济插件系统，请联系服主。"));
-                return;
+        int count = 0;
+        if (Dominion.config.getEconomyOnlyXZ()) {
+            for (DominionDTO sub_dominion : sub_dominions) {
+                count += sub_dominion.getSquare();
             }
-            int count = 0;
-            if (Dominion.config.getEconomyOnlyXZ()) {
-                for (DominionDTO sub_dominion : sub_dominions) {
-                    count += sub_dominion.getSquare();
-                }
-            } else {
-                for (DominionDTO sub_dominion : sub_dominions) {
-                    count += sub_dominion.getVolume();
-                }
+        } else {
+            for (DominionDTO sub_dominion : sub_dominions) {
+                count += sub_dominion.getVolume();
             }
-            float refund = count * Dominion.config.getEconomyPrice() * Dominion.config.getEconomyRefund();
-            VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
-            SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
         }
+        handleEconomy(operator, count, false, FAIL, SUCCESS);
         operator.setResponse(SUCCESS);
     }
 
@@ -554,6 +421,7 @@ public class DominionController {
      * @param dominion_name 领地名称
      */
     public static void setTpLocation(AbstractOperator operator, int x, int y, int z, String dominion_name) {
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置领地传送点失败");
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
             operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地 %s 不存在", dominion_name));
@@ -590,8 +458,8 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("新名称不能为空"));
             return;
         }
-        if (new_name.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("领地名称不能包含空格"));
+        if (new_name.contains(" ") || new_name.contains(".")) {
+            operator.setResponse(FAIL.addMessage("领地名称不能包含空格或点"));
             return;
         }
         if (Objects.equals(old_name, new_name)) {
@@ -645,14 +513,7 @@ public class DominionController {
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
             AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, "转让领地 %s 给 %s 会同时转让其所有子领地，是否继续？", dom_name, player_name);
-            String sub_names = "";
-            for (DominionDTO sub_dominion : sub_dominions) {
-                sub_names = sub_dominion.getName() + ", ";
-            }
-            if (sub_dominions.size() > 0) {
-                sub_names = sub_names.substring(0, sub_names.length() - 2);
-                WARNING.addMessage("(子领地：%s)", sub_names);
-            }
+            showSubNamesWarning(sub_dominions, WARNING);
             if (operator instanceof BukkitPlayerOperator) {
                 Notification.warn(operator.getPlayer(), "输入 /dominion give %s %s force 确认转让", dom_name, player_name);
             }
@@ -723,6 +584,10 @@ public class DominionController {
                 a.getZ1() < z2 && a.getZ2() > z1;
     }
 
+    private static boolean isIntersect(DominionDTO a, int[] cord) {
+        return isIntersect(a, cord[0], cord[1], cord[2], cord[3], cord[4], cord[5]);
+    }
+
     /**
      * 判断 sub 是否完全被 parent 包裹
      */
@@ -730,24 +595,32 @@ public class DominionController {
         if (parent.getId() == -1) {
             return true;
         }
-        return sub.getX1() >= parent.getX1() && sub.getX2() <= parent.getX2() &&
-                sub.getY1() >= parent.getY1() && sub.getY2() <= parent.getY2() &&
-                sub.getZ1() >= parent.getZ1() && sub.getZ2() <= parent.getZ2();
+        return isContained(sub.getX1(), sub.getY1(), sub.getZ1(), sub.getX2(), sub.getY2(), sub.getZ2(), parent.getX1(), parent.getY1(), parent.getZ1(), parent.getX2(), parent.getY2(), parent.getZ2());
+    }
+
+    private static boolean isContained(int[] cords, DominionDTO parent) {
+        return isContained(cords[0], cords[1], cords[2], cords[3], cords[4], cords[5], parent);
+    }
+
+    private static boolean isContained(DominionDTO sub, int[] cords) {
+        return isContained(sub, cords[0], cords[1], cords[2], cords[3], cords[4], cords[5]);
     }
 
     private static boolean isContained(Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
         if (parent.getId() == -1) {
             return true;
         }
-        return x1 >= parent.getX1() && x2 <= parent.getX2() &&
-                y1 >= parent.getY1() && y2 <= parent.getY2() &&
-                z1 >= parent.getZ1() && z2 <= parent.getZ2();
+        return isContained(x1, y1, z1, x2, y2, z2, parent.getX1(), parent.getY1(), parent.getZ1(), parent.getX2(), parent.getY2(), parent.getZ2());
     }
 
     private static boolean isContained(DominionDTO sub, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
-        return sub.getX1() >= x1 && sub.getX2() <= x2 &&
-                sub.getY1() >= y1 && sub.getY2() <= y2 &&
-                sub.getZ1() >= z1 && sub.getZ2() <= z2;
+        return isContained(sub.getX1(), sub.getY1(), sub.getZ1(), sub.getX2(), sub.getY2(), sub.getZ2(), x1, y1, z1, x2, y2, z2);
+    }
+
+    private static boolean isContained(int sub_x1, int sub_y1, int sub_z1, int sub_x2, int sub_y2, int sub_z2, int parent_x1, int parent_y1, int parent_z1, int parent_x2, int parent_y2, int parent_z2) {
+        return sub_x1 >= parent_x1 && sub_x2 <= parent_x2 &&
+                sub_y1 >= parent_y1 && sub_y2 <= parent_y2 &&
+                sub_z1 >= parent_z1 && sub_z2 <= parent_z2;
     }
 
     private static List<DominionDTO> getSubDominionsRecursive(DominionDTO dominion) {
@@ -758,6 +631,10 @@ public class DominionController {
         }
         sub_dominions.addAll(sub_sub_dominions);
         return sub_dominions;
+    }
+
+    private static boolean sizeNotValid(AbstractOperator operator, int[] cords) {
+        return sizeNotValid(operator, cords[0], cords[1], cords[2], cords[3], cords[4], cords[5]);
     }
 
     private static boolean sizeNotValid(AbstractOperator operator, int x1, int y1, int z1, int x2, int y2, int z2) {
@@ -864,6 +741,152 @@ public class DominionController {
             return null;
         }
         return dominion;
+    }
+
+    /**
+     * 处理经济系统
+     *
+     * @param operator 操作者
+     * @param count    数量
+     * @param paid     操作类型 true 为扣费 false 为退费
+     * @param FAIL     失败消息
+     * @param SUCCESS  成功消息
+     */
+    private static void handleEconomy(AbstractOperator operator, Integer count, boolean paid, AbstractOperator.Result FAIL, AbstractOperator.Result SUCCESS) {
+        if (Dominion.config.getEconomyEnable()) {
+            if (!VaultConnect.instance.economyAvailable()) {
+                operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
+                return;
+            }
+            float priceOrRefund = count * Dominion.config.getEconomyPrice();
+            if (paid) {
+                if (VaultConnect.instance.getBalance(operator.getPlayer()) < priceOrRefund) {
+                    operator.setResponse(FAIL.addMessage("你的余额不足，需要 %.2f %s", priceOrRefund, VaultConnect.instance.currencyNamePlural()));
+                    return;
+                }
+                SUCCESS.addMessage("已扣除 %.2f %s", priceOrRefund, VaultConnect.instance.currencyNamePlural());
+                VaultConnect.instance.withdrawPlayer(operator.getPlayer(), priceOrRefund);
+            } else {
+                float refund = priceOrRefund * Dominion.config.getEconomyRefund();
+                VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
+                SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
+            }
+        }
+    }
+
+    /**
+     * 显示粒子效果
+     *
+     * @param operator  操作者
+     * @param worldName 世界名称
+     * @param x1        x1
+     * @param y1        y1
+     * @param z1        z1
+     * @param x2        x2
+     * @param y2        y2
+     * @param z2        z2
+     * @param FAIL      失败消息
+     */
+    private static void handleParticle(AbstractOperator operator, String worldName, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, AbstractOperator.Result FAIL) {
+        if (operator instanceof BukkitPlayerOperator) {
+            World world = Dominion.instance.getServer().getWorld(worldName);
+            if (world == null) {
+                operator.setResponse(FAIL.addMessage("世界 %s 不存在", worldName));
+                return;
+            }
+            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(),
+                    new Location(world, x1, y1, z1),
+                    new Location(world, x2, y2, z2));
+        }
+    }
+
+    private static void handleParticle(AbstractOperator operator, String worldName, int[] cords, AbstractOperator.Result FAIL) {
+        handleParticle(operator, worldName, cords[0], cords[1], cords[2], cords[3], cords[4], cords[5], FAIL);
+    }
+
+    private static @Nullable DominionDTO expandContractPreCheck(AbstractOperator operator, @Nullable DominionDTO dominion, AbstractOperator.Result FAIL) {
+        if (dominion == null) {
+            return null;
+        }
+        if (operator.getLocation() == null) {
+            operator.setResponse(FAIL.addMessage("无法获取你的位置"));
+            return null;
+        }
+        if (!operator.getLocation().getWorld().getName().equals(dominion.getWorld())) {
+            operator.setResponse(FAIL.addMessage("禁止跨世界操作"));
+            return null;
+        }
+        if (!isInDominion(dominion, operator.getLocation())) {
+            operator.setResponse(FAIL.addMessage("你不在领地 %s 内，无法执行此操作", dominion.getName()));
+            return null;
+        }
+        return dominion;
+    }
+
+    private static int[] expandContractSizeChange(AbstractOperator operator, @NotNull DominionDTO dominion, boolean expand, int size, AbstractOperator.Result FAIL) {
+        BlockFace face = operator.getDirection();
+        int[] result = new int[6];
+        result[0] = dominion.getX1();
+        result[1] = dominion.getY1();
+        result[2] = dominion.getZ1();
+        result[3] = dominion.getX2();
+        result[4] = dominion.getY2();
+        result[5] = dominion.getZ2();
+        if (!expand) {
+            size = size * -1;
+        }
+        switch (face) {
+            case NORTH:
+                result[2] -= size;
+                break;
+            case SOUTH:
+                result[5] += size;
+                break;
+            case WEST:
+                result[0] -= size;
+                break;
+            case EAST:
+                result[3] += size;
+                break;
+            case UP:
+                result[4] += size;
+                break;
+            case DOWN:
+                result[1] -= size;
+                break;
+            default:
+                operator.setResponse(FAIL.addMessage("无效的方向"));
+                return null;
+        }
+        if (!expand) {
+            // 校验第二组坐标是否小于第一组坐标
+            if (result[0] > result[3] || result[1] > result[4] || result[2] > result[5]) {
+                operator.setResponse(FAIL.addMessage("缩小后的领地大小无效"));
+                return null;
+            }
+        }
+        if (sizeNotValid(operator, result)) {
+            return null;
+        }
+        return result;
+    }
+
+
+    /**
+     * 以警告形式打印所有子领地名称
+     *
+     * @param sub_dominions 子领地列表
+     * @param WARNING       警告消息
+     */
+    public static void showSubNamesWarning(List<DominionDTO> sub_dominions, AbstractOperator.Result WARNING) {
+        String sub_names = "";
+        for (DominionDTO sub_dominion : sub_dominions) {
+            sub_names = sub_dominion.getName() + ", ";
+        }
+        if (sub_dominions.size() > 0) {
+            sub_names = sub_names.substring(0, sub_names.length() - 2);
+            WARNING.addMessage("(子领地：%s)", sub_names);
+        }
     }
 
 }
