@@ -433,6 +433,22 @@ public class Cache {
         return new ArrayList<>(id_dominions.values());
     }
 
+    public int getDominionCounts() {
+        return id_dominions.size();
+    }
+
+    public int getMemberCounts() {
+        int count = 0;
+        for (Map<Integer, MemberDTO> member : player_uuid_to_member.values()) {
+            count += member.size();
+        }
+        return count;
+    }
+
+    public int getGroupCounts() {
+        return id_groups.size();
+    }
+
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
     private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree;
