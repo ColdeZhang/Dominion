@@ -1,6 +1,8 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.utils.BlueMapConnect;
+import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
@@ -90,7 +92,7 @@ public class Cache {
                     count = 1;
                 }
             }
-            BlueMapConnect.render();
+            MapRender.render();
             recheckPlayerState = true;
             _last_update_dominion.set(System.currentTimeMillis());
             XLogger.debug("loadDominionsExecution cost: %d ms for %d dominions"

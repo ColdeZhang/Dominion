@@ -433,4 +433,8 @@ public class DominionDTO {
     public String getColor() {
         return (String) color.value;
     }
+
+    public int getColorHex() {
+        return (getColorR() << 16) + (getColorG() << 8) + getColorB();
+    }
 }

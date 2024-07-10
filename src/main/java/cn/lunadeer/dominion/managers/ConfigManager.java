@@ -48,7 +48,8 @@ public class ConfigManager {
             XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
             setLimitSizeZ(128);
         }
-        _blue_map = _file.getBoolean("BlueMap", true);
+        _blue_map = _file.getBoolean("BlueMap", false);
+        _dynmap = _file.getBoolean("Dynmap", false);
         _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
         if (_auto_clean_after_days == 0) {
             XLogger.err("AutoCleanAfterDays 不能等于 0，已重置为 180");
@@ -98,6 +99,7 @@ public class ConfigManager {
         _file.set("Limit.SizeY", _limit_size_y);
         _file.set("Limit.SizeZ", _limit_size_z);
         _file.set("BlueMap", _blue_map);
+        _file.set("Dynmap", _dynmap);
         _file.set("AutoCleanAfterDays", _auto_clean_after_days);
         _file.set("Limit.MinY", _limit_min_y);
         _file.set("Limit.MaxY", _limit_max_y);
@@ -220,10 +222,8 @@ public class ConfigManager {
         return _blue_map;
     }
 
-    public void setBlueMap(Boolean blue_map) {
-        _blue_map = blue_map;
-        _file.set("BlueMap", blue_map);
-        _plugin.saveConfig();
+    public Boolean getDynmap() {
+        return _dynmap;
     }
 
     public Integer getAutoCleanAfterDays() {
@@ -423,6 +423,7 @@ public class ConfigManager {
     private Boolean _limit_op_bypass;
 
     private Boolean _blue_map;
+    private Boolean _dynmap;
     private Integer _auto_clean_after_days;
     private Integer _limit_min_y;
     private Integer _limit_max_y;
