@@ -230,7 +230,7 @@ public class DominionController {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功扩展领地 %s %d格", dominion_name, size);
         // 检查经济
         handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
-                , false, FAIL, SUCCESS);
+                , true, FAIL, SUCCESS);
         // 显示粒子效果
         handleParticle(operator, dominion.getWorld(), newCords, FAIL);
         dominion.setXYZ(newCords);
@@ -445,7 +445,7 @@ public class DominionController {
                     "成功设置领地 %s 的传送点 %d %d %d", dominion_name
                     , loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         } else {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "传送点不在领地 %s 内", dominion_name));
+            operator.setResponse(FAIL.addMessage("传送点不在领地 %s 内", dominion_name));
         }
     }
 
