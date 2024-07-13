@@ -42,14 +42,23 @@ public class SelectPointEvents implements Listener {
         if (action == Action.LEFT_CLICK_BLOCK) {
             event.setCancelled(true);
             Notification.info(player, "已选择第一个点: %d %d %d", block.getX(), block.getY(), block.getZ());
-            points.put(0, block.getLocation());
+            Location loc = block.getLocation();
+            if (Dominion.config.getLimitVert()) {
+                loc.setY(Dominion.config.getLimitMinY());
+            }
+            points.put(0, loc);
         } else if (action == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
             Notification.info(player, "已选择第二个点: %d %d %d", block.getX(), block.getY(), block.getZ());
-            points.put(1, block.getLocation());
+            Location loc = block.getLocation();
+            if (Dominion.config.getLimitVert()) {
+                loc.setY(Dominion.config.getLimitMaxY());
+            }
+            points.put(1, loc);
         } else {
             return;
         }
+        Dominion.pointsSelect.put(player.getUniqueId(), points);
 
         if (points.size() == 2) {
             World world = points.get(0).getWorld();
@@ -57,7 +66,7 @@ public class SelectPointEvents implements Listener {
                 return;
             }
             if (!points.get(0).getWorld().equals(points.get(1).getWorld())) {
-                Notification.error(player, "两个点不在同一个世界");
+                Notification.warn(player, "两个点不在同一个世界");
                 return;
             }
             Notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
@@ -69,10 +78,6 @@ public class SelectPointEvents implements Listener {
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-            if (Dominion.config.getLimitVert()) {
-                minY = Dominion.config.getLimitMinY();
-                maxY = Dominion.config.getLimitMaxY();
-            }
             DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld().getName(),
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
@@ -95,6 +100,5 @@ public class SelectPointEvents implements Listener {
             Notification.info(player, "高度： %d", dominion.getHeight());
             Notification.info(player, "体积： %d", dominion.getVolume());
         }
-        Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 }

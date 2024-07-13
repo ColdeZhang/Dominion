@@ -46,7 +46,7 @@ public class Menu {
                 .append(Button.create("所有领地").setExecuteCommand("/dominion all_dominion").build())
                 .append("查看所有领地");
         Line config = Line.create()
-                .append(Button.create("系统配置").setExecuteCommand("/dominion config").build())
+                .append(Button.create("系统配置").setExecuteCommand("/dominion sys_config").build())
                 .append("查看/修改系统配置");
         Line reload_cache = Line.create()
                 .append(Button.create("重载缓存").setExecuteCommand("/dominion reload_cache").build())
