@@ -38,6 +38,16 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
+    public void onDragonBreakBlock(EntityExplodeEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.ENDER_DRAGON) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominion(event.getLocation());
+        checkFlag(dom, Flag.DRAGON_BREAK_BLOCK, event);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // fire_spread
     public void onFireSpread(BlockIgniteEvent event) {
         Player player = event.getPlayer();
