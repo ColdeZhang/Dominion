@@ -49,7 +49,7 @@ public class SizeInfo {
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append(Button.create("访客权限").setExecuteCommand("/dominion guest_setting " + dominion.getName()).build()))
                 .showOn(player);
-        ParticleRender.showBoxFace(Dominion.instance, player,
+        ParticleRender.showBoxFace(player,
                 dominion.getLocation1(),
                 dominion.getLocation2());
     }

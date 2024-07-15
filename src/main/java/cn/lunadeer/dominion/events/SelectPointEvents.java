@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.events;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -42,14 +43,23 @@ public class SelectPointEvents implements Listener {
         if (action == Action.LEFT_CLICK_BLOCK) {
             event.setCancelled(true);
             Notification.info(player, "已选择第一个点: %d %d %d", block.getX(), block.getY(), block.getZ());
-            points.put(0, block.getLocation());
+            Location loc = block.getLocation();
+            if (Dominion.config.getLimitVert()) {
+                loc.setY(Dominion.config.getLimitMinY());
+            }
+            points.put(0, loc);
         } else if (action == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
             Notification.info(player, "已选择第二个点: %d %d %d", block.getX(), block.getY(), block.getZ());
-            points.put(1, block.getLocation());
+            Location loc = block.getLocation();
+            if (Dominion.config.getLimitVert()) {
+                loc.setY(Dominion.config.getLimitMaxY());
+            }
+            points.put(1, loc);
         } else {
             return;
         }
+        Dominion.pointsSelect.put(player.getUniqueId(), points);
 
         if (points.size() == 2) {
             World world = points.get(0).getWorld();
@@ -57,7 +67,7 @@ public class SelectPointEvents implements Listener {
                 return;
             }
             if (!points.get(0).getWorld().equals(points.get(1).getWorld())) {
-                Notification.error(player, "两个点不在同一个世界");
+                Notification.warn(player, "两个点不在同一个世界");
                 return;
             }
             Notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
@@ -66,13 +76,9 @@ public class SelectPointEvents implements Listener {
             int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
             int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
             int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-            int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
-            int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-            int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-            if (Dominion.config.getLimitVert()) {
-                minY = Dominion.config.getLimitMinY();
-                maxY = Dominion.config.getLimitMaxY();
-            }
+            int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
+            int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
+            int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
             DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld().getName(),
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
@@ -89,12 +95,11 @@ public class SelectPointEvents implements Listener {
                 float price = count * Dominion.config.getEconomyPrice();
                 Notification.info(player, "预计领地创建价格为 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
             }
-            ParticleRender.showBoxFace(Dominion.instance, player, loc1, loc2);
+            ParticleRender.showBoxFace(player, dominion.getLocation1(), dominion.getLocation2());
             Notification.info(player, "尺寸： %d x %d x %d", dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());
             Notification.info(player, "面积： %d", dominion.getSquare());
             Notification.info(player, "高度： %d", dominion.getHeight());
             Notification.info(player, "体积： %d", dominion.getVolume());
         }
-        Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 }

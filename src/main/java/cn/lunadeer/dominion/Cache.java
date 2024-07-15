@@ -253,7 +253,7 @@ public class Cache {
         player_current_dominion_id.put(player.getUniqueId(), current_dominion.getId());
         // show border
         if (current_dominion.getFlagValue(Flag.SHOW_BORDER)) {
-            ParticleRender.showBoxFace(Dominion.instance, player,
+            ParticleRender.showBoxFace(player,
                     current_dominion.getLocation1(),
                     current_dominion.getLocation2());
         }
