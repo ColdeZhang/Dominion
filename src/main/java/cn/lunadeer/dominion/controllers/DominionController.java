@@ -106,10 +106,14 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("你的领地数量已达上限(%d个)", Dominion.config.getLimitAmount()));
             return;
         }
+        int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
+        int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
+        int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
+        int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
+        int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
+        int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
         // 检查领地大小是否合法
-        if (sizeNotValid(operator,
-                loc1.getBlockX(), loc1.getBlockY(), loc1.getBlockZ(),
-                loc2.getBlockX(), loc2.getBlockY(), loc2.getBlockZ())) {
+        if (sizeNotValid(operator, minX, minY, minZ, maxX, maxY, maxZ)) {
             return;
         }
         DominionDTO parent_dominion;
@@ -134,9 +138,7 @@ public class DominionController {
         }
         // 创建 dominion (此步骤不会写入数据)
         DominionDTO dominion = DominionDTO.create(operator.getUniqueId(), name, loc1.getWorld().getName(),
-                (int) Math.min(loc1.getX(), loc2.getX()), (int) Math.min(loc1.getY(), loc2.getY()),
-                (int) Math.min(loc1.getZ(), loc2.getZ()), (int) Math.max(loc1.getX(), loc2.getX()),
-                (int) Math.max(loc1.getY(), loc2.getY()), (int) Math.max(loc1.getZ(), loc2.getZ()), parent_dominion);
+                minX, minY, minZ, maxX, maxY, maxZ, parent_dominion);
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
             operator.setResponse(FAIL.addMessage("父领地与子领地不在同一世界。"));
@@ -169,7 +171,7 @@ public class DominionController {
             return;
         }
         // 显示粒子效果
-        handleParticle(operator, dominion.getWorld(), dominion.getX1(), dominion.getY1(), dominion.getZ1(), dominion.getX2(), dominion.getY2(), dominion.getZ2(), FAIL);
+        handleParticle(operator, dominion);
         operator.setResponse(SUCCESS);
     }
 
@@ -232,8 +234,8 @@ public class DominionController {
         handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
                 , true, FAIL, SUCCESS);
         // 显示粒子效果
-        handleParticle(operator, dominion.getWorld(), newCords, FAIL);
-        dominion.setXYZ(newCords);
+        dominion = dominion.setXYZ(newCords);
+        handleParticle(operator, dominion);
         operator.setResponse(SUCCESS);
     }
 
@@ -284,8 +286,8 @@ public class DominionController {
         handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
                 , false, FAIL, SUCCESS);
         // 显示粒子效果
-        handleParticle(operator, dominion.getWorld(), newCords, FAIL);
-        dominion.setXYZ(newCords);
+        dominion = dominion.setXYZ(newCords);
+        handleParticle(operator, dominion);
         operator.setResponse(SUCCESS);
     }
 
@@ -577,9 +579,7 @@ public class DominionController {
      * 判断两个领地是否相交
      */
     private static boolean isIntersect(DominionDTO a, DominionDTO b) {
-        return a.getX1() < b.getX2() && a.getX2() > b.getX1() &&
-                a.getY1() < b.getY2() && a.getY2() > b.getY1() &&
-                a.getZ1() < b.getZ2() && a.getZ2() > b.getZ1();
+        return isIntersect(a, b.getX1(), b.getY1(), b.getZ1(), b.getX2(), b.getY2(), b.getZ2());
     }
 
     private static boolean isIntersect(DominionDTO a, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
@@ -781,31 +781,15 @@ public class DominionController {
     /**
      * 显示粒子效果
      *
-     * @param operator  操作者
-     * @param worldName 世界名称
-     * @param x1        x1
-     * @param y1        y1
-     * @param z1        z1
-     * @param x2        x2
-     * @param y2        y2
-     * @param z2        z2
-     * @param FAIL      失败消息
+     * @param operator 操作者
+     * @param dominion 领地
      */
-    private static void handleParticle(AbstractOperator operator, String worldName, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, AbstractOperator.Result FAIL) {
+    private static void handleParticle(AbstractOperator operator, DominionDTO dominion) {
         if (operator instanceof BukkitPlayerOperator) {
-            World world = Dominion.instance.getServer().getWorld(worldName);
-            if (world == null) {
-                operator.setResponse(FAIL.addMessage("世界 %s 不存在", worldName));
-                return;
-            }
-            ParticleRender.showBoxFace(Dominion.instance, operator.getPlayer(),
-                    new Location(world, x1, y1, z1),
-                    new Location(world, x2, y2, z2));
+            ParticleRender.showBoxFace(operator.getPlayer(),
+                    dominion.getLocation1(),
+                    dominion.getLocation2());
         }
-    }
-
-    private static void handleParticle(AbstractOperator operator, String worldName, int[] cords, AbstractOperator.Result FAIL) {
-        handleParticle(operator, worldName, cords[0], cords[1], cords[2], cords[3], cords[4], cords[5], FAIL);
     }
 
     private static @Nullable DominionDTO expandContractPreCheck(AbstractOperator operator, @Nullable DominionDTO dominion, AbstractOperator.Result FAIL) {

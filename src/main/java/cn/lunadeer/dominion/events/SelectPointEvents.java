@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.events;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -75,9 +76,9 @@ public class SelectPointEvents implements Listener {
             int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
             int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
             int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-            int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
-            int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-            int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
+            int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
+            int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
+            int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
             DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld().getName(),
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
@@ -94,7 +95,7 @@ public class SelectPointEvents implements Listener {
                 float price = count * Dominion.config.getEconomyPrice();
                 Notification.info(player, "预计领地创建价格为 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
             }
-            ParticleRender.showBoxFace(Dominion.instance, player, loc1, loc2);
+            ParticleRender.showBoxFace(player, dominion.getLocation1(), dominion.getLocation2());
             Notification.info(player, "尺寸： %d x %d x %d", dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());
             Notification.info(player, "面积： %d", dominion.getSquare());
             Notification.info(player, "高度： %d", dominion.getHeight());

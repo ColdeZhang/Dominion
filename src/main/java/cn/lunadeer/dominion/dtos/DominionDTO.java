@@ -311,23 +311,23 @@ public class DominionDTO {
     }
 
     public Integer getSquare() {
-        return (getX2() - getX1() + 1) * (getZ2() - getZ1() + 1);
+        return getWidthX() * getWidthZ();
     }
 
     public Integer getVolume() {
-        return getSquare() * (getY2() - getY1() + 1);
+        return getSquare() * getHeight();
     }
 
     public Integer getWidthX() {
-        return getX2() - getX1() + 1;
+        return getX2() - getX1();
     }
 
     public Integer getHeight() {
-        return getY2() - getY1() + 1;
+        return getY2() - getY1();
     }
 
     public Integer getWidthZ() {
-        return getZ2() - getZ1() + 1;
+        return getZ2() - getZ1();
     }
 
     public Integer getParentDomId() {
