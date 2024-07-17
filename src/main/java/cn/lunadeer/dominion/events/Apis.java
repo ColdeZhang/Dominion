@@ -37,7 +37,7 @@ public class Apis {
         if (inv.getLocation() == null) {
             return null;
         } else {
-            return Cache.instance.getDominion(inv.getLocation());
+            return Cache.instance.getDominionByLoc(inv.getLocation());
         }
     }
 

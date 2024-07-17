@@ -37,7 +37,7 @@ public class Apis {
             player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "无法获取你的位置信息"));
             return null;
         }
-        DominionDTO dominion = Cache.instance.getDominion(location);
+        DominionDTO dominion = Cache.instance.getDominionByLoc(location);
         if (dominion == null) {
             return null;
         }

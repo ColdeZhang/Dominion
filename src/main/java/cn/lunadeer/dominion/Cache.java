@@ -9,15 +9,17 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static cn.lunadeer.dominion.DominionNode.getLocInDominionDTO;
+import static cn.lunadeer.dominion.DominionNode.getLocInDominionNode;
 
 public class Cache {
 
@@ -62,25 +64,21 @@ public class Cache {
             int count = 0;
             if (idToLoad == null) {
                 id_dominions = new ConcurrentHashMap<>();
-                world_dominion_tree = new ConcurrentHashMap<>();
                 dominion_children = new ConcurrentHashMap<>();
+
                 List<DominionDTO> dominions = DominionDTO.selectAll();
+                CompletableFuture<Void> res = dominion_trees.initAsync(dominions);
                 count = dominions.size();
-                Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
+
                 for (DominionDTO d : dominions) {
-                    if (!world_dominions.containsKey(d.getWorld())) {
-                        world_dominions.put(d.getWorld(), new ArrayList<>());
-                    }
-                    world_dominions.get(d.getWorld()).add(d);
                     id_dominions.put(d.getId(), d);
                     if (!dominion_children.containsKey(d.getParentDomId())) {
                         dominion_children.put(d.getParentDomId(), new ArrayList<>());
                     }
                     dominion_children.get(d.getParentDomId()).add(d.getId());
                 }
-                for (Map.Entry<String, List<DominionDTO>> entry : world_dominions.entrySet()) {
-                    world_dominion_tree.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
+
+                res.join(); // 等待树的构建完成
             } else {
                 DominionDTO dominion = DominionDTO.select(idToLoad);
                 if (dominion == null && id_dominions.containsKey(idToLoad)) {
@@ -225,7 +223,7 @@ public class Cache {
                 return last_dominion;
             }
         }
-        DominionDTO current_dominion = getLocInDominionDTO(world_dominion_tree.get(player.getWorld().getName()), player.getLocation());
+        DominionDTO current_dominion = dominion_trees.getLocInDominionDTO(player.getLocation());
         int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
         int current_dom_id = current_dominion == null ? -1 : current_dominion.getId();
         if (last_dom_id == current_dom_id) {
@@ -337,30 +335,8 @@ public class Cache {
         }
     }
 
-    public DominionDTO getDominion(Location loc) {
-        return getLocInDominionDTO(world_dominion_tree.get(loc.getWorld().getName()), loc);
-    }
-
-    public List<DominionNode> getDominionTreeByPlayer(String player_name) {
-        List<DominionNode> dominionTree = new ArrayList<>();
-        PlayerDTO player = PlayerDTO.select(player_name);
-        if (player == null) return dominionTree;
-        for (List<DominionNode> tree : world_dominion_tree.values()) {
-            for (DominionNode node : tree) {
-                if (node.getDominion().getOwner().equals(player.getUuid())) {
-                    dominionTree.add(node);
-                }
-            }
-        }
-        return dominionTree;
-    }
-
-    public List<DominionNode> getAllDominionTree() {
-        List<DominionNode> dominionTree = new ArrayList<>();
-        for (List<DominionNode> tree : world_dominion_tree.values()) {
-            dominionTree.addAll(tree);
-        }
-        return dominionTree;
+    public DominionDTO getDominionByLoc(Location loc) {
+        return dominion_trees.getLocInDominionDTO(loc);
     }
 
     public GroupDTO getGroup(Integer id) {
@@ -451,8 +427,8 @@ public class Cache {
 
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
-    private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree;
     private ConcurrentHashMap<Integer, GroupDTO> id_groups;
+    private final WorldDominionTreeSectored dominion_trees = new WorldDominionTreeSectored();
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, MemberDTO>> player_uuid_to_member;   // 玩家所有的特权
     private final Map<UUID, Integer> player_current_dominion_id;                         // 玩家当前所在领地
     private ConcurrentHashMap<Integer, List<Integer>> dominion_children;
@@ -467,4 +443,116 @@ public class Cache {
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
 
     private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
+
+    private static class WorldDominionTreeSectored {
+    /*
+        D | C
+        --+--
+        B | A
+     */
+
+        private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree_sector_a; // x >= 0, z >= 0
+        private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree_sector_b; // x <= 0, z >= 0
+        private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree_sector_c; // x >= 0, z <= 0
+        private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree_sector_d; // x <= 0, z <= 0
+
+        public DominionDTO getLocInDominionDTO(@NotNull Location loc) {
+            List<DominionNode> nodes = getNodes(loc);
+            if (nodes == null) return null;
+            if (nodes.isEmpty()) return null;
+            DominionNode dominionNode = getLocInDominionNode(nodes, loc);
+            return dominionNode == null ? null : dominionNode.getDominion();
+        }
+
+
+        public List<DominionNode> getNodes(Location loc) {
+            return getNodes(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockZ());
+        }
+
+        public List<DominionNode> getNodes(String world, int x, int z) {
+            if (x >= 0 && z >= 0) {
+                return world_dominion_tree_sector_a.get(world);
+            }
+            if (x <= 0 && z >= 0) {
+                return world_dominion_tree_sector_b.get(world);
+            }
+            if (x >= 0) {
+                return world_dominion_tree_sector_c.get(world);
+            }
+            return world_dominion_tree_sector_d.get(world);
+        }
+
+        public CompletableFuture<Void> initAsync(List<DominionDTO> dominions) {
+            return CompletableFuture.runAsync(() -> init(dominions));
+        }
+
+
+        private void init(List<DominionDTO> dominions) {
+            world_dominion_tree_sector_a = new ConcurrentHashMap<>();
+            world_dominion_tree_sector_b = new ConcurrentHashMap<>();
+            world_dominion_tree_sector_c = new ConcurrentHashMap<>();
+            world_dominion_tree_sector_d = new ConcurrentHashMap<>();
+
+            Map<String, List<DominionDTO>> world_dominions_sector_a = new HashMap<>();
+            Map<String, List<DominionDTO>> world_dominions_sector_b = new HashMap<>();
+            Map<String, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
+            Map<String, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
+            for (DominionDTO d : dominions) {
+                // 对每个世界的领地进行四个象限的划分
+                if (!world_dominions_sector_a.containsKey(d.getWorld()) ||
+                        !world_dominions_sector_b.containsKey(d.getWorld()) ||
+                        !world_dominions_sector_c.containsKey(d.getWorld()) ||
+                        !world_dominions_sector_d.containsKey(d.getWorld())) {
+                    world_dominions_sector_a.put(d.getWorld(), new ArrayList<>());
+                    world_dominions_sector_b.put(d.getWorld(), new ArrayList<>());
+                    world_dominions_sector_c.put(d.getWorld(), new ArrayList<>());
+                    world_dominions_sector_d.put(d.getWorld(), new ArrayList<>());
+                }
+                if (d.getX1() >= 0 && d.getZ1() >= 0) {
+                    world_dominions_sector_a.get(d.getWorld()).add(d);
+                } else if (d.getX1() <= 0 && d.getZ1() >= 0) {
+                    if (d.getX2() >= 0) {
+                        world_dominions_sector_a.get(d.getWorld()).add(d);
+                        world_dominions_sector_b.get(d.getWorld()).add(d);
+                    } else {
+                        world_dominions_sector_b.get(d.getWorld()).add(d);
+                    }
+                } else if (d.getX1() >= 0 && d.getZ1() <= 0) {
+                    if (d.getZ2() >= 0) {
+                        world_dominions_sector_a.get(d.getWorld()).add(d);
+                        world_dominions_sector_c.get(d.getWorld()).add(d);
+                    } else {
+                        world_dominions_sector_c.get(d.getWorld()).add(d);
+                    }
+                } else {
+                    if (d.getX2() >= 0 && d.getZ2() >= 0) {
+                        world_dominions_sector_a.get(d.getWorld()).add(d);
+                        world_dominions_sector_b.get(d.getWorld()).add(d);
+                        world_dominions_sector_c.get(d.getWorld()).add(d);
+                        world_dominions_sector_d.get(d.getWorld()).add(d);
+                    } else if (d.getX2() >= 0 && d.getZ2() <= 0) {
+                        world_dominions_sector_c.get(d.getWorld()).add(d);
+                        world_dominions_sector_d.get(d.getWorld()).add(d);
+                    } else if (d.getZ2() >= 0 && d.getX2() <= 0) {
+                        world_dominions_sector_b.get(d.getWorld()).add(d);
+                        world_dominions_sector_d.get(d.getWorld()).add(d);
+                    } else {
+                        world_dominions_sector_d.get(d.getWorld()).add(d);
+                    }
+                }
+            }
+            for (Map.Entry<String, List<DominionDTO>> entry : world_dominions_sector_a.entrySet()) {
+                world_dominion_tree_sector_a.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+            }
+            for (Map.Entry<String, List<DominionDTO>> entry : world_dominions_sector_b.entrySet()) {
+                world_dominion_tree_sector_b.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+            }
+            for (Map.Entry<String, List<DominionDTO>> entry : world_dominions_sector_c.entrySet()) {
+                world_dominion_tree_sector_c.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+            }
+            for (Map.Entry<String, List<DominionDTO>> entry : world_dominions_sector_d.entrySet()) {
+                world_dominion_tree_sector_d.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+            }
+        }
+    }
 }
