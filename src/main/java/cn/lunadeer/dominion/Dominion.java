@@ -5,6 +5,9 @@ import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
+import cn.lunadeer.dominion.utils.BlueMapConnect;
+import cn.lunadeer.dominion.utils.DynmapConnect;
+import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.minecraftpluginutils.*;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseType;
@@ -12,6 +15,7 @@ import cn.lunadeer.minecraftpluginutils.scui.CuiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.dynmap.DynmapCommonAPIListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +75,8 @@ public final class Dominion extends JavaPlugin {
         XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
         XLogger.info(" ");
 
-        Scheduler.runTaskLaterAsync(BlueMapConnect::render, 40 * 20);
+        if (config.getDynmap()) DynmapCommonAPIListener.register(new DynmapConnect());  // 注册 Dynmap API
+        Scheduler.runTaskLaterAsync(MapRender::render, 40 * 20);
     }
 
     @Override

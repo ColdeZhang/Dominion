@@ -1,9 +1,10 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.BlueMapConnect;
+import cn.lunadeer.dominion.utils.BlueMapConnect;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -104,7 +105,7 @@ public class Operator {
                     Notification.error(sender, e.getMessage());
                 }
             }
-            BlueMapConnect.renderMCA(mca_cords);
+            MapRender.renderMCA(mca_cords);
             Notification.info(sender, "MCA文件列表已导出到 %s", folder.getAbsolutePath());
         });
     }

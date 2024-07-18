@@ -1,5 +1,7 @@
-package cn.lunadeer.dominion;
+package cn.lunadeer.dominion.utils;
 
+import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -15,9 +17,6 @@ import java.util.*;
 
 public class BlueMapConnect {
     public static void render() {
-        if (!Dominion.config.getBlueMap()) {
-            return;
-        }
         Scheduler.runTaskAsync(() -> {
             try {
                 BlueMapAPI.getInstance().ifPresent(api -> {
@@ -76,9 +75,6 @@ public class BlueMapConnect {
     }
 
     public static void renderMCA(Map<String, List<String>> mca_files) {
-        if (!Dominion.config.getBlueMap()) {
-            return;
-        }
         Scheduler.runTaskAsync(() -> {
             try {
                 BlueMapAPI.getInstance().ifPresent(api -> {
