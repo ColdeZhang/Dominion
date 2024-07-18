@@ -16,10 +16,11 @@ public class DynmapConnect extends DynmapCommonAPIListener {
 
     public static DynmapConnect instance;
 
-    private MarkerSet markerSet_dominion;
-    private MarkerSet markerSet_mca;
+    private MarkerSet markerSet_dominion = null;
+    private MarkerSet markerSet_mca = null;
 
     public DynmapConnect() {
+        DynmapCommonAPIListener.register(this);
         instance = this;
     }
 
@@ -30,9 +31,11 @@ public class DynmapConnect extends DynmapCommonAPIListener {
         if (this.markerSet_dominion == null) {
             this.markerSet_dominion = markerAPI.createMarkerSet("dominion", "Dominion领地", null, false);
         }
+        this.markerSet_mca = markerAPI.getMarkerSet("mca");
         if (this.markerSet_mca == null) {
             this.markerSet_mca = markerAPI.createMarkerSet("mca", "MCA文件", null, false);
         }
+        XLogger.info("Dynmap 成功注册");
     }
 
     private void setDominionMarker(DominionDTO dominion) {

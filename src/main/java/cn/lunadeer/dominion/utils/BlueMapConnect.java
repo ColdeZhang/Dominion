@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
