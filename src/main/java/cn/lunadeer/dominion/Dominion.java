@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.dominion.events.EnvironmentEvents;
 import cn.lunadeer.dominion.events.PlayerEvents;
 import cn.lunadeer.dominion.events.SelectPointEvents;

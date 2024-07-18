@@ -4,8 +4,8 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
@@ -786,9 +786,7 @@ public class DominionController {
      */
     private static void handleParticle(AbstractOperator operator, DominionDTO dominion) {
         if (operator instanceof BukkitPlayerOperator) {
-            ParticleRender.showBoxFace(operator.getPlayer(),
-                    dominion.getLocation1(),
-                    dominion.getLocation2());
+            Particle.showBorder(operator.getPlayer(), dominion);
         }
     }
 

@@ -1,9 +1,12 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.GameMode;
@@ -11,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -20,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static cn.lunadeer.dominion.DominionNode.getLocInDominionNode;
+import static cn.lunadeer.dominion.DominionNode.isInDominion;
 
 public class Cache {
 
@@ -212,7 +215,7 @@ public class Cache {
         if (last_in_dom_id != null) {
             last_dominion = id_dominions.get(last_in_dom_id);
         }
-        if (isInDominion(last_dominion, player)) {
+        if (isInDominion(last_dominion, player.getLocation())) {
             if (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).size() == 0) {
                 // 如果玩家仍在领地内，且领地没有子领地，则直接返回
                 if (recheckPlayerState) {
@@ -249,9 +252,7 @@ public class Cache {
         player_current_dominion_id.put(player.getUniqueId(), current_dominion.getId());
         // show border
         if (current_dominion.getFlagValue(Flag.SHOW_BORDER)) {
-            ParticleRender.showBoxFace(player,
-                    current_dominion.getLocation1(),
-                    current_dominion.getLocation2());
+            Particle.showBorder(player, current_dominion);
         }
         return current_dominion;
     }
@@ -359,17 +360,6 @@ public class Cache {
     public MemberDTO getMember(UUID player_uuid, DominionDTO dominion) {
         if (!player_uuid_to_member.containsKey(player_uuid)) return null;
         return player_uuid_to_member.get(player_uuid).get(dominion.getId());
-    }
-
-    private static boolean isInDominion(@Nullable DominionDTO dominion, Player player) {
-        if (dominion == null) return false;
-        if (!Objects.equals(dominion.getWorld(), player.getWorld().getName())) return false;
-        double x = player.getLocation().getX();
-        double y = player.getLocation().getY();
-        double z = player.getLocation().getZ();
-        return x >= dominion.getX1() && x <= dominion.getX2() &&
-                y >= dominion.getY1() && y <= dominion.getY2() &&
-                z >= dominion.getZ1() && z <= dominion.getZ2();
     }
 
     public DominionDTO getDominion(Integer id) {

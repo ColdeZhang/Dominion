@@ -1,10 +1,9 @@
 package cn.lunadeer.dominion.events;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.VaultConnect;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -95,7 +94,7 @@ public class SelectPointEvents implements Listener {
                 float price = count * Dominion.config.getEconomyPrice();
                 Notification.info(player, "预计领地创建价格为 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
             }
-            ParticleRender.showBoxFace(player, dominion.getLocation1(), dominion.getLocation2());
+            Particle.showBorder(player, dominion);
             Notification.info(player, "尺寸： %d x %d x %d", dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());
             Notification.info(player, "面积： %d", dominion.getSquare());
             Notification.info(player, "高度： %d", dominion.getHeight());

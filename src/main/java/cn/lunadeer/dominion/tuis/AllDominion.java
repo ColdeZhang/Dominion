@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.tuis;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;

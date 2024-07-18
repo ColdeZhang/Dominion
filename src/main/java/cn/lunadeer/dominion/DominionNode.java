@@ -72,8 +72,8 @@ public class DominionNode {
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();
-        return x >= dominion.getX1() && x <= dominion.getX2() &&
-                y >= dominion.getY1() && y <= dominion.getY2() &&
-                z >= dominion.getZ1() && z <= dominion.getZ2();
+        return x >= dominion.getX1() && x < dominion.getX2() &&
+                y >= dominion.getY1() && y < dominion.getY2() &&
+                z >= dominion.getZ1() && z < dominion.getZ2();
     }
 }

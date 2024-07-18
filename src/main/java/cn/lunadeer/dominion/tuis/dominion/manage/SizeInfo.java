@@ -1,11 +1,10 @@
 package cn.lunadeer.dominion.tuis.dominion.manage;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import cn.lunadeer.minecraftpluginutils.stui.View;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -49,8 +48,6 @@ public class SizeInfo {
                         .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append(Button.create("访客权限").setExecuteCommand("/dominion guest_setting " + dominion.getName()).build()))
                 .showOn(player);
-        ParticleRender.showBoxFace(player,
-                dominion.getLocation1(),
-                dominion.getLocation2());
+        Particle.showBorder(player, dominion);
     }
 }
