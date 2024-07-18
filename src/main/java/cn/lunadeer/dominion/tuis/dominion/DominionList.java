@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.tuis.dominion;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
+import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -27,7 +28,7 @@ public class DominionList {
 
         view.title("我的领地列表");
         view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("我的领地"));
-        view.addLines(BuildTreeLines(Cache.instance.getDominionTreeByPlayer(player.getName()), 0));
+        view.addLines(BuildTreeLines(DominionNode.BuildNodeTree(-1, DominionDTO.selectByOwner(player.getUniqueId())), 0));
         List<String> admin_dominions = playerAdminDominions(sender);
         if (admin_dominions.size() != 0) {
             view.add(Line.create().append(""));

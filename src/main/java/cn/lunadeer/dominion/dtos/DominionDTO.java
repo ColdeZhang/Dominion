@@ -65,18 +65,13 @@ public class DominionDTO {
         return query(sql);
     }
 
-    public static List<DominionDTO> selectAll(String world) {
-        String sql = "SELECT * FROM dominion WHERE world = ? AND id > 0;";
-        return query(sql, world);
-    }
-
     public static List<DominionDTO> search(String name) {
         String sql = "SELECT * FROM dominion WHERE name LIKE ? AND id > 0;";
         return query(sql, "%" + name + "%");
     }
 
-    public static List<DominionDTO> selectAll(UUID owner) {
-        String sql = "SELECT * FROM dominion WHERE owner = ? AND id > 0;";
+    public static List<DominionDTO> selectByOwner(UUID owner) {
+        String sql = "SELECT * FROM dominion WHERE owner = ? AND id > 0 ORDER BY id DESC;";
         return query(sql, owner.toString());
     }
 

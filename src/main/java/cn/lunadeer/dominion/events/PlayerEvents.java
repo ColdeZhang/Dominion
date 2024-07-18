@@ -71,7 +71,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getDamager();
-        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flag.ANIMAL_KILLING, bukkitPlayer, event);
     }
 
@@ -114,7 +114,7 @@ public class PlayerEvents implements Listener {
         if (!(Tag.BEDS.isTagged(block.getType()))) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.BED, bukkitPlayer, event);
     }
 
@@ -159,7 +159,7 @@ public class PlayerEvents implements Listener {
     }
 
     public static boolean onBreak(Player player, Location location) {
-        DominionDTO dom = Cache.instance.getDominion(location);
+        DominionDTO dom = Cache.instance.getDominionByLoc(location);
         return checkFlag(dom, Flag.BREAK_BLOCK, player, null);
     }
 
@@ -176,7 +176,7 @@ public class PlayerEvents implements Listener {
         if (!Tag.BUTTONS.isTagged(block.getType())) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.BUTTON, player, event);
     }
 
@@ -194,7 +194,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.CAKE, player, event);
     }
 
@@ -204,7 +204,7 @@ public class PlayerEvents implements Listener {
         if (loc == null) {
             dom = null;
         } else {
-            dom = Cache.instance.getDominion(loc);
+            dom = Cache.instance.getDominionByLoc(loc);
         }
         return checkFlag(dom, Flag.CONTAINER, player, null);
     }
@@ -292,7 +292,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
         checkFlag(dom, Flag.COMPARER, player, event);
     }
 
@@ -309,7 +309,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getClickedBlock().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
         checkFlag(dom, Flag.DOOR, player, event);
     }
 
@@ -323,7 +323,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.DRAGON_EGG, player, event);
     }
 
@@ -334,7 +334,7 @@ public class PlayerEvents implements Listener {
         if (!(entity instanceof Colorable)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.DYE, player, event);
     }
 
@@ -351,7 +351,7 @@ public class PlayerEvents implements Listener {
         if (!(Tag.SIGNS.isTagged(block.getType()))) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.EDIT_SIGN, player, event);
     }
 
@@ -359,7 +359,7 @@ public class PlayerEvents implements Listener {
     public void onSignEdit(SignChangeEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.EDIT_SIGN, player, event);
     }
 
@@ -412,7 +412,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getRightClicked().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getRightClicked().getLocation());
         checkFlag(dom, Flag.FEED, player, event);
     }
 
@@ -438,7 +438,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.HARVEST, player, event);
     }
 
@@ -456,7 +456,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.HONEY, player, event);
     }
 
@@ -467,7 +467,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(caught.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(caught.getLocation());
         checkFlag(dom, Flag.HOOK, player, event);
     }
 
@@ -496,7 +496,7 @@ public class PlayerEvents implements Listener {
         if (player == null) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(event.getBlock().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getBlock().getLocation());
         checkFlag(dom, Flag.IGNITE, player, event);
     }
 
@@ -514,7 +514,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.LEVER, player, event);
     }
 
@@ -529,7 +529,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player bukkitPlayer = (Player) event.getDamager();
-        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.MONSTER_KILLING, bukkitPlayer, event);
     }
 
@@ -601,7 +601,7 @@ public class PlayerEvents implements Listener {
     }
 
     public static boolean onPlace(Player player, Location location) {
-        DominionDTO dom = Cache.instance.getDominion(location);
+        DominionDTO dom = Cache.instance.getDominionByLoc(location);
         return checkFlag(dom, Flag.PLACE, player, null);
     }
 
@@ -618,7 +618,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.PRESSURE, player, event);
     }
 
@@ -628,7 +628,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = (Player) event.getEntity();
-        DominionDTO dom = Cache.instance.getDominion(event.getMount().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getMount().getLocation());
         checkFlag(dom, Flag.RIDING, player, event);
     }
 
@@ -643,14 +643,14 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.REPEATER, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // shear
     public void onShear(PlayerShearEntityEvent event) {
         Player player = event.getPlayer();
-        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flag.SHEAR, player, event);
     }
 
@@ -688,7 +688,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = (Player) event.getAttacker();
-        DominionDTO dom = Cache.instance.getDominion(event.getVehicle().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getVehicle().getLocation());
         checkFlag(dom, Flag.VEHICLE_DESTROY, player, event);
     }
 
@@ -702,7 +702,7 @@ public class PlayerEvents implements Listener {
         if (!(entity instanceof Vehicle)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominion(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.VEHICLE_SPAWN, player, event);
     }
 
@@ -715,7 +715,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Player player = (Player) event.getDamager();
-        DominionDTO dom = Cache.instance.getDominion(event.getEntity().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flag.VILLAGER_KILLING, player, event);
     }
 }

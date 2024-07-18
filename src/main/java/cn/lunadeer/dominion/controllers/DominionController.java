@@ -26,7 +26,7 @@ import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 public class DominionController {
 
     public static List<DominionDTO> all(Player owner) {
-        return DominionDTO.selectAll(owner.getUniqueId());
+        return DominionDTO.selectByOwner(owner.getUniqueId());
     }
 
     public static List<DominionDTO> all() {
