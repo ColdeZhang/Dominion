@@ -163,8 +163,11 @@ public class DominionController {
             }
         }
         // 检查经济
-        if (!skipEco)
-            handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS);
+        if (!skipEco) {
+            if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS)) {
+                return;
+            }
+        }
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
             operator.setResponse(FAIL.addMessage("创建领地失败，数据库错误，请联系管理员"));
@@ -231,8 +234,8 @@ public class DominionController {
         }
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功扩展领地 %s %d格", dominion_name, size);
         // 检查经济
-        handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
-                , true, FAIL, SUCCESS);
+        if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ() ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
+                , true, FAIL, SUCCESS)) return;
         // 显示粒子效果
         dominion = dominion.setXYZ(newCords);
         handleParticle(operator, dominion);
@@ -283,8 +286,8 @@ public class DominionController {
         }
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功缩小领地 %s %d格", dominion_name, size);
         // 退还经济
-        handleEconomy(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
-                , false, FAIL, SUCCESS);
+        if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
+                , false, FAIL, SUCCESS)) return;
         // 显示粒子效果
         dominion = dominion.setXYZ(newCords);
         handleParticle(operator, dominion);
@@ -343,7 +346,7 @@ public class DominionController {
                 count += sub_dominion.getVolume();
             }
         }
-        handleEconomy(operator, count, false, FAIL, SUCCESS);
+        if (handleEconomyFailed(operator, count, false, FAIL, SUCCESS)) return;
         operator.setResponse(SUCCESS);
     }
 
@@ -756,17 +759,17 @@ public class DominionController {
      * @param FAIL     失败消息
      * @param SUCCESS  成功消息
      */
-    private static void handleEconomy(AbstractOperator operator, Integer count, boolean paid, AbstractOperator.Result FAIL, AbstractOperator.Result SUCCESS) {
+    private static boolean handleEconomyFailed(AbstractOperator operator, Integer count, boolean paid, AbstractOperator.Result FAIL, AbstractOperator.Result SUCCESS) {
         if (Dominion.config.getEconomyEnable()) {
             if (!VaultConnect.instance.economyAvailable()) {
                 operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
-                return;
+                return true;
             }
             float priceOrRefund = count * Dominion.config.getEconomyPrice();
             if (paid) {
                 if (VaultConnect.instance.getBalance(operator.getPlayer()) < priceOrRefund) {
                     operator.setResponse(FAIL.addMessage("你的余额不足，需要 %.2f %s", priceOrRefund, VaultConnect.instance.currencyNamePlural()));
-                    return;
+                    return true;
                 }
                 SUCCESS.addMessage("已扣除 %.2f %s", priceOrRefund, VaultConnect.instance.currencyNamePlural());
                 VaultConnect.instance.withdrawPlayer(operator.getPlayer(), priceOrRefund);
@@ -776,6 +779,7 @@ public class DominionController {
                 SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
             }
         }
+        return false;
     }
 
     /**
