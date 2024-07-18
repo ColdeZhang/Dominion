@@ -35,7 +35,7 @@ public class DynmapConnect extends DynmapCommonAPIListener {
         }
     }
 
-    public void setDominionMarker(DominionDTO dominion) {
+    private void setDominionMarker(DominionDTO dominion) {
         String nameLabel = "<div>" + dominion.getName() + "</div>";
         double[] xx = {dominion.getX1(), dominion.getX2()};
         double[] zz = {dominion.getZ1(), dominion.getZ2()};
@@ -55,6 +55,10 @@ public class DynmapConnect extends DynmapCommonAPIListener {
 
     public void setDominionMarkers(List<DominionDTO> dominions) {
         Scheduler.runTaskAsync(() -> {
+            if (this.markerSet_dominion == null) {
+                XLogger.warn("无法连接到 Dynmap，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能。");
+                return;
+            }
             this.markerSet_dominion.getAreaMarkers().forEach(AreaMarker::deleteMarker);
             for (DominionDTO dominion : dominions) {
                 this.setDominionMarker(dominion);
@@ -64,6 +68,10 @@ public class DynmapConnect extends DynmapCommonAPIListener {
 
     public void setMCAMarkers(Map<String, List<String>> mca_files) {
         Scheduler.runTaskAsync(() -> {
+            if (this.markerSet_mca == null) {
+                XLogger.warn("无法连接到 Dynmap，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能。");
+                return;
+            }
             this.markerSet_mca.getAreaMarkers().forEach(AreaMarker::deleteMarker);
             for (Map.Entry<String, List<String>> entry : mca_files.entrySet()) {
                 for (String file : entry.getValue()) {
