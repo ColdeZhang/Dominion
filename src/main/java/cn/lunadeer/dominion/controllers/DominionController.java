@@ -765,6 +765,10 @@ public class DominionController {
                 operator.setResponse(FAIL.addMessage("没有可用的经济插件系统，请联系服主。"));
                 return true;
             }
+            if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
+                SUCCESS.addMessage("你是OP，已跳过经济检查。");
+                return false;
+            }
             float priceOrRefund = count * Dominion.config.getEconomyPrice();
             if (paid) {
                 if (VaultConnect.instance.getBalance(operator.getPlayer()) < priceOrRefund) {

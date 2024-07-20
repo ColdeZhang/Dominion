@@ -43,7 +43,7 @@ public class Apis {
         Location location2 = new Location(location.getWorld(), location.getX() + size, location.getY() + size, location.getZ() + size);
         if (Dominion.config.getLimitVert()) {
             location1.setY(Dominion.config.getLimitMinY());
-            location2.setY(Dominion.config.getLimitMaxY());
+            location2.setY(Dominion.config.getLimitMaxY() - 1);
         }
         Map<Integer, Location> points = new HashMap<>();
         points.put(0, location1);

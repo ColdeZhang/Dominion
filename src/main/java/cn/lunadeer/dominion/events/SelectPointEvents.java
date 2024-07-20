@@ -52,7 +52,7 @@ public class SelectPointEvents implements Listener {
             Notification.info(player, "已选择第二个点: %d %d %d", block.getX(), block.getY(), block.getZ());
             Location loc = block.getLocation();
             if (Dominion.config.getLimitVert()) {
-                loc.setY(Dominion.config.getLimitMaxY());
+                loc.setY(Dominion.config.getLimitMaxY() - 1);
             }
             points.put(1, loc);
         } else {
