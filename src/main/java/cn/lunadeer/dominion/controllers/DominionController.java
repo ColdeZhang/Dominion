@@ -6,7 +6,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.VaultConnect;
+import cn.lunadeer.minecraftpluginutils.VaultConnect.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
