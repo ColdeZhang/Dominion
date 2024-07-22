@@ -6,7 +6,7 @@
 
     <groupId>cn.lunadeer</groupId>
     <artifactId>Dominion</artifactId>
-    <version>1.38.9-beta</version>
+    <version>1.39.0-beta</version>
     <packaging>jar</packaging>
 
     <name>Dominion</name>
