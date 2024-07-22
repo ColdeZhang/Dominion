@@ -295,7 +295,7 @@ public class DominionController {
     }
 
     private static int vol(int x1, int y1, int z1, int x2, int y2, int z2) {
-        return (x2 - x1 + 1) * (y2 - y1 + 1) * (z2 - z1 + 1);
+        return (x2 - x1) * (y2 - y1) * (z2 - z1);
     }
 
     private static int vol(int[] cords) {
@@ -303,7 +303,7 @@ public class DominionController {
     }
 
     private static int sqr(int x1, int z1, int x2, int z2) {
-        return (x2 - x1 + 1) * (z2 - z1 + 1);
+        return (x2 - x1) * (z2 - z1);
     }
 
     private static int sqr(int[] cords) {
