@@ -51,6 +51,7 @@ public enum Flag {
     MONSTER_KILLING("monster_killing", "对怪物造成伤害", "玩家是否可以对怪物造成伤害", false, false, true),
     MONSTER_SPAWN("monster_spawn", "怪物生成", "是否可以生成怪物", false, true, false),
     MOVE("move", "移动", "是否可以移动", true, false, true),
+    NOTE_BLOCK("note_block", "点击音符盒", "红石音乐或者某些红石机器会用到...", false, false, true),
     PLACE("place", "放置方块", "是否可以放置方块（包括：一般方块、展示框、岩浆、水）", false, false, true),
     PRESSURE("pressure", "压力板交互", "是否可以触发各种材质的压力板", false, false, true),
     RIDING("riding", "骑乘载具", "是否可以骑乘各种载具", false, false, true),

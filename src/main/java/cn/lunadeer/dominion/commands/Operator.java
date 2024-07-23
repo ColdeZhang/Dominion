@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.utils.BlueMapConnect;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;

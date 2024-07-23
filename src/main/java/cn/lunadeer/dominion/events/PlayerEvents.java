@@ -566,6 +566,24 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // note_block
+    public void onNoteBlockClicked(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        Material clicked = block.getType();
+        if (clicked != Material.NOTE_BLOCK) {
+            return;
+        }
+        Player player = event.getPlayer();
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+        checkFlag(dom, Flag.NOTE_BLOCK, player, event);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // place
     public void onPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
