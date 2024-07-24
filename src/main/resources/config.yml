@@ -10,6 +10,7 @@ Database:
 AutoCreateRadius: 10  #-1 表示不开启
 
 Limit:
+  SpawnProtection: 10 # 出生点保护半径
   MinY: -64     # 最小Y坐标
   MaxY: 320     # 最大Y坐标
   SizeX: 128    # X方向最大长度 -1：表示不限制

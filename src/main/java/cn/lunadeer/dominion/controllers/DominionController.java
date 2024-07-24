@@ -155,6 +155,11 @@ public class DominionController {
         }
         // 获取此领地的所有同级领地
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), parent_dominion.getId());
+        // 检查是否与出生点保护冲突
+        if (isIntersectSpawn(dominion)) {
+            operator.setResponse(FAIL.addMessage("与出生点保护冲突"));
+            return;
+        }
         // 检查是否与其他子领地冲突
         for (DominionDTO sub_dominion : sub_dominions) {
             if (isIntersect(sub_dominion, dominion)) {
@@ -176,6 +181,30 @@ public class DominionController {
         // 显示粒子效果
         handleParticle(operator, dominion);
         operator.setResponse(SUCCESS);
+    }
+
+    private static boolean isIntersectSpawn(DominionDTO dominion) {
+        int radius = Dominion.config.getSpawnProtection();
+        if (radius == -1) {
+            return false;
+        }
+        World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
+        if (world == null) {
+            return false;
+        }
+        Location spawn = world.getSpawnLocation();
+        return isIntersect(dominion, spawn.getBlockX() - radius, spawn.getBlockY() - radius, spawn.getBlockZ() - radius
+                , spawn.getBlockX() + radius, spawn.getBlockY() + radius, spawn.getBlockZ() + radius);
+    }
+
+    private static boolean isIntersectSpawn(String world, int[] cords) {
+        int radius = Dominion.config.getSpawnProtection();
+        if (radius == -1) {
+            return false;
+        }
+        Location spawn = Objects.requireNonNull(Dominion.instance.getServer().getWorld(world)).getSpawnLocation();
+        return isIntersect(cords, spawn.getBlockX() - radius, spawn.getBlockY() - radius, spawn.getBlockZ() - radius
+                , spawn.getBlockX() + radius, spawn.getBlockY() + radius, spawn.getBlockZ() + radius);
     }
 
     /**
@@ -210,6 +239,11 @@ public class DominionController {
         }
         int[] newCords = expandContractSizeChange(operator, dominion, true, size, FAIL);
         if (newCords == null) {
+            return;
+        }
+        // 检查是否与出生点保护冲突
+        if (isIntersectSpawn(dominion.getWorld(), newCords)) {
+            operator.setResponse(FAIL.addMessage("与出生点保护冲突"));
             return;
         }
         // 校验是否超出父领地范围
@@ -593,6 +627,12 @@ public class DominionController {
 
     private static boolean isIntersect(DominionDTO a, int[] cord) {
         return isIntersect(a, cord[0], cord[1], cord[2], cord[3], cord[4], cord[5]);
+    }
+
+    private static boolean isIntersect(int[] cord, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
+        return cord[0] < x2 && cord[3] > x1 &&
+                cord[1] < y2 && cord[4] > y1 &&
+                cord[2] < z2 && cord[5] > z1;
     }
 
     /**

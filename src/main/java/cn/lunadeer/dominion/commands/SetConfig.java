@@ -70,6 +70,9 @@ public class SetConfig {
             case "residence_migration":
                 setResidenceMigration(sender, args);
                 break;
+            case "spawn_protection":
+                setSpawnProtection(sender, args);
+                break;
             default:
                 Notification.error(sender, "未知参数");
         }
@@ -252,11 +255,23 @@ public class SetConfig {
         } else {
             Dominion.config.setEconomyRefund(economyRefund);
         }
+        refreshPageOrNot(sender, args);
     }
 
     private static void setResidenceMigration(CommandSender sender, String[] args) {
         boolean residenceMigration = Boolean.parseBoolean(args[2]);
         Dominion.config.setResidenceMigration(residenceMigration);
+        refreshPageOrNot(sender, args);
+    }
+
+    private static void setSpawnProtection(CommandSender sender, String[] args) {
+        int spawnProtection = Integer.parseInt(args[2]);
+        if (spawnProtection != -1 && spawnProtection <= 0) {
+            Dominion.config.setSpawnProtection(1);
+            Notification.error(sender, "出生点保护半径不能小于或等于0");
+        } else {
+            Dominion.config.setSpawnProtection(spawnProtection);
+        }
         refreshPageOrNot(sender, args);
     }
 }

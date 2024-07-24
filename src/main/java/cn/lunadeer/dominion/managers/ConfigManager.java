@@ -33,6 +33,7 @@ public class ConfigManager {
             XLogger.err("AutoCreateRadius 不能等于 0，已重置为 10");
             setAutoCreateRadius(10);
         }
+        _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
         _limit_size_x = _file.getInt("Limit.SizeX", 128);
         if (_limit_size_x <= 4 && _limit_size_x != -1) {
             XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
@@ -95,6 +96,7 @@ public class ConfigManager {
 
     public void saveAll() {
         _file.set("AutoCreateRadius", _auto_create_radius);
+        _file.set("Limit.SpawnProtection", _spawn_protection);
         _file.set("Limit.SizeX", _limit_size_x);
         _file.set("Limit.SizeY", _limit_size_y);
         _file.set("Limit.SizeZ", _limit_size_z);
@@ -404,6 +406,16 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Integer getSpawnProtection() {
+        return _spawn_protection;
+    }
+
+    public void setSpawnProtection(Integer spawn_protection) {
+        _spawn_protection = spawn_protection;
+        _file.set("Limit.SpawnProtection", spawn_protection);
+        _plugin.saveConfig();
+    }
+
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;
@@ -444,4 +456,5 @@ public class ConfigManager {
     private Float _economy_refund;
     private List<String> _fly_permission_nodes;
     private Boolean _residence_migration;
+    private Integer _spawn_protection;
 }
