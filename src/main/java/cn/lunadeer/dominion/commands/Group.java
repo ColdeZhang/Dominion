@@ -7,7 +7,6 @@ import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.SelectMember;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
 import static cn.lunadeer.dominion.commands.Helper.*;
 import static cn.lunadeer.dominion.tuis.Apis.getPage;
 
@@ -30,13 +29,14 @@ public class Group {
      */
     public static void createGroup(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 4) {
                 Notification.error(sender, "用法: /dominion group create <领地名称> <权限组名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String groupName = args[3];
             GroupController.createGroup(operator, dominionName, groupName);
@@ -54,13 +54,14 @@ public class Group {
      */
     public static void deleteGroup(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 4) {
                 Notification.error(sender, "用法: /dominion group delete <领地名称> <权限组名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String groupName = args[3];
             GroupController.deleteGroup(operator, dominionName, groupName);
@@ -78,13 +79,14 @@ public class Group {
      */
     public static void renameGroup(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 5) {
                 Notification.error(sender, "用法: /dominion group rename <领地名称> <权限组旧名称> <新名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String oldGroupName = args[3];
             String newGroupName = args[4];
@@ -103,13 +105,14 @@ public class Group {
      */
     public static void setGroupFlag(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 6) {
                 Notification.error(sender, "用法: /dominion group set_flag <领地名称> <权限组名称> <权限名称> <true|false>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String groupName = args[3];
             String flag = args[4];
@@ -130,13 +133,14 @@ public class Group {
      */
     public static void addMember(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 5) {
                 Notification.error(sender, "用法: /dominion group add_member <领地名称> <权限组名称> <玩家名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String groupName = args[3];
             String playerName = args[4];
@@ -156,13 +160,14 @@ public class Group {
      */
     public static void removeMember(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 5) {
                 Notification.error(sender, "用法: /dominion group remove_member <领地名称> <权限组名称> <玩家名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String groupName = args[3];
             String playerName = args[4];

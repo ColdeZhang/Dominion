@@ -14,12 +14,16 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Objects;
 
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 
 public class Migration {
 
     public static void migrate(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             Player player = playerOnly(sender);
             if (player == null) return;
 

@@ -19,6 +19,14 @@ public class Apis {
         return (Player) sender;
     }
 
+    public static boolean hasPermission(CommandSender sender, String permission) {
+        if (!sender.hasPermission(permission)) {
+            Notification.error(sender, "你没有 %s 权限执行此命令", permission);
+            return false;
+        }
+        return true;
+    }
+
     public static void sizeInfo(CommandSender sender, DominionDTO dominionDTO) {
         Integer x1 = dominionDTO.getX1();
         Integer y1 = dominionDTO.getY1();
@@ -50,17 +58,6 @@ public class Apis {
         points.put(1, location2);
         Dominion.pointsSelect.put(player.getUniqueId(), points);
         return points;
-    }
-
-    public static boolean notOpOrConsole(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (!player.isOp()) {
-                Notification.warn(player, "你没有权限使用此命令");
-                return true;
-            }
-        }
-        return false;
     }
 
     public static String CommandParser(String command, Object... args) {

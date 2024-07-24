@@ -7,9 +7,8 @@ import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
 
 public class DominionFlag {
 
@@ -21,9 +20,10 @@ public class DominionFlag {
      * @param args   命令参数
      */
     public static void setDominionFlag(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length == 3) {
             FlagsController.setFlag(operator, args[1], Boolean.parseBoolean(args[2]));
         } else if (args.length == 4) {

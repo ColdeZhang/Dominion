@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import org.bukkit.Location;
@@ -8,12 +9,12 @@ import org.bukkit.Location;
 public class Apis {
 
     public static boolean notOwner(AbstractOperator player, DominionDTO dominion) {
-        if (player.isOp()) return false;
+        if (player.isOp() && Dominion.config.getLimitOpBypass()) return false;
         return !dominion.getOwner().equals(player.getUniqueId());
     }
 
     public static boolean noAuthToChangeFlags(AbstractOperator player, DominionDTO dominion) {
-        if (player.isOp()) return false;
+        if (player.isOp() && Dominion.config.getLimitOpBypass()) return false;
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             MemberDTO privileges = MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {

@@ -21,8 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
-import static cn.lunadeer.dominion.commands.Apis.autoPoints;
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.commands.Apis.*;
 
 public class DominionOperate {
     /**
@@ -33,6 +32,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void createDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
@@ -57,6 +59,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void createSubDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
@@ -85,6 +90,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void autoCreateDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
@@ -108,6 +116,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void autoCreateSubDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
@@ -130,6 +141,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void expandDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
@@ -167,6 +181,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void contractDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
@@ -204,9 +221,10 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void deleteDominion(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length == 2) {
             String name = args[1];
             DominionController.delete(operator, name, false);
@@ -230,9 +248,10 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void setEnterMessage(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length == 2) {
             DominionController.setJoinMessage(operator, args[1]);
             return;
@@ -252,9 +271,10 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void setLeaveMessage(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length == 2) {
             DominionController.setLeaveMessage(operator, args[1]);
             return;
@@ -274,6 +294,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void setTpLocation(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
@@ -299,9 +322,10 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void renameDominion(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length != 3) {
             Notification.error(sender, "用法: /dominion rename <原领地名称> <新领地名称>");
             return;
@@ -317,9 +341,10 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void giveDominion(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length == 3) {
             String dom_name = args[1];
             String player_name = args[2];
@@ -345,6 +370,9 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void teleportToDominion(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
@@ -457,13 +485,14 @@ public class DominionOperate {
      * @param args   命令参数
      */
     public static void setMapColor(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
+        if (!hasPermission(sender, "dominion.default")) {
+            return;
+        }
         if (args.length < 2) {
             Notification.error(sender, "用法: /dominion set_map_color <颜色> [领地名称]");
             return;
         }
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length == 2) {
             DominionController.setMapColor(operator, args[1]);
         } else {

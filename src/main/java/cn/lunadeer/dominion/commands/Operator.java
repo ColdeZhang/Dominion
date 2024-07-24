@@ -15,12 +15,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.lunadeer.dominion.commands.Apis.notOpOrConsole;
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
+
 
 public class Operator {
 
     public static void reloadCache(CommandSender sender, String[] args) {
-        if (notOpOrConsole(sender)) return;
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, "正在从数据库重新加载领地缓存...");
             Cache.instance.loadDominions();
@@ -39,7 +42,9 @@ public class Operator {
     }
 
     public static void exportMca(CommandSender sender, String[] args) {
-        if (notOpOrConsole(sender)) return;
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, "正在导出拥有领地的MCA文件列表...");
             Map<String, List<String>> mca_cords = new HashMap<>();
@@ -110,7 +115,9 @@ public class Operator {
     }
 
     public static void reloadConfig(CommandSender sender, String[] args) {
-        if (notOpOrConsole(sender)) return;
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, "正在重新加载配置文件...");
             Dominion.config.reload();

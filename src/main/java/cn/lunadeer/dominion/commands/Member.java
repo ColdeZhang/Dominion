@@ -8,7 +8,6 @@ import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectPlayer;
 import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectTemplate;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
 import static cn.lunadeer.dominion.Commands.playerNames;
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
 import static cn.lunadeer.dominion.commands.Helper.*;
 
 public class Member {
@@ -32,13 +31,14 @@ public class Member {
      */
     public static void member_add(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 4) {
                 Notification.error(sender, "用法: /dominion member add <领地名称> <玩家名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String playerName = args[3];
             MemberController.memberAdd(operator, dominionName, playerName);
@@ -57,13 +57,14 @@ public class Member {
      */
     public static void member_set_flag(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 6) {
                 Notification.error(sender, "用法: /dominion member set_flag <领地名称> <玩家名称> <权限名称> <true/false>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String playerName = args[3];
             String flagName = args[4];
@@ -85,13 +86,14 @@ public class Member {
      */
     public static void member_remove(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 4) {
                 Notification.error(sender, "用法: /dominion member remove <领地名称> <玩家名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String playerName = args[3];
             MemberController.memberRemove(operator, dominionName, playerName);
@@ -110,13 +112,14 @@ public class Member {
      */
     public static void member_apply_template(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 5) {
                 Notification.error(sender, "用法: /dominion member apply_template <领地名称> <玩家名称> <模板名称>");
                 return;
             }
-            Player player = playerOnly(sender);
-            if (player == null) return;
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String playerName = args[3];
             String templateName = args[4];

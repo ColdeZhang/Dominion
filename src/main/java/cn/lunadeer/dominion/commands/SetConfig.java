@@ -5,12 +5,14 @@ import cn.lunadeer.dominion.tuis.SysConfig;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
-import static cn.lunadeer.dominion.commands.Apis.notOpOrConsole;
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
 
 public class SetConfig {
 
     public static void handler(CommandSender sender, String[] args) {
-        if (notOpOrConsole(sender)) return;
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
         if (args.length < 2) {
             Notification.error(sender, "参数错误");
             return;

@@ -3,29 +3,43 @@ package cn.lunadeer.dominion.controllers;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class BukkitPlayerOperator implements AbstractOperator {
 
-    private final org.bukkit.entity.Player player;
+    private final CommandSender player;
     private final CompletableFuture<Result> response = new CompletableFuture<>();
 
-    public BukkitPlayerOperator(org.bukkit.entity.Player player) {
+    public BukkitPlayerOperator(CommandSender player) {
         this.player = player;
+    }
+
+    public boolean isConsole() {
+        return !(player instanceof Player);
     }
 
     @Override
     public UUID getUniqueId() {
-        return player.getUniqueId();
+        if (isConsole()) {
+            return UUID.randomUUID();
+        } else {
+            return ((Player) player).getUniqueId();
+        }
     }
 
     @Override
     public boolean isOp() {
-        return player.isOp();
+        if (isConsole()) {
+            return true;
+        } else {
+            return ((Player) player).isOp();
+        }
     }
 
     @Override
@@ -34,19 +48,30 @@ public class BukkitPlayerOperator implements AbstractOperator {
     }
 
     @Override
-    public Location getLocation() {
-        return player.getLocation();
+    public @Nullable Location getLocation() {
+        if (isConsole()) {
+            return null;
+        } else {
+            return ((Player) player).getLocation();
+        }
     }
 
     @Override
-    public Player getPlayer() {
-        return player;
+    public @Nullable Player getPlayer() {
+        if (isConsole()) {
+            return null;
+        } else {
+            return (Player) player;
+        }
     }
 
     @Override
-    public BlockFace getDirection() {
-        float yaw = player.getLocation().getYaw();
-        float pitch = player.getLocation().getPitch();
+    public @Nullable BlockFace getDirection() {
+        if (isConsole() || getLocation() == null) {
+            return null;
+        }
+        float yaw = getLocation().getYaw();
+        float pitch = getLocation().getPitch();
         if (pitch > -45 && pitch < 45) {
             if (yaw > -45 && yaw < 45) {
                 return BlockFace.SOUTH;
@@ -69,7 +94,7 @@ public class BukkitPlayerOperator implements AbstractOperator {
         return response;
     }
 
-    public static BukkitPlayerOperator create(org.bukkit.entity.Player player) {
+    public static BukkitPlayerOperator create(CommandSender player) {
         BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
         operator.getResponse().thenAccept(result -> {
             if (Objects.equals(result.getStatus(), BukkitPlayerOperator.Result.SUCCESS)) {

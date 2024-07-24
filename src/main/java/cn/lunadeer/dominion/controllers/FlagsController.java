@@ -13,7 +13,6 @@ public class FlagsController {
      * @param operator 操作者
      * @param flag     权限名称
      * @param value    权限值
-     * @return 设置后的领地信息
      */
     public static void setFlag(AbstractOperator operator, String flag, boolean value) {
         DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
@@ -29,7 +28,6 @@ public class FlagsController {
      * @param flag         权限名称
      * @param value        权限值
      * @param dominionName 领地名称
-     * @return 设置后的领地信息
      */
     public static void setFlag(AbstractOperator operator, String flag, boolean value, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);

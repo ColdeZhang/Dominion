@@ -859,6 +859,10 @@ public class DominionController {
 
     private static int[] expandContractSizeChange(AbstractOperator operator, @NotNull DominionDTO dominion, boolean expand, int size, AbstractOperator.Result FAIL) {
         BlockFace face = operator.getDirection();
+        if (face == null) {
+            operator.setResponse(FAIL.addMessage("无法获取你的方向"));
+            return null;
+        }
         int[] result = new int[6];
         result[0] = dominion.getX1();
         result[1] = dominion.getY1();

@@ -48,9 +48,9 @@ public interface AbstractOperator {
 
     public @Nullable Location getLocation();
 
-    public Player getPlayer();
+    public @Nullable Player getPlayer();
 
-    public BlockFace getDirection();
+    public @Nullable BlockFace getDirection();
 
     public CompletableFuture<Result> getResponse();
 }

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
+import static cn.lunadeer.dominion.commands.Apis.hasPermission;
 import static cn.lunadeer.dominion.commands.Apis.playerOnly;
 import static cn.lunadeer.dominion.commands.Helper.allTemplates;
 import static cn.lunadeer.dominion.commands.Helper.playerPrivileges;
@@ -31,6 +32,9 @@ public class Template {
      */
     public static void createTemplate(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 3) {
                 Notification.error(sender, "用法: /dominion template create <模板名称>");
                 return;
@@ -54,6 +58,9 @@ public class Template {
      */
     public static void deleteTemplate(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 3) {
                 Notification.error(sender, "用法: /dominion template delete <模板名称>");
                 return;
@@ -77,6 +84,9 @@ public class Template {
      */
     public static void setTemplateFlag(CommandSender sender, String[] args) {
         try {
+            if (!hasPermission(sender, "dominion.default")) {
+                return;
+            }
             if (args.length < 5) {
                 Notification.error(sender, "用法: /dominion template set_flag <模板名称> <权限名称> <true/false>");
                 return;

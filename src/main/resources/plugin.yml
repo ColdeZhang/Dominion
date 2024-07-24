@@ -11,4 +11,11 @@ commands:
   Dominion:
     description: 领地插件命令
     usage: /dominion <cmd>
-    aliases: [dominion, dom]
+    aliases: [ dominion, dom ]
+permission:
+  dominion.admin:
+    description: 领地插件管理员权限
+    default: op
+  dominion.default:
+    description: 领地插件用户权限
+    default: true
