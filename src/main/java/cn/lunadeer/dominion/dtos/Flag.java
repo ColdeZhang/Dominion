@@ -46,6 +46,7 @@ public enum Flag {
     HOOK("hook", "使用钓钩", "是否可以使用钓钩", false, false, true),
     HOPPER("hopper", "特殊容器", "包含：漏斗/熔炉/发射器/投掷器/高炉/烟熏炉", false, false, true),
     IGNITE("ignite", "点燃", "是否可以使用打火石点火", false, false, true),
+    ITEM_FRAME_INTERACTIVE("item_frame_interactive", "展示框交互", "是否可以与物品展示框交互（旋转展示框的东西）", false, false, true),
     LEVER("lever", "使用拉杆", "是否可以使用拉杆", false, false, true),
     MOB_DROP_ITEM("mob_drop_item", "生物战利品掉落", "生物死亡时是否产生掉落物", true, true, true),
     MONSTER_KILLING("monster_killing", "对怪物造成伤害", "玩家是否可以对怪物造成伤害", false, false, true),

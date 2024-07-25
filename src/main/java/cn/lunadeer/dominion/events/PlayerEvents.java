@@ -16,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -140,17 +141,37 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // break - item frame && armor stand
+    @EventHandler(priority = EventPriority.HIGHEST) // break - item frame
     public void onItemFrameBreak(HangingBreakByEntityEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof ItemFrame) && !(entity instanceof ArmorStand)) {
-            return;
-        }
         Entity remover = event.getRemover();
         if (!(remover instanceof Player)) {
             return;
         }
+        if (entity instanceof ItemFrame) {
+            if (((ItemFrame) entity).getItem().getType() != Material.AIR) {
+                if (!hasContainerPermission((Player) event.getRemover(), entity.getLocation())) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
         if (onBreak((Player) event.getRemover(), entity.getLocation())) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // break - armor stand
+    public void onArmorStandBreak(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ArmorStand)) {
+            return;
+        }
+        if (!(event.getDamager() instanceof Player)) {
+            return;
+        }
+        if (onBreak((Player) event.getDamager(), entity.getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -233,30 +254,38 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame）
+    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame put）
     public void putSomeOnItemFrame(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
         if (!(entity instanceof ItemFrame)) {
             return;
         }
+        ItemFrame itemFrame = (ItemFrame) entity;
+        if (itemFrame.getItem().getType() != Material.AIR) {
+            return;
+        }
         Player bukkitPlayer = event.getPlayer();
-        if (hasContainerPermission(bukkitPlayer, event.getRightClicked().getLocation())) {
+        if (hasContainerPermission(bukkitPlayer, entity.getLocation())) {
             return;
         }
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame）
+    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame get）
     public void removeSomeOnItemFrame(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof ItemFrame)) {
+            return;
+        }
+        ItemFrame itemFrame = (ItemFrame) entity;
+        if (itemFrame.getItem().getType() == Material.AIR) {
             return;
         }
         if (!(event.getDamager() instanceof Player)) {
             return;
         }
         Player bukkitPlayer = (Player) event.getDamager();
-        if (hasContainerPermission(bukkitPlayer, event.getEntity().getLocation())) {
+        if (hasContainerPermission(bukkitPlayer, entity.getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -496,6 +525,22 @@ public class PlayerEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getBlock().getLocation());
         checkFlag(dom, Flag.IGNITE, player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // item_frame_interactive
+    public void onItemFrameInteractive(PlayerInteractEntityEvent event) {
+        Entity entity = event.getRightClicked();
+        if (!(entity instanceof ItemFrame)) {
+            return;
+        }
+        ItemFrame itemFrame = (ItemFrame) entity;
+        if (itemFrame.getItem().getType() == Material.AIR) {
+            // 为空则当作容器处理见 putSomeOnItemFrame
+            return;
+        }
+        Player player = event.getPlayer();
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
+        checkFlag(dom, Flag.ITEM_FRAME_INTERACTIVE, player, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // lever

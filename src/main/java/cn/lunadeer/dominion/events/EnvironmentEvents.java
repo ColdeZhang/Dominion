@@ -12,10 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.entity.*;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Objects;
@@ -27,15 +25,46 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        if (entity.getType() != EntityType.CREEPER
-                && entity.getType() != EntityType.WITHER_SKULL
-                && entity.getType() != EntityType.FIREBALL
-                && entity.getType() != EntityType.ENDER_CRYSTAL
-        ) {
+        if (isExplodeEntity(entity)) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - item frame
+    public void onItemFrameExploded(HangingBreakByEntityEvent event) {
+        Entity entity = event.getEntity();
+        Entity remover = event.getRemover();
+        if (remover == null) {
+            return;
+        }
+        if (!isExplodeEntity(remover)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
+        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - armor stand
+    public void onArmorStandExploded(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.ARMOR_STAND) {
+            return;
+        }
+        Entity damager = event.getDamager();
+        if (!isExplodeEntity(damager)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
+        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+    }
+
+    private static boolean isExplodeEntity(Entity damager) {
+        return damager.getType() == EntityType.CREEPER
+                || damager.getType() == EntityType.WITHER_SKULL
+                || damager.getType() == EntityType.FIREBALL
+                || damager.getType() == EntityType.ENDER_CRYSTAL;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
