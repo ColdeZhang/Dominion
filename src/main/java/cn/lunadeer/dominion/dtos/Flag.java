@@ -20,7 +20,7 @@ public enum Flag {
     BEACON("beacon", "信标交互", "是否允许与信标交互", false, false, true),
     BED("bed", "床交互", "是否允许使用床睡觉或设置重生点", false, false, true),
     BREW("brew", "使用酿造台", "是否可以使用酿造台", false, false, true),
-    BREAK_BLOCK("break", "破坏方块", "是否可以破坏方块（包括：一般方块、展示框）", false, false, true),
+    BREAK_BLOCK("break", "破坏方块", "是否可以破坏方块（包括：一般方块、展示框、盔甲架）", false, false, true),
     BUTTON("button", "使用按钮", "是否可以使用各种材质的按钮", false, false, true),
     CAKE("cake", "吃蛋糕", "是否可以吃蛋糕", false, false, true),
     CONTAINER("container", "一般容器", "包含：箱子/木桶/潜影盒/盔甲架/展示框", false, false, true),

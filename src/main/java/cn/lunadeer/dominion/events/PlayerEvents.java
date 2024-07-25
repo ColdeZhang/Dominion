@@ -140,21 +140,19 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // break - item frame
+    @EventHandler(priority = EventPriority.HIGHEST) // break - item frame && armor stand
     public void onItemFrameBreak(HangingBreakByEntityEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof ItemFrame)) {
+        if (!(entity instanceof ItemFrame) && !(entity instanceof ArmorStand)) {
             return;
         }
-        ItemFrame itemFrame = (ItemFrame) entity;
         Entity remover = event.getRemover();
         if (!(remover instanceof Player)) {
             return;
         }
-        if (onBreak((Player) event.getRemover(), itemFrame.getLocation())) {
+        if (onBreak((Player) event.getRemover(), entity.getLocation())) {
             return;
         }
-        itemFrame.remove();
         event.setCancelled(true);
     }
 
