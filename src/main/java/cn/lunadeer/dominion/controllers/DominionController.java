@@ -137,7 +137,7 @@ public class DominionController {
             }
         }
         // 创建 dominion (此步骤不会写入数据)
-        DominionDTO dominion = DominionDTO.create(operator.getUniqueId(), name, loc1.getWorld().getName(),
+        DominionDTO dominion = DominionDTO.create(parent_dominion.getId() == -1 ? operator.getUniqueId() : parent_dominion.getOwner(), name, loc1.getWorld().getName(),
                 minX, minY, minZ, maxX, maxY, maxZ, parent_dominion);
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
