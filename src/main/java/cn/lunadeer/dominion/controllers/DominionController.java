@@ -536,10 +536,6 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("操作者信息丢失，请联系管理员"));
             return;
         }
-        if (Objects.equals(player_name, operatorDTO.getLastKnownName())) {
-            operator.setResponse(FAIL.addMessage("不能将领地转让给自己"));
-            return;
-        }
         DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
         if (dominion == null) {
             return;
@@ -547,6 +543,10 @@ public class DominionController {
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在", player_name));
+            return;
+        }
+        if (Objects.equals(dominion.getOwner(), player.getUuid())) {
+            operator.setResponse(FAIL.addMessage("领地 %s 已经属于 %s，无需转移", dom_name, player_name));
             return;
         }
         if (dominion.getParentDomId() != -1) {
