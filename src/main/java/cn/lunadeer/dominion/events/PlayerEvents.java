@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -144,8 +145,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // break - item frame
     public void onItemFrameBreak(HangingBreakByEntityEvent event) {
         Entity entity = event.getEntity();
-        Entity remover = event.getRemover();
-        if (!(remover instanceof Player)) {
+        if (event.getCause() != HangingBreakEvent.RemoveCause.ENTITY) {
             return;
         }
         if (entity instanceof ItemFrame) {

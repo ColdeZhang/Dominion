@@ -3,17 +3,17 @@ package cn.lunadeer.dominion.events;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Objects;
@@ -25,21 +25,21 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        if (isExplodeEntity(entity)) {
+        XLogger.debug("EntityExplodeEvent: " + entity.getType());
+        if (isNotExplodeEntity(entity)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getLocation());
-        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+        XLogger.debug("blockList" + event.blockList().size());
+        event.blockList().removeIf(block -> {
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+            return !checkFlag(dom, Flag.CREEPER_EXPLODE, null);
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - item frame
     public void onItemFrameExploded(HangingBreakByEntityEvent event) {
         Entity entity = event.getEntity();
-        Entity remover = event.getRemover();
-        if (remover == null) {
-            return;
-        }
-        if (!isExplodeEntity(remover)) {
+        if (event.getCause() != HangingBreakEvent.RemoveCause.EXPLOSION) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
@@ -53,18 +53,18 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         Entity damager = event.getDamager();
-        if (!isExplodeEntity(damager)) {
+        if (isNotExplodeEntity(damager)) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
-    private static boolean isExplodeEntity(Entity damager) {
-        return damager.getType() == EntityType.CREEPER
-                || damager.getType() == EntityType.WITHER_SKULL
-                || damager.getType() == EntityType.FIREBALL
-                || damager.getType() == EntityType.ENDER_CRYSTAL;
+    private static boolean isNotExplodeEntity(Entity damager) {
+        return damager.getType() != EntityType.CREEPER
+                && damager.getType() != EntityType.WITHER_SKULL
+                && damager.getType() != EntityType.FIREBALL
+                && damager.getType() != EntityType.ENDER_CRYSTAL;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
@@ -73,8 +73,10 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ENDER_DRAGON) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getLocation());
-        checkFlag(dom, Flag.DRAGON_BREAK_BLOCK, event);
+        event.blockList().removeIf(block -> {
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+            return !checkFlag(dom, Flag.DRAGON_BREAK_BLOCK, null);
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // fire_spread
@@ -130,7 +132,23 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.MINECART_TNT && entity.getType() != EntityType.PRIMED_TNT) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getLocation());
+        event.blockList().removeIf(block -> {
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+            return !checkFlag(dom, Flag.TNT_EXPLODE, null);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode - armor stand
+    public void onArmorStandExplodedByTnt(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.ARMOR_STAND) {
+            return;
+        }
+        Entity damager = event.getDamager();
+        if (damager.getType() != EntityType.PRIMED_TNT && damager.getType() != EntityType.MINECART_TNT) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.TNT_EXPLODE, event);
     }
 

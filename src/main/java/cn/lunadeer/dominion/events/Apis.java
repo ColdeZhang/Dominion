@@ -15,6 +15,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class Apis {
     public static boolean canByPass(Player player, DominionDTO dom, MemberDTO prev) {
@@ -82,7 +85,7 @@ public class Apis {
         return false;
     }
 
-    public static boolean checkFlag(DominionDTO dom, Flag flag, Cancellable event) {
+    public static boolean checkFlag(@Nullable DominionDTO dom, @NotNull Flag flag, @Nullable Cancellable event) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -92,7 +95,9 @@ public class Apis {
         if (dom.getFlagValue(flag)) {
             return true;
         }
-        event.setCancelled(true);
+        if (event != null) {
+            event.setCancelled(true);
+        }
         return false;
     }
 }
