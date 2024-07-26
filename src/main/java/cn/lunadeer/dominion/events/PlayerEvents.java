@@ -648,9 +648,6 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // place - item frame
     public void placeItemFrame(HangingPlaceEvent event) {
         Entity entity = event.getEntity();
-        if (entity.getType() != EntityType.ITEM_FRAME && entity.getType() != EntityType.GLOW_ITEM_FRAME) {
-            return;
-        }
         Player player = event.getPlayer();
         if (player == null) {
             return;
