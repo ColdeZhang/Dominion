@@ -31,7 +31,12 @@ public class Apis {
             return true;
         }
         if (prev != null) {
-            return prev.getAdmin();
+            if (prev.getGroupId() == -1) {
+                return prev.getAdmin();
+            } else {
+                GroupDTO group = Cache.instance.getGroup(prev.getGroupId());
+                return group != null && group.getAdmin();
+            }
         }
         return false;
     }
@@ -56,16 +61,13 @@ public class Apis {
             return true;
         }
         if (prev != null) {
-            if (prev.getGroupId() == -1) {
-                if (prev.getFlagValue(flag)) {
+            GroupDTO group = Cache.instance.getGroup(prev.getGroupId());
+            if (prev.getGroupId() != -1 && group != null) {
+                if (group.getFlagValue(flag)) {
                     return true;
                 }
             } else {
-                GroupDTO group = Cache.instance.getGroup(prev.getGroupId());
-                if (group == null) {
-                    return false;
-                }
-                if (group.getFlagValue(flag)) {
+                if (prev.getFlagValue(flag)) {
                     return true;
                 }
             }

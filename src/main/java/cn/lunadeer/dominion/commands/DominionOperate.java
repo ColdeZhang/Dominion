@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
 import static cn.lunadeer.dominion.commands.Apis.*;
+import static cn.lunadeer.dominion.events.Apis.canByPass;
 
 public class DominionOperate {
     /**
@@ -404,22 +405,22 @@ public class DominionOperate {
         }
 
         MemberDTO privilegeDTO = MemberDTO.select(player.getUniqueId(), dominionDTO.getId());
-        if (!player.getUniqueId().equals(dominionDTO.getOwner())) { // 领地所有人可以传送到自己的领地
+        if (!canByPass(player, dominionDTO, privilegeDTO)) {
             if (privilegeDTO == null) {
                 if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
                     Notification.error(sender, "此领地禁止传送");
                     return;
                 }
             } else {
-                if (privilegeDTO.getGroupId() == -1) {
-                    if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
-                        Notification.error(sender, "你不被允许传送到这个领地");
+                GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
+                if (privilegeDTO.getGroupId() != -1 && groupDTO != null) {
+                    if (!groupDTO.getFlagValue(Flag.TELEPORT)) {
+                        Notification.error(sender, "你所在的权限组组不被允许传送到这个领地");
                         return;
                     }
                 } else {
-                    GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
-                    if (!groupDTO.getFlagValue(Flag.TELEPORT)) {
-                        Notification.error(sender, "你所在的权限组组不被允许传送到这个领地");
+                    if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
+                        Notification.error(sender, "你不被允许传送到这个领地");
                         return;
                     }
                 }
