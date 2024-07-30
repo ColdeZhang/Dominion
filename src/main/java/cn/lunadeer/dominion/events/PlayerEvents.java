@@ -291,6 +291,30 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame get）
+    public void removeSomeOnItemFrameByArrow(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ItemFrame)) {
+            return;
+        }
+        ItemFrame itemFrame = (ItemFrame) entity;
+        if (itemFrame.getItem().getType() == Material.AIR) {
+            return;
+        }
+        if (!(event.getDamager() instanceof Arrow)) {
+            return;
+        }
+        Arrow arrow = (Arrow) event.getDamager();
+        if (!(arrow.getShooter() instanceof Player)) {
+            return;
+        }
+        Player bukkitPlayer = (Player) arrow.getShooter();
+        if (hasContainerPermission(bukkitPlayer, itemFrame.getLocation())) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // craft
     public void onCraft(InventoryOpenEvent event) {
         Inventory inv = event.getInventory();

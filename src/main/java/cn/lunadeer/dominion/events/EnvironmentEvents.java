@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -52,11 +53,28 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
-        Entity damager = event.getDamager();
-        if (isNotExplodeEntity(damager)) {
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
+        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - other entity shoot
+    public void removeSomeOnItemFrameByArrow(EntityDamageByEntityEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ItemFrame)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
+        ItemFrame itemFrame = (ItemFrame) entity;
+        if (itemFrame.getItem().getType() == Material.AIR) {
+            return;
+        }
+        if (!(event.getDamager() instanceof Arrow)) {
+            return;
+        }
+        Arrow arrow = (Arrow) event.getDamager();
+        if (arrow.getShooter() instanceof Player) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(itemFrame.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
