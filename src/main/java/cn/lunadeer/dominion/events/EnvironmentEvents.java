@@ -53,24 +53,24 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
+        if (event.getDamager() instanceof Player) {
+            return;
+        }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - other entity shoot
+    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - other projectiles
     public void removeSomeOnItemFrameByArrow(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof ItemFrame)) {
             return;
         }
         ItemFrame itemFrame = (ItemFrame) entity;
-        if (itemFrame.getItem().getType() == Material.AIR) {
+        if (!(event.getDamager() instanceof Projectile)) {
             return;
         }
-        if (!(event.getDamager() instanceof Arrow)) {
-            return;
-        }
-        Arrow arrow = (Arrow) event.getDamager();
+        Projectile arrow = (Projectile) event.getDamager();
         if (arrow.getShooter() instanceof Player) {
             return;
         }
