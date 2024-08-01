@@ -33,7 +33,7 @@ import org.spigotmc.event.entity.EntityMountEvent;
 import static cn.lunadeer.dominion.events.Apis.checkFlag;
 import static cn.lunadeer.dominion.events.Apis.getInvDominion;
 
-public class PlayerEvents implements Listener {
+public class PlayerEvents_1_20_1 implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();

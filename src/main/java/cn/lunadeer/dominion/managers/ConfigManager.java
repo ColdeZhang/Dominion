@@ -91,7 +91,7 @@ public class ConfigManager {
         _fly_permission_nodes = _file.getStringList("FlyPermissionNodes");
         _residence_migration = _file.getBoolean("ResidenceMigration", false);
         saveAll();  // 回写文件 防止文件中的数据不完整
-        Flag.loadFromJson();
+        Flag.loadFromJson();    // 加载 Flag 配置
     }
 
     public void saveAll() {
