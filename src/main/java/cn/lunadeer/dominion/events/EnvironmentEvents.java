@@ -10,7 +10,9 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
@@ -21,7 +23,7 @@ import java.util.Objects;
 import static cn.lunadeer.dominion.events.Apis.checkFlag;
 import static org.bukkit.Material.FARMLAND;
 
-public class EnvironmentEvents_1_20_1 implements Listener {
+public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
@@ -81,8 +83,7 @@ public class EnvironmentEvents_1_20_1 implements Listener {
         return damager.getType() != EntityType.CREEPER
                 && damager.getType() != EntityType.WITHER_SKULL
                 && damager.getType() != EntityType.FIREBALL
-                && damager.getType().getTypeId() != 200;
-        // 200 -> end_crystal
+                && damager.getType() != EntityType.END_CRYSTAL;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
@@ -147,8 +148,7 @@ public class EnvironmentEvents_1_20_1 implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode
     public void onTntExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        // 45 -> minecart_tnt, 20 -> primed_tnt
-        if (entity.getType().getTypeId() != 45 && entity.getType().getTypeId() != 20) {
+        if (entity.getType() != EntityType.TNT_MINECART && entity.getType() != EntityType.TNT) {
             return;
         }
         event.blockList().removeIf(block -> {
@@ -164,8 +164,7 @@ public class EnvironmentEvents_1_20_1 implements Listener {
             return;
         }
         Entity damager = event.getDamager();
-        // 45 -> minecart_tnt, 20 -> primed_tnt
-        if (entity.getType().getTypeId() != 45 && entity.getType().getTypeId() != 20) {
+        if (entity.getType() != EntityType.TNT_MINECART && entity.getType() != EntityType.TNT) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());

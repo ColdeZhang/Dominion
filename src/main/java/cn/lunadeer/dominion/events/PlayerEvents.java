@@ -15,7 +15,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityMountEvent;
+import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -29,7 +32,7 @@ import org.bukkit.material.Colorable;
 import static cn.lunadeer.dominion.events.Apis.checkFlag;
 import static cn.lunadeer.dominion.events.Apis.getInvDominion;
 
-public class PlayerEvents_1_20_1 implements Listener {
+public class PlayerEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player bukkitPlayer = event.getPlayer();
@@ -323,6 +326,19 @@ public class PlayerEvents_1_20_1 implements Listener {
         Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, inv);
         checkFlag(dom, Flag.CRAFT, bukkitPlayer, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // crafter
+    public void onCrafterOpen(InventoryOpenEvent event) {
+        Inventory inv = event.getInventory();
+        if (inv.getType() != InventoryType.CRAFTER) {
+            return;
+        }
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+            return;
+        }
+        DominionDTO dom = getInvDominion(bukkitPlayer, inv);
+        checkFlag(dom, Flag.CRAFTER, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // comparer
@@ -620,7 +636,7 @@ public class PlayerEvents_1_20_1 implements Listener {
             Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
                 if (!success) {
                     Notification.warn(player, "传送失败，你将被传送到复活点");
-                    player.teleportAsync(player.getBedSpawnLocation() == null ?
+                    player.teleport(player.getBedSpawnLocation() == null ?
                                     player.getWorld().getSpawnLocation() :
                                     player.getBedSpawnLocation()
                             , PlayerTeleportEvent.TeleportCause.PLUGIN);

@@ -1,13 +1,24 @@
+
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "cn.lunadeer"
-version = "1.42.9-beta"
+version = "1.43.0-beta"
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+// utf-8
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+}
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven("https://oss.sonatype.org/content/groups/public")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://jitpack.io")
@@ -17,6 +28,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
     compileOnly("us.dynmap:DynmapCoreAPI:3.4")
 
@@ -24,11 +36,19 @@ dependencies {
     implementation("org.yaml:snakeyaml:2.0")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
+tasks {
+    processResources {
+        // replace @version@ in plugin.yml with project version
+        filesMatching("**/plugin.yml") {
+            filter {
+                it.replace("@version@", project.version.toString())
+            }
+        }
+    }
 
-tasks.shadowJar {
-    archiveBaseName.set(rootProject.name)
-    archiveVersion.set(version.toString())
+    shadowJar {
+        archiveClassifier.set("")
+        archiveVersion.set(project.version.toString())
+        dependsOn(processResources)
+    }
 }
