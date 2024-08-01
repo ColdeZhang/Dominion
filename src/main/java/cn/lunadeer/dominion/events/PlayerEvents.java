@@ -636,7 +636,7 @@ public class PlayerEvents implements Listener {
             Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
                 if (!success) {
                     Notification.warn(player, "传送失败，你将被传送到复活点");
-                    player.teleport(player.getBedSpawnLocation() == null ?
+                    player.teleportAsync(player.getBedSpawnLocation() == null ?
                                     player.getWorld().getSpawnLocation() :
                                     player.getBedSpawnLocation()
                             , PlayerTeleportEvent.TeleportCause.PLUGIN);
