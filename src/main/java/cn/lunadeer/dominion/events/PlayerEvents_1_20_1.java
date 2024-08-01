@@ -15,10 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPlaceEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -28,7 +25,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.material.Colorable;
-import org.spigotmc.event.entity.EntityMountEvent;
 
 import static cn.lunadeer.dominion.events.Apis.checkFlag;
 import static cn.lunadeer.dominion.events.Apis.getInvDominion;
@@ -706,10 +702,9 @@ public class PlayerEvents_1_20_1 implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // riding
     public void onRiding(EntityMountEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
-        Player player = (Player) event.getEntity();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getMount().getLocation());
         checkFlag(dom, Flag.RIDING, player, event);
     }

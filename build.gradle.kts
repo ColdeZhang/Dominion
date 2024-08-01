@@ -20,10 +20,15 @@ dependencies {
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
     compileOnly("us.dynmap:DynmapCoreAPI:3.4")
 
-    shadow("cn.lunadeer:MinecraftPluginUtils:1.3.4-SNAPSHOT")
-    shadow("org.yaml:snakeyaml:2.0")
+    implementation("cn.lunadeer:MinecraftPluginUtils:1.3.4-SNAPSHOT")
+    implementation("org.yaml:snakeyaml:2.0")
 }
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks.shadowJar {
+    archiveBaseName.set(rootProject.name)
+    archiveVersion.set(version.toString())
 }

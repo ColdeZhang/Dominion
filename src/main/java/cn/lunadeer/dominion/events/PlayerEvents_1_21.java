@@ -18,13 +18,12 @@ public class PlayerEvents_1_21 extends PlayerEvents_1_20_1 {
     @EventHandler(priority = EventPriority.HIGHEST) // crafter
     public void onCrafterOpen(InventoryOpenEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getType() != InventoryType.CR) {
+        if (inv.getType() != InventoryType.CRAFTER) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, inv);
         checkFlag(dom, Flag.CRAFTER, bukkitPlayer, event);
     }
