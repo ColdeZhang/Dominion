@@ -29,7 +29,7 @@ public class DominionList {
         view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("我的领地"));
         view.addLines(BuildTreeLines(DominionNode.BuildNodeTree(-1, DominionDTO.selectByOwner(player.getUniqueId())), 0));
         List<String> admin_dominions = playerAdminDominions(sender);
-        if (admin_dominions.size() != 0) {
+        if (!admin_dominions.isEmpty()) {
             view.add(Line.create().append(""));
             view.add(Line.create().append(Component.text("--- 以下为你拥有管理员权限的领地 ---", ViewStyles.main_color)));
         }
@@ -43,9 +43,7 @@ public class DominionList {
     public static List<Line> BuildTreeLines(List<DominionNode> dominionTree, Integer depth) {
         List<Line> lines = new ArrayList<>();
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            prefix.append(" | ");
-        }
+        prefix.append(" | ".repeat(Math.max(0, depth)));
         for (DominionNode node : dominionTree) {
             TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + node.getDominion().getName()).build();
             TextComponent delete = Button.createRed("删除").setExecuteCommand("/dominion delete " + node.getDominion().getName()).build();
