@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,8 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.PressurePlate;
+import org.bukkit.material.PressureSensor;
 
 import java.util.Objects;
 
@@ -61,22 +64,21 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - other projectiles
-    public void removeSomeOnItemFrameByArrow(EntityDamageByEntityEvent event) {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof ItemFrame)) {
+    @EventHandler(priority = EventPriority.HIGHEST) // item_frame_proj_damage
+    public void removeSomeOnItemFrameByArrow(HangingBreakByEntityEvent event) {
+        if (event.getCause() != HangingBreakEvent.RemoveCause.ENTITY) {
             return;
         }
-        ItemFrame itemFrame = (ItemFrame) entity;
-        if (!(event.getDamager() instanceof Projectile)) {
+        Entity remover = event.getRemover();
+        if (!(remover instanceof Projectile projectile)) {
             return;
         }
-        Projectile arrow = (Projectile) event.getDamager();
-        if (arrow.getShooter() instanceof Player) {
+        if (!(projectile.getShooter() instanceof Player)) {
+            // 玩家破坏由 玩家 break 权限控制
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(itemFrame.getLocation());
-        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
+        checkFlag(dom, Flag.ITEM_FRAME_PROJ_DAMAGE, event);
     }
 
     private static boolean isNotExplodeEntity(Entity damager) {
@@ -185,6 +187,50 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.TRAMPLE, event);
+    }
+
+    /*
+    TRIG_PRESSURE_PROJ("trig_pressure_proj", "投掷物触发压力板", "投掷物（箭/风弹/雪球）是否可以触发压力板", false, true, true),
+    TRIG_PRESSURE_MOB("trig_pressure_mob", "生物触发压力板", "生物（不包含玩家）是否可以触发压力板", false, true, true),
+    TRIG_PRESSURE_DROP("trig_pressure_drop", "掉落物触发压力板", "掉落物是否可以触发压力板", false, true, true),
+     */
+    @EventHandler(priority = EventPriority.HIGHEST) // trig_pressure_proj
+    public void onPressurePlateTriggeredByProjectile(EntityInteractEvent event) {
+        if (!(event.getEntity() instanceof Projectile)) {
+            return;
+        }
+        Block block = event.getBlock();
+        if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+        checkFlag(dom, Flag.TRIG_PRESSURE_PROJ, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // trig_pressure_mob
+    public void onPressurePlateTriggeredByMob(EntityInteractEvent event) {
+        if (!(event.getEntity() instanceof Mob)) {
+            return;
+        }
+        Block block = event.getBlock();
+        if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+        checkFlag(dom, Flag.TRIG_PRESSURE_MOB, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // trig_pressure_drop
+    public void onPressurePlateTriggeredByDrop(EntityInteractEvent event) {
+        if (!(event.getEntity() instanceof Item)) {
+            return;
+        }
+        Block block = event.getBlock();
+        if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+        checkFlag(dom, Flag.TRIG_PRESSURE_DROP, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // wither_spawn

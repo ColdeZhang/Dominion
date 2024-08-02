@@ -15,10 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityMountEvent;
-import org.bukkit.event.entity.EntityPlaceEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -748,16 +745,10 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // shoot
-    public void onShootArrowSnowball(ProjectileLaunchEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player)) {
+    public void onShootArrowSnowball(ProjectileHitEvent event) {
+        if (!(event.getEntity().getShooter() instanceof Player player)) {
             return;
         }
-        if (event.getEntity().getType() != EntityType.ARROW &&
-                event.getEntity().getType() != EntityType.SNOWBALL &&
-                event.getEntity().getType() != EntityType.TRIDENT) {
-            return;
-        }
-        Player player = (Player) event.getEntity().getShooter();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         checkFlag(dom, Flag.SHOOT, player, event);
     }
