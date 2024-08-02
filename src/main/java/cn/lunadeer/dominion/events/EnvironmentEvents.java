@@ -18,8 +18,6 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.material.PressurePlate;
-import org.bukkit.material.PressureSensor;
 
 import java.util.Objects;
 
@@ -57,7 +55,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
-        if (event.getDamager() instanceof Player) {
+        if (isNotExplodeEntity(event.getDamager())) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
@@ -82,10 +80,13 @@ public class EnvironmentEvents implements Listener {
     }
 
     private static boolean isNotExplodeEntity(Entity damager) {
-        return damager.getType() != EntityType.CREEPER
-                && damager.getType() != EntityType.WITHER_SKULL
-                && damager.getType() != EntityType.FIREBALL
-                && damager.getType() != EntityType.END_CRYSTAL;
+        String materialName = damager.getType().name();
+        return !materialName.equals("creeper")
+                && !materialName.equals("wither_skull")
+                && !materialName.equals("fireball")
+                && !materialName.equals("end_crystal")
+                && !materialName.equals("dragon_fireball")
+                && !materialName.equals("small_fireball");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
@@ -150,7 +151,7 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode
     public void onTntExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        if (entity.getType() != EntityType.TNT_MINECART && entity.getType() != EntityType.TNT) {
+        if (!entity.getType().name().contains("tnt")) {
             return;
         }
         event.blockList().removeIf(block -> {
@@ -165,8 +166,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
-        Entity damager = event.getDamager();
-        if (entity.getType() != EntityType.TNT_MINECART && entity.getType() != EntityType.TNT) {
+        if (!event.getDamager().getType().name().contains("tnt")) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());

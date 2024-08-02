@@ -61,14 +61,13 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // animal_killing
     public void onAnimalKilling(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
+        if (!(event.getDamager() instanceof Player bukkitPlayer)) {
             return;
         }
         // 如果不是动物 则不处理
         if (!(event.getEntity() instanceof Animals)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getDamager();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flag.ANIMAL_KILLING, bukkitPlayer, event);
     }
@@ -78,10 +77,9 @@ public class PlayerEvents implements Listener {
         if (event.getInventory().getType() != InventoryType.ANVIL) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
         checkFlag(dom, Flag.ANVIL, bukkitPlayer, event);
     }
@@ -91,10 +89,9 @@ public class PlayerEvents implements Listener {
         if (event.getInventory().getType() != InventoryType.BEACON) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
         checkFlag(dom, Flag.BEACON, bukkitPlayer, event);
     }
@@ -121,10 +118,9 @@ public class PlayerEvents implements Listener {
         if (event.getInventory().getType() != InventoryType.BREWING) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
         checkFlag(dom, Flag.BREW, bukkitPlayer, event);
     }
@@ -231,10 +227,9 @@ public class PlayerEvents implements Listener {
                 event.getInventory().getType() != InventoryType.SHULKER_BOX) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         if (hasContainerPermission(bukkitPlayer, event.getInventory().getLocation())) {
             return;
         }
@@ -253,10 +248,9 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // container （item frame put）
     public void putSomeOnItemFrame(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
-        if (!(entity instanceof ItemFrame)) {
+        if (!(entity instanceof ItemFrame itemFrame)) {
             return;
         }
-        ItemFrame itemFrame = (ItemFrame) entity;
         if (itemFrame.getItem().getType() != Material.AIR) {
             return;
         }
@@ -270,17 +264,15 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // container （item frame get）
     public void removeSomeOnItemFrame(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof ItemFrame)) {
+        if (!(entity instanceof ItemFrame itemFrame)) {
             return;
         }
-        ItemFrame itemFrame = (ItemFrame) entity;
         if (itemFrame.getItem().getType() == Material.AIR) {
             return;
         }
-        if (!(event.getDamager() instanceof Player)) {
+        if (!(event.getDamager() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getDamager();
         if (hasContainerPermission(bukkitPlayer, entity.getLocation())) {
             return;
         }
@@ -290,21 +282,18 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // container （item frame get）
     public void removeSomeOnItemFrameByArrow(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof ItemFrame)) {
+        if (!(entity instanceof ItemFrame itemFrame)) {
             return;
         }
-        ItemFrame itemFrame = (ItemFrame) entity;
         if (itemFrame.getItem().getType() == Material.AIR) {
             return;
         }
-        if (!(event.getDamager() instanceof Arrow)) {
+        if (!(event.getDamager() instanceof Arrow arrow)) {
             return;
         }
-        Arrow arrow = (Arrow) event.getDamager();
-        if (!(arrow.getShooter() instanceof Player)) {
+        if (!(arrow.getShooter() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) arrow.getShooter();
         if (hasContainerPermission(bukkitPlayer, itemFrame.getLocation())) {
             return;
         }
@@ -317,10 +306,9 @@ public class PlayerEvents implements Listener {
         if (inv.getType() != InventoryType.WORKBENCH) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, inv);
         checkFlag(dom, Flag.CRAFT, bukkitPlayer, event);
     }
@@ -425,13 +413,12 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // egg
     public void onThrowingEgg(ProjectileLaunchEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player)) {
+        if (!(event.getEntity().getShooter() instanceof Player player)) {
             return;
         }
         if (event.getEntity().getType() != EntityType.EGG) {
             return;
         }
-        Player player = (Player) event.getEntity().getShooter();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         checkFlag(dom, Flag.EGG, player, event);
     }
@@ -441,23 +428,21 @@ public class PlayerEvents implements Listener {
         if (event.getInventory().getType() != InventoryType.ENCHANTING) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
         checkFlag(dom, Flag.ENCHANT, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_pearl
     public void onThrowingEndPearl(ProjectileLaunchEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player)) {
+        if (!(event.getEntity().getShooter() instanceof Player player)) {
             return;
         }
         if (event.getEntity().getType() != EntityType.ENDER_PEARL) {
             return;
         }
-        Player player = (Player) event.getEntity().getShooter();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         checkFlag(dom, Flag.ENDER_PEARL, player, event);
     }
@@ -542,10 +527,9 @@ public class PlayerEvents implements Listener {
         ) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
         checkFlag(dom, Flag.HOPPER, bukkitPlayer, event);
     }
@@ -563,10 +547,9 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // item_frame_interactive
     public void onItemFrameInteractive(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
-        if (!(entity instanceof ItemFrame)) {
+        if (!(entity instanceof ItemFrame itemFrame)) {
             return;
         }
-        ItemFrame itemFrame = (ItemFrame) entity;
         if (itemFrame.getItem().getType() == Material.AIR) {
             // 为空则当作容器处理见 putSomeOnItemFrame
             return;
@@ -596,7 +579,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // monster_killing
     public void onMonsterKilling(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
+        if (!(event.getDamager() instanceof Player bukkitPlayer)) {
             return;
         }
         // 如果不是怪物 则不处理
@@ -604,7 +587,6 @@ public class PlayerEvents implements Listener {
         if (!(entity instanceof Monster)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getDamager();
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.MONSTER_KILLING, bukkitPlayer, event);
     }
@@ -758,20 +740,18 @@ public class PlayerEvents implements Listener {
         if (event.getInventory().getType() != InventoryType.MERCHANT) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        Player bukkitPlayer = (Player) event.getPlayer();
         DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
         checkFlag(dom, Flag.TRADE, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // vehicle_destroy
     public void onVehicleDestroy(VehicleDestroyEvent event) {
-        if (!(event.getAttacker() instanceof Player)) {
+        if (!(event.getAttacker() instanceof Player player)) {
             return;
         }
-        Player player = (Player) event.getAttacker();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getVehicle().getLocation());
         checkFlag(dom, Flag.VEHICLE_DESTROY, player, event);
     }
@@ -792,13 +772,12 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)  // villager_killing
     public void onVillagerKilling(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
+        if (!(event.getDamager() instanceof Player player)) {
             return;
         }
         if (!(event.getEntity() instanceof Villager)) {
             return;
         }
-        Player player = (Player) event.getDamager();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flag.VILLAGER_KILLING, player, event);
     }
