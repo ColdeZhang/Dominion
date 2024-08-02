@@ -81,12 +81,10 @@ public class EnvironmentEvents implements Listener {
 
     private static boolean isNotExplodeEntity(Entity damager) {
         String materialName = damager.getType().name();
-        return !materialName.equals("creeper")
-                && !materialName.equals("wither_skull")
-                && !materialName.equals("fireball")
-                && !materialName.equals("end_crystal")
-                && !materialName.equals("dragon_fireball")
-                && !materialName.equals("small_fireball");
+        return !materialName.contains("CREEPER")
+                && !materialName.contains("WITHER_SKULL")
+                && !materialName.contains("FIREBALL")
+                && !materialName.contains("CRYSTAL");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
@@ -151,7 +149,8 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode
     public void onTntExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        if (!entity.getType().name().contains("tnt")) {
+        XLogger.debug("EntityExplodeEvent#name(): " + entity.getType().name());
+        if (!entity.getType().name().contains("TNT")) {
             return;
         }
         event.blockList().removeIf(block -> {
@@ -166,7 +165,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
-        if (!event.getDamager().getType().name().contains("tnt")) {
+        if (!event.getDamager().getType().name().contains("TNT")) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
