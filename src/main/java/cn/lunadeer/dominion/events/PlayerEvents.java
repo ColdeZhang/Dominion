@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.minecraftpluginutils.Common;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import org.bukkit.Location;
@@ -316,7 +317,8 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // crafter
     public void onCrafterOpen(InventoryOpenEvent event) {
         Inventory inv = event.getInventory();
-        if (inv.getType() != InventoryType.CRAFTER) {
+        // InventoryType.CRAFTER;
+        if (!inv.getType().name().contains("CRAFTER")) {
             return;
         }
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
@@ -615,10 +617,16 @@ public class PlayerEvents implements Listener {
             Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
                 if (!success) {
                     Notification.warn(player, "传送失败，你将被传送到复活点");
-                    player.teleportAsync(player.getBedSpawnLocation() == null ?
-                                    player.getWorld().getSpawnLocation() :
-                                    player.getBedSpawnLocation()
-                            , PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    Location bed = player.getBedSpawnLocation();
+                    if (bed == null) {
+                        bed = player.getWorld().getSpawnLocation();
+                    }
+                    if (Common.isPaper()) {
+                        player.teleportAsync(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    } else {
+                        player.teleport(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                    }
+
                 }
             });
         }

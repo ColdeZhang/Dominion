@@ -1,11 +1,10 @@
-
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "cn.lunadeer"
-version = "1.44.2-beta"
+version = "1.44.3-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
