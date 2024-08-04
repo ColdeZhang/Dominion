@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.events;
+package cn.lunadeer.dominion.events_v1_21;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -80,11 +80,12 @@ public class EnvironmentEvents implements Listener {
     }
 
     private static boolean isNotExplodeEntity(Entity damager) {
-        String materialName = damager.getType().name();
-        return !materialName.contains("CREEPER")
-                && !materialName.contains("WITHER_SKULL")
-                && !materialName.contains("FIREBALL")
-                && !materialName.contains("CRYSTAL");
+        return damager.getType() != EntityType.CREEPER
+                && damager.getType() != EntityType.WITHER_SKULL
+                && damager.getType() != EntityType.FIREBALL
+                && damager.getType() != EntityType.END_CRYSTAL
+                && damager.getType() != EntityType.SMALL_FIREBALL
+                && damager.getType() != EntityType.DRAGON_FIREBALL;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
@@ -149,8 +150,7 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode
     public void onTntExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
-        XLogger.debug("EntityExplodeEvent#name(): " + entity.getType().name());
-        if (!entity.getType().name().contains("TNT")) {
+        if (entity.getType() != EntityType.TNT_MINECART && entity.getType() != EntityType.TNT) {
             return;
         }
         event.blockList().removeIf(block -> {
@@ -165,7 +165,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
-        if (!event.getDamager().getType().name().contains("TNT")) {
+        if (entity.getType() != EntityType.TNT_MINECART && entity.getType() != EntityType.TNT) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());

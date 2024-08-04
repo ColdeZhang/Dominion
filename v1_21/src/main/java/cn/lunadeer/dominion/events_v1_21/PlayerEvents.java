@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.events;
+package cn.lunadeer.dominion.events_v1_21;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;

@@ -1,8 +1,6 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.events.EnvironmentEvents;
-import cn.lunadeer.dominion.events.PlayerEvents;
-import cn.lunadeer.dominion.events.SelectPointEvents;
+import cn.lunadeer.dominion.events.RegisterEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.utils.DynmapConnect;
@@ -41,9 +39,7 @@ public final class Dominion extends JavaPlugin {
         AutoClean.run();
         Cache.instance = new Cache();
 
-        Bukkit.getPluginManager().registerEvents(new PlayerEvents(), this);
-        Bukkit.getPluginManager().registerEvents(new EnvironmentEvents(), this);
-        Bukkit.getPluginManager().registerEvents(new SelectPointEvents(), this);
+        new RegisterEvents(this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
