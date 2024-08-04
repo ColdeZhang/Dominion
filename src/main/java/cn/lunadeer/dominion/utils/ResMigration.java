@@ -1,14 +1,12 @@
 package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.Residence.Message;
 import cn.lunadeer.dominion.utils.Residence.Permission;
 import cn.lunadeer.dominion.utils.Residence.Residence;
 import cn.lunadeer.dominion.utils.Residence.SaveFile;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
@@ -58,19 +56,13 @@ public class ResMigration {
     }
 
     private static ResidenceNode parseDominion(String name, World world, Residence res, SaveFile save) {
-        OfflinePlayer bukkitOwner = Dominion.instance.getServer().getOfflinePlayer(UUID.fromString(res.Permissions.OwnerUUID));
-        PlayerDTO owner = PlayerDTO.get(bukkitOwner);
-        if (owner == null) {
-            XLogger.warn("Owner not found: " + res.Permissions.OwnerUUID);
-            return null;
-        }
         String[] loc = res.Areas.values().toArray()[0].toString().split(":");
         if (loc.length != 6) {
             XLogger.warn("Invalid location: " + res.Areas.get("main"));
             return null;
         }
         ResidenceNode dominionNode = new ResidenceNode();
-        dominionNode.owner = owner.getUuid();
+        dominionNode.owner = UUID.fromString(res.Permissions.OwnerUUID);
         dominionNode.world = world;
         dominionNode.name = name;
         dominionNode.joinMessage = save.Messages.get(res.Messages).EnterMessage;
