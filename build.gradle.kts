@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "1.44.4-beta"
+version = "1.44.6-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -15,7 +15,7 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-subprojects {
+allprojects {
     apply(plugin = "java")
     apply(plugin = "com.github.johnrengelman.shadow")
 
@@ -37,19 +37,34 @@ subprojects {
         implementation("org.yaml:snakeyaml:2.0")
     }
 
-
-    tasks.withType<ProcessResources> {
+    tasks.processResources {
         // replace @version@ in plugin.yml with project version
         filesMatching("**/plugin.yml") {
             filter {
-                it.replace("@version@", project.version.toString())
+                it.replace("@version@", rootProject.version.toString())
             }
         }
     }
 
-    tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    tasks.shadowJar {
         archiveClassifier.set("")
         archiveVersion.set(project.version.toString())
         dependsOn(tasks.withType<ProcessResources>())
     }
+}
+
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":v1_20_1"))
+    implementation(project(":v1_21"))
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+    archiveVersion.set(project.version.toString())
+}
+
+tasks.register("buildPlugin") {
+    dependsOn(tasks.getByName("clean"))
+    dependsOn(tasks.getByName("shadowJar"))
 }

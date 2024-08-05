@@ -359,7 +359,7 @@ public class PlayerEvents implements Listener {
         if (block == null) {
             return;
         }
-        if (!Tag.DOORS.isTagged(block.getType())) {
+        if (!Tag.DOORS.isTagged(block.getType()) && !Tag.TRAPDOORS.isTagged(block.getType())) {
             return;
         }
         Player player = event.getPlayer();

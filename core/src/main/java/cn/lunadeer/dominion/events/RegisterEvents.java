@@ -18,11 +18,13 @@ public class RegisterEvents {
         try {
             switch (version) {
                 case v1_21:
+                    XLogger.debug("Load API version: 1.21");
                     registerEvents("cn.lunadeer.dominion.events_v1_21.PlayerEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_21.EnvironmentEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_21.SelectPointEvents");
                     break;
                 case v1_20_1:
+                    XLogger.debug("Load API version: 1.20.1");
                     registerEvents("cn.lunadeer.dominion.events_v1_20_1.PlayerEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_20_1.EnvironmentEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_20_1.SelectPointEvents");

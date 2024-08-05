@@ -52,8 +52,8 @@ public class PlayerEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
         if (!checkFlag(dom, Flag.ANCHOR, bukkitPlayer, null)) {
-            if (bukkitPlayer.getBedSpawnLocation() != null) {
-                event.setRespawnLocation(bukkitPlayer.getBedSpawnLocation());
+            if (bukkitPlayer.getRespawnLocation() != null) {
+                event.setRespawnLocation(bukkitPlayer.getRespawnLocation());
             } else {
                 event.setRespawnLocation(bukkitPlayer.getWorld().getSpawnLocation());
             }
@@ -355,7 +355,7 @@ public class PlayerEvents implements Listener {
         if (block == null) {
             return;
         }
-        if (!Tag.DOORS.isTagged(block.getType())) {
+        if (!Tag.DOORS.isTagged(block.getType()) && !Tag.TRAPDOORS.isTagged(block.getType())) {
             return;
         }
         Player player = event.getPlayer();
@@ -617,7 +617,7 @@ public class PlayerEvents implements Listener {
             Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
                 if (!success) {
                     Notification.warn(player, "传送失败，你将被传送到复活点");
-                    Location bed = player.getBedSpawnLocation();
+                    Location bed = player.getRespawnLocation();
                     if (bed == null) {
                         bed = player.getWorld().getSpawnLocation();
                     }
