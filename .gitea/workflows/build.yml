@@ -13,18 +13,16 @@ jobs:
         uses: https://ssl.lunadeer.cn:14446/actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: "Set up Maven"
-        uses: https://ssl.lunadeer.cn:14446/actions/setup-maven@v4
-      - name: "Set up JDK 17"
+      - name: "Set up JDK 21"
         uses: https://ssl.lunadeer.cn:14446/actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'zulu'
-          cache: maven
-      - name: "Build with Maven"
-        run: mvn -B package --file pom.xml
+          cache: gradle
+      - name: "Build with Gradle"
+        run: ./gradlew buildPlugin
       - name: "Copy jar to staging"
-        run: mkdir staging && cp target/*.jar staging
+        run: mkdir staging && cp build/libs/*.jar staging/
       - name: "Build & test"
         run: |
           echo "done!"

@@ -1,0 +1,21 @@
+name: Dominion
+version: @version@
+main: cn.lunadeer.dominion.Dominion
+api-version: '1.20'
+load: STARTUP
+folia-supported: true
+softdepend:
+  - Vault
+  - dynmap
+commands:
+  Dominion:
+    description: 领地插件命令
+    usage: /dominion <cmd>
+    aliases: [ dominion, dom ]
+permissions:
+  dominion.admin:
+    description: 领地插件管理员权限
+    default: op
+  dominion.default:
+    description: 领地插件用户权限
+    default: true
