@@ -370,12 +370,14 @@ public class DominionController {
         }
         DominionDTO.delete(dominion);
         // 退还经济
-        int count = 0;
+        int count;
         if (Dominion.config.getEconomyOnlyXZ()) {
+            count = dominion.getSquare();
             for (DominionDTO sub_dominion : sub_dominions) {
                 count += sub_dominion.getSquare();
             }
         } else {
+            count = dominion.getVolume();
             for (DominionDTO sub_dominion : sub_dominions) {
                 count += sub_dominion.getVolume();
             }

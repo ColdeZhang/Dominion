@@ -38,7 +38,7 @@ public class BukkitPlayerOperator implements AbstractOperator {
         if (isConsole()) {
             return true;
         } else {
-            return ((Player) player).isOp();
+            return ((Player) player).isOp() || player.hasPermission("dominion.admin");
         }
     }
 

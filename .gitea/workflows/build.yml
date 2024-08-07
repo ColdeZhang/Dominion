@@ -1,4 +1,4 @@
-name: Java CI-CD with Maven
+name: Java CI-CD with Gradle
 
 on:
   push:
