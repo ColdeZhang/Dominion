@@ -31,10 +31,10 @@ public class SysConfig {
 
         Line spawnProtect = Line.create()
                 .append(Component.text("    出生点保护范围"));
-        if (Dominion.config.getLimitSizeX() == -1) {
+        if (Dominion.config.getSpawnProtection() == -1) {
             spawnProtect.append(Component.text("无限制")).append(Button.create("设置数值").setExecuteCommand("/dominion set_config spawn_protection 10 " + page).build());
         } else {
-            spawnProtect.append(NumChanger.create(Dominion.config.getLimitSizeX(), "/dominion set_config spawn_protection").setPageNumber(page).build());
+            spawnProtect.append(NumChanger.create(Dominion.config.getSpawnProtection(), "/dominion set_config spawn_protection").setPageNumber(page).build());
             spawnProtect.append(Button.create("设置无限制").setExecuteCommand("/dominion set_config spawn_protection -1 " + page).build());
         }
         view.add(spawnProtect);
