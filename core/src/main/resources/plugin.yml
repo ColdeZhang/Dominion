@@ -2,11 +2,11 @@ name: Dominion
 version: @version@
 main: cn.lunadeer.dominion.Dominion
 api-version: '1.20'
-load: STARTUP
 folia-supported: true
 softdepend:
   - Vault
   - dynmap
+  - PlaceholderAPI
 commands:
   Dominion:
     description: 领地插件命令

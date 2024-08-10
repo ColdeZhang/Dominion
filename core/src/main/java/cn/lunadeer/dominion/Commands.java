@@ -4,10 +4,7 @@ import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.cuis.*;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.tuis.AllDominion;
-import cn.lunadeer.dominion.tuis.Menu;
-import cn.lunadeer.dominion.tuis.MigrateList;
-import cn.lunadeer.dominion.tuis.SysConfig;
+import cn.lunadeer.dominion.tuis.*;
 import cn.lunadeer.dominion.tuis.dominion.DominionList;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
@@ -136,6 +133,12 @@ public class Commands implements TabExecutor {
                 break;
             case "env_setting":
                 EnvSetting.show(sender, args);
+                break;
+            case "use_title":
+                Title.use_title(sender, args);
+                break;
+            case "title_list":
+                TitleList.show(sender, args);
                 break;
             // ---===  Sub Command  ===---
             case "member":

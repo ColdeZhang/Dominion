@@ -1,9 +1,6 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.ResMigration;
@@ -14,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -184,8 +182,12 @@ public class Cache {
             if (groupId == null) {
                 id_groups = new ConcurrentHashMap<>();
                 List<GroupDTO> groups = GroupDTO.selectAll();
+                List<PlayerDTO> players = PlayerDTO.all();
                 for (GroupDTO group : groups) {
                     id_groups.put(group.getId(), group);
+                }
+                for (PlayerDTO player : players) {
+                    map_player_using_group_title_id.put(player.getUuid(), player.getUsingGroupTitleID());
                 }
             } else {
                 GroupDTO group = GroupDTO.select(groupId);
@@ -363,6 +365,20 @@ public class Cache {
         return player_uuid_to_member.get(player_uuid).get(dominion.getId());
     }
 
+    public List<GroupDTO> getBelongGroupsOf(UUID plauer_uuid) {
+        List<GroupDTO> groups = new ArrayList<>();
+        if (!player_uuid_to_member.containsKey(plauer_uuid)) return groups;
+        for (MemberDTO member : player_uuid_to_member.get(plauer_uuid).values()) {
+            if (member.getGroupId() != -1) {
+                GroupDTO group = getGroup(member.getGroupId());
+                if (group != null) {
+                    groups.add(group);
+                }
+            }
+        }
+        return groups;
+    }
+
     public DominionDTO getDominion(Integer id) {
         return id_dominions.get(id);
     }
@@ -434,6 +450,8 @@ public class Cache {
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
 
     private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
+
+    private final Map<UUID, Integer> map_player_using_group_title_id = new HashMap<>();
 
     private static class WorldDominionTreeSectored {
     /*
@@ -545,5 +563,16 @@ public class Cache {
                 world_dominion_tree_sector_d.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
             }
         }
+    }
+
+    public @Nullable GroupDTO getPlayerUsingGroupTitle(UUID uuid) {
+        if (map_player_using_group_title_id.containsKey(uuid)) {
+            return getGroup(map_player_using_group_title_id.get(uuid));
+        }
+        return null;
+    }
+
+    public void updatePlayerUsingGroupTitle(UUID uuid, Integer groupId) {
+        map_player_using_group_title_id.put(uuid, groupId);
     }
 }

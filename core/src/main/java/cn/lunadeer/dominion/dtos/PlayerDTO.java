@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
@@ -65,7 +66,8 @@ public class PlayerDTO {
             UUID uuid = UUID.fromString(rs.getString("uuid"));
             String lastKnownName = rs.getString("last_known_name");
             Long lastJoinAt = rs.getTimestamp("last_join_at").getTime();
-            PlayerDTO player = new PlayerDTO(id, uuid, lastKnownName, lastJoinAt);
+            Integer usingGroupTitleID = rs.getInt("using_group_title_id");
+            PlayerDTO player = new PlayerDTO(id, uuid, lastKnownName, lastJoinAt, usingGroupTitleID);
             players.add(player);
         }
         return players;
@@ -74,15 +76,15 @@ public class PlayerDTO {
     public static PlayerDTO select(UUID uuid) {
         String sql = "SELECT * FROM player_name WHERE uuid = ?;";
         List<PlayerDTO> players = query(sql, uuid.toString());
-        if (players.size() == 0) return null;
-        return players.get(0);
+        if (players.isEmpty()) return null;
+        return players.getFirst();
     }
 
     public static PlayerDTO select(String name) {
         String sql = "SELECT * FROM player_name WHERE last_known_name = ?;";
         List<PlayerDTO> players = query(sql, name);
-        if (players.size() == 0) return null;
-        return players.get(0);
+        if (players.isEmpty()) return null;
+        return players.getFirst();
     }
 
     public static List<PlayerDTO> search(String name) {
@@ -100,17 +102,19 @@ public class PlayerDTO {
         Field uuid = new Field("uuid", player.getUuid().toString());
         Field lastKnownName = new Field("last_known_name", player.getLastKnownName());
         Field lastJoinAt = new Field("last_join_at", Timestamp.valueOf(LocalDateTime.now()));
+        Field usingGroupTitleID = new Field("using_group_title_id", player.getUsingGroupTitleID());
         InsertRow insertRow = new InsertRow()
                 .table("player_name")
                 .field(uuid)
                 .field(lastKnownName)
                 .field(lastJoinAt)
+                .field(usingGroupTitleID)
                 .returningAll()
                 .onConflictOverwrite(new Field("id", null));
         try (ResultSet rs = insertRow.execute()) {
             List<PlayerDTO> players = getDTOFromRS(rs);
-            if (players.size() == 0) return null;
-            return players.get(0);
+            if (players.isEmpty()) return null;
+            return players.getFirst();
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("插入玩家信息失败: ", e, insertRow.toString());
             return null;
@@ -121,31 +125,34 @@ public class PlayerDTO {
         Field lastKnownName = new Field("last_known_name", player.getLastKnownName());
         Field uuid = new Field("uuid", player.getUuid().toString());
         Field lastJoinAt = new Field("last_join_at", Timestamp.valueOf(LocalDateTime.now()));
+        Field usingGroupTitleID = new Field("using_group_title_id", player.getUsingGroupTitleID());
         UpdateRow updateRow = new UpdateRow()
                 .table("player_name")
                 .field(lastKnownName)
                 .field(lastJoinAt)
+                .field(usingGroupTitleID)
                 .where("uuid = ?", uuid.value)
                 .returningAll(uuid);
         try (ResultSet rs = updateRow.execute()) {
             List<PlayerDTO> players = getDTOFromRS(rs);
-            if (players.size() == 0) return null;
-            return players.get(0);
+            if (players.isEmpty()) return null;
+            return players.getFirst();
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("更新玩家信息失败: ", e, updateRow.toString());
             return null;
         }
     }
 
-    private PlayerDTO(Integer id, UUID uuid, String lastKnownName, Long lastJoinAt) {
+    private PlayerDTO(Integer id, UUID uuid, String lastKnownName, Long lastJoinAt, Integer using_group_title_id) {
         this.id = id;
         this.uuid = uuid;
         this.lastKnownName = lastKnownName;
         this.lastJoinAt = lastJoinAt;
+        this.using_group_title_id = using_group_title_id;
     }
 
     private PlayerDTO(UUID uuid, String lastKnownName, Long lastJoinAt) {
-        this(null, uuid, lastKnownName, lastJoinAt);
+        this(null, uuid, lastKnownName, lastJoinAt, -1);
     }
 
     public Integer getId() {
@@ -180,8 +187,19 @@ public class PlayerDTO {
         this.lastJoinAt = lastJoinAt;
     }
 
+    public Integer getUsingGroupTitleID() {
+        return using_group_title_id;
+    }
+
+    public void setUsingGroupTitleID(Integer usingGroupTitleID) {
+        this.using_group_title_id = usingGroupTitleID;
+        update(this);
+        Cache.instance.updatePlayerUsingGroupTitle(uuid, usingGroupTitleID);
+    }
+
     private Integer id;
     private UUID uuid;
     private String lastKnownName;
     private Long lastJoinAt;
+    private Integer using_group_title_id;
 }

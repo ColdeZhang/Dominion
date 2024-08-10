@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "2.0.2-beta"
+version = "2.1.0-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -27,11 +27,13 @@ allprojects {
         maven("https://jitpack.io")
         maven("https://repo.mikeprimm.com/")
         maven("https://ssl.lunadeer.cn:14454/repository/maven-snapshots/")
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
 
     dependencies {
         compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
+        compileOnly("me.clip:placeholderapi:2.11.6")
 
         implementation("cn.lunadeer:MinecraftPluginUtils:1.3.4-SNAPSHOT")
         implementation("org.yaml:snakeyaml:2.0")

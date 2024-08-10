@@ -1,11 +1,13 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import net.kyori.adventure.text.Component;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ public class GroupDTO {
     Field domID = new Field("dom_id", FieldType.INT);
     Field name = new Field("name", FieldType.STRING);
     Field admin = new Field("admin", FieldType.BOOLEAN);
+    Field name_colored = new Field("name_colored", FieldType.STRING);
+
     private final Map<Flag, Boolean> flags = new HashMap<>();
 
     public Integer getId() {
@@ -33,6 +37,14 @@ public class GroupDTO {
         return (String) name.value;
     }
 
+    public Component getNameColoredComponent() {
+        return ColorParser.getComponentType((String) name_colored.value);
+    }
+
+    public String getNameColoredBukkit() {
+        return ColorParser.getBukkitType((String) name_colored.value);
+    }
+
     public Boolean getAdmin() {
         return (Boolean) admin.value;
     }
@@ -43,8 +55,9 @@ public class GroupDTO {
     }
 
     public GroupDTO setName(String name) {
-        this.name.value = name;
-        UpdateRow updateRow = new UpdateRow().field(this.name);
+        this.name_colored.value = name;
+        this.name.value = ColorParser.getPlainText(name);
+        UpdateRow updateRow = new UpdateRow().field(this.name).field(this.name_colored);
         return doUpdate(updateRow);
     }
 
@@ -67,15 +80,16 @@ public class GroupDTO {
         insertRow.table("dominion_group")
                 .field(group.domID)
                 .field(group.name)
-                .field(group.admin);
+                .field(group.admin)
+                .field(group.name_colored);
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             insertRow.field(new Field(f.getFlagName(), dominionDTO.getFlagValue(f)));
         }
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
-            if (groups.size() == 0) return null;
-            Cache.instance.loadGroups(groups.get(0).getId());
-            return groups.get(0);
+            if (groups.isEmpty()) return null;
+            Cache.instance.loadGroups(groups.getFirst().getId());
+            return groups.getFirst();
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("创建权限组失败: ", e, "");
             return null;
@@ -99,15 +113,15 @@ public class GroupDTO {
     public static GroupDTO select(Integer id) {
         String sql = "SELECT * FROM dominion_group WHERE id = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, id));
-        if (groups.size() == 0) return null;
-        return groups.get(0);
+        if (groups.isEmpty()) return null;
+        return groups.getFirst();
     }
 
     public static GroupDTO select(Integer domID, String name) {
         String sql = "SELECT * FROM dominion_group WHERE dom_id = ? AND name = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, domID, name));
-        if (groups.size() == 0) return null;
-        return groups.get(0);
+        if (groups.isEmpty()) return null;
+        return groups.getFirst();
     }
 
     public static List<GroupDTO> selectAll() {
@@ -122,19 +136,21 @@ public class GroupDTO {
 
     private GroupDTO(String name, Integer domID) {
         this.domID.value = domID;
-        this.name.value = name;
+        this.name.value = ColorParser.getPlainText(name);
+        this.name_colored.value = name;
         this.admin.value = false;
         for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
             flags.put(f, f.getDefaultValue());
         }
     }
 
-    private GroupDTO(Integer id, Integer domID, String name, Boolean admin, Map<Flag, Boolean> flags) {
+    private GroupDTO(Integer id, Integer domID, String name, Boolean admin, Map<Flag, Boolean> flags, String nameColored) {
         this.id.value = id;
         this.domID.value = domID;
         this.name.value = name;
         this.admin.value = admin;
         this.flags.putAll(flags);
+        this.name_colored.value = nameColored;
     }
 
     private static List<GroupDTO> getDTOFromRS(ResultSet rs) {
@@ -151,7 +167,8 @@ public class GroupDTO {
                         rs.getInt("dom_id"),
                         rs.getString("name"),
                         rs.getBoolean("admin"),
-                        flags
+                        flags,
+                        rs.getString("name_colored")
                 );
                 list.add(group);
             }
@@ -167,9 +184,9 @@ public class GroupDTO {
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
-            if (groups.size() == 0) return null;
+            if (groups.isEmpty()) return null;
             Cache.instance.loadGroups((Integer) id.value);
-            return groups.get(0);
+            return groups.getFirst();
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新权限组失败: ", e, "");
             return null;

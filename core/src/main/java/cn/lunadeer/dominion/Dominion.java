@@ -3,6 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.events.RegisterEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
+import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.utils.DynmapConnect;
 import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.minecraftpluginutils.*;
@@ -38,6 +39,10 @@ public final class Dominion extends JavaPlugin {
         new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceHolderApi(this);
+        }
 
         new RegisterEvents(this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());

@@ -70,7 +70,7 @@ public class GroupList {
             Button add = Button.createGreen("+")
                     .setHoverText("添加成员到权限组 " + group.getName())
                     .setExecuteCommand("/dominion group select_member " + dominion.getName() + " " + group.getName() + " " + page);
-            line.append(del.build()).append(edit.build()).append(group.getName()).append(add.build());
+            line.append(del.build()).append(edit.build()).append(group.getNameColoredComponent()).append(add.build());
             view.add(line);
             List<MemberDTO> players = MemberDTO.selectByGroupId(group.getId());
             XLogger.debug("players: " + players.size());

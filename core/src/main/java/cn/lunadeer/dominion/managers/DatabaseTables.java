@@ -231,5 +231,16 @@ public class DatabaseTables {
                 DatabaseManager.handleDatabaseError("迁移 player_privilege 到 dominion_member 失败", e, sql);
             }
         }
+
+        // 2.1.0-beta add group name colored
+        if (!Common.IsFieldExist("dominion_group", "name_colored")) {
+            TableColumn dominion_group_name_colored = new TableColumn("name_colored", FieldType.STRING, false, false, true, false, "'未命名'");
+            new AddColumn(dominion_group_name_colored).table("dominion_group").ifNotExists().execute();
+            String copy_sql = "UPDATE dominion_group SET name_colored = name;";
+            DatabaseManager.instance.query(copy_sql);
+
+            TableColumn player_name_using_group_title_id = new TableColumn("using_group_title_id", FieldType.INT, false, false, true, false, -1);
+            new AddColumn(player_name_using_group_title_id).table("player_name").ifNotExists().execute();
+        }
     }
 }
