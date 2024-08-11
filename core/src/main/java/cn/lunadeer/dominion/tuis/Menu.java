@@ -61,8 +61,8 @@ public class Menu {
         view.title("Dominion 领地系统");
         view.navigator(Line.create().append("主菜单"));
         view.add(create);
-        if (Dominion.config.getGroupTitleEnable()) view.add(list);
-        view.add(title);
+        view.add(list);
+        if (Dominion.config.getGroupTitleEnable()) view.add(title);
         view.add(template);
         view.add(help);
         view.add(link);
