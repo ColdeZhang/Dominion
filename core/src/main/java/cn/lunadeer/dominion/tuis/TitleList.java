@@ -27,7 +27,7 @@ public class TitleList {
         ListView view = ListView.create(10, "/dominion title_list");
 
         view.title("我可使用的权限组称号");
-        view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("称号"));
+        view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("权限组称号列表"));
 
         List<GroupDTO> groups = Cache.instance.getBelongGroupsOf(player.getUniqueId());
         GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
