@@ -159,13 +159,10 @@ public class EnvironmentEvents implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode - armor stand
+    @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode - entity
     public void onArmorStandExplodedByTnt(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity harmer = event.getDamager();
-        if (entity.getType() != EntityType.ARMOR_STAND) {
-            return;
-        }
         if (harmer.getType() != EntityType.TNT_MINECART && harmer.getType() != EntityType.TNT) {
             return;
         }
