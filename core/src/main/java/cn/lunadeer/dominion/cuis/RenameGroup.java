@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
+import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -30,8 +31,8 @@ public class RenameGroup {
         public void handleData(String input) {
             XLogger.debug("renameGroupCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            GroupController.renameGroup(operator, dominionName, oldName, input);
-            GroupSetting.show(sender, dominionName, input);
+            GroupController.renameGroup(operator, dominionName, oldName, ColorParser.getPlainText(input), input);
+            GroupSetting.show(sender, dominionName, ColorParser.getPlainText(input));
         }
     }
 

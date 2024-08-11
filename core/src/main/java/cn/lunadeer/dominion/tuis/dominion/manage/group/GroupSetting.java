@@ -45,7 +45,7 @@ public class GroupSetting {
         }
 
         ListView view = ListView.create(10, "/dominion group setting " + dominion.getName() + " " + group.getName());
-        view.title("权限组 " + group.getNameColoredBukkit() + " 管理");
+        view.title(Component.text("权限组 ").append(group.getNameColoredComponent()).append(Component.text(" 管理")));
         view.navigator(
                 Line.create()
                         .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())

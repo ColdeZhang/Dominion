@@ -9,7 +9,7 @@ import static cn.lunadeer.dominion.controllers.Apis.notOwner;
 
 public class GroupController {
 
-    public static void createGroup(AbstractOperator operator, String domName, String groupName) {
+    public static void createGroup(AbstractOperator operator, String domName, String groupName, String nameColored) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建权限组 %s 失败", groupName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建权限组 %s 成功", groupName);
         if (groupName.contains(" ")) {
@@ -30,7 +30,7 @@ public class GroupController {
             operator.setResponse(FAIL.addMessage("领地 %s 已存在名为 %s 的权限组", domName, groupName));
             return;
         }
-        group = GroupDTO.create(groupName, dominion);
+        group = GroupDTO.create(nameColored, dominion);
         if (group == null) {
             operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
             return;
@@ -96,7 +96,7 @@ public class GroupController {
         operator.setResponse(SUCCESS);
     }
 
-    public static void renameGroup(AbstractOperator operator, String domName, String oldName, String newName) {
+    public static void renameGroup(AbstractOperator operator, String domName, String oldName, String newName, String nameColored) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "重命名权限组 %s 为 %s 失败", oldName, newName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "重命名权限组 %s 为 %s 成功", oldName, newName);
         if (newName.contains(" ")) {
@@ -117,7 +117,7 @@ public class GroupController {
             operator.setResponse(FAIL.addMessage("领地 %s 不存在名为 %s 的权限组", domName, oldName));
             return;
         }
-        group = group.setName(newName);
+        group = group.setName(nameColored);
         if (group == null) {
             operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
             return;

@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.SelectMember;
+import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ public class Group {
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             String dominionName = args[2];
             String groupName = args[3];
-            GroupController.createGroup(operator, dominionName, groupName);
+            GroupController.createGroup(operator, dominionName, ColorParser.getPlainText(groupName), groupName);
             GroupList.show(sender, dominionName);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
@@ -90,7 +91,7 @@ public class Group {
             String dominionName = args[2];
             String oldGroupName = args[3];
             String newGroupName = args[4];
-            GroupController.renameGroup(operator, dominionName, oldGroupName, newGroupName);
+            GroupController.renameGroup(operator, dominionName, oldGroupName, ColorParser.getPlainText(newGroupName), newGroupName);
             GroupSetting.show(sender, dominionName, newGroupName);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

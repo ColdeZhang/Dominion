@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -32,13 +33,14 @@ public class TitleList {
         GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
 
         for (GroupDTO group : groups) {
+            DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
             Line line = Line.create();
             if (using != null && using.getId().equals(group.getId())) {
                 line.append(Button.createRed("卸下").setExecuteCommand("/dominion use_title -1").build());
             } else {
                 line.append(Button.createGreen("使用").setExecuteCommand("/dominion use_title " + group.getId()).build());
             }
-            line.append(group.getNameColoredComponent());
+            line.append(group.getNameColoredComponent()).append("来自领地：" + dominion.getName());
             view.add(line);
         }
 
