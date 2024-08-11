@@ -566,6 +566,9 @@ public class Cache {
     }
 
     public @Nullable GroupDTO getPlayerUsingGroupTitle(UUID uuid) {
+        if (!Dominion.config.getGroupTitleEnable()) {
+            return null;
+        }
         if (map_player_using_group_title_id.containsKey(uuid)) {
             return getGroup(map_player_using_group_title_id.get(uuid));
         }

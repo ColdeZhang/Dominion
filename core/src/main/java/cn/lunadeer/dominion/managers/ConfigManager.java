@@ -90,6 +90,9 @@ public class ConfigManager {
         }
         _fly_permission_nodes = _file.getStringList("FlyPermissionNodes");
         _residence_migration = _file.getBoolean("ResidenceMigration", false);
+        _group_title_enable = _file.getBoolean("GroupTitle.Enable", false);
+        _group_title_prefix = _file.getString("GroupTitle.Prefix", "&#ffffff[");
+        _group_title_suffix = _file.getString("GroupTitle.Suffix", "&#ffffff]");
         saveAll();  // 回写文件 防止文件中的数据不完整
         Flag.loadFromJson();    // 加载 Flag 配置
     }
@@ -121,6 +124,9 @@ public class ConfigManager {
         _file.set("Economy.Refund", _economy_refund);
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
         _file.set("ResidenceMigration", _residence_migration);
+        _file.set("GroupTitle.Enable", _group_title_enable);
+        _file.set("GroupTitle.Prefix", _group_title_prefix);
+        _file.set("GroupTitle.Suffix", _group_title_suffix);
         _plugin.saveConfig();
     }
 
@@ -416,6 +422,36 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public Boolean getGroupTitleEnable() {
+        return _group_title_enable;
+    }
+
+    public void setGroupTitleEnable(Boolean group_title_enable) {
+        _group_title_enable = group_title_enable;
+        _file.set("GroupTitle.Enable", group_title_enable);
+        _plugin.saveConfig();
+    }
+
+    public String getGroupTitlePrefix() {
+        return _group_title_prefix;
+    }
+
+    public void setGroupTitlePrefix(String group_title_prefix) {
+        _group_title_prefix = group_title_prefix;
+        _file.set("GroupTitle.Prefix", group_title_prefix);
+        _plugin.saveConfig();
+    }
+
+    public String getGroupTitleSuffix() {
+        return _group_title_suffix;
+    }
+
+    public void setGroupTitleSuffix(String group_title_suffix) {
+        _group_title_suffix = group_title_suffix;
+        _file.set("GroupTitle.Suffix", group_title_suffix);
+        _plugin.saveConfig();
+    }
+
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;
@@ -457,4 +493,8 @@ public class ConfigManager {
     private List<String> _fly_permission_nodes;
     private Boolean _residence_migration;
     private Integer _spawn_protection;
+
+    private Boolean _group_title_enable;
+    private String _group_title_prefix;
+    private String _group_title_suffix;
 }

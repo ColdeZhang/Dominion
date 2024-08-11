@@ -4,7 +4,6 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;

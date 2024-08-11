@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -38,11 +39,13 @@ public class GroupDTO {
     }
 
     public Component getNameColoredComponent() {
-        return ColorParser.getComponentType((String) name_colored.value);
+        String with_pre_suf = Dominion.config.getGroupTitlePrefix() + (String) name_colored.value + Dominion.config.getGroupTitleSuffix();
+        return ColorParser.getComponentType(with_pre_suf);
     }
 
     public String getNameColoredBukkit() {
-        return ColorParser.getBukkitType((String) name_colored.value);
+        String with_pre_suf = Dominion.config.getGroupTitlePrefix() + (String) name_colored.value + Dominion.config.getGroupTitleSuffix();
+        return ColorParser.getBukkitType(with_pre_suf);
     }
 
     public Boolean getAdmin() {

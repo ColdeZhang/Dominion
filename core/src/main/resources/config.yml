@@ -53,6 +53,13 @@ FlyPermissionNodes:
 # 是否允许玩家从 Residence 迁移领地数据
 ResidenceMigration: false
 
+# 权限组称号 - 使用权限组当作称号(需要PlaceholderAPI插件)
+# Papi: %dominion_group_title%
+GroupTitle:
+  Enable: false
+  Prefix: "&#ffffff["
+  Suffix: "&#ffffff]"
+
 BlueMap: false
 Dynmap: false
 

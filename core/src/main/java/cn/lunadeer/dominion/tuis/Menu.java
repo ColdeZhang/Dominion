@@ -30,6 +30,9 @@ public class Menu {
         Line list = Line.create()
                 .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
                 .append("查看我的领地");
+        Line title = Line.create()
+                .append(Button.create("称号列表").setExecuteCommand("/dominion title_list").build())
+                .append("查看/使用权限组称号");
         Line template = Line.create()
                 .append(Button.create("模板列表").setExecuteCommand("/dominion template list").build())
                 .append("成员权限模板列表");
@@ -55,13 +58,14 @@ public class Menu {
                 .append(Button.create("重载配置").setExecuteCommand("/dominion reload_config").build())
                 .append("重载配置文件");
         ListView view = ListView.create(10, "/dominion menu");
-        view.title("Dominion 领地系统")
-                .navigator(Line.create().append("主菜单"))
-                .add(create)
-                .add(list)
-                .add(template)
-                .add(help)
-                .add(link);
+        view.title("Dominion 领地系统");
+        view.navigator(Line.create().append("主菜单"));
+        view.add(create);
+        if (Dominion.config.getGroupTitleEnable()) view.add(list);
+        view.add(title);
+        view.add(template);
+        view.add(help);
+        view.add(link);
         if (Dominion.config.getResidenceMigration()) {
             view.add(migrate);
         }
