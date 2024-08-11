@@ -29,28 +29,34 @@ public class Title {
             return;
         }
         try {
+            int id = Integer.parseInt(args[1]);
             PlayerDTO player = PlayerDTO.get(bukkit_player);
-            GroupDTO group = Cache.instance.getGroup(Integer.parseInt(args[1]));
-            if (group == null) {
-                Notification.error(sender, "权限组不存在");
-                return;
+            if (id == -1) {
+                player.setUsingGroupTitleID(id);
+                Notification.info(sender, "成功卸下权限组称号");
+            } else {
+                GroupDTO group = Cache.instance.getGroup(id);
+                if (group == null) {
+                    Notification.error(sender, "权限组不存在");
+                    return;
+                }
+                DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
+                if (dominion == null) {
+                    Notification.error(sender, "权限组 %s 所属领地不存在", group.getName());
+                    return;
+                }
+                MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
+                if (member == null) {
+                    Notification.error(sender, "你不是 %s 的成员，无法使用其称号", dominion.getName());
+                    return;
+                }
+                if (!Objects.equals(member.getGroupId(), group.getId())) {
+                    Notification.error(sender, "你不属于权限组 %s，无法使用其称号", group.getName());
+                    return;
+                }
+                player.setUsingGroupTitleID(group.getId());
+                Notification.info(sender, "成功使用权限组 %s 称号", group.getName());
             }
-            DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
-            if (dominion == null) {
-                Notification.error(sender, "权限组 %s 所属领地不存在", group.getName());
-                return;
-            }
-            MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
-            if (member == null) {
-                Notification.error(sender, "你不是 %s 的成员，无法使用其称号", dominion.getName());
-                return;
-            }
-            if (!Objects.equals(member.getGroupId(), group.getId())) {
-                Notification.error(sender, "你不属于权限组 %s，无法使用其称号", group.getName());
-                return;
-            }
-            player.setUsingGroupTitleID(group.getId());
-            Notification.info(sender, "成功使用权限组 %s 称号", group.getName());
             int page = getPage(args, 2);
             TitleList.show(sender, page);
         } catch (Exception e) {
