@@ -100,6 +100,10 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
             return;
         }
+        if (dominion.getOwner().equals(player.getUuid())) {
+            operator.setResponse(FAIL.addMessage("玩家 %s 是领地 %s 的拥有者，不可以被添加为成员", player_name, dominionName));
+            return;
+        }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege != null) {
             operator.setResponse(FAIL.addMessage("玩家 %s 已经是领地 %s 的成员", player_name, dominionName));
