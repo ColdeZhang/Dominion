@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "2.1.12-beta"
+version = "2.1.13-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -20,8 +20,8 @@ allprojects {
     apply(plugin = "com.github.johnrengelman.shadow")
 
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
         maven("https://oss.sonatype.org/content/groups/public")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://jitpack.io")
@@ -35,7 +35,7 @@ allprojects {
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
         compileOnly("me.clip:placeholderapi:2.11.6")
 
-        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.4-SNAPSHOT")
+        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.7-SNAPSHOT")
         implementation("org.yaml:snakeyaml:2.0")
     }
 
