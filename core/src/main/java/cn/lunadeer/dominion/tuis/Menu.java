@@ -36,9 +36,9 @@ public class Menu {
         Line template = Line.create()
                 .append(Button.create("模板列表").setExecuteCommand("/dominion template list").build())
                 .append("成员权限模板列表");
-        Line help = Line.create()
-                .append(Button.create("指令帮助").setExecuteCommand("/dominion help").build())
-                .append("查看指令帮助");
+//        Line help = Line.create()
+//                .append(Button.create("指令帮助").setExecuteCommand("/dominion help").build())
+//                .append("查看指令帮助");
         Line link = Line.create()
                 .append(Button.create("使用文档").setOpenURL("https://ssl.lunadeer.cn:14448/doc/23/").build())
                 .append("在浏览器中打开使用文档");
@@ -64,7 +64,7 @@ public class Menu {
         view.add(list);
         if (Dominion.config.getGroupTitleEnable()) view.add(title);
         view.add(template);
-        view.add(help);
+//        view.add(help);
         view.add(link);
         if (Dominion.config.getResidenceMigration()) {
             view.add(migrate);
