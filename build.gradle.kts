@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "2.1.9-beta"
+version = "2.1.12-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -40,6 +40,7 @@ allprojects {
     }
 
     tasks.processResources {
+        outputs.upToDateWhen { false }
         // replace @version@ in plugin.yml with project version
         filesMatching("**/plugin.yml") {
             filter {
@@ -66,7 +67,7 @@ tasks.shadowJar {
     archiveVersion.set(project.version.toString())
 }
 
-tasks.register("buildPlugin") {
-    dependsOn(tasks.getByName("clean"))
-    dependsOn(tasks.getByName("shadowJar"))
+tasks.register("buildPlugin") { // <<<< RUN THIS TASK TO BUILD PLUGIN
+    dependsOn(tasks.clean)
+    dependsOn(tasks.shadowJar)
 }

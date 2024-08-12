@@ -39,12 +39,20 @@ public class GroupDTO {
     }
 
     public Component getNameColoredComponent() {
-        String with_pre_suf = Dominion.config.getGroupTitlePrefix() + (String) name_colored.value + Dominion.config.getGroupTitleSuffix();
+        String with_pre_suf = "&#ffffff" +
+                Dominion.config.getGroupTitlePrefix() +
+                (String) name_colored.value +
+                "&#ffffff" +
+                Dominion.config.getGroupTitleSuffix();
         return ColorParser.getComponentType(with_pre_suf);
     }
 
     public String getNameColoredBukkit() {
-        String with_pre_suf = Dominion.config.getGroupTitlePrefix() + (String) name_colored.value + Dominion.config.getGroupTitleSuffix();
+        String with_pre_suf =  "&#ffffff" +
+                Dominion.config.getGroupTitlePrefix() +
+                (String) name_colored.value +
+                "&#ffffff" +
+                Dominion.config.getGroupTitleSuffix();
         return ColorParser.getBukkitType(with_pre_suf);
     }
 

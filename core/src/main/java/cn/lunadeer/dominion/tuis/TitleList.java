@@ -32,6 +32,13 @@ public class TitleList {
         List<GroupDTO> groups = Cache.instance.getBelongGroupsOf(player.getUniqueId());
         GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
 
+        // 将其拥有的所有领地的权限组称号都加入列表 - 领地所有者可以使用其领地的任意权限组称号
+        List<DominionDTO> dominions = DominionDTO.selectByOwner(player.getUniqueId());
+        for (DominionDTO dominion : dominions) {
+            List<GroupDTO> groupsOfDom = GroupDTO.selectByDominionId(dominion.getId());
+            groups.addAll(groupsOfDom);
+        }
+
         for (GroupDTO group : groups) {
             DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
             Line line = Line.create();

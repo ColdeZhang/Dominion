@@ -55,10 +55,11 @@ ResidenceMigration: false
 
 # 权限组称号 - 使用权限组当作称号(需要PlaceholderAPI插件)
 # Papi: %dominion_group_title%
+# 前后缀如需要加颜色请使用这种格式 &#ffffff
 GroupTitle:
   Enable: false
-  Prefix: "&#ffffff["
-  Suffix: "&#ffffff]"
+  Prefix: "["
+  Suffix: "]"
 
 BlueMap: false
 Dynmap: false

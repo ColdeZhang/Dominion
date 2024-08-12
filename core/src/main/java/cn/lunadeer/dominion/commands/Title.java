@@ -45,14 +45,16 @@ public class Title {
                     Notification.error(sender, "权限组 %s 所属领地不存在", group.getName());
                     return;
                 }
-                MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
-                if (member == null) {
-                    Notification.error(sender, "你不是 %s 的成员，无法使用其称号", dominion.getName());
-                    return;
-                }
-                if (!Objects.equals(member.getGroupId(), group.getId())) {
-                    Notification.error(sender, "你不属于权限组 %s，无法使用其称号", group.getName());
-                    return;
+                if (!dominion.getOwner().equals(bukkit_player.getUniqueId())) {
+                    MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
+                    if (member == null) {
+                        Notification.error(sender, "你不是 %s 的成员，无法使用其称号", dominion.getName());
+                        return;
+                    }
+                    if (!Objects.equals(member.getGroupId(), group.getId())) {
+                        Notification.error(sender, "你不属于权限组 %s，无法使用其称号", group.getName());
+                        return;
+                    }
                 }
                 player.setUsingGroupTitleID(group.getId());
                 Notification.info(sender, "成功使用权限组 %s 称号", group.getName());
