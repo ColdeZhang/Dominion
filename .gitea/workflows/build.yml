@@ -21,8 +21,6 @@ jobs:
           cache: gradle
       - name: "Build with Gradle"
         run: |
-          echo "proxy is ${{ vars.DEERCLOUD_PROXY }}"
-          export https_proxy=${{ vars.DEERCLOUD_PROXY }}
           ./gradlew buildPlugin
       - name: "Copy jar to staging"
         run: mkdir staging && cp build/libs/*.jar staging/
