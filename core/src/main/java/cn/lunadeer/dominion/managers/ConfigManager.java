@@ -7,6 +7,7 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.File;
 import java.util.List;
 
 public class ConfigManager {
@@ -21,6 +22,7 @@ public class ConfigManager {
         _plugin.reloadConfig();
         _file = _plugin.getConfig();
         _debug = _file.getBoolean("Debug", false);
+        _timer = _file.getBoolean("Timer", false);
         XLogger.setDebug(_debug);
         _db_type = _file.getString("Database.Type", "sqlite");
         _db_host = _file.getString("Database.Host", "localhost");
@@ -98,35 +100,65 @@ public class ConfigManager {
     }
 
     public void saveAll() {
+        // 删除旧文件
+        new File(_plugin.getDataFolder(), "config.yml").delete();
+        // 保存新文件
+        _plugin.saveDefaultConfig();
+        // 重新加载
+        _plugin.reloadConfig();
+        _file = _plugin.getConfig();
+
+        // 保存配置
+        _file.set("Database.Type", _db_type);
+        _file.set("Database.Host", _db_host);
+        _file.set("Database.Port", _db_port);
+        _file.set("Database.Name", _db_name);
+        _file.set("Database.User", _db_user);
+        _file.set("Database.Pass", _db_pass);
+
         _file.set("AutoCreateRadius", _auto_create_radius);
+
         _file.set("Limit.SpawnProtection", _spawn_protection);
+        _file.set("Limit.MinY", _limit_min_y);
+        _file.set("Limit.MaxY", _limit_max_y);
         _file.set("Limit.SizeX", _limit_size_x);
         _file.set("Limit.SizeY", _limit_size_y);
         _file.set("Limit.SizeZ", _limit_size_z);
-        _file.set("BlueMap", _blue_map);
-        _file.set("Dynmap", _dynmap);
-        _file.set("AutoCleanAfterDays", _auto_clean_after_days);
-        _file.set("Limit.MinY", _limit_min_y);
-        _file.set("Limit.MaxY", _limit_max_y);
         _file.set("Limit.Amount", _limit_amount);
         _file.set("Limit.Depth", _limit_depth);
         _file.set("Limit.Vert", _limit_vert);
-        _file.set("Limit.OpByPass", _limit_op_bypass);
         _file.set("Limit.WorldBlackList", _world_black_list);
-        _file.set("CheckUpdate", _check_update);
+        _file.set("Limit.OpByPass", _limit_op_bypass);
+
         _file.set("Teleport.Enable", _tp_enable);
         _file.set("Teleport.Delay", _tp_delay);
         _file.set("Teleport.CoolDown", _tp_cool_down);
+
+        _file.set("AutoCleanAfterDays", _auto_clean_after_days);
+
         _file.set("Tool", _tool);
+
         _file.set("Economy.Enable", _economy_enable);
         _file.set("Economy.Price", _economy_price);
         _file.set("Economy.OnlyXZ", _economy_only_xz);
         _file.set("Economy.Refund", _economy_refund);
+
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
+
         _file.set("ResidenceMigration", _residence_migration);
+
         _file.set("GroupTitle.Enable", _group_title_enable);
         _file.set("GroupTitle.Prefix", _group_title_prefix);
         _file.set("GroupTitle.Suffix", _group_title_suffix);
+
+        _file.set("BlueMap", _blue_map);
+        _file.set("Dynmap", _dynmap);
+
+        _file.set("CheckUpdate", _check_update);
+
+        _file.set("Debug", _debug);
+        _file.set("Timer", _timer);
+
         _plugin.saveConfig();
     }
 
@@ -139,6 +171,10 @@ public class ConfigManager {
         _file.set("Debug", debug);
         _plugin.saveConfig();
         XLogger.setDebug(debug);
+    }
+
+    public Boolean TimerEnabled() {
+        return _timer;
     }
 
     public String getDbType() {
@@ -455,6 +491,7 @@ public class ConfigManager {
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;
+    private Boolean _timer;
 
     private String _db_type;
     private String _db_host;

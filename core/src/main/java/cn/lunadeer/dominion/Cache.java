@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.ResMigration;
+import cn.lunadeer.minecraftpluginutils.AutoTimer;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -213,51 +214,53 @@ public class Cache {
      * @return 玩家当前所在领地
      */
     public DominionDTO getPlayerCurrentDominion(Player player) {
-        Integer last_in_dom_id = player_current_dominion_id.get(player.getUniqueId());
-        DominionDTO last_dominion = null;
-        if (last_in_dom_id != null) {
-            last_dominion = id_dominions.get(last_in_dom_id);
-        }
-        if (isInDominion(last_dominion, player.getLocation())) {
-            if (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).size() == 0) {
-                // 如果玩家仍在领地内，且领地没有子领地，则直接返回
-                if (recheckPlayerState) {
-                    lightOrNot(player, last_dominion);
-                    flyOrNot(player, last_dominion);
-                    recheckPlayerState = false;
+        try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
+            Integer last_in_dom_id = player_current_dominion_id.get(player.getUniqueId());
+            DominionDTO last_dominion = null;
+            if (last_in_dom_id != null) {
+                last_dominion = id_dominions.get(last_in_dom_id);
+            }
+            if (isInDominion(last_dominion, player.getLocation())) {
+                if (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).isEmpty()) {
+                    // 如果玩家仍在领地内，且领地没有子领地，则直接返回
+                    if (recheckPlayerState) {
+                        lightOrNot(player, last_dominion);
+                        flyOrNot(player, last_dominion);
+                        recheckPlayerState = false;
+                    }
+                    return last_dominion;
                 }
+            }
+            DominionDTO current_dominion = dominion_trees.getLocInDominionDTO(player.getLocation());
+            int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
+            int current_dom_id = current_dominion == null ? -1 : current_dominion.getId();
+            if (last_dom_id == current_dom_id) {
                 return last_dominion;
             }
-        }
-        DominionDTO current_dominion = dominion_trees.getLocInDominionDTO(player.getLocation());
-        int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
-        int current_dom_id = current_dominion == null ? -1 : current_dominion.getId();
-        if (last_dom_id == current_dom_id) {
-            return last_dominion;
-        }
-        if (last_dom_id != -1) {
-            String msg = last_dominion.getLeaveMessage();
-            msg = msg.replace("${DOM_NAME}", last_dominion.getName());
-            Notification.actionBar(player, msg);
-        }
-        if (current_dom_id != -1) {
-            String msg = current_dominion.getJoinMessage();
-            msg = msg.replace("${DOM_NAME}", current_dominion.getName());
-            Notification.actionBar(player, msg);
-        }
+            if (last_dom_id != -1) {
+                String msg = last_dominion.getLeaveMessage();
+                msg = msg.replace("${DOM_NAME}", last_dominion.getName());
+                Notification.actionBar(player, msg);
+            }
+            if (current_dom_id != -1) {
+                String msg = current_dominion.getJoinMessage();
+                msg = msg.replace("${DOM_NAME}", current_dominion.getName());
+                Notification.actionBar(player, msg);
+            }
 
-        lightOrNot(player, current_dominion);   // 发光检查
-        flyOrNot(player, current_dominion);     // 飞行检查
-        if (current_dominion == null) {
-            player_current_dominion_id.put(player.getUniqueId(), null);
-            return null;
+            lightOrNot(player, current_dominion);   // 发光检查
+            flyOrNot(player, current_dominion);     // 飞行检查
+            if (current_dominion == null) {
+                player_current_dominion_id.put(player.getUniqueId(), null);
+                return null;
+            }
+            player_current_dominion_id.put(player.getUniqueId(), current_dominion.getId());
+            // show border
+            if (current_dominion.getFlagValue(Flag.SHOW_BORDER)) {
+                Particle.showBorder(player, current_dominion);
+            }
+            return current_dominion;
         }
-        player_current_dominion_id.put(player.getUniqueId(), current_dominion.getId());
-        // show border
-        if (current_dominion.getFlagValue(Flag.SHOW_BORDER)) {
-            Particle.showBorder(player, current_dominion);
-        }
-        return current_dominion;
     }
 
     /**
@@ -466,11 +469,13 @@ public class Cache {
         private ConcurrentHashMap<String, List<DominionNode>> world_dominion_tree_sector_d; // x <= 0, z <= 0
 
         public DominionDTO getLocInDominionDTO(@NotNull Location loc) {
-            List<DominionNode> nodes = getNodes(loc);
-            if (nodes == null) return null;
-            if (nodes.isEmpty()) return null;
-            DominionNode dominionNode = getLocInDominionNode(nodes, loc);
-            return dominionNode == null ? null : dominionNode.getDominion();
+            try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
+                List<DominionNode> nodes = getNodes(loc);
+                if (nodes == null) return null;
+                if (nodes.isEmpty()) return null;
+                DominionNode dominionNode = getLocInDominionNode(nodes, loc);
+                return dominionNode == null ? null : dominionNode.getDominion();
+            }
         }
 
 

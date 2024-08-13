@@ -85,8 +85,8 @@ public class DominionDTO {
         }
         String sql = "SELECT * FROM dominion WHERE id = ? AND id > 0;";
         List<DominionDTO> dominions = query(sql, id);
-        if (dominions.size() == 0) return null;
-        return dominions.get(0);
+        if (dominions.isEmpty()) return null;
+        return dominions.getFirst();
     }
 
     public static List<DominionDTO> selectByParentId(String world, Integer parentId) {
@@ -105,8 +105,8 @@ public class DominionDTO {
     public static DominionDTO select(String name) {
         String sql = "SELECT * FROM dominion WHERE name = ? AND id > 0;";
         List<DominionDTO> dominions = query(sql, name);
-        if (dominions.size() == 0) return null;
-        return dominions.get(0);
+        if (dominions.isEmpty()) return null;
+        return dominions.getFirst();
     }
 
     public static DominionDTO insert(DominionDTO dominion) {
@@ -125,8 +125,8 @@ public class DominionDTO {
         try (ResultSet rs = insert.execute()) {
             Cache.instance.loadDominions();
             List<DominionDTO> dominions = getDTOFromRS(rs);
-            if (dominions.size() == 0) return null;
-            return dominions.get(0);
+            if (dominions.isEmpty()) return null;
+            return dominions.getFirst();
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("数据库操作失败: ", e, insert.toString());
             return null;
@@ -224,9 +224,9 @@ public class DominionDTO {
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
             List<DominionDTO> dominions = getDTOFromRS(rs);
-            if (dominions.size() == 0) return null;
+            if (dominions.isEmpty()) return null;
             Cache.instance.loadDominions((Integer) id.value);
-            return dominions.get(0);
+            return dominions.getFirst();
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("更新领地信息失败: ", e, updateRow.toString());
             return null;

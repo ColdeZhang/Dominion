@@ -67,3 +67,5 @@ Dynmap: false
 CheckUpdate: true
 
 Debug: false
+
+Timer: false  # 性能测试计时器

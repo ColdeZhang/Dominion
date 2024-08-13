@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align: center;">
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/03/28/6604f0cec0f0e.png" alt="" width="70%">
 
@@ -38,8 +38,9 @@
 - 领地区域可视化；
 - 管理员可在游戏内使用TUI配置领地系统；
 - 支持[从 Residence 迁移](https://ssl.lunadeer.cn:14448/doc/73/)领地数据（1.33.7+）；
+- 超高性能（一个坐标在10127个领地内的搜索平均耗时不超过0.2ms，仅占用1tick的不到0.4%时间）
 
-<div align="center">
+<div style="text-align: center;">
 
 创建领地
 
@@ -53,6 +54,9 @@
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debec11dad.gif" alt="" width="60%">
 
+高性能
+
+<img src="https://ssl.lunadeer.cn:14437/i/2024/08/13/66bad56cc9fac.png" alt="" width="60%">
 
 </div>
 
