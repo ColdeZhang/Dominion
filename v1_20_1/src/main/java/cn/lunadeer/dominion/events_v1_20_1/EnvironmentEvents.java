@@ -49,6 +49,22 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - item frame
+    public void onItemFrameShot(ProjectileHitEvent event) {
+        Entity hit = event.getHitEntity();
+        if (hit == null) {
+            return;
+        }
+        if (event.getEntity().getShooter() instanceof Player) {
+            return;
+        }
+        if (!(hit instanceof Hanging)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(hit.getLocation());
+        checkFlag(dom, Flag.CREEPER_EXPLODE, event);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - armor stand
     public void onArmorStandExploded(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();

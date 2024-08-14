@@ -26,7 +26,7 @@ public enum Flag {
     CONTAINER("container", "一般容器", "包含：箱子/木桶/潜影盒/盔甲架/展示框", false, false, true),
     CRAFT("craft", "使用工作台", "是否可以使用工作台", false, false, true),
     CRAFTER("crafter", "合成器", "是否可以修改自动合成器", false, false, true),
-    CREEPER_EXPLODE("creeper_explode", "实体爆炸", "包含：苦力怕/凋零头颅/末影水晶/火球", false, true, true),
+    CREEPER_EXPLODE("creeper_explode", "生物破坏", "包含：苦力怕/凋零头颅/末影水晶/火球爆炸等", false, true, true),
     COMPARER("comparer", "比较器交互", "是否可以修改比较器状态", false, false, true),
     DOOR("door", "门交互", "是否可以使用各种材质的门（包括活板门）", false, false, true),
     DRAGON_BREAK_BLOCK("dragon_break_block", "末影龙破坏方块", "末影龙冲撞是否可以破坏方块", false, true, true),
