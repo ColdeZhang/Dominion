@@ -7,6 +7,8 @@ import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
+import cn.lunadeer.minecraftpluginutils.databse.DatabaseType;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
@@ -121,6 +123,14 @@ public class Operator {
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, "正在重新加载配置文件...");
             Dominion.config.reload();
+            DatabaseManager.instance.reConnection(
+                    DatabaseType.valueOf(Dominion.config.getDbType().toUpperCase()),
+                    Dominion.config.getDbHost(),
+                    Dominion.config.getDbPort(),
+                    Dominion.config.getDbName(),
+                    Dominion.config.getDbUser(),
+                    Dominion.config.getDbPass()
+            );
             Notification.info(sender, "配置文件已重新加载");
         });
     }
