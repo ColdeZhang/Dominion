@@ -40,7 +40,7 @@
 - 支持[从 Residence 迁移](https://ssl.lunadeer.cn:14448/doc/73/)领地数据（1.33.7+）；
 - 超高性能（一个坐标在10127个领地内的搜索平均耗时不超过0.2ms，仅占用1tick的不到0.4%时间）
 
-<div style="text-align: center;">
+<div align="center">
 
 创建领地
 
