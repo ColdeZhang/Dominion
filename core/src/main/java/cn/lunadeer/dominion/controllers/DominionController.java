@@ -103,7 +103,7 @@ public class DominionController {
         }
         // 检查领地数量是否达到上限
         if (amountNotValid(operator)) {
-            operator.setResponse(FAIL.addMessage("你的领地数量已达上限(%d个)", Dominion.config.getLimitAmount()));
+            operator.setResponse(FAIL.addMessage("你的领地数量已达上限(%d个)", Dominion.config.getLimitAmount(operator.getPlayer())));
             return;
         }
         int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
@@ -169,7 +169,7 @@ public class DominionController {
         }
         // 检查经济
         if (!skipEco) {
-            if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS)) {
+            if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ(operator.getPlayer()) ? dominion.getSquare() : dominion.getVolume(), true, FAIL, SUCCESS)) {
                 return;
             }
         }
@@ -274,7 +274,7 @@ public class DominionController {
         }
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功扩展领地 %s %d格", dominion_name, size);
         // 检查经济
-        if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ() ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
+        if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ(operator.getPlayer()) ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
                 , true, FAIL, SUCCESS)) return;
         // 显示粒子效果
         dominion = dominion.setXYZ(newCords);
@@ -326,7 +326,7 @@ public class DominionController {
         }
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "成功缩小领地 %s %d格", dominion_name, size);
         // 退还经济
-        if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ() ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
+        if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ(operator.getPlayer()) ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
                 , false, FAIL, SUCCESS)) return;
         // 显示粒子效果
         dominion = dominion.setXYZ(newCords);
@@ -377,7 +377,7 @@ public class DominionController {
         DominionDTO.delete(dominion);
         // 退还经济
         int count;
-        if (Dominion.config.getEconomyOnlyXZ()) {
+        if (Dominion.config.getEconomyOnlyXZ(operator.getPlayer())) {
             count = dominion.getSquare();
             for (DominionDTO sub_dominion : sub_dominions) {
                 count += sub_dominion.getSquare();
@@ -720,24 +720,24 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("领地的任意一边长度不得小于4"));
             return true;
         }
-        if (x_length > Dominion.config.getLimitSizeX() && Dominion.config.getLimitSizeX() > 0) {
-            operator.setResponse(FAIL.addMessage("领地X方向长度不能超过 %d", Dominion.config.getLimitSizeX()));
+        if (x_length > Dominion.config.getLimitSizeX(operator.getPlayer()) && Dominion.config.getLimitSizeX(operator.getPlayer()) > 0) {
+            operator.setResponse(FAIL.addMessage("领地X方向长度不能超过 %d", Dominion.config.getLimitSizeX(operator.getPlayer())));
             return true;
         }
-        if (y_length > Dominion.config.getLimitSizeY() && Dominion.config.getLimitSizeY() > 0) {
-            operator.setResponse(FAIL.addMessage("领地Y方向高度不能超过 %d", Dominion.config.getLimitSizeY()));
+        if (y_length > Dominion.config.getLimitSizeY(operator.getPlayer()) && Dominion.config.getLimitSizeY(operator.getPlayer()) > 0) {
+            operator.setResponse(FAIL.addMessage("领地Y方向高度不能超过 %d", Dominion.config.getLimitSizeY(operator.getPlayer())));
             return true;
         }
-        if (z_length > Dominion.config.getLimitSizeZ() && Dominion.config.getLimitSizeZ() > 0) {
-            operator.setResponse(FAIL.addMessage("领地Z方向长度不能超过 %d", Dominion.config.getLimitSizeZ()));
+        if (z_length > Dominion.config.getLimitSizeZ(operator.getPlayer()) && Dominion.config.getLimitSizeZ(operator.getPlayer()) > 0) {
+            operator.setResponse(FAIL.addMessage("领地Z方向长度不能超过 %d", Dominion.config.getLimitSizeZ(operator.getPlayer())));
             return true;
         }
-        if (y2 > Dominion.config.getLimitMaxY()) {
-            operator.setResponse(FAIL.addMessage("领地Y坐标不能超过 %d", Dominion.config.getLimitMaxY()));
+        if (y2 > Dominion.config.getLimitMaxY(operator.getPlayer())) {
+            operator.setResponse(FAIL.addMessage("领地Y坐标不能超过 %d", Dominion.config.getLimitMaxY(operator.getPlayer())));
             return true;
         }
-        if (y1 < Dominion.config.getLimitMinY()) {
-            operator.setResponse(FAIL.addMessage("领地Y坐标不能低于 %d", Dominion.config.getLimitMinY()));
+        if (y1 < Dominion.config.getLimitMinY(operator.getPlayer())) {
+            operator.setResponse(FAIL.addMessage("领地Y坐标不能低于 %d", Dominion.config.getLimitMinY(operator.getPlayer())));
             return true;
         }
         return false;
@@ -748,10 +748,10 @@ public class DominionController {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        if (Dominion.config.getLimitDepth() == -1) {
+        if (Dominion.config.getLimitDepth(operator.getPlayer()) == -1) {
             return false;
         }
-        if (parent_dom.getId() != -1 && Dominion.config.getLimitDepth() == 0) {
+        if (parent_dom.getId() != -1 && Dominion.config.getLimitDepth(operator.getPlayer()) == 0) {
             operator.setResponse(FAIL.addMessage("不允许创建子领地"));
             return true;
         }
@@ -763,8 +763,8 @@ public class DominionController {
             parent_dom = Cache.instance.getDominion(parent_dom.getParentDomId());
             level++;
         }
-        if (level >= Dominion.config.getLimitDepth()) {
-            operator.setResponse(FAIL.addMessage("子领地嵌套深度不能超过 %d", Dominion.config.getLimitDepth()));
+        if (level >= Dominion.config.getLimitDepth(operator.getPlayer())) {
+            operator.setResponse(FAIL.addMessage("子领地嵌套深度不能超过 %d", Dominion.config.getLimitDepth(operator.getPlayer())));
             return true;
         }
         return false;
@@ -774,14 +774,14 @@ public class DominionController {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount() && Dominion.config.getLimitAmount() != -1;
+        return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount(operator.getPlayer()) && Dominion.config.getLimitAmount(operator.getPlayer()) != -1;
     }
 
     private static boolean worldNotValid(AbstractOperator operator, String world) {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        return Dominion.config.getWorldBlackList().contains(world);
+        return Dominion.config.getWorldBlackList(operator.getPlayer()).contains(world);
     }
 
     private static DominionDTO getExistDomAndIsOwner(AbstractOperator operator, String dominion_name) {
@@ -817,7 +817,7 @@ public class DominionController {
                 SUCCESS.addMessage("你是OP，已跳过经济检查。");
                 return false;
             }
-            float priceOrRefund = count * Dominion.config.getEconomyPrice();
+            float priceOrRefund = count * Dominion.config.getEconomyPrice(operator.getPlayer());
             if (paid) {
                 if (VaultConnect.instance.getBalance(operator.getPlayer()) < priceOrRefund) {
                     operator.setResponse(FAIL.addMessage("你的余额不足，需要 %.2f %s", priceOrRefund, VaultConnect.instance.currencyNamePlural()));
@@ -826,7 +826,7 @@ public class DominionController {
                 SUCCESS.addMessage("已扣除 %.2f %s", priceOrRefund, VaultConnect.instance.currencyNamePlural());
                 VaultConnect.instance.withdrawPlayer(operator.getPlayer(), priceOrRefund);
             } else {
-                float refund = priceOrRefund * Dominion.config.getEconomyRefund();
+                float refund = priceOrRefund * Dominion.config.getEconomyRefund(operator.getPlayer());
                 VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
                 SUCCESS.addMessage("已退还 %.2f %s", refund, VaultConnect.instance.currencyNamePlural());
             }

@@ -6,8 +6,11 @@ import cn.lunadeer.minecraftpluginutils.VaultConnect.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,21 +40,6 @@ public class ConfigManager {
             setAutoCreateRadius(10);
         }
         _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
-        _limit_size_x = _file.getInt("Limit.SizeX", 128);
-        if (_limit_size_x <= 4 && _limit_size_x != -1) {
-            XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
-            setLimitSizeX(128);
-        }
-        _limit_size_y = _file.getInt("Limit.SizeY", 64);
-        if (_limit_size_y <= 4 && _limit_size_y != -1) {
-            XLogger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
-            setLimitSizeY(64);
-        }
-        _limit_size_z = _file.getInt("Limit.SizeZ", 128);
-        if (_limit_size_z <= 4 && _limit_size_z != -1) {
-            XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
-            setLimitSizeZ(128);
-        }
         _blue_map = _file.getBoolean("BlueMap", false);
         _dynmap = _file.getBoolean("Dynmap", false);
         _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
@@ -59,22 +47,7 @@ public class ConfigManager {
             XLogger.err("AutoCleanAfterDays 不能等于 0，已重置为 180");
             setAutoCleanAfterDays(180);
         }
-        _limit_min_y = _file.getInt("Limit.MinY", -64);
-        _limit_max_y = _file.getInt("Limit.MaxY", 320);
-        if (_limit_min_y >= _limit_max_y) {
-            XLogger.err("Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320");
-            setLimitMinY(-64);
-            setLimitMaxY(320);
-        }
-        _limit_amount = _file.getInt("Limit.Amount", 10);
-        _limit_depth = _file.getInt("Limit.Depth", 10);
-        _limit_vert = _file.getBoolean("Limit.Vert", false);
-        if (_limit_vert && _limit_size_y <= _limit_max_y - _limit_min_y) {
-            setLimitSizeY(_limit_max_y - _limit_min_y + 1);
-            XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (_limit_max_y - _limit_min_y + 1));
-        }
         _limit_op_bypass = _file.getBoolean("Limit.OpByPass", true);
-        _world_black_list = _file.getStringList("Limit.WorldBlackList");
         _check_update = _file.getBoolean("CheckUpdate", true);
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
         _tp_delay = _file.getInt("Teleport.Delay", 0);
@@ -85,9 +58,6 @@ public class ConfigManager {
             setTool("ARROW");
         }
         _economy_enable = _file.getBoolean("Economy.Enable", false);
-        _economy_price = (float) _file.getDouble("Economy.Price", 10.0);
-        _economy_only_xz = _file.getBoolean("Economy.OnlyXZ", false);
-        _economy_refund = (float) _file.getDouble("Economy.Refund", 0.85);
         if (getEconomyEnable()) {
             new VaultConnect(this._plugin);
         }
@@ -96,6 +66,61 @@ public class ConfigManager {
         _group_title_enable = _file.getBoolean("GroupTitle.Enable", false);
         _group_title_prefix = _file.getString("GroupTitle.Prefix", "&#ffffff[");
         _group_title_suffix = _file.getString("GroupTitle.Suffix", "&#ffffff]");
+
+        GroupLimit defaultGroup = new GroupLimit();
+        defaultGroup.setLimitSizeX(_file.getInt("Limit.SizeX", 128));
+        defaultGroup.setLimitSizeY(_file.getInt("Limit.SizeY", 64));
+        defaultGroup.setLimitSizeZ(_file.getInt("Limit.SizeZ", 128));
+        defaultGroup.setLimitMinY(_file.getInt("Limit.MinY", -64));
+        defaultGroup.setLimitMaxY(_file.getInt("Limit.MaxY", 320));
+        defaultGroup.setLimitAmount(_file.getInt("Limit.Amount", 10));
+        defaultGroup.setLimitDepth(_file.getInt("Limit.Depth", 3));
+        defaultGroup.setLimitVert(_file.getBoolean("Limit.Vert", false));
+        defaultGroup.setWorldBlackList(_file.getStringList("Limit.WorldBlackList"));
+        defaultGroup.setPrice(_file.getDouble("Economy.Price", 10.0));
+        defaultGroup.setPriceOnlyXZ(_file.getBoolean("Economy.OnlyXZ", false));
+        defaultGroup.setRefundRatio(_file.getDouble("Economy.Refund", 0.85));
+        limits.put("default", defaultGroup);
+        if (defaultGroup.getLimitSizeX() <= 4 && defaultGroup.getLimitSizeX() != -1) {
+            XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
+            setLimitSizeX(128);
+        }
+        if (defaultGroup.getLimitSizeY() <= 4 && defaultGroup.getLimitSizeY() != -1) {
+            XLogger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
+            setLimitSizeY(64);
+        }
+        if (defaultGroup.getLimitSizeZ() <= 4 && defaultGroup.getLimitSizeZ() != -1) {
+            XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
+            setLimitSizeZ(128);
+        }
+        if (defaultGroup.getLimitMinY() >= defaultGroup.getLimitMaxY()) {
+            XLogger.err("Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320");
+            setLimitMinY(-64);
+            setLimitMaxY(320);
+        }
+        if (defaultGroup.getRefundRatio() < 0.0 || defaultGroup.getRefundRatio() > 1.0) {
+            XLogger.err("Economy.Refund 设置不合法，已重置为 0.85");
+            setEconomyRefund(0.85f);
+        }
+        if (defaultGroup.getPrice() < 0.0) {
+            XLogger.err("Economy.Price 设置不合法，已重置为 10.0");
+            setEconomyPrice(10.0f);
+        }
+        if (defaultGroup.getLimitVert() && defaultGroup.getLimitSizeY() <= defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY()) {
+            XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1));
+            setLimitSizeY(defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1);
+        }
+        if (defaultGroup.getLimitAmount() < 0 && defaultGroup.getLimitAmount() != -1) {
+            XLogger.err("Limit.Amount 设置不合法，已重置为 10");
+            setLimitAmount(10);
+        }
+        if (defaultGroup.getLimitDepth() < 0 && defaultGroup.getLimitDepth() != -1) {
+            XLogger.err("Limit.Depth 设置不合法，已重置为 3");
+            setLimitDepth(3);
+        }
+
+        limits.putAll(GroupLimit.loadGroups(_plugin));
+
         saveAll();  // 回写文件 防止文件中的数据不完整
         Flag.loadFromJson();    // 加载 Flag 配置
     }
@@ -120,15 +145,15 @@ public class ConfigManager {
         _file.set("AutoCreateRadius", _auto_create_radius);
 
         _file.set("Limit.SpawnProtection", _spawn_protection);
-        _file.set("Limit.MinY", _limit_min_y);
-        _file.set("Limit.MaxY", _limit_max_y);
-        _file.set("Limit.SizeX", _limit_size_x);
-        _file.set("Limit.SizeY", _limit_size_y);
-        _file.set("Limit.SizeZ", _limit_size_z);
-        _file.set("Limit.Amount", _limit_amount);
-        _file.set("Limit.Depth", _limit_depth);
-        _file.set("Limit.Vert", _limit_vert);
-        _file.set("Limit.WorldBlackList", _world_black_list);
+        _file.set("Limit.MinY", limits.get("default").getLimitMinY());
+        _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
+        _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
+        _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
+        _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
+        _file.set("Limit.Amount", limits.get("default").getLimitAmount());
+        _file.set("Limit.Depth", limits.get("default").getLimitDepth());
+        _file.set("Limit.Vert", limits.get("default").getLimitVert());
+        _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());
         _file.set("Limit.OpByPass", _limit_op_bypass);
 
         _file.set("Teleport.Enable", _tp_enable);
@@ -140,9 +165,9 @@ public class ConfigManager {
         _file.set("Tool", _tool);
 
         _file.set("Economy.Enable", _economy_enable);
-        _file.set("Economy.Price", _economy_price);
-        _file.set("Economy.OnlyXZ", _economy_only_xz);
-        _file.set("Economy.Refund", _economy_refund);
+        _file.set("Economy.Price", limits.get("default").getPrice());
+        _file.set("Economy.OnlyXZ", limits.get("default").getPriceOnlyXZ());
+        _file.set("Economy.Refund", limits.get("default").getRefundRatio());
 
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
 
@@ -223,32 +248,32 @@ public class ConfigManager {
         return _db_pass;
     }
 
-    public Integer getLimitSizeX() {
-        return _limit_size_x;
+    public Integer getLimitSizeX(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitSizeX();
     }
 
     public void setLimitSizeX(Integer max_x) {
-        _limit_size_x = max_x;
+        limits.get("default").setLimitSizeX(max_x);
         _file.set("Limit.SizeX", max_x);
         _plugin.saveConfig();
     }
 
-    public Integer getLimitSizeY() {
-        return _limit_size_y;
+    public Integer getLimitSizeY(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitSizeY();
     }
 
     public void setLimitSizeY(Integer max_y) {
-        _limit_size_y = max_y;
+        limits.get("default").setLimitSizeY(max_y);
         _file.set("Limit.SizeY", max_y);
         _plugin.saveConfig();
     }
 
-    public Integer getLimitSizeZ() {
-        return _limit_size_z;
+    public Integer getLimitSizeZ(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitSizeZ();
     }
 
     public void setLimitSizeZ(Integer max_z) {
-        _limit_size_z = max_z;
+        limits.get("default").setLimitSizeZ(max_z);
         _file.set("Limit.SizeZ", max_z);
         _plugin.saveConfig();
     }
@@ -281,58 +306,58 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
-    public Integer getLimitMinY() {
-        return _limit_min_y;
+    public Integer getLimitMinY(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitMinY();
     }
 
     public void setLimitMinY(Integer limit_bottom) {
-        _limit_min_y = limit_bottom;
+        limits.get("default").setLimitMinY(limit_bottom);
         _file.set("Limit.MinY", limit_bottom);
         _plugin.saveConfig();
     }
 
-    public Integer getLimitMaxY() {
-        return _limit_max_y;
+    public Integer getLimitMaxY(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitMaxY();
     }
 
     public void setLimitMaxY(Integer limit_top) {
-        _limit_max_y = limit_top;
+        limits.get("default").setLimitMaxY(limit_top);
         _file.set("Limit.MaxY", limit_top);
         _plugin.saveConfig();
     }
 
-    public Integer getLimitAmount() {
-        return _limit_amount;
+    public Integer getLimitAmount(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitAmount();
     }
 
     public void setLimitAmount(Integer limit_amount) {
-        _limit_amount = limit_amount;
+        limits.get("default").setLimitAmount(limit_amount);
         _file.set("Limit.Amount", limit_amount);
         _plugin.saveConfig();
     }
 
-    public Integer getLimitDepth() {
-        return _limit_depth;
+    public Integer getLimitDepth(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitDepth();
     }
 
     public void setLimitDepth(Integer limit_depth) {
-        _limit_depth = limit_depth;
+        limits.get("default").setLimitDepth(limit_depth);
         _file.set("Limit.Depth", limit_depth);
         _plugin.saveConfig();
     }
 
-    public Boolean getLimitVert() {
-        return _limit_vert;
+    public Boolean getLimitVert(Player player) {
+        return limits.get(getPlayerGroup(player)).getLimitVert();
     }
 
     public void setLimitVert(Boolean limit_vert) {
-        _limit_vert = limit_vert;
+        limits.get("default").setLimitVert(limit_vert);
         _file.set("Limit.Vert", limit_vert);
         _plugin.saveConfig();
     }
 
-    public List<String> getWorldBlackList() {
-        return _world_black_list;
+    public List<String> getWorldBlackList(Player player) {
+        return limits.get(getPlayerGroup(player)).getWorldBlackList();
     }
 
     public Boolean getLimitOpBypass() {
@@ -399,32 +424,32 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
-    public Float getEconomyPrice() {
-        return _economy_price;
+    public Float getEconomyPrice(Player player) {
+        return limits.get(getPlayerGroup(player)).getPrice().floatValue();
     }
 
     public void setEconomyPrice(Float economy_price) {
-        _economy_price = economy_price;
+        limits.get("default").setPrice((double) economy_price);
         _file.set("Economy.Price", economy_price);
         _plugin.saveConfig();
     }
 
-    public Boolean getEconomyOnlyXZ() {
-        return _economy_only_xz;
+    public Boolean getEconomyOnlyXZ(Player player) {
+        return limits.get(getPlayerGroup(player)).getPriceOnlyXZ();
     }
 
     public void setEconomyOnlyXZ(Boolean economy_only_xz) {
-        _economy_only_xz = economy_only_xz;
+        limits.get("default").setPriceOnlyXZ(economy_only_xz);
         _file.set("Economy.OnlyXZ", economy_only_xz);
         _plugin.saveConfig();
     }
 
-    public Float getEconomyRefund() {
-        return _economy_refund;
+    public Float getEconomyRefund(Player player) {
+        return limits.get(getPlayerGroup(player)).getRefundRatio().floatValue();
     }
 
     public void setEconomyRefund(Float economy_refund) {
-        _economy_refund = economy_refund;
+        limits.get("default").setRefundRatio((double) economy_refund);
         _file.set("Economy.Refund", economy_refund);
         _plugin.saveConfig();
     }
@@ -526,5 +551,20 @@ public class ConfigManager {
     private String _group_title_prefix;
     private String _group_title_suffix;
 
-    private Map<String, GroupLimit> limits;
+    private final Map<String, GroupLimit> limits = new HashMap<>();
+
+    private String getPlayerGroup(@Nullable Player player) {
+        if (player == null) {
+            return "default";
+        }
+        for (String group : limits.keySet()) {
+            if (group.equals("default")) {
+                continue;
+            }
+            if (player.hasPermission("group." + group)) {
+                return group;
+            }
+        }
+        return "default";
+    }
 }

@@ -31,9 +31,9 @@ public class CommandUtils {
         Location location = player.getLocation();
         Location location1 = new Location(location.getWorld(), location.getX() - size, location.getY() - size, location.getZ() - size);
         Location location2 = new Location(location.getWorld(), location.getX() + size, location.getY() + size, location.getZ() + size);
-        if (Dominion.config.getLimitVert()) {
-            location1.setY(Dominion.config.getLimitMinY());
-            location2.setY(Dominion.config.getLimitMaxY() - 1);
+        if (Dominion.config.getLimitVert(player)) {
+            location1.setY(Dominion.config.getLimitMinY(player));
+            location2.setY(Dominion.config.getLimitMaxY(player) - 1);
         }
         Map<Integer, Location> points = new HashMap<>();
         points.put(0, location1);

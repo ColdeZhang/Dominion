@@ -102,14 +102,14 @@ public class SetConfig {
     }
 
     private static void adjustSizeY() {
-        if (Dominion.config.getLimitVert()) {
-            Dominion.config.setLimitSizeY(Dominion.config.getLimitMaxY() - Dominion.config.getLimitMinY() + 1);
+        if (Dominion.config.getLimitVert(null)) {
+            Dominion.config.setLimitSizeY(Dominion.config.getLimitMaxY(null) - Dominion.config.getLimitMinY(null) + 1);
         }
     }
 
     private static void setLimitMaxY(CommandSender sender, String[] args) {
         int maxY = Integer.parseInt(args[2]);
-        if (maxY <= Dominion.config.getLimitMinY()) {
+        if (maxY <= Dominion.config.getLimitMinY(null)) {
             Notification.error(sender, "最高Y坐标限制不能小于最低Y坐标限制");
             return;
         }
@@ -120,7 +120,7 @@ public class SetConfig {
 
     private static void setLimitMinY(CommandSender sender, String[] args) {
         int minY = Integer.parseInt(args[2]);
-        if (minY >= Dominion.config.getLimitMaxY()) {
+        if (minY >= Dominion.config.getLimitMaxY(null)) {
             Notification.error(sender, "最低Y坐标限制不能大于最高Y坐标限制");
             return;
         }

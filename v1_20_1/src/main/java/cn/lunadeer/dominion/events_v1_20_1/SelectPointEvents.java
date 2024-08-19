@@ -43,16 +43,16 @@ public class SelectPointEvents implements Listener {
             event.setCancelled(true);
             Notification.info(player, "已选择第一个点: %d %d %d", block.getX(), block.getY(), block.getZ());
             Location loc = block.getLocation();
-            if (Dominion.config.getLimitVert()) {
-                loc.setY(Dominion.config.getLimitMinY());
+            if (Dominion.config.getLimitVert(player)) {
+                loc.setY(Dominion.config.getLimitMinY(player));
             }
             points.put(0, loc);
         } else if (action == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
             Notification.info(player, "已选择第二个点: %d %d %d", block.getX(), block.getY(), block.getZ());
             Location loc = block.getLocation();
-            if (Dominion.config.getLimitVert()) {
-                loc.setY(Dominion.config.getLimitMaxY() - 1);
+            if (Dominion.config.getLimitVert(player)) {
+                loc.setY(Dominion.config.getLimitMaxY(player) - 1);
             }
             points.put(1, loc);
         } else {
@@ -86,12 +86,12 @@ public class SelectPointEvents implements Listener {
                     return;
                 }
                 int count;
-                if (Dominion.config.getEconomyOnlyXZ()) {
+                if (Dominion.config.getEconomyOnlyXZ(player)) {
                     count = dominion.getSquare();
                 } else {
                     count = dominion.getVolume();
                 }
-                float price = count * Dominion.config.getEconomyPrice();
+                float price = count * Dominion.config.getEconomyPrice(player);
                 Notification.info(player, "预计领地创建价格为 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
             }
             Particle.showBorder(player, dominion);

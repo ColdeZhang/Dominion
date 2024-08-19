@@ -41,38 +41,38 @@ public class SysConfig {
 
         Line limitSizeX = Line.create()
                 .append(Component.text("    X轴(东西)"));
-        if (Dominion.config.getLimitSizeX() == -1) {
+        if (Dominion.config.getLimitSizeX(null) == -1) {
             limitSizeX.append(Component.text("无限制")).append(Button.create("设置数值").setExecuteCommand("/dominion set_config limit_size_x 64 " + page).build());
         } else {
-            limitSizeX.append(NumChanger.create(Dominion.config.getLimitSizeX(), "/dominion set_config limit_size_x").setPageNumber(page).build());
+            limitSizeX.append(NumChanger.create(Dominion.config.getLimitSizeX(null), "/dominion set_config limit_size_x").setPageNumber(page).build());
             limitSizeX.append(Button.create("设置无限制").setExecuteCommand("/dominion set_config limit_size_x -1 " + page).build());
         }
         view.add(limitSizeX);
         Line limitSizeZ = Line.create()
                 .append(Component.text("    Z轴(南北)"));
-        if (Dominion.config.getLimitSizeZ() == -1) {
+        if (Dominion.config.getLimitSizeZ(null) == -1) {
             limitSizeZ.append(Component.text("无限制")).append(Button.create("设置数值").setExecuteCommand("/dominion set_config limit_size_z 64 " + page).build());
         } else {
-            limitSizeZ.append(NumChanger.create(Dominion.config.getLimitSizeZ(), "/dominion set_config limit_size_z").setPageNumber(page).build());
+            limitSizeZ.append(NumChanger.create(Dominion.config.getLimitSizeZ(null), "/dominion set_config limit_size_z").setPageNumber(page).build());
             limitSizeZ.append(Button.create("设置无限制").setExecuteCommand("/dominion set_config limit_size_z -1 " + page).build());
         }
         view.add(limitSizeZ);
         Line limitSizeY = Line.create()
                 .append(Component.text("    Y轴(垂直)"));
-        if (!Dominion.config.getLimitVert()) {
-            if (Dominion.config.getLimitSizeY() == -1) {
+        if (!Dominion.config.getLimitVert(null)) {
+            if (Dominion.config.getLimitSizeY(null) == -1) {
                 limitSizeY.append(Component.text("无限制")).append(Button.create("设置数值").setExecuteCommand("/dominion set_config limit_size_y 64 " + page).build());
             } else {
-                limitSizeY.append(NumChanger.create(Dominion.config.getLimitSizeY(), "/dominion set_config limit_size_y").setPageNumber(page).build());
+                limitSizeY.append(NumChanger.create(Dominion.config.getLimitSizeY(null), "/dominion set_config limit_size_y").setPageNumber(page).build());
                 limitSizeY.append(Button.create("设置无限制").setExecuteCommand("/dominion set_config limit_size_y -1 " + page).build());
             }
         } else {
-            limitSizeY.append(Component.text(Dominion.config.getLimitSizeY())
+            limitSizeY.append(Component.text(Dominion.config.getLimitSizeY(null))
                     .style(Style.style(TextDecoration.STRIKETHROUGH))
                     .hoverEvent(Component.text("因为垂直自动延伸已开启，此设置不可手动修改")));
         }
         view.add(limitSizeY);
-        if (Dominion.config.getLimitVert()) {
+        if (Dominion.config.getLimitVert(null)) {
             view.add(Line.create()
                     .append("垂直自动延伸")
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion set_config limit_vert false " + page).build()));
@@ -83,27 +83,27 @@ public class SysConfig {
         }
         Line limitMaxY = Line.create()
                 .append(Component.text("最高Y坐标限制"));
-        limitMaxY.append(NumChanger.create(Dominion.config.getLimitMaxY(), "/dominion set_config limit_max_y").setPageNumber(page).build());
+        limitMaxY.append(NumChanger.create(Dominion.config.getLimitMaxY(null), "/dominion set_config limit_max_y").setPageNumber(page).build());
         view.add(limitMaxY);
         Line limitMinY = Line.create()
                 .append(Component.text("最低Y坐标限制"));
-        limitMinY.append(NumChanger.create(Dominion.config.getLimitMinY(), "/dominion set_config limit_min_y").setPageNumber(page).build());
+        limitMinY.append(NumChanger.create(Dominion.config.getLimitMinY(null), "/dominion set_config limit_min_y").setPageNumber(page).build());
         view.add(limitMinY);
         Line limitAmount = Line.create()
                 .append(Component.text("每个玩家领地数量限制"));
-        if (Dominion.config.getLimitAmount() == -1) {
+        if (Dominion.config.getLimitAmount(null) == -1) {
             limitAmount.append(Component.text("无限制")).append(Button.create("设置数值").setExecuteCommand("/dominion set_config limit_amount 3 " + page).build());
         } else {
-            limitAmount.append(NumChanger.create(Dominion.config.getLimitAmount(), "/dominion set_config limit_amount").setPageNumber(page).build());
+            limitAmount.append(NumChanger.create(Dominion.config.getLimitAmount(null), "/dominion set_config limit_amount").setPageNumber(page).build());
             limitAmount.append(Button.create("设置无限制").setExecuteCommand("/dominion set_config limit_amount -1 " + page).build());
         }
         view.add(limitAmount);
         Line limitDepth = Line.create()
                 .append(Component.text("领地深度限制"));
-        if (Dominion.config.getLimitDepth() == -1) {
+        if (Dominion.config.getLimitDepth(null) == -1) {
             limitDepth.append(Component.text("无限制")).append(Button.create("设置数值").setExecuteCommand("/dominion set_config limit_depth 64 " + page).build());
         } else {
-            limitDepth.append(NumChanger.create(Dominion.config.getLimitDepth(), "/dominion set_config limit_depth").setPageNumber(page).build());
+            limitDepth.append(NumChanger.create(Dominion.config.getLimitDepth(null), "/dominion set_config limit_depth").setPageNumber(page).build());
             limitDepth.append(Button.create("设置无限制").setExecuteCommand("/dominion set_config limit_depth -1 " + page).build());
         }
         view.add(limitDepth);
@@ -146,9 +146,9 @@ public class SysConfig {
             view.add(economy);
             Line price = Line.create()
                     .append(Component.text("    每方块单价"))
-                    .append(NumChanger.create(Dominion.config.getEconomyPrice(), "/dominion set_config economy_price", 0.1).setPageNumber(page).build());
+                    .append(NumChanger.create(Dominion.config.getEconomyPrice(null), "/dominion set_config economy_price", 0.1).setPageNumber(page).build());
             view.add(price);
-            if (Dominion.config.getEconomyOnlyXZ()) {
+            if (Dominion.config.getEconomyOnlyXZ(null)) {
                 view.add(Line.create()
                         .append("   仅计价平面积")
                         .append(Button.createGreen("☑").setExecuteCommand("/dominion set_config economy_only_xz false " + page).build()));
@@ -159,7 +159,7 @@ public class SysConfig {
             }
             Line refund = Line.create()
                     .append(Component.text("    删除/缩小领地退还比例"))
-                    .append(NumChanger.create(Dominion.config.getEconomyRefund(), "/dominion set_config economy_refund", 0.01).setPageNumber(page).build());
+                    .append(NumChanger.create(Dominion.config.getEconomyRefund(null), "/dominion set_config economy_refund", 0.01).setPageNumber(page).build());
             view.add(refund);
         }
         if (Dominion.config.getResidenceMigration()) {

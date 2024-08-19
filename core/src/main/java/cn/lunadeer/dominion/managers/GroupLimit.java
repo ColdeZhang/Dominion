@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GroupLimit {
-    private final JavaPlugin plugin;
+    YamlConfiguration config;
     private final File file_path;
     private Integer min_y;
     private Integer max_y;
@@ -25,9 +25,59 @@ public class GroupLimit {
     private Boolean only_xz;
     private Double refund;
 
-    public GroupLimit(JavaPlugin plugin, File filePath) {
-        this.plugin = plugin;
+    public GroupLimit() {
+        this.file_path = null;
+    }
+
+    public GroupLimit(File filePath) {
         this.file_path = filePath;
+        config = YamlConfiguration.loadConfiguration(this.file_path);
+        setLimitMinY(config.getInt("MinY", -64));
+        setLimitMaxY(config.getInt("MaxY", 320));
+        if (getLimitMinY() >= getLimitMaxY()) {
+            XLogger.err("权限组 %s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320", this.file_path.getName());
+            setLimitMinY(-64);
+            setLimitMaxY(320);
+        }
+        setLimitSizeX(config.getInt("SizeX", 128));
+        if (getLimitSizeX() <= 4 && getLimitSizeX() != -1) {
+            XLogger.err("权限组 %s 的 SizeX 设置过小，已重置为 128", this.file_path.getName());
+            setLimitSizeX(128);
+        }
+        setLimitSizeY(config.getInt("SizeY", 64));
+        if (getLimitSizeY() <= 4 && getLimitSizeY() != -1) {
+            XLogger.err("权限组 %s 的 SizeY 设置过小，已重置为 64", this.file_path.getName());
+            setLimitSizeY(64);
+        }
+        setLimitSizeZ(config.getInt("SizeZ", 128));
+        if (getLimitSizeZ() <= 4 && getLimitSizeZ() != -1) {
+            XLogger.err("权限组 %s 的 SizeZ 设置过小，已重置为 128", this.file_path.getName());
+            setLimitSizeZ(128);
+        }
+        setLimitAmount(config.getInt("Amount", 10));
+        if (getLimitAmount() <= 0 && getLimitAmount() != -1) {
+            XLogger.err("权限组 %s 的 Amount 设置不合法，已重置为 10", this.file_path.getName());
+            setLimitAmount(10);
+        }
+        setLimitDepth(config.getInt("Depth", 3));
+        if (getLimitDepth() <= 0 && getLimitDepth() != -1) {
+            XLogger.err("权限组 %s 的 Depth 设置不合法，已重置为 3", this.file_path.getName());
+            setLimitDepth(3);
+        }
+        setLimitVert(config.getBoolean("Vert", false));
+        setWorldBlackList(config.getStringList("WorldBlackList"));
+        setPrice(config.getDouble("Price", 10.0));
+        if (getPrice() < 0.0) {
+            XLogger.err("权限组 %s 的 Price 设置不合法，已重置为 10.0", this.file_path.getName());
+            setPrice(10.0);
+        }
+        setPriceOnlyXZ(config.getBoolean("OnlyXZ", false));
+        setRefundRatio(config.getDouble("Refund", 0.85));
+        if (getRefundRatio() < 0.0 || getRefundRatio() > 1.0) {
+            XLogger.err("权限组 %s 的 Refund 设置不合法，已重置为 0.85", this.file_path.getName());
+            setRefundRatio(0.85);
+        }
+        save(); // 保存一次，确保文件中的数据是合法的
     }
 
     public Integer getLimitMinY() {
@@ -78,96 +128,71 @@ public class GroupLimit {
         return refund;
     }
 
+
     public void setLimitMinY(Integer min_y) {
         this.min_y = min_y;
+        this.save();
     }
 
     public void setLimitMaxY(Integer max_y) {
         this.max_y = max_y;
+        this.save();
     }
 
     public void setLimitSizeX(Integer size_x) {
         this.size_x = size_x;
+        this.save();
     }
 
     public void setLimitSizeY(Integer size_y) {
         this.size_y = size_y;
+        this.save();
     }
 
     public void setLimitSizeZ(Integer size_z) {
         this.size_z = size_z;
+        this.save();
     }
 
     public void setLimitAmount(Integer amount) {
         this.amount = amount;
+        this.save();
     }
 
     public void setLimitDepth(Integer depth) {
         this.depth = depth;
+        this.save();
     }
 
     public void setLimitVert(Boolean vert) {
         this.vert = vert;
+        this.save();
     }
 
     public void setWorldBlackList(List<String> world_black_list) {
         this.world_black_list = world_black_list;
+        this.save();
     }
 
     public void setPrice(Double price) {
         this.price = price;
+        this.save();
     }
 
     public void setPriceOnlyXZ(Boolean only_xz) {
         this.only_xz = only_xz;
+        this.save();
     }
 
     public void setRefundRatio(Double refund) {
         this.refund = refund;
-    }
-
-    private static GroupLimit loadGroup(JavaPlugin plugin, File file) {
-        GroupLimit group = new GroupLimit(plugin, file);
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        group.setLimitMinY(config.getInt("MinY", -64));
-        group.setLimitMaxY(config.getInt("MaxY", 320));
-        if (group.getLimitMinY() >= group.getLimitMaxY()) {
-            XLogger.err("权限组 " + file.getName() + " 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320");
-            group.setLimitMinY(-64);
-            group.setLimitMaxY(320);
-        }
-        group.setLimitSizeX(config.getInt("SizeX", 128));
-        if (group.getLimitSizeX() <= 4 && group.getLimitSizeX() != -1) {
-            XLogger.err("权限组 " + file.getName() + " 的 SizeX 设置过小，已重置为 128");
-            group.setLimitSizeX(128);
-        }
-        group.setLimitSizeY(config.getInt("SizeY", 64));
-        if (group.getLimitSizeY() <= 4 && group.getLimitSizeY() != -1) {
-            XLogger.err("权限组 " + file.getName() + " 的 SizeY 设置过小，已重置为 64");
-            group.setLimitSizeY(64);
-        }
-        group.setLimitSizeZ(config.getInt("SizeZ", 128));
-        if (group.getLimitSizeZ() <= 4 && group.getLimitSizeZ() != -1) {
-            XLogger.err("权限组 " + file.getName() + " 的 SizeZ 设置过小，已重置为 128");
-            group.setLimitSizeZ(128);
-        }
-        group.setLimitAmount(config.getInt("Amount", 10));
-        group.setLimitDepth(config.getInt("Depth", 3));
-        group.setLimitVert(config.getBoolean("Vert", false));
-        group.setWorldBlackList(config.getStringList("WorldBlackList"));
-        group.setPrice(config.getDouble("Price", 10.0));
-        group.setPriceOnlyXZ(config.getBoolean("OnlyXZ", false));
-        group.setRefundRatio(config.getDouble("Refund", 0.85));
-        if (group.getRefundRatio() < 0.0 || group.getRefundRatio() > 1.0) {
-            XLogger.err("权限组 " + file.getName() + " 的 Refund 设置不合法，已重置为 0.85");
-            group.setRefundRatio(0.85);
-        }
-        group.save();
-        return group;
+        this.save();
     }
 
     private void save() {
-        YamlConfiguration config = new YamlConfiguration();
+        if (file_path == null) {
+            return;
+        }
         config.set("MinY", min_y);
         config.set("MaxY", max_y);
         config.set("SizeX", size_x);
@@ -206,9 +231,10 @@ public class GroupLimit {
                 continue;
             }
             String groupName = name.substring(0, name.length() - 4);
-            GroupLimit group = GroupLimit.loadGroup(plugin, file);
+            GroupLimit group = new GroupLimit(file);
             groups.put(groupName, group);
         }
+        XLogger.info("共加载了 %d 个领地组。", groups.size());
         return groups;
     }
 }
