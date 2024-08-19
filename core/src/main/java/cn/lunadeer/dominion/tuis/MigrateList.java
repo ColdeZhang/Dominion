@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.tuis;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.ResMigration;
+import cn.lunadeer.dominion.utils.TuiUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -18,7 +19,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 
 public class MigrateList {
 
@@ -31,7 +32,7 @@ public class MigrateList {
             return;
         }
 
-        int page = Apis.getPage(args, 1);
+        int page = TuiUtils.getPage(args, 1);
 
         ListView view = ListView.create(10, "/dominion migrate_list");
 

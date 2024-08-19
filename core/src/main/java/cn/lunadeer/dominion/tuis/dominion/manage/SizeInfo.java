@@ -11,8 +11,8 @@ import cn.lunadeer.minecraftpluginutils.stui.components.Line;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getDominionNameArg_1;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.getDominionNameArg_1;
 
 public class SizeInfo {
     public static void show(CommandSender sender, String[] args) {

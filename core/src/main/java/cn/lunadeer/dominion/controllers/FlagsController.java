@@ -2,8 +2,9 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.utils.ControllerUtils;
 
-import static cn.lunadeer.dominion.controllers.Apis.noAuthToChangeFlags;
+import static cn.lunadeer.dominion.utils.ControllerUtils.noAuthToChangeFlags;
 
 public class FlagsController {
 
@@ -15,7 +16,7 @@ public class FlagsController {
      * @param value    权限值
      */
     public static void setFlag(AbstractOperator operator, String flag, boolean value) {
-        DominionDTO dominion = Apis.getPlayerCurrentDominion(operator);
+        DominionDTO dominion = ControllerUtils.getPlayerCurrentDominion(operator);
         if (dominion == null) return;
         setFlag(operator, flag, value, dominion.getName());
         operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置领地权限 %s 为 %s", flag, value));

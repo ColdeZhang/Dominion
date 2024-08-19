@@ -1,15 +1,15 @@
-package cn.lunadeer.dominion.events;
+package cn.lunadeer.dominion;
 
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class RegisterEvents {
+public class EventsRegister {
 
     private JavaPlugin plugin;
 
-    public RegisterEvents(JavaPlugin plugin) {
+    public EventsRegister(JavaPlugin plugin) {
         APIVersion version = GetAPIVersion(plugin);
         this.plugin = plugin;
         if (version == null) {

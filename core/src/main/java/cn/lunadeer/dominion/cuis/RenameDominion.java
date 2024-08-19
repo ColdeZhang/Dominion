@@ -8,7 +8,7 @@ import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 
 public class RenameDominion {
 

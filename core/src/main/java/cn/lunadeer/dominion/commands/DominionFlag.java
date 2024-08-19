@@ -8,7 +8,7 @@ import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 
 public class DominionFlag {
 

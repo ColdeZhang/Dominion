@@ -1,12 +1,13 @@
-package cn.lunadeer.dominion.controllers;
+package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import org.bukkit.Location;
 
-public class Apis {
+public class ControllerUtils {
 
     public static boolean notOwner(AbstractOperator player, DominionDTO dominion) {
         if (player.isOp() && Dominion.config.getLimitOpBypass()) return false;

@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
-import static cn.lunadeer.dominion.commands.Apis.*;
-import static cn.lunadeer.dominion.events.Apis.canByPass;
+import static cn.lunadeer.dominion.utils.CommandUtils.*;
+import static cn.lunadeer.dominion.utils.EventUtils.canByPass;
 
 public class DominionOperate {
     /**

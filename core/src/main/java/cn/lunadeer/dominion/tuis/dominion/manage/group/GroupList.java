@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.tuis.Apis;
+import cn.lunadeer.dominion.utils.TuiUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.noAuthToManage;
 
 public class GroupList {
 
@@ -42,7 +42,7 @@ public class GroupList {
             return;
         }
         if (noAuthToManage(player, dominion)) return;
-        int page = Apis.getPage(args, 3);
+        int page = TuiUtils.getPage(args, 3);
         List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
         ListView view = ListView.create(10, "/dominion group list " + dominion.getName());
         view.title("权限组列表");

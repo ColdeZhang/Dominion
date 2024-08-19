@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
-import static cn.lunadeer.dominion.controllers.Apis.getPlayerCurrentDominion;
-import static cn.lunadeer.dominion.controllers.Apis.notOwner;
+import static cn.lunadeer.dominion.utils.ControllerUtils.getPlayerCurrentDominion;
+import static cn.lunadeer.dominion.utils.ControllerUtils.notOwner;
 
 public class DominionController {
 

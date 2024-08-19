@@ -27,8 +27,8 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.material.Colorable;
 
-import static cn.lunadeer.dominion.events.Apis.checkFlag;
-import static cn.lunadeer.dominion.events.Apis.getInvDominion;
+import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
+import static cn.lunadeer.dominion.utils.EventUtils.getInvDominion;
 
 public class PlayerEvents implements Listener {
     @EventHandler

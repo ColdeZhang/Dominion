@@ -5,7 +5,7 @@ import cn.lunadeer.dominion.tuis.SysConfig;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 
 public class SetConfig {
 

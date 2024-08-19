@@ -10,6 +10,7 @@ import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.SizeInfo;
+import cn.lunadeer.dominion.utils.TuiUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -51,7 +52,7 @@ public class Commands implements TabExecutor {
                 DominionList.show(sender, args);
                 break;
             case "help":
-                cn.lunadeer.dominion.tuis.Apis.printHelp(sender, args);
+                TuiUtils.printHelp(sender, args);
                 break;
             case "info":
                 SizeInfo.show(sender, args);

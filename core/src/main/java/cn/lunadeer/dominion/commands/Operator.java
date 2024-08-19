@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 
 
 public class Operator {

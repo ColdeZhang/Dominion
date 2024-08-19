@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.events;
+package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class Apis {
+public class EventUtils {
     public static boolean canByPass(Player player, DominionDTO dom, MemberDTO prev) {
         if (player.isOp() && Dominion.config.getLimitOpBypass()) {
             return true;

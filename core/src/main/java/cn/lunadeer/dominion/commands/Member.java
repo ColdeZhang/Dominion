@@ -17,7 +17,7 @@ import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
 import static cn.lunadeer.dominion.Commands.playerNames;
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 import static cn.lunadeer.dominion.commands.Helper.*;
 
 public class Member {
@@ -131,6 +131,10 @@ public class Member {
     }
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion member <add/set_flag/remove/apply_template/list/setting/select_player/select_template>");
+            return;
+        }
         switch (args[1]) {
             case "add":
                 Member.member_add(sender, args);

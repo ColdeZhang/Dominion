@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
 public class Title {
 

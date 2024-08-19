@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 
 public class MemberAdd {
 

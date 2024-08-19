@@ -15,11 +15,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.commands.Helper.allTemplates;
 import static cn.lunadeer.dominion.commands.Helper.playerPrivileges;
-import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
 public class Template {
 
@@ -106,6 +106,10 @@ public class Template {
 
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion template <list|setting|delete|create|set_flag>");
+            return;
+        }
         switch (args[1]) {
             case "list":
                 TemplateList.show(sender, args);

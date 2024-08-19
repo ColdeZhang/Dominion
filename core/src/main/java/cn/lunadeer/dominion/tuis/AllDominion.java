@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.getPage;
-import static cn.lunadeer.dominion.tuis.Apis.notOp;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.notOp;
 import static cn.lunadeer.dominion.tuis.dominion.DominionList.BuildTreeLines;
 
 public class AllDominion {

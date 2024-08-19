@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
-import static cn.lunadeer.dominion.commands.Apis.hasPermission;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 import static cn.lunadeer.dominion.commands.Helper.*;
-import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
 public class Group {
 
@@ -181,6 +181,10 @@ public class Group {
     }
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (args.length < 2) {
+            Notification.error(sender, "用法: /dominion group <create|delete|rename|set_flag|add_member|remove_member|select_member|setting|list>");
+            return;
+        }
         switch (args[1]) {
             case "create":
                 createGroup(sender, args);

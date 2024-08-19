@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.events.RegisterEvents;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
@@ -49,7 +48,7 @@ public final class Dominion extends JavaPlugin {
             }
         }
 
-        new RegisterEvents(this);
+        new EventsRegister(this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);

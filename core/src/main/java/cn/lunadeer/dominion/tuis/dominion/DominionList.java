@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.commands.Helper.playerAdminDominions;
-import static cn.lunadeer.dominion.tuis.Apis.getPage;
+import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
 public class DominionList {
     public static void show(CommandSender sender, String[] args) {

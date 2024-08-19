@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.tuis.dominion.manage.group;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.tuis.Apis;
+import cn.lunadeer.dominion.utils.TuiUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -12,8 +12,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.commands.Apis.playerOnly;
-import static cn.lunadeer.dominion.tuis.Apis.noAuthToManage;
+import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.utils.TuiUtils.noAuthToManage;
 
 public class GroupSetting {
     public static void show(CommandSender sender, String dominionName, String groupName) {
@@ -37,7 +37,7 @@ public class GroupSetting {
             return;
         }
         if (noAuthToManage(player, dominion)) return;
-        int page = Apis.getPage(args, 4);
+        int page = TuiUtils.getPage(args, 4);
         GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
         if (group == null) {
             Notification.error(sender, "权限组 %s 不存在", args[3]);

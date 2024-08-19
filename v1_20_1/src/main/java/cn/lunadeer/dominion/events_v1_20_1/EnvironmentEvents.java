@@ -21,7 +21,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Objects;
 
-import static cn.lunadeer.dominion.events.Apis.checkFlag;
+import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
 import static org.bukkit.Material.FARMLAND;
 
 public class EnvironmentEvents implements Listener {

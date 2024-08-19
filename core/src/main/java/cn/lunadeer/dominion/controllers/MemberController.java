@@ -2,8 +2,8 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.*;
 
-import static cn.lunadeer.dominion.controllers.Apis.noAuthToChangeFlags;
-import static cn.lunadeer.dominion.controllers.Apis.notOwner;
+import static cn.lunadeer.dominion.utils.ControllerUtils.noAuthToChangeFlags;
+import static cn.lunadeer.dominion.utils.ControllerUtils.notOwner;
 
 public class MemberController {
 
