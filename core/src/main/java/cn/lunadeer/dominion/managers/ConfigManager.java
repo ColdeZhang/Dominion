@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
     public ConfigManager(Dominion plugin) {
@@ -502,20 +503,12 @@ public class ConfigManager {
 
     private Integer _auto_create_radius;
 
-    private Integer _limit_size_x;
-    private Integer _limit_size_y;
-    private Integer _limit_size_z;
     private Boolean _limit_op_bypass;
 
     private Boolean _blue_map;
     private Boolean _dynmap;
     private Integer _auto_clean_after_days;
-    private Integer _limit_min_y;
-    private Integer _limit_max_y;
-    private Integer _limit_amount;
-    private Integer _limit_depth;
-    private Boolean _limit_vert;
-    private List<String> _world_black_list;
+
     private Boolean _check_update;
 
     private Boolean _tp_enable;
@@ -524,9 +517,7 @@ public class ConfigManager {
     private String _tool;
 
     private Boolean _economy_enable;
-    private Float _economy_price;
-    private Boolean _economy_only_xz;
-    private Float _economy_refund;
+
     private List<String> _fly_permission_nodes;
     private Boolean _residence_migration;
     private Integer _spawn_protection;
@@ -534,4 +525,6 @@ public class ConfigManager {
     private Boolean _group_title_enable;
     private String _group_title_prefix;
     private String _group_title_suffix;
+
+    private Map<String, GroupLimit> limits;
 }
