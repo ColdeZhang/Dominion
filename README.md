@@ -42,19 +42,19 @@
 
 <div align="center">
 
-创建领地
+### 创建领地
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debf78eca4.gif" alt="" width="60%">
 
-权限管理
+### 权限管理
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debe052786.gif" alt="" width="60%">
 
-配置
+### 配置
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/05/10/663debec11dad.gif" alt="" width="60%">
 
-高性能
+### 高性能
 
 <img src="https://ssl.lunadeer.cn:14437/i/2024/08/13/66bad56cc9fac.png" alt="" width="60%">
 
@@ -63,6 +63,8 @@
 ## 支持版本
 
 - 1.20.1+ (Bukkit、Spigot、Paper、Folia)
+
+> 需要使用 Java21 运行你的服务端，如果你还在使用 Java17 可以放心替换为 Java21，理论上 1.20.1+ 版本的服务端核心可以直接升级到 Java21 启动。
 
 ## TODO
 
