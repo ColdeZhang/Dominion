@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GroupLimit {
-    YamlConfiguration config;
+    private final  YamlConfiguration config;
     private final File file_path;
     private Integer min_y;
     private Integer max_y;
@@ -27,6 +27,7 @@ public class GroupLimit {
 
     public GroupLimit() {
         this.file_path = null;
+        this.config = new YamlConfiguration();
     }
 
     public GroupLimit(File filePath) {
@@ -131,61 +132,73 @@ public class GroupLimit {
 
     public void setLimitMinY(Integer min_y) {
         this.min_y = min_y;
+        this.config.set("MinY", min_y);
         this.save();
     }
 
     public void setLimitMaxY(Integer max_y) {
         this.max_y = max_y;
+        this.config.set("MaxY", max_y);
         this.save();
     }
 
     public void setLimitSizeX(Integer size_x) {
         this.size_x = size_x;
+        this.config.set("SizeX", size_x);
         this.save();
     }
 
     public void setLimitSizeY(Integer size_y) {
         this.size_y = size_y;
+        this.config.set("SizeY", size_y);
         this.save();
     }
 
     public void setLimitSizeZ(Integer size_z) {
         this.size_z = size_z;
+        this.config.set("SizeZ", size_z);
         this.save();
     }
 
     public void setLimitAmount(Integer amount) {
         this.amount = amount;
+        this.config.set("Amount", amount);
         this.save();
     }
 
     public void setLimitDepth(Integer depth) {
         this.depth = depth;
+        this.config.set("Depth", depth);
         this.save();
     }
 
     public void setLimitVert(Boolean vert) {
         this.vert = vert;
+        this.config.set("Vert", vert);
         this.save();
     }
 
     public void setWorldBlackList(List<String> world_black_list) {
         this.world_black_list = world_black_list;
+        this.config.set("WorldBlackList", world_black_list);
         this.save();
     }
 
     public void setPrice(Double price) {
         this.price = price;
+        this.config.set("Price", price);
         this.save();
     }
 
     public void setPriceOnlyXZ(Boolean only_xz) {
         this.only_xz = only_xz;
+        this.config.set("OnlyXZ", only_xz);
         this.save();
     }
 
     public void setRefundRatio(Double refund) {
         this.refund = refund;
+        this.config.set("Refund", refund);
         this.save();
     }
 
@@ -193,18 +206,6 @@ public class GroupLimit {
         if (file_path == null) {
             return;
         }
-        config.set("MinY", min_y);
-        config.set("MaxY", max_y);
-        config.set("SizeX", size_x);
-        config.set("SizeY", size_y);
-        config.set("SizeZ", size_z);
-        config.set("Amount", amount);
-        config.set("Depth", depth);
-        config.set("Vert", vert);
-        config.set("WorldBlackList", world_black_list);
-        config.set("Price", price);
-        config.set("OnlyXZ", only_xz);
-        config.set("Refund", refund);
         try {
             config.save(file_path);
         } catch (Exception e) {
