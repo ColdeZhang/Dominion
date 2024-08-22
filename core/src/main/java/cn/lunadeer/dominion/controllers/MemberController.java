@@ -2,8 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.*;
 
-import static cn.lunadeer.dominion.utils.ControllerUtils.noAuthToChangeFlags;
-import static cn.lunadeer.dominion.utils.ControllerUtils.notOwner;
+import static cn.lunadeer.dominion.utils.ControllerUtils.*;
 
 public class MemberController {
 
@@ -33,7 +32,7 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
             return;
         }
-        if (privilege.getAdmin() && notOwner(operator, dominion)) {
+        if (isAdmin(privilege) && notOwner(operator, dominion)) {
             operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法移除一个领地管理员", dominionName));
             return;
         }
@@ -69,7 +68,12 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
             return;
         }
-        if ((flag.equals("admin") || privilege.getAdmin()) && notOwner(operator, dominion)) {
+        GroupDTO group = GroupDTO.select(privilege.getGroupId());
+        if (group != null) {
+            operator.setResponse(FAIL.addMessage("玩家 %s 属于 %s 权限组，无法单独设置权限", player_name, group.getName()));
+            return;
+        }
+        if ((flag.equals("admin") || isAdmin(privilege)) && notOwner(operator, dominion)) {
             operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他玩家管理员的权限", dominionName));
             return;
         }
@@ -141,7 +145,7 @@ public class MemberController {
             operator.setResponse(FAIL.addMessage("模板 %s 不存在", templateName));
             return;
         }
-        if (notOwner(operator, dominion) && privilege.getAdmin()) {
+        if (notOwner(operator, dominion) && (isAdmin(privilege) || template.getAdmin())) {
             operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他管理员的权限", dominionName));
             return;
         }

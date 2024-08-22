@@ -4,8 +4,10 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 public class ControllerUtils {
 
@@ -48,6 +50,22 @@ public class ControllerUtils {
         } else {
             player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你当前在子领地内，请指定要操作的领地名称"));
             return null;
+        }
+    }
+
+    /**
+     * 检查一个成员是否是管理员
+     * 此方法会同时尝试搜索玩家所在的权限组是否是管理员
+     *
+     * @param member 成员权限
+     * @return 是否是管理员
+     */
+    public static boolean isAdmin(@NotNull MemberDTO member) {
+        GroupDTO group = GroupDTO.select(member.getGroupId());
+        if (group == null) {
+            return member.getAdmin();
+        } else {
+            return group.getAdmin();
         }
     }
 
