@@ -33,7 +33,7 @@ public class DominionDTO {
             Integer id = rs.getInt("id");
             UUID owner = UUID.fromString(rs.getString("owner"));
             String name = rs.getString("name");
-            String world = rs.getString("world");
+            UUID world_uid = UUID.fromString(rs.getString("world_uid"));
             Integer x1 = rs.getInt("x1");
             Integer y1 = rs.getInt("y1");
             Integer z1 = rs.getInt("z1");
@@ -48,7 +48,7 @@ public class DominionDTO {
             }
             String color = rs.getString("color");
 
-            DominionDTO dominion = new DominionDTO(id, owner, name, world, x1, y1, z1, x2, y2, z2, parentDomId,
+            DominionDTO dominion = new DominionDTO(id, owner, name, world_uid, x1, y1, z1, x2, y2, z2, parentDomId,
                     rs.getString("join_message"),
                     rs.getString("leave_message"),
                     flags,
@@ -79,7 +79,7 @@ public class DominionDTO {
         if (id == -1) {
             return new DominionDTO(-1,
                     UUID.fromString("00000000-0000-0000-0000-000000000000"),
-                    "根领地", "all",
+                    "根领地", UUID.fromString("00000000-0000-0000-0000-000000000000"),
                     -2147483648, -2147483648, -2147483648,
                     2147483647, 2147483647, 2147483647, -1);
         }
@@ -89,17 +89,17 @@ public class DominionDTO {
         return dominions.getFirst();
     }
 
-    public static List<DominionDTO> selectByParentId(String world, Integer parentId) {
-        String sql = "SELECT * FROM dominion WHERE world = ? AND parent_dom_id = ? AND id > 0;";
-        return query(sql, world, parentId);
+    public static List<DominionDTO> selectByParentId(UUID world_uid, Integer parentId) {
+        String sql = "SELECT * FROM dominion WHERE world_uid = ? AND parent_dom_id = ? AND id > 0;";
+        return query(sql, world_uid.toString(), parentId);
     }
 
-    public static List<DominionDTO> selectByLocation(String world, Integer x, Integer y, Integer z) {
-        String sql = "SELECT * FROM dominion WHERE world = ? AND " +
+    public static List<DominionDTO> selectByLocation(UUID world_uid, Integer x, Integer y, Integer z) {
+        String sql = "SELECT * FROM dominion WHERE world_uid = ? AND " +
                 "x1 <= ? AND x2 >= ? AND " +
                 "y1 <= ? AND y2 >= ? AND " +
                 "z1 <= ? AND z2 >= ? AND " + "id > 0;";
-        return query(sql, world, x, x, y, y, z, z);
+        return query(sql, world_uid.toString(), x, x, y, y, z, z);
     }
 
     public static DominionDTO select(String name) {
@@ -113,7 +113,7 @@ public class DominionDTO {
         InsertRow insert = new InsertRow().returningAll().table("dominion").onConflictDoNothing(new Field("id", null));
         insert.field(dominion.owner)
                 .field(dominion.name)
-                .field(dominion.world)
+                .field(dominion.world_uid)
                 .field(dominion.x1).field(dominion.y1).field(dominion.z1)
                 .field(dominion.x2).field(dominion.y2).field(dominion.z2)
                 .field(dominion.parentDomId)
@@ -139,7 +139,7 @@ public class DominionDTO {
         Cache.instance.loadDominions();
     }
 
-    private DominionDTO(Integer id, UUID owner, String name, String world,
+    private DominionDTO(Integer id, UUID owner, String name, UUID world_uid,
                         Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2,
                         Integer parentDomId,
                         String joinMessage, String leaveMessage,
@@ -149,7 +149,7 @@ public class DominionDTO {
         this.id.value = id;
         this.owner.value = owner.toString();
         this.name.value = name;
-        this.world.value = world;
+        this.world_uid.value = world_uid.toString();
         this.x1.value = x1;
         this.y1.value = y1;
         this.z1.value = z1;
@@ -165,13 +165,13 @@ public class DominionDTO {
     }
 
 
-    private DominionDTO(Integer id, UUID owner, String name, String world,
+    private DominionDTO(Integer id, UUID owner, String name, UUID world_uid,
                         Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2,
                         Integer parentDomId) {
         this.id.value = id;
         this.owner.value = owner.toString();
         this.name.value = name;
-        this.world.value = world;
+        this.world_uid.value = world_uid.toString();
         this.x1.value = x1;
         this.y1.value = y1;
         this.z1.value = z1;
@@ -181,20 +181,19 @@ public class DominionDTO {
         this.parentDomId.value = parentDomId;
     }
 
-    public DominionDTO(UUID owner, String name, String world,
+    public DominionDTO(UUID owner, String name, UUID world_uid,
                        Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
-        this(null, owner, name, world, x1, y1, z1, x2, y2, z2, -1);
+        this(null, owner, name, world_uid, x1, y1, z1, x2, y2, z2, -1);
     }
 
-    public static DominionDTO create(UUID owner, String name, String world,
+    public static DominionDTO create(UUID owner, String name, UUID world_uid,
                                      Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
-        return new DominionDTO(null, owner, name, world, x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
+        return new DominionDTO(null, owner, name, world_uid, x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
     }
 
     private final Field id = new Field("id", FieldType.INT);
     private final Field owner = new Field("owner", FieldType.STRING);
     private final Field name = new Field("name", FieldType.STRING);
-    private final Field world = new Field("world", FieldType.STRING);
     private final Field x1 = new Field("x1", FieldType.INT);
     private final Field y1 = new Field("y1", FieldType.INT);
     private final Field z1 = new Field("z1", FieldType.INT);
@@ -207,6 +206,7 @@ public class DominionDTO {
     private final Map<Flag, Boolean> flags = new HashMap<>();
     private final Field tp_location = new Field("tp_location", "default");
     private final Field color = new Field("color", "#00BFFF");
+    private final Field world_uid = new Field("world_uid", FieldType.STRING);
 
 
     // getters and setters
@@ -247,8 +247,12 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.name));
     }
 
-    public String getWorld() {
-        return (String) world.value;
+    public World getWorld() {
+        return Dominion.instance.getServer().getWorld(getWorldUid());
+    }
+
+    public UUID getWorldUid() {
+        return UUID.fromString((String) world_uid.value);
     }
 
     public Integer getX1() {
@@ -384,12 +388,12 @@ public class DominionDTO {
         } else {
             // 0:0:0
             String[] loc = ((String) tp_location.value).split(":");
-            World w = Dominion.instance.getServer().getWorld(getWorld());
+            World w = getWorld();
             if (loc.length == 3 && w != null) {
                 return new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
             } else {
                 XLogger.warn("领地传送点数据异常: %s", tp_location);
-                XLogger.debug("world: %s, loc.length: %d", world, loc.length);
+                XLogger.debug("world: %s, loc.length: %d", getWorld(), loc.length);
                 return null;
             }
         }
@@ -401,11 +405,11 @@ public class DominionDTO {
     }
 
     public Location getLocation1() {
-        return new Location(Dominion.instance.getServer().getWorld(getWorld()), getX1(), getY1(), getZ1());
+        return new Location(getWorld(), getX1(), getY1(), getZ1());
     }
 
     public Location getLocation2() {
-        return new Location(Dominion.instance.getServer().getWorld(getWorld()), getX2(), getY2(), getZ2());
+        return new Location(getWorld(), getX2(), getY2(), getZ2());
     }
 
     public DominionDTO setColor(String color) {
