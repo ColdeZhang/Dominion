@@ -55,20 +55,16 @@ public class DominionNode {
                     return node;
                 } else {
                     DominionNode childDominion = getLocInDominionNode(node.children, loc);
-                    if (childDominion == null) {
-                        return node;
-                    } else {
-                        return childDominion;
-                    }
+                    return Objects.requireNonNullElse(childDominion, node);
                 }
             }
         }
         return null;
     }
 
-    public static boolean isInDominion(@Nullable DominionDTO dominion, Location location) {
+    public static boolean isInDominion(@Nullable DominionDTO dominion, @NotNull Location location) {
         if (dominion == null) return false;
-        if (!Objects.equals(dominion.getWorld(), location.getWorld().getName())) return false;
+        if (!Objects.equals(dominion.getWorldUid(), location.getWorld().getUID())) return false;
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();

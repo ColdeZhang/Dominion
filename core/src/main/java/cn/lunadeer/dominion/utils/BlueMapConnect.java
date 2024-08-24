@@ -21,10 +21,13 @@ public class BlueMapConnect {
                 BlueMapAPI.getInstance().ifPresent(api -> {
                     Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
                     for (DominionDTO dominion : Cache.instance.getDominions()) {
-                        if (!world_dominions.containsKey(dominion.getWorld())) {
-                            world_dominions.put(dominion.getWorld(), new ArrayList<>());
+                        if (dominion.getWorld() == null) {
+                            continue;
                         }
-                        world_dominions.get(dominion.getWorld()).add(dominion);
+                        if (!world_dominions.containsKey(dominion.getWorld().getName())) {
+                            world_dominions.put(dominion.getWorld().getName(), new ArrayList<>());
+                        }
+                        world_dominions.get(dominion.getWorld().getName()).add(dominion);
                     }
                     for (Map.Entry<String, List<DominionDTO>> d : world_dominions.entrySet()) {
                         api.getWorld(d.getKey()).ifPresent(world -> {

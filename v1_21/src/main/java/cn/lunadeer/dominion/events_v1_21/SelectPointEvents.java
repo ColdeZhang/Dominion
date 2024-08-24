@@ -78,7 +78,7 @@ public class SelectPointEvents implements Listener {
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
-            DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld().getName(),
+            DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld(),
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
                 if (!VaultConnect.instance.economyAvailable()) {

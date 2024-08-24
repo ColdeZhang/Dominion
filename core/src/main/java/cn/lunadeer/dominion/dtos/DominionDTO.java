@@ -10,6 +10,8 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -87,6 +89,10 @@ public class DominionDTO {
         List<DominionDTO> dominions = query(sql, id);
         if (dominions.isEmpty()) return null;
         return dominions.getFirst();
+    }
+
+    public static List<DominionDTO> selectByParentId(World world, Integer parentId){
+        return selectByParentId(world.getUID(), parentId);
     }
 
     public static List<DominionDTO> selectByParentId(UUID world_uid, Integer parentId) {
@@ -181,14 +187,14 @@ public class DominionDTO {
         this.parentDomId.value = parentDomId;
     }
 
-    public DominionDTO(UUID owner, String name, UUID world_uid,
+    public DominionDTO(UUID owner, String name, @NotNull World world,
                        Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
-        this(null, owner, name, world_uid, x1, y1, z1, x2, y2, z2, -1);
+        this(null, owner, name, world.getUID(), x1, y1, z1, x2, y2, z2, -1);
     }
 
-    public static DominionDTO create(UUID owner, String name, UUID world_uid,
+    public static DominionDTO create(UUID owner, String name, @NotNull World world,
                                      Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
-        return new DominionDTO(null, owner, name, world_uid, x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
+        return new DominionDTO(null, owner, name, world.getUID(), x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
     }
 
     private final Field id = new Field("id", FieldType.INT);
@@ -247,7 +253,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.name));
     }
 
-    public World getWorld() {
+    public @Nullable World getWorld() {
         return Dominion.instance.getServer().getWorld(getWorldUid());
     }
 

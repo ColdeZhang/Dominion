@@ -42,11 +42,14 @@ public class DynmapConnect extends DynmapCommonAPIListener {
         String nameLabel = "<div>" + dominion.getName() + "</div>";
         double[] xx = {dominion.getX1(), dominion.getX2()};
         double[] zz = {dominion.getZ1(), dominion.getZ2()};
+        if (dominion.getWorld() == null) {
+            return;
+        }
         AreaMarker marker = this.markerSet_dominion.createAreaMarker(
                 dominion.getId().toString(),
                 nameLabel,
                 true,
-                dominion.getWorld(),
+                dominion.getWorld().getName(),
                 xx,
                 zz,
                 false

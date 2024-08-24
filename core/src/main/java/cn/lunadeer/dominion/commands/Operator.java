@@ -52,8 +52,11 @@ public class Operator {
             Map<String, List<String>> mca_cords = new HashMap<>();
             List<DominionDTO> doms = Cache.instance.getDominions();
             for (DominionDTO dom : doms) {
-                if (!mca_cords.containsKey(dom.getWorld())) {
-                    mca_cords.put(dom.getWorld(), new ArrayList<>());
+                if (dom.getWorld() == null) {
+                    continue;
+                }
+                if (!mca_cords.containsKey(dom.getWorld().getName())) {
+                    mca_cords.put(dom.getWorld().getName(), new ArrayList<>());
                 }
                 Integer world_x1 = dom.getX1();
                 Integer world_x2 = dom.getX2();
@@ -66,10 +69,10 @@ public class Operator {
                 for (int x = mca_x1; x <= mca_x2; x++) {
                     for (int z = mca_z1; z <= mca_z2; z++) {
                         String file_name = "r." + x + "." + z + ".mca";
-                        if (mca_cords.get(dom.getWorld()).contains(file_name)) {
+                        if (mca_cords.get(dom.getWorld().getName()).contains(file_name)) {
                             continue;
                         }
-                        mca_cords.get(dom.getWorld()).add(file_name);
+                        mca_cords.get(dom.getWorld().getName()).add(file_name);
                     }
                 }
             }

@@ -1,12 +1,16 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.databse.*;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.AddColumn;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
+import cn.lunadeer.minecraftpluginutils.databse.syntax.RemoveColumn;
+import org.bukkit.World;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 public class DatabaseTables {
     public static void migrate() {
@@ -241,6 +245,19 @@ public class DatabaseTables {
 
             TableColumn player_name_using_group_title_id = new TableColumn("using_group_title_id", FieldType.INT, false, false, true, false, -1);
             new AddColumn(player_name_using_group_title_id).table("player_name").ifNotExists().execute();
+        }
+
+        // 2.3.0 change world name to world uid
+        if (!Common.IsFieldExist("dominion", "world_uid")) {
+            TableColumn dominion_world_uid = new TableColumn("world_uid", FieldType.STRING, false, false, true, false, "'00000000-0000-0000-0000-000000000000'");
+            new AddColumn(dominion_world_uid).table("dominion").ifNotExists().execute();
+            List<World> worlds = Dominion.instance.getServer().getWorlds();
+            for (World world : worlds) {
+                String sql = String.format("UPDATE dominion SET world_uid = '%s' WHERE world = '%s';", world.getUID().toString(), world.getName());
+                DatabaseManager.instance.query(sql);
+            }
+            DatabaseManager.instance.query("UPDATE dominion SET world_uid = '00000000-0000-0000-0000-000000000000' WHERE world = 'all';");
+            new RemoveColumn("world").table("dominion").IfExists().execute();
         }
     }
 }

@@ -92,7 +92,7 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("已经存在名称为 %s 的领地", name));
             return;
         }
-        if (!loc1.getWorld().equals(loc2.getWorld())) {
+        if (!loc1.getWorld().getUID().equals(loc2.getWorld().getUID())) {
             operator.setResponse(FAIL.addMessage("选点世界不一致"));
             return;
         }
@@ -137,10 +137,10 @@ public class DominionController {
             }
         }
         // 创建 dominion (此步骤不会写入数据)
-        DominionDTO dominion = DominionDTO.create(parent_dominion.getId() == -1 ? operator.getUniqueId() : parent_dominion.getOwner(), name, loc1.getWorld().getName(),
+        DominionDTO dominion = DominionDTO.create(parent_dominion.getId() == -1 ? operator.getUniqueId() : parent_dominion.getOwner(), name, loc1.getWorld(),
                 minX, minY, minZ, maxX, maxY, maxZ, parent_dominion);
         // 如果parent_dominion不为-1 检查是否在同一世界
-        if (parent_dominion.getId() != -1 && !parent_dominion.getWorld().equals(dominion.getWorld())) {
+        if (parent_dominion.getId() != -1 && !parent_dominion.getWorldUid().equals(dominion.getWorldUid())) {
             operator.setResponse(FAIL.addMessage("父领地与子领地不在同一世界。"));
             return;
         }
@@ -154,7 +154,7 @@ public class DominionController {
             return;
         }
         // 获取此领地的所有同级领地
-        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), parent_dominion.getId());
+        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), parent_dominion.getId());
         // 检查是否与出生点保护冲突
         if (isIntersectSpawn(operator, dominion)) {
             operator.setResponse(FAIL.addMessage("与出生点保护冲突"));
@@ -191,7 +191,7 @@ public class DominionController {
         if (radius == -1) {
             return false;
         }
-        World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
+        World world = dominion.getWorld();
         if (world == null) {
             return false;
         }
@@ -200,7 +200,7 @@ public class DominionController {
                 , spawn.getBlockX() + radius, spawn.getBlockY() + radius, spawn.getBlockZ() + radius);
     }
 
-    private static boolean isIntersectSpawn(AbstractOperator operator, String world, int[] cords) {
+    private static boolean isIntersectSpawn(AbstractOperator operator, @NotNull World world, int[] cords) {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
@@ -208,7 +208,7 @@ public class DominionController {
         if (radius == -1) {
             return false;
         }
-        Location spawn = Objects.requireNonNull(Dominion.instance.getServer().getWorld(world)).getSpawnLocation();
+        Location spawn = world.getSpawnLocation();
         return isIntersect(cords, spawn.getBlockX() - radius, spawn.getBlockY() - radius, spawn.getBlockZ() - radius
                 , spawn.getBlockX() + radius, spawn.getBlockY() + radius, spawn.getBlockZ() + radius);
     }
@@ -263,7 +263,7 @@ public class DominionController {
             return;
         }
         // 获取同世界下的所有同级领地
-        List<DominionDTO> exist_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getParentDomId());
+        List<DominionDTO> exist_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), dominion.getParentDomId());
         for (DominionDTO exist_dominion : exist_dominions) {
             if (isIntersect(exist_dominion, newCords)) {
                 // 如果是自己，跳过
@@ -317,7 +317,7 @@ public class DominionController {
             return;
         }
         // 获取所有的子领地
-        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
+        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), dominion.getId());
         for (DominionDTO sub_dominion : sub_dominions) {
             if (!isContained(sub_dominion, newCords)) {
                 operator.setResponse(FAIL.addMessage("缩小后的领地无法包含子领地 %s", sub_dominion.getName()));
@@ -478,9 +478,9 @@ public class DominionController {
             operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地 %s 不存在", dominion_name));
             return;
         }
-        World world = Dominion.instance.getServer().getWorld(dominion.getWorld());
+        World world = dominion.getWorld();
         if (world == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "世界 %s 不存在", dominion.getWorld()));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地所在世界不存在"));
             return;
         }
         Location loc = new Location(world, x, y, z);
@@ -679,7 +679,7 @@ public class DominionController {
     }
 
     private static List<DominionDTO> getSubDominionsRecursive(DominionDTO dominion) {
-        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorld(), dominion.getId());
+        List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), dominion.getId());
         List<DominionDTO> sub_sub_dominions = new ArrayList<>();
         for (DominionDTO sub_dominion : sub_dominions) {
             sub_sub_dominions.addAll(getSubDominionsRecursive(sub_dominion));
@@ -777,11 +777,11 @@ public class DominionController {
         return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount(operator.getPlayer()) && Dominion.config.getLimitAmount(operator.getPlayer()) != -1;
     }
 
-    private static boolean worldNotValid(AbstractOperator operator, String world) {
+    private static boolean worldNotValid(AbstractOperator operator, String worldName) {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        return Dominion.config.getWorldBlackList(operator.getPlayer()).contains(world);
+        return Dominion.config.getWorldBlackList(operator.getPlayer()).contains(worldName);
     }
 
     private static DominionDTO getExistDomAndIsOwner(AbstractOperator operator, String dominion_name) {
@@ -854,7 +854,7 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage("无法获取你的位置"));
             return null;
         }
-        if (!operator.getLocation().getWorld().getName().equals(dominion.getWorld())) {
+        if (!operator.getLocation().getWorld().getUID().equals(dominion.getWorldUid())) {
             operator.setResponse(FAIL.addMessage("禁止跨世界操作"));
             return null;
         }
@@ -929,7 +929,7 @@ public class DominionController {
         for (DominionDTO sub_dominion : sub_dominions) {
             sub_names = sub_dominion.getName() + ", ";
         }
-        if (sub_dominions.size() > 0) {
+        if (!sub_dominions.isEmpty()) {
             sub_names = sub_names.substring(0, sub_names.length() - 2);
             WARNING.addMessage("(子领地：%s)", sub_names);
         }
