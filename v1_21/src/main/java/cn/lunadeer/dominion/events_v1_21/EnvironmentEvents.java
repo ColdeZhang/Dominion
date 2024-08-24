@@ -7,6 +7,7 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,10 +15,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 
 import java.util.Objects;
 
@@ -304,5 +308,44 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.VILLAGER_SPAWN, event);
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHopper(InventoryMoveItemEvent event) {
+        Inventory hopper = event.getDestination();
+        Inventory inventory = event.getSource();
+        DominionDTO hopperDom = Cache.instance.getDominionByLoc(hopper.getLocation());
+        DominionDTO inventoryDom = Cache.instance.getDominionByLoc(inventory.getLocation());
+        if (hopperDom == null && inventoryDom != null) {
+            checkFlag(inventoryDom, Flag.HOPPER_OUTSIDE, event);
+        }
+        if (hopperDom != null && inventoryDom != null) {
+            if (!hopperDom.getId().equals(inventoryDom.getId())) {
+                checkFlag(inventoryDom, Flag.HOPPER_OUTSIDE, event);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockPushedByPiston(BlockPistonExtendEvent event) {
+        Block piston = event.getBlock();
+        DominionDTO pistonDom = Cache.instance.getDominionByLoc(piston.getLocation());
+        BlockFace direction = event.getDirection();
+        Block endBlockAfterPush = piston.getRelative(direction, event.getBlocks().size() + 1);
+        DominionDTO endBlockDom = Cache.instance.getDominionByLoc(endBlockAfterPush.getLocation());
+        if (pistonDom != null && endBlockDom == null) {
+            checkFlag(pistonDom, Flag.PISTON_OUTSIDE, event);
+        }
+        if (pistonDom == null && endBlockDom != null) {
+            checkFlag(endBlockDom, Flag.PISTON_OUTSIDE, event);
+        }
+        if (pistonDom != null && endBlockDom != null) {
+            if (!pistonDom.getId().equals(endBlockDom.getId())) {
+                if (!endBlockDom.getFlagValue(Flag.PISTON_OUTSIDE) || !pistonDom.getFlagValue(Flag.PISTON_OUTSIDE)) {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 }
