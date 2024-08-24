@@ -392,6 +392,10 @@ public class DominionOperate {
                 int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
                 int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
                 World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
+                if (world == null) {
+                    Notification.error(sender, "领地所在世界 %s 不存在", dominionDTO.getWorld());
+                    return;
+                }
                 location = new Location(world, x, player.getLocation().getY(), z);
                 XLogger.warn("领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
             }
@@ -460,6 +464,10 @@ public class DominionOperate {
             int center_x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
             int center_z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
             World world = Dominion.instance.getServer().getWorld(dominionDTO.getWorld());
+            if (world == null) {
+                Notification.error(player, "领地所在世界 %s 不存在", dominionDTO.getWorld());
+                return;
+            }
             if (location == null) {
                 location = new Location(world, center_x, player.getLocation().getY(), center_z);
                 Notification.warn(player, "领地 %s 没有设置传送点，将尝试传送到中心点", dominionDTO.getName());
