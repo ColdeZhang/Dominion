@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.utils.MapRender;
+import cn.lunadeer.minecraftpluginutils.GiteaReleaseCheck;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -136,6 +137,13 @@ public class Operator {
             );
             Notification.info(sender, "配置文件已重新加载");
         });
+    }
+
+    public static void version(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
+        GiteaReleaseCheck.instance.getLatestRelease();
     }
 
     private static int convertWorld2Mca(int world) {
