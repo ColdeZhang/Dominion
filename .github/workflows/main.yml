@@ -24,11 +24,12 @@ jobs:
       run: mkdir staging && cp build/libs/*.jar staging/
     - name: "Build & test"
       run: |
+        TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
         echo "done!"
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ github.ref }}"
+        automatic_release_tag: "${{ steps.build.outputs.TAG }}"
         prerelease: false
         files: |
           staging/*.jar
