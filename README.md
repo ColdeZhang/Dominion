@@ -4,7 +4,7 @@
 
 ### [开源地址](https://github.com/ColdeZhang/Dominion) | [文档地址](https://ssl.lunadeer.cn:14448/doc/23/)
 
-### [下载页面](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases) | [镜像地址](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
+### [下载页面](https://github.com/ColdeZhang/Dominion/releases/latest) | [镜像地址](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
 
 ### [统计页面](https://bstats.org/plugin/bukkit/Dominion/21445) | [Hangar](https://hangar.papermc.io/zhangyuheng/Dominion)
 
