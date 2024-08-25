@@ -2,7 +2,7 @@
 name: 报告BUG
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: bug, 疑问/待复现
 assignees: ''
 
 ---
