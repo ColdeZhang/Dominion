@@ -16,16 +16,12 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '21'
-        distribution: 'temurin'
+        distribution: 'zulu'
         cache: gradle
     - name: "Build with Gradle"
       run: ./gradlew buildPlugin
     - name: "Copy jar to staging"
       run: mkdir staging && cp build/libs/*.jar staging/
-# 设置 jobs Maven pom 版本环境变量
-    - name: Set Release version env variable
-      run: |
-        echo "RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
     - name: "Build & test"
       run: |
         echo "done!"
@@ -34,6 +30,5 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: false
-        title: "Release ${{ env.RELEASE_VERSION }}"
         files: |
           staging/*.jar
