@@ -141,6 +141,9 @@ public class Commands implements TabExecutor {
             case "title_list":
                 TitleList.show(sender, args);
                 break;
+            case "version":
+                Operator.version(sender, args);
+                break;
             // ---===  Sub Command  ===---
             case "member":
                 Member.handle(sender, args);
