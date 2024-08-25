@@ -60,7 +60,7 @@ public final class Dominion extends JavaPlugin {
         if (config.getCheckUpdate()) {
             giteaReleaseCheck = new GiteaReleaseCheck(this,
                     "https://ssl.lunadeer.cn:14446",
-                    "zhangyuheng",
+                    "mirror",
                     "Dominion");
         }
 
