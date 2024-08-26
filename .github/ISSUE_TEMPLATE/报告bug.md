@@ -1,6 +1,6 @@
 ---
 name: 报告BUG
-about: Create a report to help us improve
+about: 提交一个BUG报告
 title: ''
 labels: bug, 疑问/待复现
 assignees: ''
@@ -8,26 +8,33 @@ assignees: ''
 ---
 
 **BUG描述**
-A clear and concise description of what the bug is.
+
+请详细、清晰地描述bug现象。
 
 **复现方式**
-Steps to reproduce the behavior:
+
+Bug复现步骤：
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
 **正常情况的表现**
-A clear and concise description of what you expected to happen.
+
+正常情况下的表现应该是怎样的
 
 **截图**
-If applicable, add screenshots to help explain your problem.
+
+（可选）。
 
 **运行环境:**
- - 服务器系统：win, linux
- - 服务端核心：（如：Paper、Spigot）
- - 服务端版本：
- - 插件版本：
+
+- 服务器系统：win, linux
+- 服务端核心：（如：Paper、Spigot）
+- 服务端版本：
+- 插件版本：
 
 **补充信息**
-Add any other context about the problem here.
+
+如错误日志等。
