@@ -685,6 +685,22 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // place - armor stand
+    public void placeArmorStand(EntityPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        Entity entity = event.getEntity();
+        if (!(entity instanceof ArmorStand)) {
+            return;
+        }
+        if (onPlace(player, entity.getLocation())) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
     public static boolean onPlace(Player player, Location location) {
         DominionDTO dom = Cache.instance.getDominionByLoc(location);
         return checkFlag(dom, Flag.PLACE, player, null);
