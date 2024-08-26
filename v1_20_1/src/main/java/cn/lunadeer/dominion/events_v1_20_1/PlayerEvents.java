@@ -19,7 +19,6 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -91,13 +90,17 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // beacon
     public void onBeaconUse(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.BEACON) {
+        Inventory inv = event.getInventory();
+        if (inv.getType() != InventoryType.BEACON) {
             return;
         }
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        if (inv.getLocation() == null) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(inv.getLocation());
         checkFlag(dom, Flag.BEACON, bukkitPlayer, event);
     }
 
@@ -418,14 +421,15 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // egg
-    public void onThrowingEgg(ProjectileLaunchEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player player)) {
+    public void onThrowingEgg(ProjectileHitEvent event) {
+        Projectile projectile = event.getEntity();
+        if (!(projectile.getShooter() instanceof Player player)) {
             return;
         }
-        if (event.getEntity().getType() != EntityType.EGG) {
+        if (projectile.getType() != EntityType.EGG) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
         checkFlag(dom, Flag.EGG, player, event);
     }
 
@@ -442,14 +446,15 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_pearl
-    public void onThrowingEndPearl(ProjectileLaunchEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player player)) {
+    public void onThrowingEndPearl(ProjectileHitEvent event) {
+        Projectile projectile = event.getEntity();
+        if (!(projectile.getShooter() instanceof Player player)) {
             return;
         }
-        if (event.getEntity().getType() != EntityType.ENDER_PEARL) {
+        if (projectile.getType() != EntityType.ENDER_PEARL) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
         checkFlag(dom, Flag.ENDER_PEARL, player, event);
     }
 
@@ -740,10 +745,14 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // shoot
     public void onShootArrowSnowball(ProjectileHitEvent event) {
-        if (!(event.getEntity().getShooter() instanceof Player player)) {
+        Projectile projectile = event.getEntity();
+        if (!(projectile.getShooter() instanceof Player player)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
+        if (projectile.getType() == EntityType.ENDER_PEARL || projectile.getType() == EntityType.EGG) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
         checkFlag(dom, Flag.SHOOT, player, event);
     }
 
