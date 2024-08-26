@@ -9,6 +9,14 @@ import static cn.lunadeer.dominion.utils.ControllerUtils.notOwner;
 
 public class GroupController {
 
+    /**
+     * 创建权限组
+     *
+     * @param operator    操作者
+     * @param domName     领地名称
+     * @param groupName   权限组名称
+     * @param nameColored 权限组名称（带颜色）
+     */
     public static void createGroup(AbstractOperator operator, String domName, String groupName, String nameColored) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建权限组 %s 失败", groupName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建权限组 %s 成功", groupName);
@@ -38,6 +46,13 @@ public class GroupController {
         operator.setResponse(SUCCESS);
     }
 
+    /**
+     * 删除权限组
+     *
+     * @param operator  操作者
+     * @param domName   领地名称
+     * @param groupName 权限组名称
+     */
     public static void deleteGroup(AbstractOperator operator, String domName, String groupName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "删除权限组 %s 失败", groupName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "删除权限组 %s 成功", groupName);
@@ -59,6 +74,15 @@ public class GroupController {
         operator.setResponse(SUCCESS);
     }
 
+    /**
+     * 设置权限组权限
+     *
+     * @param operator  操作者
+     * @param domName   领地名称
+     * @param groupName 权限组名称
+     * @param flag      权限名称
+     * @param value     权限值
+     */
     public static void setGroupFlag(AbstractOperator operator, String domName, String groupName, String flag, boolean value) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置权限组 %s 的权限 %s 为 %s 失败", groupName, flag, value);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置权限组 %s 的权限 %s 为 %s 成功", groupName, flag, value);
@@ -96,6 +120,15 @@ public class GroupController {
         operator.setResponse(SUCCESS);
     }
 
+    /**
+     * 重命名权限组
+     *
+     * @param operator    操作者
+     * @param domName     领地名称
+     * @param oldName     旧名称
+     * @param newName     新名称
+     * @param nameColored 新名称（带颜色）
+     */
     public static void renameGroup(AbstractOperator operator, String domName, String oldName, String newName, String nameColored) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "重命名权限组 %s 为 %s 失败", oldName, newName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "重命名权限组 %s 为 %s 成功", oldName, newName);
@@ -125,6 +158,14 @@ public class GroupController {
         operator.setResponse(SUCCESS);
     }
 
+    /**
+     * 添加成员到权限组
+     *
+     * @param operator   操作者
+     * @param domName    领地名称
+     * @param groupName  权限组名称
+     * @param playerName 玩家名称
+     */
     public static void addMember(AbstractOperator operator, String domName, String groupName, String playerName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "添加成员 %s 到权限组 %s 失败", playerName, groupName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "添加成员 %s 到权限组 %s 成功", playerName, groupName);
@@ -172,6 +213,14 @@ public class GroupController {
         operator.setResponse(SUCCESS);
     }
 
+    /**
+     * 从权限组移除成员
+     *
+     * @param operator   操作者
+     * @param domName    领地名称
+     * @param groupName  权限组名称
+     * @param playerName 玩家名称
+     */
     public static void removeMember(AbstractOperator operator, String domName, String groupName, String playerName) {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "从权限组 %s 移除成员 %s 失败", groupName, playerName);
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "从权限组 %s 移除成员 %s 成功", groupName, playerName);

@@ -7,6 +7,12 @@ import java.util.List;
 
 public class TemplateController {
 
+    /**
+     * 创建权限模板
+     *
+     * @param operator     操作者
+     * @param templateName 模板名称
+     */
     public static void createTemplate(AbstractOperator operator, String templateName) {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建成功");
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建失败");
@@ -29,6 +35,12 @@ public class TemplateController {
         operator.setResponse(SUCCESS.addMessage("成功创建名为 %s 的权限模板", templateName));
     }
 
+    /**
+     * 删除权限模板
+     *
+     * @param operator     操作者
+     * @param templateName 模板名称
+     */
     public static void deleteTemplate(AbstractOperator operator, String templateName) {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "删除成功");
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "删除失败");
@@ -45,6 +57,14 @@ public class TemplateController {
         operator.setResponse(SUCCESS);
     }
 
+    /**
+     * 设置权限模板的权限
+     *
+     * @param operator     操作者
+     * @param templateName 模板名称
+     * @param flag_name    权限名称
+     * @param value        权限值
+     */
     public static void setTemplateFlag(AbstractOperator operator, String templateName, String flag_name, boolean value) {
         AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置成功");
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置失败");
