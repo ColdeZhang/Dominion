@@ -7,29 +7,29 @@ on:
 
 jobs:
   build:
-#	配置权限
+    #	配置权限
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 21
-      uses: actions/setup-java@v3
-      with:
-        java-version: '21'
-        distribution: 'zulu'
-        cache: gradle
-    - name: "Build with Gradle"
-      run: ./gradlew buildPlugin
-    - name: "Copy jar to staging"
-      run: mkdir staging && cp build/libs/*.jar staging/
-    - name: "Build & test"
-      run: |
-        TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-        echo "done!"
-    - uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "${{ steps.build.outputs.TAG }}"
-        prerelease: false
-        files: |
-          staging/*.jar
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+          cache: gradle
+      - name: "Build with Gradle"
+        run: ./gradlew buildPlugin
+      - name: "Copy jar to staging"
+        run: mkdir staging && cp build/libs/*.jar staging/
+      - name: "Build & test"
+        run: |
+          TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          echo "done!"
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ steps.build.outputs.TAG }}"
+          prerelease: false
+          files: |
+            staging/*.jar

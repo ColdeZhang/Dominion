@@ -52,7 +52,7 @@ public class Migration {
                 return;
             }
             create(player, resNode, "");
-            if (args.length == 3 ) {
+            if (args.length == 3) {
                 int parentId = Integer.parseInt(args[2]);
                 String[] newArgs = new String[2];
                 newArgs[0] = "migrate_list";

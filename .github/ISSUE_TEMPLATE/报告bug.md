@@ -1,6 +1,6 @@
 ---
 name: 报告BUG
-about: Create a report to help us improve
+about: 提交一个BUG报告
 title: ''
 labels: bug, 疑问/待复现
 assignees: ''
@@ -12,6 +12,7 @@ A clear and concise description of what the bug is.
 
 **复现方式**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -24,10 +25,11 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **运行环境:**
- - 服务器系统：win, linux
- - 服务端核心：（如：Paper、Spigot）
- - 服务端版本：
- - 插件版本：
+
+- 服务器系统：win, linux
+- 服务端核心：（如：Paper、Spigot）
+- 服务端版本：
+- 插件版本：
 
 **补充信息**
 Add any other context about the problem here.

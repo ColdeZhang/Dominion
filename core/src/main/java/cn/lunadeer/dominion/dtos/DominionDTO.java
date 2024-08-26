@@ -91,7 +91,7 @@ public class DominionDTO {
         return dominions.getFirst();
     }
 
-    public static List<DominionDTO> selectByParentId(World world, Integer parentId){
+    public static List<DominionDTO> selectByParentId(World world, Integer parentId) {
         return selectByParentId(world.getUID(), parentId);
     }
 

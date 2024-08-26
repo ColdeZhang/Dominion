@@ -48,7 +48,7 @@ public class GroupDTO {
     }
 
     public String getNameColoredBukkit() {
-        String with_pre_suf =  "&#ffffff" +
+        String with_pre_suf = "&#ffffff" +
                 Dominion.config.getGroupTitlePrefix() +
                 (String) name_colored.value +
                 "&#ffffff" +
