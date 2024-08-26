@@ -95,7 +95,7 @@ public class PlayerDTO {
 
     public static void delete(PlayerDTO player) {
         String sql = "DELETE FROM player_name WHERE uuid = ?;";
-        query(sql, player.getUuid());
+        query(sql, player.getUuid().toString());
     }
 
     private static PlayerDTO insert(PlayerDTO player) {
