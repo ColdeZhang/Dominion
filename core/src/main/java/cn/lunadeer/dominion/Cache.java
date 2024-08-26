@@ -513,80 +513,84 @@ public class Cache {
 
 
         private void init(List<DominionDTO> dominions) {
-            world_dominion_tree_sector_a = new ConcurrentHashMap<>();
-            world_dominion_tree_sector_b = new ConcurrentHashMap<>();
-            world_dominion_tree_sector_c = new ConcurrentHashMap<>();
-            world_dominion_tree_sector_d = new ConcurrentHashMap<>();
+            try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
+                world_dominion_tree_sector_a = new ConcurrentHashMap<>();
+                world_dominion_tree_sector_b = new ConcurrentHashMap<>();
+                world_dominion_tree_sector_c = new ConcurrentHashMap<>();
+                world_dominion_tree_sector_d = new ConcurrentHashMap<>();
 
-            Map<UUID, List<DominionDTO>> world_dominions_sector_a = new HashMap<>();
-            Map<UUID, List<DominionDTO>> world_dominions_sector_b = new HashMap<>();
-            Map<UUID, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
-            Map<UUID, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
+                Map<UUID, List<DominionDTO>> world_dominions_sector_a = new HashMap<>();
+                Map<UUID, List<DominionDTO>> world_dominions_sector_b = new HashMap<>();
+                Map<UUID, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
+                Map<UUID, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
 
-            // 根据所有领地的最大最小坐标计算象限中心点
-            int max_x = dominions.stream().mapToInt(DominionDTO::getX1).max().orElse(0);
-            int min_x = dominions.stream().mapToInt(DominionDTO::getX2).min().orElse(0);
-            int max_z = dominions.stream().mapToInt(DominionDTO::getZ1).max().orElse(0);
-            int min_z = dominions.stream().mapToInt(DominionDTO::getZ2).min().orElse(0);
-            section_origin_x = (max_x + min_x) / 2;
-            section_origin_z = (max_z + min_z) / 2;
-            XLogger.debug("Cache init section origin: %d, %d", section_origin_x, section_origin_z);
+                // 根据所有领地的最大最小坐标计算象限中心点
 
-            for (DominionDTO d : dominions) {
-                // 对每个世界的领地进行四个象限的划分
-                if (!world_dominions_sector_a.containsKey(d.getWorldUid()) ||
-                        !world_dominions_sector_b.containsKey(d.getWorldUid()) ||
-                        !world_dominions_sector_c.containsKey(d.getWorldUid()) ||
-                        !world_dominions_sector_d.containsKey(d.getWorldUid())) {
-                    world_dominions_sector_a.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominions_sector_b.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominions_sector_c.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominions_sector_d.put(d.getWorldUid(), new ArrayList<>());
+                int max_x = dominions.stream().mapToInt(DominionDTO::getX1).max().orElse(0);
+                int min_x = dominions.stream().mapToInt(DominionDTO::getX2).min().orElse(0);
+                int max_z = dominions.stream().mapToInt(DominionDTO::getZ1).max().orElse(0);
+                int min_z = dominions.stream().mapToInt(DominionDTO::getZ2).min().orElse(0);
+                section_origin_x = (max_x + min_x) / 2;
+                section_origin_z = (max_z + min_z) / 2;
+                XLogger.debug("Cache init section origin: %d, %d", section_origin_x, section_origin_z);
+
+
+                for (DominionDTO d : dominions) {
+                    // 对每个世界的领地进行四个象限的划分
+                    if (!world_dominions_sector_a.containsKey(d.getWorldUid()) ||
+                            !world_dominions_sector_b.containsKey(d.getWorldUid()) ||
+                            !world_dominions_sector_c.containsKey(d.getWorldUid()) ||
+                            !world_dominions_sector_d.containsKey(d.getWorldUid())) {
+                        world_dominions_sector_a.put(d.getWorldUid(), new ArrayList<>());
+                        world_dominions_sector_b.put(d.getWorldUid(), new ArrayList<>());
+                        world_dominions_sector_c.put(d.getWorldUid(), new ArrayList<>());
+                        world_dominions_sector_d.put(d.getWorldUid(), new ArrayList<>());
+                    }
+                    if (d.getX1() >= section_origin_x && d.getZ1() >= section_origin_z) {
+                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
+                    } else if (d.getX1() <= section_origin_x && d.getZ1() >= section_origin_z) {
+                        if (d.getX2() >= section_origin_x) {
+                            world_dominions_sector_a.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
+                        } else {
+                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
+                        }
+                    } else if (d.getX1() >= section_origin_x && d.getZ1() <= section_origin_z) {
+                        if (d.getZ2() >= section_origin_z) {
+                            world_dominions_sector_a.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
+                        } else {
+                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
+                        }
+                    } else {
+                        if (d.getX2() >= section_origin_x && d.getZ2() >= section_origin_z) {
+                            world_dominions_sector_a.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        } else if (d.getX2() >= section_origin_x && d.getZ2() <= section_origin_z) {
+                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        } else if (d.getZ2() >= section_origin_z && d.getX2() <= section_origin_x) {
+                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
+                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        } else {
+                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        }
+                    }
                 }
-                if (d.getX1() >= section_origin_x && d.getZ1() >= section_origin_z) {
-                    world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                } else if (d.getX1() <= section_origin_x && d.getZ1() >= section_origin_z) {
-                    if (d.getX2() >= section_origin_x) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                    } else {
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                    }
-                } else if (d.getX1() >= section_origin_x && d.getZ1() <= section_origin_z) {
-                    if (d.getZ2() >= section_origin_z) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                    } else {
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                    }
-                } else {
-                    if (d.getX2() >= section_origin_x && d.getZ2() >= section_origin_z) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                    } else if (d.getX2() >= section_origin_x && d.getZ2() <= section_origin_z) {
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                    } else if (d.getZ2() >= section_origin_z && d.getX2() <= section_origin_x) {
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                    } else {
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                    }
+                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_a.entrySet()) {
+                    world_dominion_tree_sector_a.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
                 }
-            }
-            for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_a.entrySet()) {
-                world_dominion_tree_sector_a.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-            }
-            for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_b.entrySet()) {
-                world_dominion_tree_sector_b.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-            }
-            for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_c.entrySet()) {
-                world_dominion_tree_sector_c.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-            }
-            for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_d.entrySet()) {
-                world_dominion_tree_sector_d.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_b.entrySet()) {
+                    world_dominion_tree_sector_b.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+                }
+                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_c.entrySet()) {
+                    world_dominion_tree_sector_c.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+                }
+                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_d.entrySet()) {
+                    world_dominion_tree_sector_d.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
+                }
             }
         }
     }
