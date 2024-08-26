@@ -25,6 +25,12 @@ import static cn.lunadeer.dominion.utils.ControllerUtils.notOwner;
 
 public class DominionController {
 
+    /**
+     * 获取玩家拥有的领地
+     *
+     * @param owner 玩家
+     * @return 领地列表
+     */
     public static List<DominionDTO> all(Player owner) {
         return DominionDTO.selectByOwner(owner.getUniqueId());
     }

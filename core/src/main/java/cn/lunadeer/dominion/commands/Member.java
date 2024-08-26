@@ -17,8 +17,8 @@ import java.util.List;
 
 import static cn.lunadeer.dominion.Commands.boolOptions;
 import static cn.lunadeer.dominion.Commands.playerNames;
-import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 import static cn.lunadeer.dominion.commands.Helper.*;
+import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 
 public class Member {
 

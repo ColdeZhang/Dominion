@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GroupLimit {
-    private final  YamlConfiguration config;
+    private final YamlConfiguration config;
     private final File file_path;
     private Integer min_y;
     private Integer max_y;
