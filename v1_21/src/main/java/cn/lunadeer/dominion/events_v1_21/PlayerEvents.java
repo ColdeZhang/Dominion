@@ -53,7 +53,7 @@ public class PlayerEvents implements Listener {
         if (!event.isAnchorSpawn()) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getRespawnLocation());
         if (!checkFlag(dom, Flag.ANCHOR, bukkitPlayer, null)) {
             if (bukkitPlayer.getRespawnLocation() != null) {
                 event.setRespawnLocation(bukkitPlayer.getRespawnLocation());
