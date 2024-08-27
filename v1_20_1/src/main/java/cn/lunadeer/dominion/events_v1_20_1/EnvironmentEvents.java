@@ -8,14 +8,12 @@ import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
@@ -39,6 +37,18 @@ public class EnvironmentEvents implements Listener {
         XLogger.debug("blockList" + event.blockList().size());
         event.blockList().removeIf(block -> {
             DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+            return !checkFlag(dom, Flag.CREEPER_EXPLODE, null);
+        });
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - bed anchor
+    public void onBedAnchorExplosion(BlockExplodeEvent event) {
+        BlockState block = event.getExplodedBlockState();
+        if (block == null) {
+            return;
+        }
+        event.blockList().removeIf(blockState -> {
+            DominionDTO dom = Cache.instance.getDominionByLoc(blockState.getLocation());
             return !checkFlag(dom, Flag.CREEPER_EXPLODE, null);
         });
     }

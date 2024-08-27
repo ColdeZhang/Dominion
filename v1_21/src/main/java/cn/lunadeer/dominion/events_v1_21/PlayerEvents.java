@@ -63,6 +63,24 @@ public class PlayerEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // anchor
+    public void onAnchorInteractive(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        Material clicked = block.getType();
+        if (clicked != Material.RESPAWN_ANCHOR) {
+            return;
+        }
+        Player player = event.getPlayer();
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+        checkFlag(dom, Flag.ANCHOR, player, event);
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // animal_killing
     public void onAnimalKilling(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player bukkitPlayer)) {
