@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public enum Flag {
-    ANCHOR("anchor", "重生锚", "是否允许设置重生锚", false, false, true),
+    ANCHOR("anchor", "重生锚", "是否允许设置/使用重生锚", false, false, true),
     ANIMAL_KILLING("animal_killing", "对动物造成伤害", "是否允许对动物造成伤害", false, false, true),
     ANIMAL_SPAWN("animal_spawn", "动物生成（繁殖）", "是否允许动物生成（包括繁殖）", true, true, false),
     ANVIL("anvil", "使用铁砧", "是否允许使用铁砧", false, false, true),
@@ -26,7 +26,7 @@ public enum Flag {
     CONTAINER("container", "一般容器", "包含：箱子/木桶/潜影盒/盔甲架/展示框", false, false, true),
     CRAFT("craft", "使用工作台", "是否可以使用工作台", false, false, true),
     CRAFTER("crafter", "合成器", "是否可以修改自动合成器", false, false, true),
-    CREEPER_EXPLODE("creeper_explode", "生物破坏", "包含：苦力怕/凋零头颅/末影水晶/火球爆炸等", false, true, true),
+    CREEPER_EXPLODE("creeper_explode", "生物破坏/非TNT爆炸", "包含：苦力怕/凋零头颅/末影水晶/火球/床/重生锚爆炸等", false, true, true),
     COMPARER("comparer", "比较器交互", "是否可以修改比较器状态", false, false, true),
     DOOR("door", "门交互", "是否可以使用各种材质的门（包括活板门）", false, false, true),
     DRAGON_BREAK_BLOCK("dragon_break_block", "末影龙破坏方块", "末影龙冲撞是否可以破坏方块", false, true, true),
