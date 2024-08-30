@@ -44,10 +44,6 @@ public class EnvironmentEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - bed anchor
     public void onBedAnchorExplosion(BlockExplodeEvent event) {
-        BlockState block = event.getExplodedBlockState();
-        if (block == null) {
-            return;
-        }
         event.blockList().removeIf(blockState -> {
             DominionDTO dom = Cache.instance.getDominionByLoc(blockState.getLocation());
             return !checkFlag(dom, Flag.CREEPER_EXPLODE, null);
@@ -269,6 +265,18 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.WITHER_SPAWN, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // wither_spawn - explode
+    public void onWitherSpawnExplode(EntityExplodeEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.WITHER) {
+            return;
+        }
+        event.blockList().removeIf(block -> {
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+            return !checkFlag(dom, Flag.WITHER_SPAWN, null);
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // ender_man spawn
