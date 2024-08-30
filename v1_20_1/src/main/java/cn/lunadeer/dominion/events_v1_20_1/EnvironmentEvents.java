@@ -271,6 +271,18 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flag.WITHER_SPAWN, event);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // wither_spawn - explode
+    public void onWitherSpawnExplode(EntityExplodeEvent event) {
+        Entity entity = event.getEntity();
+        if (entity.getType() != EntityType.WITHER) {
+            return;
+        }
+        event.blockList().removeIf(block -> {
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
+            return !checkFlag(dom, Flag.WITHER_SPAWN, null);
+        });
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST) // ender_man spawn
     public void onEnderManSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();

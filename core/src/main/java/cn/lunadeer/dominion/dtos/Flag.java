@@ -77,7 +77,7 @@ public enum Flag {
     VEHICLE_SPAWN("vehicle_spawn", "生成载具", "是否可以生成载具（主要是矿车）", false, false, true),
     VILLAGER_KILLING("villager_killing", "对村民造成伤害", "是否可以对村民造成伤害", false, false, true),
     VILLAGER_SPAWN("villager_spawn", "村民繁殖", "是否允许村民繁殖（包括村民蛋）", true, true, true),
-    WITHER_SPAWN("wither_spawn", "凋零生成", "凋零生成", false, true, true),
+    WITHER_SPAWN("wither_spawn", "凋零生成", "凋零生成以及凋零生成时产生的爆炸", false, true, true),
     ;
     private final String flag_name;
     private String display_name;
