@@ -85,10 +85,15 @@ public enum Flag {
     private Boolean default_value;
     private Boolean enable;
     private final Boolean dominion_only;
+    private Boolean custom_text = false;
+    private final String default_display_name;
+    private final String default_description;
 
     Flag(String flagName, String displayName, String desc, boolean defaultValue, boolean dominion_only, boolean enable) {
         this.flag_name = flagName;
+        this.default_display_name = displayName;
         this.display_name = displayName;
+        this.default_description = desc;
         this.description = desc;
         this.default_value = defaultValue;
         this.dominion_only = dominion_only;
@@ -221,6 +226,7 @@ public enum Flag {
         json.put("description", flag.getDescription());
         json.put("default_value", flag.getDefaultValue());
         json.put("enable", flag.getEnable());
+        json.put("custom_text", flag.custom_text);
         return json;
     }
 
@@ -238,13 +244,19 @@ public enum Flag {
             try {
                 JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
                 if (flagJson != null) {
-                    flag.setDisplayName((String) flagJson.get("display_name"));
-                    flag.setDescription((String) flagJson.get("description"));
-                    flag.setDefaultValue((Boolean) flagJson.get("default_value"));
-                    flag.setEnable((Boolean) flagJson.get("enable"));
+                    flag.custom_text = (Boolean) flagJson.getOrDefault("custom_text", false);
+                    flag.setDefaultValue((Boolean) flagJson.getOrDefault("default_value", flag.getDefaultValue()));
+                    flag.setEnable((Boolean) flagJson.getOrDefault("enable", flag.getEnable()));
+                    if (flag.custom_text) { // 如果使用自定义文本 则从配置文件中读取
+                        flag.setDisplayName((String) flagJson.getOrDefault("display_name", flag.getDisplayName()));
+                        flag.setDescription((String) flagJson.getOrDefault("description", flag.getDescription()));
+                    } else {    // 否则设置为默认文本
+                        flag.setDisplayName(flag.default_display_name);
+                        flag.setDescription(flag.default_description);
+                    }
                 }
             } catch (Exception e) {
-                XLogger.warn("读取权限 %s 配置失败：%s，已跳过", flag.getFlagName(), e.getMessage());
+                XLogger.warn("读取权限 %s 配置失败：%s，已跳过，使用默认配置", flag.getFlagName(), e.getMessage());
             }
         }
     }
