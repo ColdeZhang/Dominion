@@ -5,12 +5,21 @@ import cn.lunadeer.dominion.controllers.FlagsController;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
+import cn.lunadeer.dominion.utils.i18n.i18n;
+import cn.lunadeer.dominion.utils.i18n.i18nField;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 
 public class DominionFlag {
+
+    @i18nField(defaultValue = "用法: /dominion set <权限名称> <true/false> [领地名称]")
+    static i18n SetDominionFlagUsage;
+
+    static {
+        i18n.initializeI18nFields(DominionFlag.class);
+    }
 
     /**
      * 设置领地权限
@@ -41,7 +50,7 @@ public class DominionFlag {
             }
 
         } else {
-            Notification.error(sender, "用法: /dominion set <权限名称> <true/false> [领地名称]");
+            Notification.error(sender, SetDominionFlagUsage.trans());
         }
     }
 
