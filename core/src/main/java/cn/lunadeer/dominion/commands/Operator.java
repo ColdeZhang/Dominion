@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.commands;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.MapRender;
 import cn.lunadeer.minecraftpluginutils.GiteaReleaseCheck;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -28,19 +29,19 @@ public class Operator {
             return;
         }
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, "正在从数据库重新加载领地缓存...");
+            Notification.info(sender, Translation.Commands_ReloadingDominionCache);
             Cache.instance.loadDominions();
-            Notification.info(sender, "领地缓存已重新加载");
+            Notification.info(sender, Translation.Commands_ReloadedDominionCache);
         });
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, "正在从数据库重新加载玩家权限缓存...");
+            Notification.info(sender, Translation.Commands_ReloadingPrivilegeCache);
             Cache.instance.loadMembers();
-            Notification.info(sender, "玩家权限缓存已重新加载");
+            Notification.info(sender, Translation.Commands_ReloadedPrivilegeCache);
         });
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, "正在从数据库重新加载权限组缓存...");
+            Notification.info(sender, Translation.Commands_ReloadingGroupCache);
             Cache.instance.loadGroups();
-            Notification.info(sender, "权限组缓存已重新加载");
+            Notification.info(sender, Translation.Commands_ReloadedGroupCache);
         });
     }
 
@@ -49,7 +50,7 @@ public class Operator {
             return;
         }
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, "正在导出拥有领地的MCA文件列表...");
+            Notification.info(sender, Translation.Commands_ExportingMCAList);
             Map<String, List<String>> mca_cords = new HashMap<>();
             List<DominionDTO> doms = Cache.instance.getDominions();
             for (DominionDTO dom : doms) {
@@ -81,42 +82,42 @@ public class Operator {
             if (!folder.exists()) {
                 boolean success = folder.mkdirs();
                 if (!success) {
-                    Notification.error(sender, "创建导出文件夹失败");
+                    Notification.error(sender, Translation.Commands_CreateExportFolderFailed);
                     return;
                 }
             }
             for (String world : mca_cords.keySet()) {
                 File file = new File(folder, world + ".txt");
-                Notification.info(sender, "正在导出 %s 的MCA文件列表...", world);
+                Notification.info(sender, Translation.Commands_ExportingMCAListForWorld, world);
                 try {
                     if (file.exists()) {
                         boolean success = file.delete();
                         if (!success) {
-                            Notification.error(sender, "删除 %s 的MCA文件列表失败", world);
+                            Notification.error(sender, Translation.Commands_DeleteMCAListFailed, world);
                             continue;
                         }
                     }
                     boolean success = file.createNewFile();
                     if (!success) {
-                        Notification.error(sender, "创建 %s 的MCA文件列表失败", world);
+                        Notification.error(sender, Translation.Commands_CreateMCAListFailed, world);
                         continue;
                     }
                     List<String> cords = mca_cords.get(world);
                     for (String cord : cords) {
-                        XLogger.debug("正在写入 %s...", cord);
+                        XLogger.debug("Writing %s...", cord);
                         try {
                             java.nio.file.Files.write(file.toPath(), (cord + "\n").getBytes(), java.nio.file.StandardOpenOption.APPEND);
                         } catch (Exception e) {
-                            Notification.error(sender, "写入 %s 失败", cord);
+                            Notification.error(sender, Translation.Commands_WriteMCAListFailed, cord);
                         }
                     }
                 } catch (Exception e) {
-                    Notification.error(sender, "导出 %s 的MCA文件列表失败", world);
+                    Notification.error(sender, Translation.Commands_ExportMCAListFailed, world);
                     Notification.error(sender, e.getMessage());
                 }
             }
             MapRender.renderMCA(mca_cords);
-            Notification.info(sender, "MCA文件列表已导出到 %s", folder.getAbsolutePath());
+            Notification.info(sender, Translation.Commands_ExportedMCAList, folder.getAbsolutePath());
         });
     }
 
@@ -125,7 +126,7 @@ public class Operator {
             return;
         }
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, "正在重新加载配置文件...");
+            Notification.info(sender, Translation.Commands_ReloadingConfig);
             Dominion.config.reload();
             DatabaseManager.instance.reConnection(
                     DatabaseType.valueOf(Dominion.config.getDbType().toUpperCase()),
@@ -135,7 +136,7 @@ public class Operator {
                     Dominion.config.getDbUser(),
                     Dominion.config.getDbPass()
             );
-            Notification.info(sender, "配置文件已重新加载");
+            Notification.info(sender, Translation.Commands_ReloadedConfig);
         });
     }
 

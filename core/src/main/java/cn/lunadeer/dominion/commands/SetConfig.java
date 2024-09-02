@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.SysConfig;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,7 @@ public class SetConfig {
             return;
         }
         if (args.length < 2) {
-            Notification.error(sender, "参数错误");
+            Notification.error(sender, Translation.Commands_ArgumentsNotEnough);
             return;
         }
         switch (args[1]) {
@@ -76,7 +77,7 @@ public class SetConfig {
                 setSpawnProtection(sender, args);
                 break;
             default:
-                Notification.error(sender, "未知参数");
+                Notification.error(sender, Translation.Commands_UnknownArgument);
         }
     }
 
@@ -92,9 +93,9 @@ public class SetConfig {
 
     private static void setAutoCreateRadius(CommandSender sender, String[] args) {
         int size = Integer.parseInt(args[2]);
-        if (size < 2) {
-            Dominion.config.setAutoCreateRadius(2);
-            Notification.error(sender, "自动创建半径不能小于2");
+        if (size <= 0) {
+            Dominion.config.setAutoCreateRadius(1);
+            Notification.error(sender, Translation.Config_AutoCreateRadiusError);
         } else {
             Dominion.config.setAutoCreateRadius(size);
         }
@@ -110,7 +111,7 @@ public class SetConfig {
     private static void setLimitMaxY(CommandSender sender, String[] args) {
         int maxY = Integer.parseInt(args[2]);
         if (maxY <= Dominion.config.getLimitMinY(null)) {
-            Notification.error(sender, "最高Y坐标限制不能小于最低Y坐标限制");
+            Notification.error(sender, Translation.Commands_MinYShouldBeLessThanMaxY);
             return;
         }
         Dominion.config.setLimitMaxY(maxY);
@@ -121,7 +122,7 @@ public class SetConfig {
     private static void setLimitMinY(CommandSender sender, String[] args) {
         int minY = Integer.parseInt(args[2]);
         if (minY >= Dominion.config.getLimitMaxY(null)) {
-            Notification.error(sender, "最低Y坐标限制不能大于最高Y坐标限制");
+            Notification.error(sender, Translation.Commands_MaxYShouldBeGreaterThanMinY);
             return;
         }
         Dominion.config.setLimitMinY(minY);
@@ -133,7 +134,7 @@ public class SetConfig {
         int sizeX = Integer.parseInt(args[2]);
         if (sizeX != -1 && sizeX < 4) {
             Dominion.config.setLimitSizeX(4);
-            Notification.error(sender, "X轴(东西)最大尺寸不能小于4");
+            Notification.error(sender, Translation.Commands_SizeXShouldBeGreaterThan4);
         } else {
             Dominion.config.setLimitSizeX(sizeX);
         }
@@ -144,7 +145,7 @@ public class SetConfig {
         int sizeZ = Integer.parseInt(args[2]);
         if (sizeZ != -1 && sizeZ < 4) {
             Dominion.config.setLimitSizeZ(4);
-            Notification.error(sender, "Z轴(南北)最大尺寸不能小于4");
+            Notification.error(sender, Translation.Commands_SizeZShouldBeGreaterThan4);
             return;
         } else {
             Dominion.config.setLimitSizeZ(sizeZ);
@@ -156,7 +157,7 @@ public class SetConfig {
         int sizeY = Integer.parseInt(args[2]);
         if (sizeY != -1 && sizeY < 4) {
             Dominion.config.setLimitSizeY(4);
-            Notification.error(sender, "Y轴(垂直)最大尺寸不能小于4");
+            Notification.error(sender, Translation.Commands_SizeYShouldBeGreaterThan4);
         } else {
             Dominion.config.setLimitSizeY(sizeY);
         }
@@ -167,7 +168,7 @@ public class SetConfig {
         int amount = Integer.parseInt(args[2]);
         if (amount != -1 && amount < 0) {
             Dominion.config.setLimitAmount(0);
-            Notification.error(sender, "每个玩家领地数量限制不能小于0");
+            Notification.error(sender, Translation.Commands_AmountShouldBeGreaterThan0);
         } else {
             Dominion.config.setLimitAmount(amount);
         }
@@ -178,7 +179,7 @@ public class SetConfig {
         int depth = Integer.parseInt(args[2]);
         if (depth != -1 && depth < 0) {
             Dominion.config.setLimitDepth(0);
-            Notification.error(sender, "领地深度限制不能小于0");
+            Notification.error(sender, Translation.Commands_DepthShouldBeGreaterThan0);
         } else {
             Dominion.config.setLimitDepth(depth);
         }
@@ -208,7 +209,7 @@ public class SetConfig {
         int tpDelay = Integer.parseInt(args[2]);
         if (tpDelay < 0) {
             Dominion.config.setTpDelay(0);
-            Notification.error(sender, "传送延迟不能小于0");
+            Notification.error(sender, Translation.Commands_TpDelayShouldBeGreaterThan0);
         } else {
             Dominion.config.setTpDelay(tpDelay);
         }
@@ -219,7 +220,7 @@ public class SetConfig {
         int tpCoolDown = Integer.parseInt(args[2]);
         if (tpCoolDown < 0) {
             Dominion.config.setTpCoolDown(0);
-            Notification.error(sender, "传送冷却时间不能小于0");
+            Notification.error(sender, Translation.Commands_TpCoolDownShouldBeGreaterThan0);
         } else {
             Dominion.config.setTpCoolDown(tpCoolDown);
         }
@@ -236,7 +237,7 @@ public class SetConfig {
         float economyPrice = Float.parseFloat(args[2]);
         if (economyPrice < 0) {
             Dominion.config.setEconomyPrice(0.0f);
-            Notification.error(sender, "每方块单价不能小于0");
+            Notification.error(sender, Translation.Commands_PriceShouldBeGreaterThan0);
         } else {
             Dominion.config.setEconomyPrice(economyPrice);
         }
@@ -253,7 +254,7 @@ public class SetConfig {
         float economyRefund = Float.parseFloat(args[2]);
         if (economyRefund < 0) {
             Dominion.config.setEconomyRefund(0.0f);
-            Notification.error(sender, "领地退款比例不能小于0");
+            Notification.error(sender, Translation.Commands_RefundShouldBeGreaterThan0);
         } else {
             Dominion.config.setEconomyRefund(economyRefund);
         }
@@ -270,7 +271,7 @@ public class SetConfig {
         int spawnProtection = Integer.parseInt(args[2]);
         if (spawnProtection != -1 && spawnProtection <= 0) {
             Dominion.config.setSpawnProtection(1);
-            Notification.error(sender, "出生点保护半径不能小于或等于0");
+            Notification.error(sender, Translation.Commands_SpawnProtectRadiusShouldBeGreaterThan0);
         } else {
             Dominion.config.setSpawnProtection(spawnProtection);
         }

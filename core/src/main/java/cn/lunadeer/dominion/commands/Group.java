@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.SelectMember;
@@ -34,7 +35,7 @@ public class Group {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, "用法: /dominion group create <领地名称> <权限组名称>");
+                Notification.error(sender, Translation.Commands_CreateGroupUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -59,7 +60,7 @@ public class Group {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, "用法: /dominion group delete <领地名称> <权限组名称>");
+                Notification.error(sender, Translation.Commands_DeleteGroupUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -84,7 +85,7 @@ public class Group {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, "用法: /dominion group rename <领地名称> <权限组旧名称> <新名称>");
+                Notification.error(sender, Translation.Commands_RenameGroupUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -110,7 +111,7 @@ public class Group {
                 return;
             }
             if (args.length < 6) {
-                Notification.error(sender, "用法: /dominion group set_flag <领地名称> <权限组名称> <权限名称> <true|false>");
+                Notification.error(sender, Translation.Commands_SetGroupFlagUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -138,7 +139,7 @@ public class Group {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, "用法: /dominion group add_member <领地名称> <权限组名称> <玩家名称>");
+                Notification.error(sender, Translation.Commands_AddGroupMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -165,7 +166,7 @@ public class Group {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, "用法: /dominion group remove_member <领地名称> <权限组名称> <玩家名称>");
+                Notification.error(sender, Translation.Commands_RemoveGroupMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -182,7 +183,7 @@ public class Group {
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion group <create|delete|rename|set_flag|add_member|remove_member|select_member|setting|list>");
+            Notification.error(sender, Translation.Commands_GroupUsage);
             return;
         }
         switch (args[1]) {
@@ -238,7 +239,7 @@ public class Group {
         if (args.length == 4) {
             switch (args[1]) {
                 case "create":
-                    return Collections.singletonList("新权限组名称");
+                    return Collections.singletonList(Translation.Commands_NewGroupName.trans());
                 case "delete":
                 case "rename":
                 case "set_flag":
@@ -252,7 +253,7 @@ public class Group {
         if (args.length == 5) {
             switch (args[1]) {
                 case "rename":
-                    return Collections.singletonList("权限组新名称");
+                    return Collections.singletonList(Translation.Commands_NewGroupName.trans());
                 case "set_flag":
                     return playerPrivileges();
                 case "remove_member":

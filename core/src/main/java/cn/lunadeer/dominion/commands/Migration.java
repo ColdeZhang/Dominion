@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.MigrateList;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -28,27 +29,27 @@ public class Migration {
             if (player == null) return;
 
             if (!Dominion.config.getResidenceMigration()) {
-                Notification.error(sender, "Residence 迁移功能没有开启");
+                Notification.error(sender, Translation.Commands_ResidenceMigrationDisabled);
                 return;
             }
 
             if (args.length < 2) {
-                Notification.error(sender, "用法: /dominion migrate <res领地名称>");
+                Notification.error(sender, Translation.Commands_MigrateUsage);
                 return;
             }
             String resName = args[1];
             List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
             if (res_data == null) {
-                Notification.error(sender, "你没有可迁移的数据");
+                Notification.error(sender, Translation.Commands_NoMigrationData);
                 return;
             }
             ResMigration.ResidenceNode resNode = res_data.stream().filter(node -> node.name.equals(resName)).findFirst().orElse(null);
             if (resNode == null) {
-                Notification.error(sender, "未找到指定的 Residence 领地");
+                Notification.error(sender, Translation.Commands_NoResidenceDominion);
                 return;
             }
             if (!resNode.owner.equals(player.getUniqueId())) {
-                Notification.error(sender, "你不是该领地的所有者，无法迁移此领地");
+                Notification.error(sender, Translation.Commands_ResidenceNotOwner);
                 return;
             }
             create(player, resNode, "");
@@ -60,7 +61,7 @@ public class Migration {
                 MigrateList.show(sender, newArgs);
             }
         } catch (Exception e) {
-            Notification.error(sender, "迁移失败: " + e.getMessage());
+            Notification.error(sender, Translation.Commands_MigrateFailed, e.getMessage());
         }
     }
 
@@ -78,7 +79,7 @@ public class Migration {
                 for (String msg : result.getMessages()) {
                     Notification.info(player, msg);
                 }
-                Notification.info(player, "领地 " + node.name + " 已从 Residence 迁移至 Dominion");
+                Notification.info(player, Translation.Commands_MigrateSuccess, node.name);
                 if (node.children != null) {
                     for (ResMigration.ResidenceNode child : node.children) {
                         create(player, child, node.name);

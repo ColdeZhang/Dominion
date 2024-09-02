@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.TemplateController;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.template.TemplateList;
 import cn.lunadeer.dominion.tuis.template.TemplateSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -36,7 +37,7 @@ public class Template {
                 return;
             }
             if (args.length < 3) {
-                Notification.error(sender, "用法: /dominion template create <模板名称>");
+                Notification.error(sender, Translation.Commands_CreateTemplateUsage);
                 return;
             }
             Player player = playerOnly(sender);
@@ -62,7 +63,7 @@ public class Template {
                 return;
             }
             if (args.length < 3) {
-                Notification.error(sender, "用法: /dominion template delete <模板名称>");
+                Notification.error(sender, Translation.Commands_DeleteTemplateUsage);
                 return;
             }
             Player player = playerOnly(sender);
@@ -88,7 +89,7 @@ public class Template {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, "用法: /dominion template set_flag <模板名称> <权限名称> <true/false>");
+                Notification.error(sender, Translation.Commands_SetTemplateFlagUsage);
                 return;
             }
             Player player = playerOnly(sender);
@@ -107,7 +108,7 @@ public class Template {
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion template <list|setting|delete|create|set_flag>");
+            Notification.error(sender, Translation.Commands_TemplateUsage);
             return;
         }
         switch (args[1]) {
@@ -136,13 +137,13 @@ public class Template {
         if (args.length == 3) {
             switch (args[1]) {
                 case "create":
-                    return Collections.singletonList("输入模板名称");
+                    return Collections.singletonList(Translation.Commands_NewTemplateName.trans());
                 case "delete":
                 case "set_flag":
                 case "setting":
                     return allTemplates(sender);
                 case "list":
-                    return Collections.singletonList("页码(可选)");
+                    return Collections.singletonList(Translation.Commands_PageOptional.trans());
             }
         }
         if (args.length == 4) {
@@ -150,7 +151,7 @@ public class Template {
                 case "set_flag":
                     return playerPrivileges();
                 case "setting":
-                    return Collections.singletonList("页码(可选)");
+                    return Collections.singletonList(Translation.Commands_PageOptional.trans());
             }
         }
         if (args.length == 5) {
