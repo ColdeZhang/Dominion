@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.managers.Translation;
 
 import java.util.Objects;
 
@@ -18,29 +19,29 @@ public class GroupController {
      * @param nameColored 权限组名称（带颜色）
      */
     public static void createGroup(AbstractOperator operator, String domName, String groupName, String nameColored) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建权限组 %s 失败", groupName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建权限组 %s 成功", groupName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_CreateGroupFailed, groupName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_CreateGroupSuccess, groupName);
         if (groupName.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("权限组名称不能包含空格"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNameInvalid));
             return;
         }
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
             return;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法创建权限组", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group != null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 已存在名为 %s 的权限组", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNameExist, domName, groupName));
             return;
         }
         group = GroupDTO.create(nameColored, dominion);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -54,20 +55,20 @@ public class GroupController {
      * @param groupName 权限组名称
      */
     public static void deleteGroup(AbstractOperator operator, String domName, String groupName) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "删除权限组 %s 失败", groupName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "删除权限组 %s 成功", groupName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DeleteGroupFailed, groupName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_DeleteGroupSuccess, groupName);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
             return;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法删除权限组", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在名为 %s 的权限组", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
             return;
         }
         group.delete();
@@ -84,11 +85,11 @@ public class GroupController {
      * @param value     权限值
      */
     public static void setGroupFlag(AbstractOperator operator, String domName, String groupName, String flag, boolean value) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置权限组 %s 的权限 %s 为 %s 失败", groupName, flag, value);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置权限组 %s 的权限 %s 为 %s 成功", groupName, flag, value);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_SetGroupFlagFailed, groupName, flag, value);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetGroupFlagSuccess, groupName, flag, value);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) {
@@ -96,11 +97,11 @@ public class GroupController {
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在名为 %s 的权限组", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
             return;
         }
         if ((flag.equals("admin") || group.getAdmin()) && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改管理员权限组权限", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwnerForGroup, domName));
             return;
         }
         if (flag.equals("admin")) {
@@ -108,13 +109,13 @@ public class GroupController {
         } else {
             Flag f = Flag.getFlag(flag);
             if (f == null) {
-                operator.setResponse(FAIL.addMessage("未知的权限 %s", flag));
+                operator.setResponse(FAIL.addMessage(Translation.Controller_UnknownFlag, flag));
                 return;
             }
             group = group.setFlagValue(f, value);
         }
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -130,29 +131,29 @@ public class GroupController {
      * @param nameColored 新名称（带颜色）
      */
     public static void renameGroup(AbstractOperator operator, String domName, String oldName, String newName, String nameColored) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "重命名权限组 %s 为 %s 失败", oldName, newName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "重命名权限组 %s 为 %s 成功", oldName, newName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_RenameGroupFailed, oldName, newName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_RenameGroupSuccess, oldName, newName);
         if (newName.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("权限组名称不能包含空格"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNameInvalid));
             return;
         }
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
             return;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法重命名权限组", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), oldName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在名为 %s 的权限组", domName, oldName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, oldName));
             return;
         }
         group = group.setName(nameColored);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -167,47 +168,47 @@ public class GroupController {
      * @param playerName 玩家名称
      */
     public static void addMember(AbstractOperator operator, String domName, String groupName, String playerName) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "添加成员 %s 到权限组 %s 失败", playerName, groupName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "添加成员 %s 到权限组 %s 成功", playerName, groupName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_AddGroupMemberFailed, playerName, groupName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_AddGroupMemberSuccess, playerName, groupName);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在名为 %s 的权限组", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你没有权限修改领地 %s 的权限组 %s 成员", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NoPermissionForGroupMember, domName, groupName));
             return;
         }
         if (group.getAdmin() && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法添加成员到管理员权限组", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwnerForGroupMember, domName));
             return;
         }
         PlayerDTO player = PlayerDTO.select(playerName);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不存在", playerName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotExist, playerName));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员，无法直接加入权限组", playerName, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotDominionMember, playerName, domName));
             return;
         }
         if (Objects.equals(privilege.getGroupId(), group.getId())) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 已在权限组 %s 中", playerName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerAlreadyInGroup, playerName, groupName));
             return;
         }
         if (notOwner(operator, dominion) && privilege.getAdmin()) {
-            operator.setResponse(FAIL.addMessage("%s 是管理员，你不是领地 %s 的拥有者，无法添加管理员到权限组", playerName, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerIsOwnerForGroupMember, playerName, domName));
             return;
         }
         privilege = privilege.setGroupId(group.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -222,43 +223,43 @@ public class GroupController {
      * @param playerName 玩家名称
      */
     public static void removeMember(AbstractOperator operator, String domName, String groupName, String playerName) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "从权限组 %s 移除成员 %s 失败", groupName, playerName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "从权限组 %s 移除成员 %s 成功", groupName, playerName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_RemoveGroupMemberFailed, groupName, playerName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_RemoveGroupMemberSuccess, groupName, playerName);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在名为 %s 的权限组", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你没有权限移除领地 %s 的权限组 %s 成员", domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NoPermissionForRemoveGroupMember, domName, groupName));
             return;
         }
         if (group.getAdmin() && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法从管理员权限组移除成员", domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwnerForRemoveGroupMember, domName));
             return;
         }
         PlayerDTO player = PlayerDTO.select(playerName);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不存在", playerName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotExist, playerName));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", playerName, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotMember, playerName, domName));
             return;
         }
         if (!Objects.equals(privilege.getGroupId(), group.getId())) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不在权限组 %s 中", playerName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotInGroup, playerName, groupName));
             return;
         }
         privilege = privilege.setGroupId(-1);
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("请联系服务器管理员"));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);

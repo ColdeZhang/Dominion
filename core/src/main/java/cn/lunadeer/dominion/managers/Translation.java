@@ -243,8 +243,8 @@ public class Translation extends Localization {
     public static i18n Controller_ConflictWithSpawnProtect;
     @i18nField(defaultValue = "与领地 %s 冲突")
     public static i18n Controller_ConflictWithDominion;
-    @i18nField(defaultValue = "创建领地失败，数据库错误，请联系管理员")
-    public static i18n Controller_CreateDominionDatabaseError;
+    @i18nField(defaultValue = "数据库错误，请联系管理员")
+    public static i18n Controller_DatabaseError;
     @i18nField(defaultValue = "无法获取你所处的领地，请指定名称")
     public static i18n Controller_CannotGetDominionAuto;
     @i18nField(defaultValue = "扩展领地失败")
@@ -355,6 +355,62 @@ public class Translation extends Localization {
     public static i18n Controller_ContractSizeInvalid;
     @i18nField(defaultValue = "(子领地：%s)")
     public static i18n Controller_SubDominionList;
+
+    @i18nField(defaultValue = "成功设置领地权限 %s 为 %s")
+    public static i18n Controller_SetDominionFlagSuccess;
+    @i18nField(defaultValue = "未知的权限 %s")
+    public static i18n Controller_UnknownFlag;
+
+    @i18nField(defaultValue = "创建权限组 %s 失败")
+    public static i18n Controller_CreateGroupFailed;
+    @i18nField(defaultValue = "创建权限组 %s 成功")
+    public static i18n Controller_CreateGroupSuccess;
+    @i18nField(defaultValue = "权限组名称不能包含空格")
+    public static i18n Controller_GroupNameInvalid;
+    @i18nField(defaultValue = "领地 %s 已存在名为 %s 的权限组")
+    public static i18n Controller_GroupNameExist;
+    @i18nField(defaultValue = "删除权限组 %s 失败")
+    public static i18n Controller_DeleteGroupFailed;
+    @i18nField(defaultValue = "删除权限组 %s 成功")
+    public static i18n Controller_DeleteGroupSuccess;
+    @i18nField(defaultValue = "领地 %s 不存在名为 %s 的权限组")
+    public static i18n Controller_GroupNotExist;
+    @i18nField(defaultValue = "设置权限组 %s 的权限 %s 为 %s 失败")
+    public static i18n Controller_SetGroupFlagFailed;
+    @i18nField(defaultValue = "设置权限组 %s 的权限 %s 为 %s 成功")
+    public static i18n Controller_SetGroupFlagSuccess;
+    @i18nField(defaultValue = "你不是领地 %s 的拥有者，无法修改管理员权限组权限")
+    public static i18n Controller_NotDominionOwnerForGroup;
+    @i18nField(defaultValue = "重命名权限组 %s 为 %s 失败")
+    public static i18n Controller_RenameGroupFailed;
+    @i18nField(defaultValue = "重命名权限组 %s 为 %s 成功")
+    public static i18n Controller_RenameGroupSuccess;
+    @i18nField(defaultValue = "添加成员 %s 到权限组 %s 失败")
+    public static i18n Controller_AddGroupMemberFailed;
+    @i18nField(defaultValue = "添加成员 %s 到权限组 %s 成功")
+    public static i18n Controller_AddGroupMemberSuccess;
+    @i18nField(defaultValue = "你没有权限修改领地 %s 的权限组 %s 成员")
+    public static i18n Controller_NoPermissionForGroupMember;
+    @i18nField(defaultValue = "你不是领地 %s 的拥有者，无法添加成员到管理员权限组")
+    public static i18n Controller_NotDominionOwnerForGroupMember;
+    @i18nField(defaultValue = "玩家 %s 不是领地 %s 的成员，无法直接加入权限组")
+    public static i18n Controller_PlayerNotDominionMember;
+    @i18nField(defaultValue = "玩家 %s 已在权限组 %s 中")
+    public static i18n Controller_PlayerAlreadyInGroup;
+    @i18nField(defaultValue = "%s 是管理员，你不是领地 %s 的拥有者，无法添加管理员到权限组")
+    public static i18n Controller_PlayerIsOwnerForGroupMember;
+    @i18nField(defaultValue = "从权限组 %s 移除成员 %s 失败")
+    public static i18n Controller_RemoveGroupMemberFailed;
+    @i18nField(defaultValue = "从权限组 %s 移除成员 %s 成功")
+    public static i18n Controller_RemoveGroupMemberSuccess;
+    @i18nField(defaultValue = "你没有权限移除领地 %s 的权限组 %s 成员")
+    public static i18n Controller_NoPermissionForRemoveGroupMember;
+    @i18nField(defaultValue = "你不是领地 %s 的拥有者，无法从管理员权限组移除成员")
+    public static i18n Controller_NotDominionOwnerForRemoveGroupMember;
+    @i18nField(defaultValue = "玩家 %s 不是领地 %s 的成员")
+    public static i18n Controller_PlayerNotMember;
+    @i18nField(defaultValue = "玩家 %s 不在权限组 %s 中")
+    public static i18n Controller_PlayerNotInGroup;
 
     @i18nField(defaultValue = "AutoCreateRadius 不能等于 0，已重置为 10")
     public static i18n Config_AutoCreateRadiusError;

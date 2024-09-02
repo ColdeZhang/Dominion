@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ControllerUtils;
 
 import static cn.lunadeer.dominion.utils.ControllerUtils.noAuthToChangeFlags;
@@ -19,7 +20,7 @@ public class FlagsController {
         DominionDTO dominion = ControllerUtils.getPlayerCurrentDominion(operator);
         if (dominion == null) return;
         setFlag(operator, flag, value, dominion.getName());
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置领地权限 %s 为 %s", flag, value));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetDominionFlagSuccess, flag, value));
     }
 
     /**
@@ -33,16 +34,16 @@ public class FlagsController {
     public static void setFlag(AbstractOperator operator, String flag, boolean value, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "领地 %s 不存在", dominionName));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DominionNotExist, dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         Flag f = Flag.getFlag(flag);
         if (f == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "未知的领地权限 %s", flag));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_UnknownFlag, flag));
             return;
         }
         dominion.setFlagValue(f, value);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置领地权限 %s 为 %s", flag, value));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetDominionFlagSuccess, flag, value));
     }
 }
