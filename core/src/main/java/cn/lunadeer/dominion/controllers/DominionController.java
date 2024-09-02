@@ -182,7 +182,7 @@ public class DominionController {
         }
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CreateDominionDatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
             return;
         }
         // 显示粒子效果
