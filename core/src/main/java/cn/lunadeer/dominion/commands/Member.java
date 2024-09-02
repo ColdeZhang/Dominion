@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.MemberController;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberList;
 import cn.lunadeer.dominion.tuis.dominion.manage.member.MemberSetting;
 import cn.lunadeer.dominion.tuis.dominion.manage.member.SelectPlayer;
@@ -35,7 +36,7 @@ public class Member {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, "用法: /dominion member add <领地名称> <玩家名称>");
+                Notification.error(sender, Translation.Commands_DominionAddMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -61,7 +62,7 @@ public class Member {
                 return;
             }
             if (args.length < 6) {
-                Notification.error(sender, "用法: /dominion member set_flag <领地名称> <玩家名称> <权限名称> <true/false>");
+                Notification.error(sender, Translation.Commands_DominionSetFlagUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -90,7 +91,7 @@ public class Member {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, "用法: /dominion member remove <领地名称> <玩家名称>");
+                Notification.error(sender, Translation.Commands_DominionRemoveMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -116,7 +117,7 @@ public class Member {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, "用法: /dominion member apply_template <领地名称> <玩家名称> <模板名称>");
+                Notification.error(sender, Translation.Commands_DominionApplyTemplateUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -132,7 +133,7 @@ public class Member {
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
-            Notification.error(sender, "用法: /dominion member <add/set_flag/remove/apply_template/list/setting/select_player/select_template>");
+            Notification.error(sender, Translation.Commands_MemberUsage);
             return;
         }
         switch (args[1]) {
@@ -191,7 +192,7 @@ public class Member {
                 case "select_player":
                     return playerNames();
                 case "list":
-                    return Collections.singletonList("页码(可选)");
+                    return Collections.singletonList(Translation.Commands_PageOptional.trans());
             }
         }
         if (args.length == 5) {
@@ -202,7 +203,7 @@ public class Member {
                     return allTemplates(sender);
                 case "setting":
                 case "select_template":
-                    return Collections.singletonList("页码(可选)");
+                    return Collections.singletonList(Translation.Commands_PageOptional.trans());
             }
         }
         if (args.length == 6) {
