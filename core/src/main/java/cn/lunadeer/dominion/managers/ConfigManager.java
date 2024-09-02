@@ -114,11 +114,11 @@ public class ConfigManager {
             setLimitSizeY(defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1);
         }
         if (defaultGroup.getLimitAmount() < 0 && defaultGroup.getLimitAmount() != -1) {
-            XLogger.err("Limit.Amount 设置不合法，已重置为 10");
+            XLogger.err(Translation.Config_AmountError);
             setLimitAmount(10);
         }
         if (defaultGroup.getLimitDepth() < 0 && defaultGroup.getLimitDepth() != -1) {
-            XLogger.err("Limit.Depth 设置不合法，已重置为 3");
+            XLogger.err(Translation.Config_DepthError);
             setLimitDepth(3);
         }
         limits.put("default", defaultGroup);
@@ -147,63 +147,66 @@ public class ConfigManager {
         _file.set("Database.Pass", _db_pass);
 
         _file.set("Language", _language);
-        _file.setComments("Language", List.of("语言设置，参考 languages 文件夹下的文件名"));
+        _file.setComments("Language", List.of(Translation.ConfigComment_Language.trans()));
 
         _file.set("AutoCreateRadius", _auto_create_radius);
-        _file.setComments("AutoCreateRadius", Arrays.asList("自动创建领地的半径，单位为方块", "-1 表示不开启"));
+        _file.setComments("AutoCreateRadius", Arrays.asList(Translation.ConfigComment_AutoCreateRadius.trans(), Translation.ConfigComment_NegativeOneDisabled.trans()));
 
-        _file.setComments("Limit", List.of("默认玩家圈地限制"));
+        _file.setComments("Limit", List.of(Translation.ConfigComment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
-        _file.setInlineComments("Limit.SpawnProtection", List.of("出生点保护半径 出生点此范围内不允许圈地 -1 表示不开启"));
+        _file.setInlineComments("Limit.SpawnProtection", Arrays.asList(Translation.ConfigComment_SpawnProtectRadius.trans(), Translation.ConfigComment_NegativeOneDisabled.trans()));
         _file.set("Limit.MinY", limits.get("default").getLimitMinY());
-        _file.setInlineComments("Limit.MinY", List.of("最小Y坐标"));
+        _file.setInlineComments("Limit.MinY", List.of(Translation.ConfigComment_MinY.trans()));
         _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
-        _file.setInlineComments("Limit.MaxY", List.of("最大Y坐标"));
+        _file.setInlineComments("Limit.MaxY", List.of(Translation.ConfigComment_MaxY.trans()));
         _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
-        _file.setInlineComments("Limit.SizeX", List.of("X方向最大长度 -1：表示不限制"));
+        _file.setInlineComments("Limit.SizeX", Arrays.asList(Translation.ConfigComment_SizeX.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
         _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
-        _file.setInlineComments("Limit.SizeY", List.of("Y方向最大长度 -1：表示不限制"));
+        _file.setInlineComments("Limit.SizeY", Arrays.asList(Translation.ConfigComment_SizeY.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
         _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
-        _file.setInlineComments("Limit.SizeZ", List.of("Z方向最大长度 -1：表示不限制"));
+        _file.setInlineComments("Limit.SizeZ", Arrays.asList(Translation.ConfigComment_SizeZ.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Amount", limits.get("default").getLimitAmount());
-        _file.setInlineComments("Limit.Amount", List.of("最大领地数量 -1：表示不限制"));
+        _file.setInlineComments("Limit.Amount", List.of(Translation.ConfigComment_Amount.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Depth", limits.get("default").getLimitDepth());
-        _file.setInlineComments("Limit.Depth", List.of("子领地深度 0：不允许子领地 -1：不限制"));
+        _file.setInlineComments("Limit.Depth", List.of(Translation.ConfigComment_Depth.trans(), Translation.ConfigComment_ZeroDisabled.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Vert", limits.get("default").getLimitVert());
-        _file.setInlineComments("Limit.Vert", List.of("是否自动延伸到 MaxY 和 MinY"));
+        _file.setInlineComments("Limit.Vert", List.of(Translation.ConfigComment_Vert.trans()));
         _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());
-        _file.setInlineComments("Limit.WorldBlackList", List.of("不允许圈地的世界列表"));
+        _file.setInlineComments("Limit.WorldBlackList", List.of(Translation.ConfigComment_DisabledWorlds.trans()));
         _file.set("Limit.OpByPass", _limit_op_bypass);
-        _file.setInlineComments("Limit.OpByPass", List.of("是否允许OP无视领地限制"));
+        _file.setInlineComments("Limit.OpByPass", List.of(Translation.ConfigComment_OpBypass.trans()));
 
         _file.set("Teleport.Enable", _tp_enable);
         _file.set("Teleport.Delay", _tp_delay);
-        _file.setInlineComments("Teleport.Delay", List.of("传送延迟 秒"));
+        _file.setInlineComments("Teleport.Delay", List.of(Translation.ConfigComment_TpDelay.trans()));
         _file.set("Teleport.CoolDown", _tp_cool_down);
-        _file.setInlineComments("Teleport.CoolDown", List.of("传送冷却 秒"));
+        _file.setInlineComments("Teleport.CoolDown", List.of(Translation.ConfigComment_TpCoolDown.trans()));
 
         _file.set("AutoCleanAfterDays", _auto_clean_after_days);
-        _file.setComments("AutoCleanAfterDays", Arrays.asList("自动清理长时间未上线玩家的领地（天）", "-1 表示不开启"));
+        _file.setComments("AutoCleanAfterDays", Arrays.asList(Translation.ConfigComment_AutoCleanAfterDays.trans(), Translation.ConfigComment_NegativeOneDisabled.trans()));
 
         _file.set("Tool", _tool);
-        _file.setComments("Tool", List.of("圈地工具名称"));
+        _file.setComments("Tool", List.of(Translation.ConfigComment_ToolName.trans()));
 
-        _file.setComments("Economy", Arrays.asList("经济设置", "需要安装 Vault 前置及插件"));
+        _file.setComments("Economy", Arrays.asList(Translation.ConfigComment_Economy.trans(), Translation.ConfigComment_VaultRequired.trans()));
         _file.set("Economy.Enable", _economy_enable);
         _file.set("Economy.Price", limits.get("default").getPrice());
-        _file.setInlineComments("Economy.Price", List.of("圈地价格 单位每方块"));
+        _file.setInlineComments("Economy.Price", List.of(Translation.ConfigComment_Price.trans()));
         _file.set("Economy.OnlyXZ", limits.get("default").getPriceOnlyXZ());
-        _file.setInlineComments("Economy.OnlyXZ", List.of("是否只计算xz平面积"));
+        _file.setInlineComments("Economy.OnlyXZ", List.of(Translation.ConfigComment_OnlyXZ.trans()));
         _file.set("Economy.Refund", limits.get("default").getRefundRatio());
-        _file.setInlineComments("Economy.Refund", List.of("删除领地时的退款比例"));
+        _file.setInlineComments("Economy.Refund", List.of(Translation.ConfigComment_Refund.trans()));
 
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
-        _file.setComments("FlyPermissionNodes", List.of("飞行权限节点 - 拥有以下任意一个权限节点的玩家不会被本插件拦截飞行"));
+        _file.setComments("FlyPermissionNodes", List.of(Translation.ConfigComment_FlyPermission.trans()));
 
         _file.set("ResidenceMigration", _residence_migration);
-        _file.setComments("ResidenceMigration", List.of("是否允许玩家从 Residence 迁移领地数据"));
+        _file.setComments("ResidenceMigration", List.of(Translation.ConfigComment_ResidenceMigration.trans()));
 
-        _file.setComments("GroupTitle", Arrays.asList("权限组称号 - 使用权限组当作称号(需要PlaceholderAPI插件)", "变量: %dominion_group_title%", "前后缀如需要加颜色请使用这种格式 &#ffffff"));
+        _file.setComments("GroupTitle", Arrays.asList(
+                Translation.ConfigComment_GroupTitle.trans(),
+                Translation.ConfigComment_GroupTitleVariable.trans(),
+                Translation.ConfigComment_GroupTitleColor.trans()));
         _file.set("GroupTitle.Enable", _group_title_enable);
         _file.set("GroupTitle.Prefix", _group_title_prefix);
         _file.set("GroupTitle.Suffix", _group_title_suffix);
@@ -215,7 +218,7 @@ public class ConfigManager {
 
         _file.set("Debug", _debug);
         _file.set("Timer", _timer);
-        _file.setInlineComments("Timer", List.of("性能测试计时器"));
+        _file.setInlineComments("Timer", List.of(Translation.ConfigComment_PerformanceTimer.trans()));
 
         _plugin.saveConfig();
     }
