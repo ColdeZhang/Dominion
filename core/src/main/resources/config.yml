@@ -6,56 +6,44 @@ Database:
   User: dominion
   Pass: dominion
 
-# 自动圈地大小
-AutoCreateRadius: 10  #-1 表示不开启
+Language: zh-cn
+
+AutoCreateRadius: 10
 
 Limit:
-  SpawnProtection: 10 # 出生点保护半径 出生点此范围内不允许圈地 -1 表示不开启
-  MinY: -64     # 最小Y坐标
-  MaxY: 320     # 最大Y坐标
-  SizeX: 128    # X方向最大长度 -1：表示不限制
-  SizeY: 64     # Y方向最大长度 -1：表示不限制
-  SizeZ: 128    # Z方向最大长度 -1：表示不限制
-  Amount: 10    # 最大领地数量 -1：表示不限制
-  Depth: 3      # 子领地深度 0：不允许子领地 -1：不限制
-  Vert: false   # 是否自动延伸到 MaxY 和 MinY
-  WorldBlackList: [ ]  # 不允许领地的世界
-  OpByPass: true # 是否允许OP无视领地限制
+  SpawnProtection: 10
+  MinY: -64
+  MaxY: 320
+  SizeX: 128
+  SizeY: 64
+  SizeZ: 128
+  Amount: 10
+  Depth: 3
+  Vert: false
+  WorldBlackList: [ ]
+  OpByPass: true
 
 Teleport:
   Enable: true
-  # 传送延迟 秒
   Delay: 0
-  # 冷却时间 秒
   CoolDown: 0
 
-# 自动清理长时间未上线玩家的领地
-AutoCleanAfterDays: 180 # -1 表示不开启
+AutoCleanAfterDays: 180
 
-# 圈地工具
 Tool: ARROW
 
-# 经济系统 - 需要安装Vault插件
 Economy:
   Enable: false
-  # 单价 - 每方块
   Price: 10.0
-  # 是否只计算xz平面积
   OnlyXZ: false
-  # 删除领地退还比例
   Refund: 0.85
 
-# 飞行权限节点 - 拥有以下任意一个权限节点的玩家不会被本插件拦截飞行
 FlyPermissionNodes:
   - essentials.fly
   - cmi.command.fly
 
-# 是否允许玩家从 Residence 迁移领地数据
 ResidenceMigration: false
 
-# 权限组称号 - 使用权限组当作称号(需要PlaceholderAPI插件)
-# Papi: %dominion_group_title%
-# 前后缀如需要加颜色请使用这种格式 &#ffffff
 GroupTitle:
   Enable: false
   Prefix: "["
@@ -68,4 +56,4 @@ CheckUpdate: true
 
 Debug: false
 
-Timer: false  # 性能测试计时器
+Timer: false
