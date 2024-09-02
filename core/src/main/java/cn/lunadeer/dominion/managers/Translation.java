@@ -213,6 +213,149 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "使用称号失败：%s")
     public static i18n Commands_UseTitleFailed;
 
+    @i18nField(defaultValue = "创建领地失败")
+    public static i18n Controller_CreateDominionFailed;
+    @i18nField(defaultValue = "成功创建领地 %s")
+    public static i18n Controller_CreateDominionSuccess;
+    @i18nField(defaultValue = "领地名称不能为空")
+    public static i18n Controller_DominionNameShouldNotEmpty;
+    @i18nField(defaultValue = "领地名称不能包含空格或点")
+    public static i18n Controller_DominionNameInvalid;
+    @i18nField(defaultValue = "已经存在名称为 %s 的领地")
+    public static i18n Controller_DominionNameExist;
+    @i18nField(defaultValue = "两个选点世界不一致")
+    public static i18n Controller_SelectPointsWorldNotSame;
+    @i18nField(defaultValue = "禁止在世界 %s 创建领地")
+    public static i18n Controller_CreateDominionDisabledWorld;
+    @i18nField(defaultValue = "你的领地数量已达上限(%d个)")
+    public static i18n Controller_DominionAmountLimit;
+    @i18nField(defaultValue = "父领地 %s 不存在")
+    public static i18n Controller_ParentDominionNotExist;
+    @i18nField(defaultValue = "根领地丢失！")
+    public static i18n Controller_RootDominionLost;
+    @i18nField(defaultValue = "你不是父领地 %s 的拥有者，无法创建子领地")
+    public static i18n Controller_NotParentDominionOwner;
+    @i18nField(defaultValue = "父领地与子领地不在同一世界")
+    public static i18n Controller_ParentDominionNotInSameWorld;
+    @i18nField(defaultValue = "超出父领地 %s 范围")
+    public static i18n Controller_OutOfParentDominionRange;
+    @i18nField(defaultValue = "与出生点保护冲突")
+    public static i18n Controller_ConflictWithSpawnProtect;
+    @i18nField(defaultValue = "与领地 %s 冲突")
+    public static i18n Controller_ConflictWithDominion;
+    @i18nField(defaultValue = "创建领地失败，数据库错误，请联系管理员")
+    public static i18n Controller_CreateDominionDatabaseError;
+    @i18nField(defaultValue = "无法获取你所处的领地，请指定名称")
+    public static i18n Controller_CannotGetDominionAuto;
+    @i18nField(defaultValue = "扩展领地失败")
+    public static i18n Controller_ExpandDominionFailed;
+    @i18nField(defaultValue = "领地所在世界丢失")
+    public static i18n Controller_DominionWorldLost;
+    @i18nField(defaultValue = "父领地丢失")
+    public static i18n Controller_ParentDominionLost;
+    @i18nField(defaultValue = "成功扩展领地 %s %d格")
+    public static i18n Controller_ExpandDominionSuccess;
+    @i18nField(defaultValue = "缩小领地失败")
+    public static i18n Controller_ContractDominionFailed;
+    @i18nField(defaultValue = "缩小后的领地无法包含子领地 %s")
+    public static i18n Controller_ContractDominionConflict;
+    @i18nField(defaultValue = "成功缩小领地 %s %d格")
+    public static i18n Controller_ContractDominionSuccess;
+    @i18nField(defaultValue = "删除领地失败")
+    public static i18n Controller_DeleteDominionFailed;
+    @i18nField(defaultValue = "领地 %s 及其所有子领地已删除")
+    public static i18n Controller_DeleteDominionSuccess;
+    @i18nField(defaultValue = "删除领地 %s 会同时删除其所有子领地，是否继续？")
+    public static i18n Controller_DeleteDominionConfirm;
+    @i18nField(defaultValue = "输入 /dominion delete %s force 确认删除")
+    public static i18n Controller_DeleteDominionForceConfirm;
+    @i18nField(defaultValue = "成功设置领地 %s 的进入消息")
+    public static i18n Controller_SetEnterMessageSuccess;
+    @i18nField(defaultValue = "成功设置领地 %s 的离开消息")
+    public static i18n Controller_SetLeaveMessageSuccess;
+    @i18nField(defaultValue = "设置领地传送点失败")
+    public static i18n Controller_SetTpLocationFailed;
+    @i18nField(defaultValue = "领地 %s 不存在")
+    public static i18n Controller_DominionNotExist;
+    @i18nField(defaultValue = "领地所在世界不存在")
+    public static i18n Controller_DominionWorldNotExist;
+    @i18nField(defaultValue = "成功设置领地 %s 的传送点 %d %d %d")
+    public static i18n Controller_SetTpLocationSuccess;
+    @i18nField(defaultValue = "传送点不在领地 %s 内")
+    public static i18n Controller_TpLocationNotInDominion;
+    @i18nField(defaultValue = "重命名领地失败")
+    public static i18n Controller_RenameDominionFailed;
+    @i18nField(defaultValue = "新名称与旧名称相同")
+    public static i18n Controller_RenameDominionSameName;
+    @i18nField(defaultValue = "成功将领地 %s 重命名为 %s")
+    public static i18n Controller_RenameDominionSuccess;
+    @i18nField(defaultValue = "转让领地失败")
+    public static i18n Controller_GiveDominionFailed;
+    @i18nField(defaultValue = "玩家 %s 不存在")
+    public static i18n Controller_PlayerNotExist;
+    @i18nField(defaultValue = "领地 %s 已经属于 %s，无需转移")
+    public static i18n Controller_DominionAlreadyBelong;
+    @i18nField(defaultValue = "子领地无法转让，你可以通过将 %s 设置为管理员来让其管理领地 %s")
+    public static i18n Controller_SubDominionCannotGive;
+    @i18nField(defaultValue = "转让领地 %s 给 %s 会同时转让其所有子领地，是否继续？")
+    public static i18n Controller_GiveDominionConfirm;
+    @i18nField(defaultValue = "输入 /dominion give %s %s force 确认转让")
+    public static i18n Controller_GiveDominionForceConfirm;
+    @i18nField(defaultValue = "成功将领地 %s 及其所有子领地转让给 %s")
+    public static i18n Controller_GiveDominionSuccess;
+    @i18nField(defaultValue = "设置领地地图颜色失败")
+    public static i18n Controller_SetMapColorFailed;
+    @i18nField(defaultValue = "颜色格式不正确")
+    public static i18n Controller_MapColorInvalid;
+    @i18nField(defaultValue = "成功设置领地 %s 的卫星地图颜色为 %s")
+    public static i18n Controller_SetMapColorSuccess;
+    @i18nField(defaultValue = "尺寸不合法")
+    public static i18n Controller_SizeInvalid;
+    @i18nField(defaultValue = "领地的任意一边长度不得小于4")
+    public static i18n Controller_SizeShouldBeGreaterThan4;
+    @i18nField(defaultValue = "领地X方向(东西)长度不能超过 %d")
+    public static i18n Controller_SizeXShouldBeLessThan;
+    @i18nField(defaultValue = "领地Y方向(上下)高度不能超过 %d")
+    public static i18n Controller_SizeYShouldBeLessThan;
+    @i18nField(defaultValue = "领地Z方向(南北)长度不能超过 %d")
+    public static i18n Controller_SizeZShouldBeLessThan;
+    @i18nField(defaultValue = "领地Y坐标上限不能超过 %d")
+    public static i18n Controller_MaxYShouldBeLessThan;
+    @i18nField(defaultValue = "领地Y坐标下限不能超过 %d")
+    public static i18n Controller_MinYShouldBeLessThan;
+    @i18nField(defaultValue = "子领地深度不合法")
+    public static i18n Controller_DepthInvalid;
+    @i18nField(defaultValue = "不允许创建子领地")
+    public static i18n Controller_CreateSubDominionDisabled;
+    @i18nField(defaultValue = "子领地嵌套深度不能超过 %d")
+    public static i18n Controller_DepthShouldBeLessThan;
+    @i18nField(defaultValue = "你不是领地 %s 的拥有者")
+    public static i18n Controller_NotDominionOwner;
+    @i18nField(defaultValue = "没有可用的经济插件系统，请联系服主")
+    public static i18n Controller_NoEconomyPlugin;
+    @i18nField(defaultValue = "你是OP，已跳过经济检查")
+    public static i18n Controller_OpBypassEconomyCheck;
+    @i18nField(defaultValue = "你的余额不足，需要 %.2f %s")
+    public static i18n Controller_NotEnoughMoney;
+    @i18nField(defaultValue = "已扣除 %.2f %s")
+    public static i18n Controller_ChargeMoney;
+    @i18nField(defaultValue = "已退还 %.2f %s")
+    public static i18n Controller_RefundMoney;
+    @i18nField(defaultValue = "无法获取你的位置")
+    public static i18n Controller_CannotGetLocation;
+    @i18nField(defaultValue = "禁止跨世界操作")
+    public static i18n Controller_CrossWorldOperationDisallowed;
+    @i18nField(defaultValue = "你不在领地 %s 内，无法执行此操作")
+    public static i18n Controller_NotInDominion;
+    @i18nField(defaultValue = "无法获取你的方向")
+    public static i18n Controller_CannotGetDirection;
+    @i18nField(defaultValue = "无效的方向 %s")
+    public static i18n Controller_InvalidDirection;
+    @i18nField(defaultValue = "缩小后的领地大小无效")
+    public static i18n Controller_ContractSizeInvalid;
+    @i18nField(defaultValue = "(子领地：%s)")
+    public static i18n Controller_SubDominionList;
+
     @i18nField(defaultValue = "AutoCreateRadius 不能等于 0，已重置为 10")
     public static i18n Config_AutoCreateRadiusError;
     @i18nField(defaultValue = "AutoCleanAfterDays 不能等于 0，已重置为 180")

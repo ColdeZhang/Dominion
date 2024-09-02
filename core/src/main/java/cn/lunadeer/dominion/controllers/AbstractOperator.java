@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.minecraftpluginutils.i18n.i18n;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -20,6 +21,12 @@ public interface AbstractOperator {
         private Integer success;
         private List<String> messages;
 
+        public Result(Integer success, i18n message, Object... args) {
+            this.success = success;
+            this.messages = new ArrayList<>();
+            this.messages.add(message.trans());
+        }
+
         public Result(Integer success, String message, Object... args) {
             this.success = success;
             this.messages = new ArrayList<>();
@@ -29,6 +36,10 @@ public interface AbstractOperator {
         public Result addMessage(String message, Object... args) {
             this.messages.add(String.format(message, args));
             return this;
+        }
+
+        public Result addMessage(i18n message, Object... args) {
+            return addMessage(message.trans(), args);
         }
 
         public Integer getStatus() {
