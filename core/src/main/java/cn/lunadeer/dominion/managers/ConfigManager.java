@@ -10,12 +10,14 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ConfigManager {
     public ConfigManager(Dominion plugin) {
+        new Translation(plugin);
         _plugin = plugin;
         _plugin.saveDefaultConfig();
         reload();
@@ -25,6 +27,8 @@ public class ConfigManager {
     public void reload() {
         _plugin.reloadConfig();
         _file = _plugin.getConfig();
+        _language = _file.getString("Language", "zh-cn");
+        Translation.instance.loadLocale(_language);
         _debug = _file.getBoolean("Debug", false);
         _timer = _file.getBoolean("Timer", false);
         XLogger.setDebug(_debug);
@@ -36,7 +40,7 @@ public class ConfigManager {
         _db_pass = _file.getString("Database.Pass", "postgres");
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
         if (_auto_create_radius == 0) {
-            XLogger.err("AutoCreateRadius 不能等于 0，已重置为 10");
+            XLogger.err(Translation.Config_AutoCreateRadiusError);
             setAutoCreateRadius(10);
         }
         _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
@@ -44,7 +48,7 @@ public class ConfigManager {
         _dynmap = _file.getBoolean("Dynmap", false);
         _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
         if (_auto_clean_after_days == 0) {
-            XLogger.err("AutoCleanAfterDays 不能等于 0，已重置为 180");
+            XLogger.err(Translation.Config_AutoCleanAfterDaysError);
             setAutoCleanAfterDays(180);
         }
         _limit_op_bypass = _file.getBoolean("Limit.OpByPass", true);
@@ -54,7 +58,7 @@ public class ConfigManager {
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
         _tool = _file.getString("Tool", "ARROW");
         if (Material.getMaterial(_tool) == null) {
-            XLogger.err("工具名称设置错误，已重置为 ARROW");
+            XLogger.err(Translation.Config_ToolNameError);
             setTool("ARROW");
         }
         _economy_enable = _file.getBoolean("Economy.Enable", false);
@@ -80,34 +84,33 @@ public class ConfigManager {
         defaultGroup.setPrice(_file.getDouble("Economy.Price", 10.0));
         defaultGroup.setPriceOnlyXZ(_file.getBoolean("Economy.OnlyXZ", false));
         defaultGroup.setRefundRatio(_file.getDouble("Economy.Refund", 0.85));
-        limits.put("default", defaultGroup);
         if (defaultGroup.getLimitSizeX() <= 4 && defaultGroup.getLimitSizeX() != -1) {
-            XLogger.err("Limit.SizeX 尺寸不能小于 4，已重置为 128");
+            XLogger.err(Translation.Config_LimitSizeXError);
             setLimitSizeX(128);
         }
         if (defaultGroup.getLimitSizeY() <= 4 && defaultGroup.getLimitSizeY() != -1) {
-            XLogger.err("Limit.SizeY 尺寸不能小于 4，已重置为 64");
+            XLogger.err(Translation.Config_LimitSizeYError);
             setLimitSizeY(64);
         }
         if (defaultGroup.getLimitSizeZ() <= 4 && defaultGroup.getLimitSizeZ() != -1) {
-            XLogger.err("Limit.SizeZ 尺寸不能小于 4，已重置为 128");
+            XLogger.err(Translation.Config_LimitSizeZError);
             setLimitSizeZ(128);
         }
         if (defaultGroup.getLimitMinY() >= defaultGroup.getLimitMaxY()) {
-            XLogger.err("Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320");
+            XLogger.err(Translation.Config_LimitMinYError);
             setLimitMinY(-64);
             setLimitMaxY(320);
         }
         if (defaultGroup.getRefundRatio() < 0.0 || defaultGroup.getRefundRatio() > 1.0) {
-            XLogger.err("Economy.Refund 设置不合法，已重置为 0.85");
+            XLogger.err(Translation.Config_RefundError);
             setEconomyRefund(0.85f);
         }
         if (defaultGroup.getPrice() < 0.0) {
-            XLogger.err("Economy.Price 设置不合法，已重置为 10.0");
+            XLogger.err(Translation.Config_PriceError);
             setEconomyPrice(10.0f);
         }
         if (defaultGroup.getLimitVert() && defaultGroup.getLimitSizeY() <= defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY()) {
-            XLogger.warn("启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 " + (defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1));
+            XLogger.warn(Translation.Config_LimitSizeYAutoAdjust, (defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1));
             setLimitSizeY(defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1);
         }
         if (defaultGroup.getLimitAmount() < 0 && defaultGroup.getLimitAmount() != -1) {
@@ -118,6 +121,7 @@ public class ConfigManager {
             XLogger.err("Limit.Depth 设置不合法，已重置为 3");
             setLimitDepth(3);
         }
+        limits.put("default", defaultGroup);
 
         limits.putAll(GroupLimit.loadGroups(_plugin));
 
@@ -142,37 +146,64 @@ public class ConfigManager {
         _file.set("Database.User", _db_user);
         _file.set("Database.Pass", _db_pass);
 
-        _file.set("AutoCreateRadius", _auto_create_radius);
+        _file.set("Language", _language);
+        _file.setComments("Language", List.of("语言设置，参考 languages 文件夹下的文件名"));
 
+        _file.set("AutoCreateRadius", _auto_create_radius);
+        _file.setComments("AutoCreateRadius", Arrays.asList("自动创建领地的半径，单位为方块", "-1 表示不开启"));
+
+        _file.setComments("Limit", List.of("默认玩家圈地限制"));
         _file.set("Limit.SpawnProtection", _spawn_protection);
+        _file.setInlineComments("Limit.SpawnProtection", List.of("出生点保护半径 出生点此范围内不允许圈地 -1 表示不开启"));
         _file.set("Limit.MinY", limits.get("default").getLimitMinY());
+        _file.setInlineComments("Limit.MinY", List.of("最小Y坐标"));
         _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
+        _file.setInlineComments("Limit.MaxY", List.of("最大Y坐标"));
         _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
+        _file.setInlineComments("Limit.SizeX", List.of("X方向最大长度 -1：表示不限制"));
         _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
+        _file.setInlineComments("Limit.SizeY", List.of("Y方向最大长度 -1：表示不限制"));
         _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
+        _file.setInlineComments("Limit.SizeZ", List.of("Z方向最大长度 -1：表示不限制"));
         _file.set("Limit.Amount", limits.get("default").getLimitAmount());
+        _file.setInlineComments("Limit.Amount", List.of("最大领地数量 -1：表示不限制"));
         _file.set("Limit.Depth", limits.get("default").getLimitDepth());
+        _file.setInlineComments("Limit.Depth", List.of("子领地深度 0：不允许子领地 -1：不限制"));
         _file.set("Limit.Vert", limits.get("default").getLimitVert());
+        _file.setInlineComments("Limit.Vert", List.of("是否自动延伸到 MaxY 和 MinY"));
         _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());
+        _file.setInlineComments("Limit.WorldBlackList", List.of("不允许圈地的世界列表"));
         _file.set("Limit.OpByPass", _limit_op_bypass);
+        _file.setInlineComments("Limit.OpByPass", List.of("是否允许OP无视领地限制"));
 
         _file.set("Teleport.Enable", _tp_enable);
         _file.set("Teleport.Delay", _tp_delay);
+        _file.setInlineComments("Teleport.Delay", List.of("传送延迟 秒"));
         _file.set("Teleport.CoolDown", _tp_cool_down);
+        _file.setInlineComments("Teleport.CoolDown", List.of("传送冷却 秒"));
 
         _file.set("AutoCleanAfterDays", _auto_clean_after_days);
+        _file.setComments("AutoCleanAfterDays", Arrays.asList("自动清理长时间未上线玩家的领地（天）", "-1 表示不开启"));
 
         _file.set("Tool", _tool);
+        _file.setComments("Tool", List.of("圈地工具名称"));
 
+        _file.setComments("Economy", Arrays.asList("经济设置", "需要安装 Vault 前置及插件"));
         _file.set("Economy.Enable", _economy_enable);
         _file.set("Economy.Price", limits.get("default").getPrice());
+        _file.setInlineComments("Economy.Price", List.of("圈地价格 单位每方块"));
         _file.set("Economy.OnlyXZ", limits.get("default").getPriceOnlyXZ());
+        _file.setInlineComments("Economy.OnlyXZ", List.of("是否只计算xz平面积"));
         _file.set("Economy.Refund", limits.get("default").getRefundRatio());
+        _file.setInlineComments("Economy.Refund", List.of("删除领地时的退款比例"));
 
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
+        _file.setComments("FlyPermissionNodes", List.of("飞行权限节点 - 拥有以下任意一个权限节点的玩家不会被本插件拦截飞行"));
 
         _file.set("ResidenceMigration", _residence_migration);
+        _file.setComments("ResidenceMigration", List.of("是否允许玩家从 Residence 迁移领地数据"));
 
+        _file.setComments("GroupTitle", Arrays.asList("权限组称号 - 使用权限组当作称号(需要PlaceholderAPI插件)", "变量: %dominion_group_title%", "前后缀如需要加颜色请使用这种格式 &#ffffff"));
         _file.set("GroupTitle.Enable", _group_title_enable);
         _file.set("GroupTitle.Prefix", _group_title_prefix);
         _file.set("GroupTitle.Suffix", _group_title_suffix);
@@ -184,6 +215,7 @@ public class ConfigManager {
 
         _file.set("Debug", _debug);
         _file.set("Timer", _timer);
+        _file.setInlineComments("Timer", List.of("性能测试计时器"));
 
         _plugin.saveConfig();
     }
@@ -525,6 +557,8 @@ public class ConfigManager {
     private String _db_user;
     private String _db_pass;
     private String _db_name;
+
+    private String _language;
 
     private Integer _auto_create_radius;
 
