@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.managers;
 
 
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.i18n.Localization;
 import cn.lunadeer.minecraftpluginutils.i18n.i18n;
 import cn.lunadeer.minecraftpluginutils.i18n.i18nField;
@@ -575,6 +576,8 @@ public class Translation extends Localization {
     public static i18n Config_Check_GroupPriceError;
     @i18nField(defaultValue = "权限组 %s 的 Refund 设置不合法，已重置为 0.85")
     public static i18n Config_Check_GroupRefundError;
+    @i18nField(defaultValue = "读取权限配置失败：%s")
+    public static i18n Config_Check_LoadFlagError;
 
     @i18nField(defaultValue = "语言设置，参考 languages 文件夹下的文件名")
     public static i18n Config_Comment_Language;
@@ -644,5 +647,28 @@ public class Translation extends Localization {
 
     public Translation(JavaPlugin plugin) {
         super(plugin);
+    }
+
+    public void loadOrSetFlagTranslation(Flag flag) {
+        String displayNameTranslation = loadOrSet(flag.getDisplayNameKey(), flag.getDisplayName());
+        String descriptionTranslation = loadOrSet(flag.getDescriptionKey(), flag.getDescription());
+        flag.setDisplayName(displayNameTranslation);
+        flag.setDescription(descriptionTranslation);
+    }
+
+    public void saveFlagTranslation(Flag flag) {
+        set(flag.getDisplayNameKey(), flag.getDisplayName());
+        set(flag.getDescriptionKey(), flag.getDescription());
+    }
+
+    public void loadFlagTranslation(Flag flag) {
+        String displayNameTranslation = load(flag.getDisplayNameKey());
+        if (displayNameTranslation != null) {
+            flag.setDisplayName(displayNameTranslation);
+        }
+        String descriptionTranslation = load(flag.getDescriptionKey());
+        if (descriptionTranslation != null) {
+            flag.setDescription(descriptionTranslation);
+        }
     }
 }

@@ -126,7 +126,7 @@ public class ConfigManager {
         limits.putAll(GroupLimit.loadGroups(_plugin));
 
         saveAll();  // 回写文件 防止文件中的数据不完整
-        Flag.loadFromJson();    // 加载 Flag 配置
+        Flag.loadFromFile();    // 加载 Flag 配置
     }
 
     public void saveAll() {
