@@ -40,12 +40,12 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
-            Notification.error(sender, Translation.Commands_CreateDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_CreateDominionUsage);
             return;
         }
         Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
         if (points == null || points.get(0) == null || points.get(1) == null) {
-            Notification.error(sender, Translation.Commands_CreateSelectPointsFirst);
+            Notification.error(sender, Translation.Commands_Dominion_CreateSelectPointsFirst);
             return;
         }
         String name = args[1];
@@ -67,12 +67,12 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Notification.error(sender, Translation.Commands_CreateSubDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_CreateSubDominionUsage);
             return;
         }
         Map<Integer, Location> points = Dominion.pointsSelect.get(player.getUniqueId());
         if (points == null || points.get(0) == null || points.get(1) == null) {
-            Notification.error(sender, Translation.Commands_CreateSubSelectPointsFirst);
+            Notification.error(sender, Translation.Commands_Dominion_CreateSubSelectPointsFirst);
             return;
         }
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
@@ -100,11 +100,11 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
-            Notification.error(sender, Translation.Commands_AutoCreateDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_AutoCreateDominionUsage);
             return;
         }
         if (Dominion.config.getAutoCreateRadius() < 0) {
-            Notification.error(sender, Translation.Commands_AutoCreateDominionDisabled);
+            Notification.error(sender, Translation.Commands_Dominion_AutoCreateDominionDisabled);
             return;
         }
         autoPoints(player);
@@ -126,11 +126,11 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Notification.error(sender, Translation.Commands_AutoCreateSubDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_AutoCreateSubDominionUsage);
             return;
         }
         if (Dominion.config.getAutoCreateRadius() < 0) {
-            Notification.error(sender, Translation.Commands_AutoCreateDominionDisabled);
+            Notification.error(sender, Translation.Commands_Dominion_AutoCreateDominionDisabled);
             return;
         }
         autoPoints(player);
@@ -153,7 +153,7 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Notification.error(sender, Translation.Commands_ExpandDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_ExpandDominionUsage);
             return;
         }
         int size = 10;
@@ -161,11 +161,11 @@ public class DominionOperate {
         try {
             size = Integer.parseInt(args[1]);
         } catch (Exception e) {
-            Notification.error(sender, Translation.Commands_SizeShouldBeInteger);
+            Notification.error(sender, Translation.Commands_Dominion_SizeShouldBeInteger);
             return;
         }
         if (size <= 0) {
-            Notification.error(sender, Translation.Commands_SizeShouldBePositive);
+            Notification.error(sender, Translation.Commands_Dominion_SizeShouldBePositive);
             return;
         }
         if (args.length == 3) {
@@ -193,7 +193,7 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2 && args.length != 3) {
-            Notification.error(sender, Translation.Commands_ContractDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_ContractDominionUsage);
             return;
         }
         int size = 10;
@@ -201,11 +201,11 @@ public class DominionOperate {
         try {
             size = Integer.parseInt(args[1]);
         } catch (Exception e) {
-            Notification.error(sender, Translation.Commands_SizeShouldBeInteger);
+            Notification.error(sender, Translation.Commands_Dominion_SizeShouldBeInteger);
             return;
         }
         if (size <= 0) {
-            Notification.error(sender, Translation.Commands_SizeShouldBePositive);
+            Notification.error(sender, Translation.Commands_Dominion_SizeShouldBePositive);
             return;
         }
         if (args.length == 3) {
@@ -243,7 +243,7 @@ public class DominionOperate {
                 return;
             }
         }
-        Notification.error(sender, Translation.Commands_DeleteDominionUsage);
+        Notification.error(sender, Translation.Commands_Dominion_DeleteDominionUsage);
     }
 
     /**
@@ -266,7 +266,7 @@ public class DominionOperate {
             DominionController.setJoinMessage(operator, args[1], args[2]);
             return;
         }
-        Notification.error(sender, Translation.Commands_SetEnterMessageUsage);
+        Notification.error(sender, Translation.Commands_Dominion_SetEnterMessageUsage);
     }
 
     /**
@@ -289,7 +289,7 @@ public class DominionOperate {
             DominionController.setLeaveMessage(operator, args[1], args[2]);
             return;
         }
-        Notification.error(sender, Translation.Commands_SetLeaveMessageUsage);
+        Notification.error(sender, Translation.Commands_Dominion_SetLeaveMessageUsage);
     }
 
     /**
@@ -317,7 +317,7 @@ public class DominionOperate {
                     args[1]);
             return;
         }
-        Notification.error(sender, Translation.Commands_SetTpLocationUsage);
+        Notification.error(sender, Translation.Commands_Dominion_SetTpLocationUsage);
     }
 
     /**
@@ -333,7 +333,7 @@ public class DominionOperate {
         }
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
         if (args.length != 3) {
-            Notification.error(sender, Translation.Commands_RenameDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_RenameDominionUsage);
             return;
         }
         DominionController.rename(operator, args[1], args[2]);
@@ -365,7 +365,7 @@ public class DominionOperate {
                 return;
             }
         }
-        Notification.error(sender, Translation.Commands_GiveDominionUsage);
+        Notification.error(sender, Translation.Commands_Dominion_GiveDominionUsage);
     }
 
     /**
@@ -382,34 +382,34 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         if (args.length != 2) {
-            Notification.error(sender, Translation.Commands_TpDominionUsage);
+            Notification.error(sender, Translation.Commands_Dominion_TpDominionUsage);
             return;
         }
         DominionDTO dominionDTO = DominionDTO.select(args[1]);
         if (dominionDTO == null) {
-            Notification.error(sender, Translation.Commands_DominionNotExist);
+            Notification.error(sender, Translation.Commands_Dominion_DominionNotExist);
             return;
         }
         if (player.isOp() && Dominion.config.getLimitOpBypass()) {
-            Notification.warn(sender, Translation.Commands_OpBypassTpLimit);
+            Notification.warn(sender, Translation.Messages_OpBypassTpLimit);
             Location location = dominionDTO.getTpLocation();
             if (location == null) {
                 int x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;
                 int z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
                 World world = dominionDTO.getWorld();
                 if (world == null) {
-                    Notification.error(sender, Translation.Commands_WorldNotExist);
+                    Notification.error(sender, Translation.Messages_WorldNotExist);
                     return;
                 }
                 location = new Location(world, x, player.getLocation().getY(), z);
-                XLogger.warn(Translation.Commands_DominionNoTpLocation, dominionDTO.getName());
+                XLogger.warn(Translation.Messages_NoTpLocation, dominionDTO.getName());
             }
             Teleport.doTeleportSafely(player, location);
-            Notification.info(player, Translation.Commands_TpToDominion, dominionDTO.getName());
+            Notification.info(player, Translation.Messages_TpToDominion, dominionDTO.getName());
             return;
         }
         if (!Dominion.config.getTpEnable()) {
-            Notification.error(sender, Translation.Commands_TpDisabled);
+            Notification.error(sender, Translation.Messages_TpDisabled);
             return;
         }
 
@@ -417,19 +417,19 @@ public class DominionOperate {
         if (!canByPass(player, dominionDTO, privilegeDTO)) {
             if (privilegeDTO == null) {
                 if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
-                    Notification.error(sender, Translation.Commands_DominionNoTp);
+                    Notification.error(sender, Translation.Messages_DominionNoTp);
                     return;
                 }
             } else {
                 GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
                 if (privilegeDTO.getGroupId() != -1 && groupDTO != null) {
                     if (!groupDTO.getFlagValue(Flag.TELEPORT)) {
-                        Notification.error(sender, Translation.Commands_GroupNoTp);
+                        Notification.error(sender, Translation.Messages_GroupNoTp);
                         return;
                     }
                 } else {
                     if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
-                        Notification.error(sender, Translation.Commands_PrivilegeNoTp);
+                        Notification.error(sender, Translation.Messages_PrivilegeNoTp);
                         return;
                     }
                 }
@@ -441,19 +441,19 @@ public class DominionOperate {
         if (next_time != null) {
             if (now.isBefore(next_time)) {
                 long secs_until_next = now.until(next_time, java.time.temporal.ChronoUnit.SECONDS);
-                Notification.error(player, Translation.Commands_TpCoolDown, secs_until_next);
+                Notification.error(player, Translation.Messages_TpCoolDown, secs_until_next);
                 return;
             }
         }
         if (Dominion.config.getTpDelay() > 0) {
-            Notification.info(player, Translation.Commands_TpDelay, Dominion.config.getTpDelay());
+            Notification.info(player, Translation.Messages_TpDelay, Dominion.config.getTpDelay());
             Scheduler.runTaskAsync(() -> {
                 int i = Dominion.config.getTpDelay();
                 while (i > 0) {
                     if (!player.isOnline()) {
                         return;
                     }
-                    Notification.actionBar(player, Translation.Commands_TpCountDown, i);
+                    Notification.actionBar(player, Translation.Messages_TpCountDown, i);
                     i--;
                     try {
                         Thread.sleep(1000);
@@ -470,22 +470,22 @@ public class DominionOperate {
             int center_z = (dominionDTO.getZ1() + dominionDTO.getZ2()) / 2;
             World world = dominionDTO.getWorld();
             if (world == null) {
-                Notification.error(player, Translation.Commands_WorldNotExist);
+                Notification.error(player, Translation.Messages_WorldNotExist);
                 return;
             }
             if (location == null) {
                 location = new Location(world, center_x, player.getLocation().getY(), center_z);
-                Notification.warn(player, Translation.Commands_DominionNoTpLocation, dominionDTO.getName());
+                Notification.warn(player, Translation.Messages_NoTpLocation, dominionDTO.getName());
             } else if (!isInDominion(dominionDTO, location)) {
                 location = new Location(world, center_x, player.getLocation().getY(), center_z);
-                Notification.warn(player, Translation.Commands_DominionTpLocationNotInDominion, dominionDTO.getName());
+                Notification.warn(player, Translation.Messages_TpLocationNotInside, dominionDTO.getName());
             }
             if (player.isOnline()) {
                 Teleport.doTeleportSafely(player, location).thenAccept(b -> {
                     if (b) {
-                        Notification.info(player, Translation.Commands_TpToDominion, dominionDTO.getName());
+                        Notification.info(player, Translation.Messages_TpToDominion, dominionDTO.getName());
                     } else {
-                        Notification.error(player, Translation.Commands_TpFailed);
+                        Notification.error(player, Translation.Messages_TpFailed);
                     }
                 });
             }
@@ -503,7 +503,7 @@ public class DominionOperate {
             return;
         }
         if (args.length < 2) {
-            Notification.error(sender, Translation.Commands_SetMapColorUsage);
+            Notification.error(sender, Translation.Commands_Dominion_SetMapColorUsage);
             return;
         }
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);

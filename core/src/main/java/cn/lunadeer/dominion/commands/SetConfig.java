@@ -95,7 +95,7 @@ public class SetConfig {
         int size = Integer.parseInt(args[2]);
         if (size <= 0) {
             Dominion.config.setAutoCreateRadius(1);
-            Notification.error(sender, Translation.Config_AutoCreateRadiusError);
+            Notification.error(sender, Translation.Config_Check_AutoCreateRadiusError);
         } else {
             Dominion.config.setAutoCreateRadius(size);
         }
@@ -111,7 +111,7 @@ public class SetConfig {
     private static void setLimitMaxY(CommandSender sender, String[] args) {
         int maxY = Integer.parseInt(args[2]);
         if (maxY <= Dominion.config.getLimitMinY(null)) {
-            Notification.error(sender, Translation.Commands_MinYShouldBeLessThanMaxY);
+            Notification.error(sender, Translation.Commands_SetConfig_MinYShouldBeLessThanMaxY);
             return;
         }
         Dominion.config.setLimitMaxY(maxY);
@@ -122,7 +122,7 @@ public class SetConfig {
     private static void setLimitMinY(CommandSender sender, String[] args) {
         int minY = Integer.parseInt(args[2]);
         if (minY >= Dominion.config.getLimitMaxY(null)) {
-            Notification.error(sender, Translation.Commands_MaxYShouldBeGreaterThanMinY);
+            Notification.error(sender, Translation.Commands_SetConfig_MaxYShouldBeGreaterThanMinY);
             return;
         }
         Dominion.config.setLimitMinY(minY);
@@ -134,7 +134,7 @@ public class SetConfig {
         int sizeX = Integer.parseInt(args[2]);
         if (sizeX != -1 && sizeX < 4) {
             Dominion.config.setLimitSizeX(4);
-            Notification.error(sender, Translation.Commands_SizeXShouldBeGreaterThan4);
+            Notification.error(sender, Translation.Commands_SetConfig_SizeXShouldBeGreaterThan4);
         } else {
             Dominion.config.setLimitSizeX(sizeX);
         }
@@ -145,7 +145,7 @@ public class SetConfig {
         int sizeZ = Integer.parseInt(args[2]);
         if (sizeZ != -1 && sizeZ < 4) {
             Dominion.config.setLimitSizeZ(4);
-            Notification.error(sender, Translation.Commands_SizeZShouldBeGreaterThan4);
+            Notification.error(sender, Translation.Commands_SetConfig_SizeZShouldBeGreaterThan4);
             return;
         } else {
             Dominion.config.setLimitSizeZ(sizeZ);
@@ -157,7 +157,7 @@ public class SetConfig {
         int sizeY = Integer.parseInt(args[2]);
         if (sizeY != -1 && sizeY < 4) {
             Dominion.config.setLimitSizeY(4);
-            Notification.error(sender, Translation.Commands_SizeYShouldBeGreaterThan4);
+            Notification.error(sender, Translation.Commands_SetConfig_SizeYShouldBeGreaterThan4);
         } else {
             Dominion.config.setLimitSizeY(sizeY);
         }
@@ -168,7 +168,7 @@ public class SetConfig {
         int amount = Integer.parseInt(args[2]);
         if (amount != -1 && amount < 0) {
             Dominion.config.setLimitAmount(0);
-            Notification.error(sender, Translation.Commands_AmountShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_AmountShouldBeGreaterThan0);
         } else {
             Dominion.config.setLimitAmount(amount);
         }
@@ -179,7 +179,7 @@ public class SetConfig {
         int depth = Integer.parseInt(args[2]);
         if (depth != -1 && depth < 0) {
             Dominion.config.setLimitDepth(0);
-            Notification.error(sender, Translation.Commands_DepthShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_DepthShouldBeGreaterThan0);
         } else {
             Dominion.config.setLimitDepth(depth);
         }
@@ -209,7 +209,7 @@ public class SetConfig {
         int tpDelay = Integer.parseInt(args[2]);
         if (tpDelay < 0) {
             Dominion.config.setTpDelay(0);
-            Notification.error(sender, Translation.Commands_TpDelayShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_TpDelayShouldBeGreaterThan0);
         } else {
             Dominion.config.setTpDelay(tpDelay);
         }
@@ -220,7 +220,7 @@ public class SetConfig {
         int tpCoolDown = Integer.parseInt(args[2]);
         if (tpCoolDown < 0) {
             Dominion.config.setTpCoolDown(0);
-            Notification.error(sender, Translation.Commands_TpCoolDownShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_TpCoolDownShouldBeGreaterThan0);
         } else {
             Dominion.config.setTpCoolDown(tpCoolDown);
         }
@@ -237,7 +237,7 @@ public class SetConfig {
         float economyPrice = Float.parseFloat(args[2]);
         if (economyPrice < 0) {
             Dominion.config.setEconomyPrice(0.0f);
-            Notification.error(sender, Translation.Commands_PriceShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_PriceShouldBeGreaterThan0);
         } else {
             Dominion.config.setEconomyPrice(economyPrice);
         }
@@ -254,7 +254,7 @@ public class SetConfig {
         float economyRefund = Float.parseFloat(args[2]);
         if (economyRefund < 0) {
             Dominion.config.setEconomyRefund(0.0f);
-            Notification.error(sender, Translation.Commands_RefundShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_RefundShouldBeGreaterThan0);
         } else {
             Dominion.config.setEconomyRefund(economyRefund);
         }
@@ -271,7 +271,7 @@ public class SetConfig {
         int spawnProtection = Integer.parseInt(args[2]);
         if (spawnProtection != -1 && spawnProtection <= 0) {
             Dominion.config.setSpawnProtection(1);
-            Notification.error(sender, Translation.Commands_SpawnProtectRadiusShouldBeGreaterThan0);
+            Notification.error(sender, Translation.Commands_SetConfig_SpawnProtectRadiusShouldBeGreaterThan0);
         } else {
             Dominion.config.setSpawnProtection(spawnProtection);
         }

@@ -42,7 +42,7 @@ public class DominionFlag {
             }
 
         } else {
-            Notification.error(sender, Translation.Commands_SetDominionFlagUsage);
+            Notification.error(sender, Translation.Commands_Dominion_SetFlagUsage);
         }
     }
 

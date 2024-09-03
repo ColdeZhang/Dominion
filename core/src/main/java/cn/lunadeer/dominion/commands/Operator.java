@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.utils.MapRender;
+import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.minecraftpluginutils.GiteaReleaseCheck;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
@@ -29,19 +29,19 @@ public class Operator {
             return;
         }
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, Translation.Commands_ReloadingDominionCache);
+            Notification.info(sender, Translation.Commands_Operator_ReloadingDominionCache);
             Cache.instance.loadDominions();
-            Notification.info(sender, Translation.Commands_ReloadedDominionCache);
+            Notification.info(sender, Translation.Commands_Operator_ReloadedDominionCache);
         });
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, Translation.Commands_ReloadingPrivilegeCache);
+            Notification.info(sender, Translation.Commands_Operator_ReloadingPrivilegeCache);
             Cache.instance.loadMembers();
-            Notification.info(sender, Translation.Commands_ReloadedPrivilegeCache);
+            Notification.info(sender, Translation.Commands_Operator_ReloadedPrivilegeCache);
         });
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, Translation.Commands_ReloadingGroupCache);
+            Notification.info(sender, Translation.Commands_Operator_ReloadingGroupCache);
             Cache.instance.loadGroups();
-            Notification.info(sender, Translation.Commands_ReloadedGroupCache);
+            Notification.info(sender, Translation.Commands_Operator_ReloadedGroupCache);
         });
     }
 
@@ -50,7 +50,7 @@ public class Operator {
             return;
         }
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, Translation.Commands_ExportingMCAList);
+            Notification.info(sender, Translation.Commands_Operator_ExportingMCAList);
             Map<String, List<String>> mca_cords = new HashMap<>();
             List<DominionDTO> doms = Cache.instance.getDominions();
             for (DominionDTO dom : doms) {
@@ -82,24 +82,24 @@ public class Operator {
             if (!folder.exists()) {
                 boolean success = folder.mkdirs();
                 if (!success) {
-                    Notification.error(sender, Translation.Commands_CreateExportFolderFailed);
+                    Notification.error(sender, Translation.Commands_Operator_CreateExportFolderFailed);
                     return;
                 }
             }
             for (String world : mca_cords.keySet()) {
                 File file = new File(folder, world + ".txt");
-                Notification.info(sender, Translation.Commands_ExportingMCAListForWorld, world);
+                Notification.info(sender, Translation.Commands_Operator_ExportingMCAListForWorld, world);
                 try {
                     if (file.exists()) {
                         boolean success = file.delete();
                         if (!success) {
-                            Notification.error(sender, Translation.Commands_DeleteMCAListFailed, world);
+                            Notification.error(sender, Translation.Commands_Operator_DeleteMCAListFailed, world);
                             continue;
                         }
                     }
                     boolean success = file.createNewFile();
                     if (!success) {
-                        Notification.error(sender, Translation.Commands_CreateMCAListFailed, world);
+                        Notification.error(sender, Translation.Commands_Operator_CreateMCAListFailed, world);
                         continue;
                     }
                     List<String> cords = mca_cords.get(world);
@@ -108,16 +108,16 @@ public class Operator {
                         try {
                             java.nio.file.Files.write(file.toPath(), (cord + "\n").getBytes(), java.nio.file.StandardOpenOption.APPEND);
                         } catch (Exception e) {
-                            Notification.error(sender, Translation.Commands_WriteMCAListFailed, cord);
+                            Notification.error(sender, Translation.Commands_Operator_WriteMCAListFailed, cord);
                         }
                     }
                 } catch (Exception e) {
-                    Notification.error(sender, Translation.Commands_ExportMCAListFailed, world);
+                    Notification.error(sender, Translation.Commands_Operator_ExportMCAListFailed, world);
                     Notification.error(sender, e.getMessage());
                 }
             }
             MapRender.renderMCA(mca_cords);
-            Notification.info(sender, Translation.Commands_ExportedMCAList, folder.getAbsolutePath());
+            Notification.info(sender, Translation.Commands_Operator_ExportedMCAList, folder.getAbsolutePath());
         });
     }
 
@@ -126,7 +126,7 @@ public class Operator {
             return;
         }
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, Translation.Commands_ReloadingConfig);
+            Notification.info(sender, Translation.Commands_Operator_ReloadingConfig);
             Dominion.config.reload();
             DatabaseManager.instance.reConnection(
                     DatabaseType.valueOf(Dominion.config.getDbType().toUpperCase()),
@@ -136,7 +136,7 @@ public class Operator {
                     Dominion.config.getDbUser(),
                     Dominion.config.getDbPass()
             );
-            Notification.info(sender, Translation.Commands_ReloadedConfig);
+            Notification.info(sender, Translation.Commands_Operator_ReloadedConfig);
         });
     }
 

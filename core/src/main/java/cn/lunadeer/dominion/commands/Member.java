@@ -36,7 +36,7 @@ public class Member {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, Translation.Commands_DominionAddMemberUsage);
+                Notification.error(sender, Translation.Commands_Member_DominionAddMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -62,7 +62,7 @@ public class Member {
                 return;
             }
             if (args.length < 6) {
-                Notification.error(sender, Translation.Commands_DominionSetFlagUsage);
+                Notification.error(sender, Translation.Commands_Member_DominionSetFlagUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -91,7 +91,7 @@ public class Member {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, Translation.Commands_DominionRemoveMemberUsage);
+                Notification.error(sender, Translation.Commands_Member_DominionRemoveMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -117,7 +117,7 @@ public class Member {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, Translation.Commands_DominionApplyTemplateUsage);
+                Notification.error(sender, Translation.Commands_Member_DominionApplyTemplateUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -133,7 +133,7 @@ public class Member {
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
-            Notification.error(sender, Translation.Commands_MemberUsage);
+            Notification.error(sender, Translation.Commands_Member_MemberUsage);
             return;
         }
         switch (args[1]) {

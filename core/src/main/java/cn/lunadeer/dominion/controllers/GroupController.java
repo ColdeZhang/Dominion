@@ -19,29 +19,29 @@ public class GroupController {
      * @param nameColored 权限组名称（带颜色）
      */
     public static void createGroup(AbstractOperator operator, String domName, String groupName, String nameColored) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_CreateGroupFailed, groupName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_CreateGroupSuccess, groupName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CreateGroupFailed, groupName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_CreateGroupSuccess, groupName);
         if (groupName.contains(" ")) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNameInvalid));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNameInvalid));
             return;
         }
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, domName));
             return;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwner, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group != null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNameExist, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNameExist, domName, groupName));
             return;
         }
         group = GroupDTO.create(nameColored, dominion);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -55,20 +55,20 @@ public class GroupController {
      * @param groupName 权限组名称
      */
     public static void deleteGroup(AbstractOperator operator, String domName, String groupName) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DeleteGroupFailed, groupName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_DeleteGroupSuccess, groupName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DeleteGroupFailed, groupName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_DeleteGroupSuccess, groupName);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, domName));
             return;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwner, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNotExist, domName, groupName));
             return;
         }
         group.delete();
@@ -85,11 +85,11 @@ public class GroupController {
      * @param value     权限值
      */
     public static void setGroupFlag(AbstractOperator operator, String domName, String groupName, String flag, boolean value) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_SetGroupFlagFailed, groupName, flag, value);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetGroupFlagSuccess, groupName, flag, value);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetGroupFlagFailed, groupName, flag, value);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetGroupFlagSuccess, groupName, flag, value);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, domName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) {
@@ -97,11 +97,11 @@ public class GroupController {
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNotExist, domName, groupName));
             return;
         }
         if ((flag.equals("admin") || group.getAdmin()) && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwnerForGroup, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwnerForGroup, domName));
             return;
         }
         if (flag.equals("admin")) {
@@ -109,13 +109,13 @@ public class GroupController {
         } else {
             Flag f = Flag.getFlag(flag);
             if (f == null) {
-                operator.setResponse(FAIL.addMessage(Translation.Controller_UnknownFlag, flag));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_UnknownFlag, flag));
                 return;
             }
             group = group.setFlagValue(f, value);
         }
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -131,29 +131,29 @@ public class GroupController {
      * @param nameColored 新名称（带颜色）
      */
     public static void renameGroup(AbstractOperator operator, String domName, String oldName, String newName, String nameColored) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_RenameGroupFailed, oldName, newName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_RenameGroupSuccess, oldName, newName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_RenameGroupFailed, oldName, newName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_RenameGroupSuccess, oldName, newName);
         if (newName.contains(" ")) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNameInvalid));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNameInvalid));
             return;
         }
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, domName));
             return;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwner, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), oldName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, oldName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNotExist, domName, oldName));
             return;
         }
         group = group.setName(nameColored);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -168,47 +168,47 @@ public class GroupController {
      * @param playerName 玩家名称
      */
     public static void addMember(AbstractOperator operator, String domName, String groupName, String playerName) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_AddGroupMemberFailed, playerName, groupName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_AddGroupMemberSuccess, playerName, groupName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_AddGroupMemberFailed, playerName, groupName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_AddGroupMemberSuccess, playerName, groupName);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNotExist, domName, groupName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NoPermissionForGroupMember, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NoPermissionForGroupMember, domName, groupName));
             return;
         }
         if (group.getAdmin() && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwnerForGroupMember, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwnerForGroupMember, domName));
             return;
         }
         PlayerDTO player = PlayerDTO.select(playerName);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotExist, playerName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, playerName));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotDominionMember, playerName, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotDominionMember, playerName, domName));
             return;
         }
         if (Objects.equals(privilege.getGroupId(), group.getId())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerAlreadyInGroup, playerName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerAlreadyInGroup, playerName, groupName));
             return;
         }
         if (notOwner(operator, dominion) && privilege.getAdmin()) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerIsOwnerForGroupMember, playerName, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerIsOwnerForGroupMember, playerName, domName));
             return;
         }
         privilege = privilege.setGroupId(group.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);
@@ -223,43 +223,43 @@ public class GroupController {
      * @param playerName 玩家名称
      */
     public static void removeMember(AbstractOperator operator, String domName, String groupName, String playerName) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_RemoveGroupMemberFailed, groupName, playerName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_RemoveGroupMemberSuccess, groupName, playerName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_RemoveGroupMemberFailed, groupName, playerName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_RemoveGroupMemberSuccess, groupName, playerName);
         DominionDTO dominion = DominionDTO.select(domName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, domName));
             return;
         }
         GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
         if (group == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_GroupNotExist, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_GroupNotExist, domName, groupName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NoPermissionForRemoveGroupMember, domName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NoPermissionForRemoveGroupMember, domName, groupName));
             return;
         }
         if (group.getAdmin() && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwnerForRemoveGroupMember, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwnerForRemoveGroupMember, domName));
             return;
         }
         PlayerDTO player = PlayerDTO.select(playerName);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotExist, playerName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, playerName));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotMember, playerName, domName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotMember, playerName, domName));
             return;
         }
         if (!Objects.equals(privilege.getGroupId(), group.getId())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotInGroup, playerName, groupName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotInGroup, playerName, groupName));
             return;
         }
         privilege = privilege.setGroupId(-1);
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
         operator.setResponse(SUCCESS);

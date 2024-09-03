@@ -26,7 +26,7 @@ public class Title {
         Player bukkit_player = playerOnly(sender);
         if (bukkit_player == null) return;
         if (args.length < 2) {
-            Notification.error(sender, Translation.Commands_UseTitleUsage);
+            Notification.error(sender, Translation.Commands_Title_UseTitleUsage);
             return;
         }
         try {
@@ -34,36 +34,36 @@ public class Title {
             PlayerDTO player = PlayerDTO.get(bukkit_player);
             if (id == -1) {
                 player.setUsingGroupTitleID(id);
-                Notification.info(sender, Translation.Commands_RemoveTitleSuccess);
+                Notification.info(sender, Translation.Commands_Title_RemoveTitleSuccess);
             } else {
                 GroupDTO group = Cache.instance.getGroup(id);
                 if (group == null) {
-                    Notification.error(sender, Translation.Commands_GroupNotExist);
+                    Notification.error(sender, Translation.Commands_Title_GroupNotExist);
                     return;
                 }
                 DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
                 if (dominion == null) {
-                    Notification.error(sender, Translation.Commands_GroupDominionNotExist, group.getName());
+                    Notification.error(sender, Translation.Commands_Title_GroupDominionNotExist, group.getName());
                     return;
                 }
                 if (!dominion.getOwner().equals(bukkit_player.getUniqueId())) {
                     MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
                     if (member == null) {
-                        Notification.error(sender, Translation.Commands_NotGroupMember, dominion.getName());
+                        Notification.error(sender, Translation.Commands_Title_NotDominionMember, dominion.getName());
                         return;
                     }
                     if (!Objects.equals(member.getGroupId(), group.getId())) {
-                        Notification.error(sender, Translation.Commands_NotGroupMember2, group.getName());
+                        Notification.error(sender, Translation.Commands_Title_NotGroupMember, group.getName());
                         return;
                     }
                 }
                 player.setUsingGroupTitleID(group.getId());
-                Notification.info(sender, Translation.Commands_UseTitleSuccess, group.getName());
+                Notification.info(sender, Translation.Commands_Title_UseTitleSuccess, group.getName());
             }
             int page = getPage(args, 2);
             TitleList.show(sender, page);
         } catch (Exception e) {
-            Notification.error(sender, Translation.Commands_UseTitleFailed, e.getMessage());
+            Notification.error(sender, Translation.Commands_Title_UseTitleFailed, e.getMessage());
         }
     }
 

@@ -3,8 +3,9 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
-import cn.lunadeer.dominion.utils.DynmapConnect;
-import cn.lunadeer.dominion.utils.MapRender;
+import cn.lunadeer.dominion.managers.Translation;
+import cn.lunadeer.dominion.utils.map.DynmapConnect;
+import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.minecraftpluginutils.*;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseType;
@@ -43,7 +44,7 @@ public final class Dominion extends JavaPlugin {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 new PlaceHolderApi(this);
             } else {
-                XLogger.warn("未找到 PlaceholderAPI 插件，无法使用权限组组称号功能，已自动关闭");
+                XLogger.warn(Translation.Messages_PlaceholderAPINotFound);
                 config.setGroupTitleEnable(false);
             }
         }
@@ -67,8 +68,8 @@ public final class Dominion extends JavaPlugin {
         // SCUI 初始化
         Bukkit.getPluginManager().registerEvents(new CuiManager(this), this);
 
-        XLogger.info("领地插件已启动");
-        XLogger.info("版本：" + this.getDescription().getVersion());
+        XLogger.info(Translation.Messages_PluginEnabled);
+        XLogger.info(Translation.Messages_PluginVersion, this.getDescription().getVersion());
         // http://patorjk.com/software/taag/#p=display&f=Big&t=Dominion
         XLogger.info("  _____                  _       _");
         XLogger.info(" |  __ \\                (_)     (_)");

@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -34,8 +35,8 @@ public class RenameDominion {
         Player player = playerOnly(sender);
         if (player == null) return;
         CuiTextInput.InputCallback renameDominionCB = new renameDominionCB(player, args[1]);
-        CuiTextInput view = CuiTextInput.create(renameDominionCB).setText(args[1]).title("领地重命名");
-        view.setSuggestCommand("/dominion rename <原领地名称> <新领地名称>");
+        CuiTextInput view = CuiTextInput.create(renameDominionCB).setText(args[1]).title(Translation.CUI_Input_RenameDominion.trans());
+        view.setSuggestCommand(Translation.Commands_Dominion_RenameDominionUsage.trans());
         view.open(player);
     }
 }

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.cuis.*;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.*;
 import cn.lunadeer.dominion.tuis.dominion.DominionList;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
@@ -237,9 +238,10 @@ public class Commands implements TabExecutor {
                 case "help":
                 case "list":
                 case "sys_config":
+                    return Collections.singletonList(Translation.Commands_PageOptional.trans());
                 case "create":
                 case "auto_create":
-                    return Collections.singletonList("输入领地名称");
+                    return Collections.singletonList(Translation.Commands_DominionName.trans());
                 case "delete":
                 case "info":
                 case "manage":
@@ -254,16 +256,16 @@ public class Commands implements TabExecutor {
                     return dominionFlags();
                 case "expand":
                 case "contract":
-                    return Collections.singletonList("大小(整数)");
+                    return Collections.singletonList(Translation.Commands_SizeInteger.trans());
                 case "create_sub":
                 case "auto_create_sub":
-                    return Collections.singletonList("子领地名称");
+                    return Collections.singletonList(Translation.Commands_SubDominionName.trans());
                 case "set_enter_msg":
-                    return Collections.singletonList("进入提示语内容");
+                    return Collections.singletonList(Translation.Commands_EnterMessageContent.trans());
                 case "set_leave_msg":
-                    return Collections.singletonList("离开提示语内容");
+                    return Collections.singletonList(Translation.Commands_LeaveMessageContent.trans());
                 case "set_map_color":
-                    return Collections.singletonList("输入颜色(16进制)");
+                    return Collections.singletonList(Translation.Commands_InputColor.trans());
             }
         }
         if (args.length == 3) {
@@ -279,7 +281,7 @@ public class Commands implements TabExecutor {
                 case "set_map_color":
                     return playerDominions(sender);
                 case "rename":
-                    return Collections.singletonList("输入新领地名称");
+                    return Collections.singletonList(Translation.Commands_NewDominionName.trans());
                 case "give":
                     return playerNames();
             }

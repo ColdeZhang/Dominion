@@ -40,7 +40,7 @@ public class ConfigManager {
         _db_pass = _file.getString("Database.Pass", "postgres");
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
         if (_auto_create_radius == 0) {
-            XLogger.err(Translation.Config_AutoCreateRadiusError);
+            XLogger.err(Translation.Config_Check_AutoCreateRadiusError);
             setAutoCreateRadius(10);
         }
         _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
@@ -48,7 +48,7 @@ public class ConfigManager {
         _dynmap = _file.getBoolean("Dynmap", false);
         _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
         if (_auto_clean_after_days == 0) {
-            XLogger.err(Translation.Config_AutoCleanAfterDaysError);
+            XLogger.err(Translation.Config_Check_AutoCleanAfterDaysError);
             setAutoCleanAfterDays(180);
         }
         _limit_op_bypass = _file.getBoolean("Limit.OpByPass", true);
@@ -58,7 +58,7 @@ public class ConfigManager {
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
         _tool = _file.getString("Tool", "ARROW");
         if (Material.getMaterial(_tool) == null) {
-            XLogger.err(Translation.Config_ToolNameError);
+            XLogger.err(Translation.Config_Check_ToolNameError);
             setTool("ARROW");
         }
         _economy_enable = _file.getBoolean("Economy.Enable", false);
@@ -85,40 +85,40 @@ public class ConfigManager {
         defaultGroup.setPriceOnlyXZ(_file.getBoolean("Economy.OnlyXZ", false));
         defaultGroup.setRefundRatio(_file.getDouble("Economy.Refund", 0.85));
         if (defaultGroup.getLimitSizeX() <= 4 && defaultGroup.getLimitSizeX() != -1) {
-            XLogger.err(Translation.Config_LimitSizeXError);
+            XLogger.err(Translation.Config_Check_LimitSizeXError);
             setLimitSizeX(128);
         }
         if (defaultGroup.getLimitSizeY() <= 4 && defaultGroup.getLimitSizeY() != -1) {
-            XLogger.err(Translation.Config_LimitSizeYError);
+            XLogger.err(Translation.Config_Check_LimitSizeYError);
             setLimitSizeY(64);
         }
         if (defaultGroup.getLimitSizeZ() <= 4 && defaultGroup.getLimitSizeZ() != -1) {
-            XLogger.err(Translation.Config_LimitSizeZError);
+            XLogger.err(Translation.Config_Check_LimitSizeZError);
             setLimitSizeZ(128);
         }
         if (defaultGroup.getLimitMinY() >= defaultGroup.getLimitMaxY()) {
-            XLogger.err(Translation.Config_LimitMinYError);
+            XLogger.err(Translation.Config_Check_LimitMinYError);
             setLimitMinY(-64);
             setLimitMaxY(320);
         }
         if (defaultGroup.getRefundRatio() < 0.0 || defaultGroup.getRefundRatio() > 1.0) {
-            XLogger.err(Translation.Config_RefundError);
+            XLogger.err(Translation.Config_Check_RefundError);
             setEconomyRefund(0.85f);
         }
         if (defaultGroup.getPrice() < 0.0) {
-            XLogger.err(Translation.Config_PriceError);
+            XLogger.err(Translation.Config_Check_PriceError);
             setEconomyPrice(10.0f);
         }
         if (defaultGroup.getLimitVert() && defaultGroup.getLimitSizeY() <= defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY()) {
-            XLogger.warn(Translation.Config_LimitSizeYAutoAdjust, (defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1));
+            XLogger.warn(Translation.Config_Check_LimitSizeYAutoAdjust, (defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1));
             setLimitSizeY(defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1);
         }
         if (defaultGroup.getLimitAmount() < 0 && defaultGroup.getLimitAmount() != -1) {
-            XLogger.err(Translation.Config_AmountError);
+            XLogger.err(Translation.Config_Check_AmountError);
             setLimitAmount(10);
         }
         if (defaultGroup.getLimitDepth() < 0 && defaultGroup.getLimitDepth() != -1) {
-            XLogger.err(Translation.Config_DepthError);
+            XLogger.err(Translation.Config_Check_DepthError);
             setLimitDepth(3);
         }
         limits.put("default", defaultGroup);
@@ -147,66 +147,66 @@ public class ConfigManager {
         _file.set("Database.Pass", _db_pass);
 
         _file.set("Language", _language);
-        _file.setComments("Language", List.of(Translation.ConfigComment_Language.trans()));
+        _file.setComments("Language", List.of(Translation.Config_Comment_Language.trans()));
 
         _file.set("AutoCreateRadius", _auto_create_radius);
-        _file.setComments("AutoCreateRadius", Arrays.asList(Translation.ConfigComment_AutoCreateRadius.trans(), Translation.ConfigComment_NegativeOneDisabled.trans()));
+        _file.setComments("AutoCreateRadius", Arrays.asList(Translation.Config_Comment_AutoCreateRadius.trans(), Translation.Config_Comment_NegativeOneDisabled.trans()));
 
-        _file.setComments("Limit", List.of(Translation.ConfigComment_DefaultLimit.trans()));
+        _file.setComments("Limit", List.of(Translation.Config_Comment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
-        _file.setInlineComments("Limit.SpawnProtection", Arrays.asList(Translation.ConfigComment_SpawnProtectRadius.trans(), Translation.ConfigComment_NegativeOneDisabled.trans()));
+        _file.setInlineComments("Limit.SpawnProtection", Arrays.asList(Translation.Config_Comment_SpawnProtectRadius.trans(), Translation.Config_Comment_NegativeOneDisabled.trans()));
         _file.set("Limit.MinY", limits.get("default").getLimitMinY());
-        _file.setInlineComments("Limit.MinY", List.of(Translation.ConfigComment_MinY.trans()));
+        _file.setInlineComments("Limit.MinY", List.of(Translation.Config_Comment_MinY.trans()));
         _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
-        _file.setInlineComments("Limit.MaxY", List.of(Translation.ConfigComment_MaxY.trans()));
+        _file.setInlineComments("Limit.MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
         _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
-        _file.setInlineComments("Limit.SizeX", Arrays.asList(Translation.ConfigComment_SizeX.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.SizeX", Arrays.asList(Translation.Config_Comment_SizeX.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
-        _file.setInlineComments("Limit.SizeY", Arrays.asList(Translation.ConfigComment_SizeY.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.SizeY", Arrays.asList(Translation.Config_Comment_SizeY.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
-        _file.setInlineComments("Limit.SizeZ", Arrays.asList(Translation.ConfigComment_SizeZ.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.SizeZ", Arrays.asList(Translation.Config_Comment_SizeZ.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Amount", limits.get("default").getLimitAmount());
-        _file.setInlineComments("Limit.Amount", List.of(Translation.ConfigComment_Amount.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.Amount", List.of(Translation.Config_Comment_Amount.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Depth", limits.get("default").getLimitDepth());
-        _file.setInlineComments("Limit.Depth", List.of(Translation.ConfigComment_Depth.trans(), Translation.ConfigComment_ZeroDisabled.trans(), Translation.ConfigComment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.Depth", List.of(Translation.Config_Comment_Depth.trans(), Translation.Config_Comment_ZeroDisabled.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Vert", limits.get("default").getLimitVert());
-        _file.setInlineComments("Limit.Vert", List.of(Translation.ConfigComment_Vert.trans()));
+        _file.setInlineComments("Limit.Vert", List.of(Translation.Config_Comment_Vert.trans()));
         _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());
-        _file.setInlineComments("Limit.WorldBlackList", List.of(Translation.ConfigComment_DisabledWorlds.trans()));
+        _file.setInlineComments("Limit.WorldBlackList", List.of(Translation.Config_Comment_DisabledWorlds.trans()));
         _file.set("Limit.OpByPass", _limit_op_bypass);
-        _file.setInlineComments("Limit.OpByPass", List.of(Translation.ConfigComment_OpBypass.trans()));
+        _file.setInlineComments("Limit.OpByPass", List.of(Translation.Config_Comment_OpBypass.trans()));
 
         _file.set("Teleport.Enable", _tp_enable);
         _file.set("Teleport.Delay", _tp_delay);
-        _file.setInlineComments("Teleport.Delay", List.of(Translation.ConfigComment_TpDelay.trans()));
+        _file.setInlineComments("Teleport.Delay", List.of(Translation.Config_Comment_TpDelay.trans()));
         _file.set("Teleport.CoolDown", _tp_cool_down);
-        _file.setInlineComments("Teleport.CoolDown", List.of(Translation.ConfigComment_TpCoolDown.trans()));
+        _file.setInlineComments("Teleport.CoolDown", List.of(Translation.Config_Comment_TpCoolDown.trans()));
 
         _file.set("AutoCleanAfterDays", _auto_clean_after_days);
-        _file.setComments("AutoCleanAfterDays", Arrays.asList(Translation.ConfigComment_AutoCleanAfterDays.trans(), Translation.ConfigComment_NegativeOneDisabled.trans()));
+        _file.setComments("AutoCleanAfterDays", Arrays.asList(Translation.Config_Comment_AutoCleanAfterDays.trans(), Translation.Config_Comment_NegativeOneDisabled.trans()));
 
         _file.set("Tool", _tool);
-        _file.setComments("Tool", List.of(Translation.ConfigComment_ToolName.trans()));
+        _file.setComments("Tool", List.of(Translation.Config_Comment_ToolName.trans()));
 
-        _file.setComments("Economy", Arrays.asList(Translation.ConfigComment_Economy.trans(), Translation.ConfigComment_VaultRequired.trans()));
+        _file.setComments("Economy", Arrays.asList(Translation.Config_Comment_Economy.trans(), Translation.Config_Comment_VaultRequired.trans()));
         _file.set("Economy.Enable", _economy_enable);
         _file.set("Economy.Price", limits.get("default").getPrice());
-        _file.setInlineComments("Economy.Price", List.of(Translation.ConfigComment_Price.trans()));
+        _file.setInlineComments("Economy.Price", List.of(Translation.Config_Comment_Price.trans()));
         _file.set("Economy.OnlyXZ", limits.get("default").getPriceOnlyXZ());
-        _file.setInlineComments("Economy.OnlyXZ", List.of(Translation.ConfigComment_OnlyXZ.trans()));
+        _file.setInlineComments("Economy.OnlyXZ", List.of(Translation.Config_Comment_OnlyXZ.trans()));
         _file.set("Economy.Refund", limits.get("default").getRefundRatio());
-        _file.setInlineComments("Economy.Refund", List.of(Translation.ConfigComment_Refund.trans()));
+        _file.setInlineComments("Economy.Refund", List.of(Translation.Config_Comment_Refund.trans()));
 
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
-        _file.setComments("FlyPermissionNodes", List.of(Translation.ConfigComment_FlyPermission.trans()));
+        _file.setComments("FlyPermissionNodes", List.of(Translation.Config_Comment_FlyPermission.trans()));
 
         _file.set("ResidenceMigration", _residence_migration);
-        _file.setComments("ResidenceMigration", List.of(Translation.ConfigComment_ResidenceMigration.trans()));
+        _file.setComments("ResidenceMigration", List.of(Translation.Config_Comment_ResidenceMigration.trans()));
 
         _file.setComments("GroupTitle", Arrays.asList(
-                Translation.ConfigComment_GroupTitle.trans(),
-                Translation.ConfigComment_GroupTitleVariable.trans(),
-                Translation.ConfigComment_GroupTitleColor.trans()));
+                Translation.Config_Comment_GroupTitle.trans(),
+                Translation.Config_Comment_GroupTitleVariable.trans(),
+                Translation.Config_Comment_GroupTitleColor.trans()));
         _file.set("GroupTitle.Enable", _group_title_enable);
         _file.set("GroupTitle.Prefix", _group_title_prefix);
         _file.set("GroupTitle.Suffix", _group_title_suffix);
@@ -218,7 +218,7 @@ public class ConfigManager {
 
         _file.set("Debug", _debug);
         _file.set("Timer", _timer);
-        _file.setInlineComments("Timer", List.of(Translation.ConfigComment_PerformanceTimer.trans()));
+        _file.setInlineComments("Timer", List.of(Translation.Config_Comment_PerformanceTimer.trans()));
 
         _plugin.saveConfig();
     }

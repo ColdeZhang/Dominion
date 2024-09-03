@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.utils;
+package cn.lunadeer.dominion.utils.map;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;

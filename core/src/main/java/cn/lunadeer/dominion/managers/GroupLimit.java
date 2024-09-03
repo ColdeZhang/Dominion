@@ -36,46 +36,46 @@ public class GroupLimit {
         setLimitMinY(config.getInt("MinY", -64));
         setLimitMaxY(config.getInt("MaxY", 320));
         if (getLimitMinY() >= getLimitMaxY()) {
-            XLogger.err("权限组 %s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupMinYError, this.file_path.getName());
             setLimitMinY(-64);
             setLimitMaxY(320);
         }
         setLimitSizeX(config.getInt("SizeX", 128));
         if (getLimitSizeX() <= 4 && getLimitSizeX() != -1) {
-            XLogger.err("权限组 %s 的 SizeX 设置过小，已重置为 128", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupSizeXError, this.file_path.getName());
             setLimitSizeX(128);
         }
         setLimitSizeY(config.getInt("SizeY", 64));
         if (getLimitSizeY() <= 4 && getLimitSizeY() != -1) {
-            XLogger.err("权限组 %s 的 SizeY 设置过小，已重置为 64", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupSizeYError, this.file_path.getName());
             setLimitSizeY(64);
         }
         setLimitSizeZ(config.getInt("SizeZ", 128));
         if (getLimitSizeZ() <= 4 && getLimitSizeZ() != -1) {
-            XLogger.err("权限组 %s 的 SizeZ 设置过小，已重置为 128", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupSizeZError, this.file_path.getName());
             setLimitSizeZ(128);
         }
         setLimitAmount(config.getInt("Amount", 10));
         if (getLimitAmount() <= 0 && getLimitAmount() != -1) {
-            XLogger.err("权限组 %s 的 Amount 设置不合法，已重置为 10", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupAmountError, this.file_path.getName());
             setLimitAmount(10);
         }
         setLimitDepth(config.getInt("Depth", 3));
         if (getLimitDepth() <= 0 && getLimitDepth() != -1) {
-            XLogger.err("权限组 %s 的 Depth 设置不合法，已重置为 3", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupDepthError, this.file_path.getName());
             setLimitDepth(3);
         }
         setLimitVert(config.getBoolean("Vert", false));
         setWorldBlackList(config.getStringList("WorldBlackList"));
         setPrice(config.getDouble("Price", 10.0));
         if (getPrice() < 0.0) {
-            XLogger.err("权限组 %s 的 Price 设置不合法，已重置为 10.0", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupPriceError, this.file_path.getName());
             setPrice(10.0);
         }
         setPriceOnlyXZ(config.getBoolean("OnlyXZ", false));
         setRefundRatio(config.getDouble("Refund", 0.85));
         if (getRefundRatio() < 0.0 || getRefundRatio() > 1.0) {
-            XLogger.err("权限组 %s 的 Refund 设置不合法，已重置为 0.85", this.file_path.getName());
+            XLogger.err(Translation.Config_Check_GroupRefundError, this.file_path.getName());
             setRefundRatio(0.85);
         }
         save(); // 保存一次，确保文件中的数据是合法的
@@ -235,7 +235,7 @@ public class GroupLimit {
             GroupLimit group = new GroupLimit(file);
             groups.put(groupName, group);
         }
-        XLogger.info("共加载了 %d 个领地组。", groups.size());
+        XLogger.info(Translation.Messages_LoadedGroupAmount, groups.size());
         return groups;
     }
 }
