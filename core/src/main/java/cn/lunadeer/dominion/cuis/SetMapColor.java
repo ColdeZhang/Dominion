@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -37,12 +38,12 @@ public class SetMapColor {
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Notification.error(sender, "领地不存在");
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
         CuiTextInput.InputCallback setMapColorCB = new SetMapColor.setMapColorCB(player, dominion.getName());
-        CuiTextInput view = CuiTextInput.create(setMapColorCB).setText(dominion.getColor()).title("输入卫星地图地块颜色（16进制）");
-        view.setSuggestCommand("/dominion set_map_color <颜色> [领地名称]");
+        CuiTextInput view = CuiTextInput.create(setMapColorCB).setText(dominion.getColor()).title(Translation.CUI_Input_SetMapColor.trans());
+        view.setSuggestCommand(Translation.Commands_Dominion_SetMapColorUsage.trans());
         view.open(player);
     }
 

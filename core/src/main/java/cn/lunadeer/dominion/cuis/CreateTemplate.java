@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.TemplateController;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.template.TemplateList;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -32,8 +33,8 @@ public class CreateTemplate {
         Player player = playerOnly(sender);
         if (player == null) return;
         CuiTextInput.InputCallback createTemplateCB = new createTemplateCB(player);
-        CuiTextInput view = CuiTextInput.create(createTemplateCB).setText("未命名模板").title("输入模板名称");
-        view.setSuggestCommand("/dominion template create <模板名称>");
+        CuiTextInput view = CuiTextInput.create(createTemplateCB).setText(Translation.Commands_Template_NewTemplateName.trans()).title(Translation.CUI_Input_CreateTemplate.trans());
+        view.setSuggestCommand(Translation.Commands_Template_CreateTemplateUsage.trans());
         view.open(player);
     }
 

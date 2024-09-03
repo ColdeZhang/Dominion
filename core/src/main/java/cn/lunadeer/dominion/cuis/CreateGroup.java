@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -39,12 +40,12 @@ public class CreateGroup {
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Notification.error(sender, "领地不存在");
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
         CuiTextInput.InputCallback createGroupCB = new createGroupCB(player, dominion.getName());
-        CuiTextInput view = CuiTextInput.create(createGroupCB).setText("未命名权限组").title("输入要创建的权限组名称");
-        view.setSuggestCommand("/dominion group create <领地名称> <权限组名称>");
+        CuiTextInput view = CuiTextInput.create(createGroupCB).setText(Translation.Commands_Group_NewGroupName.trans()).title(Translation.CUI_Input_CreateGroup.trans());
+        view.setSuggestCommand(Translation.Commands_Group_CreateGroupUsage.trans());
         view.open(player);
     }
 

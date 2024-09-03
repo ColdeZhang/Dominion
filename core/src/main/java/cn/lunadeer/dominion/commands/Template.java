@@ -37,7 +37,7 @@ public class Template {
                 return;
             }
             if (args.length < 3) {
-                Notification.error(sender, Translation.Commands_CreateTemplateUsage);
+                Notification.error(sender, Translation.Commands_Template_CreateTemplateUsage);
                 return;
             }
             Player player = playerOnly(sender);
@@ -63,7 +63,7 @@ public class Template {
                 return;
             }
             if (args.length < 3) {
-                Notification.error(sender, Translation.Commands_DeleteTemplateUsage);
+                Notification.error(sender, Translation.Commands_Template_DeleteTemplateUsage);
                 return;
             }
             Player player = playerOnly(sender);
@@ -89,7 +89,7 @@ public class Template {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, Translation.Commands_SetTemplateFlagUsage);
+                Notification.error(sender, Translation.Commands_Template_SetTemplateFlagUsage);
                 return;
             }
             Player player = playerOnly(sender);
@@ -108,7 +108,7 @@ public class Template {
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
-            Notification.error(sender, Translation.Commands_TemplateUsage);
+            Notification.error(sender, Translation.Commands_Template_TemplateUsage);
             return;
         }
         switch (args[1]) {
@@ -137,7 +137,7 @@ public class Template {
         if (args.length == 3) {
             switch (args[1]) {
                 case "create":
-                    return Collections.singletonList(Translation.Commands_NewTemplateName.trans());
+                    return Collections.singletonList(Translation.Commands_Template_NewTemplateName.trans());
                 case "delete":
                 case "set_flag":
                 case "setting":

@@ -1,7 +1,8 @@
-package cn.lunadeer.dominion.utils;
+package cn.lunadeer.dominion.utils.map;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import com.flowpowered.math.vector.Vector2d;
@@ -70,7 +71,7 @@ public class BlueMapConnect {
                     }
                 });
             } catch (NoClassDefFoundError e) {
-                XLogger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
+                XLogger.warn(Translation.Messages_BlueMapConnectFailed);
                 XLogger.err(e.getMessage());
             }
         });
@@ -123,7 +124,7 @@ public class BlueMapConnect {
                     }
                 });
             } catch (NoClassDefFoundError e) {
-                XLogger.warn("无法连接 BlueMap 插件，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能以避免下方的报错。");
+                XLogger.warn(Translation.Messages_BlueMapConnectFailed);
                 XLogger.err(e.getMessage());
             }
         });

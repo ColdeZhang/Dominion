@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -37,12 +38,12 @@ public class EditLeaveMessage {
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[1]);
         if (dominion == null) {
-            Notification.error(sender, "领地不存在");
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
         CuiTextInput.InputCallback editLeaveMessageCB = new editLeaveMessageCB(player, dominion.getName());
-        CuiTextInput view = CuiTextInput.create(editLeaveMessageCB).setText(dominion.getLeaveMessage()).title("编辑离开提示语");
-        view.setSuggestCommand("/dominion set_leave_msg <提示语> [领地名称]");
+        CuiTextInput view = CuiTextInput.create(editLeaveMessageCB).setText(dominion.getLeaveMessage()).title(Translation.CUI_Input_EditLeaveMessage.trans());
+        view.setSuggestCommand(Translation.Commands_Dominion_SetLeaveMessageUsage.trans());
         view.open(player);
     }
 }

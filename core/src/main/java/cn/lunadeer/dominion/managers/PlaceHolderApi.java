@@ -18,7 +18,7 @@ public class PlaceHolderApi extends PlaceholderExpansion {
         this.plugin = plugin;
         this.register();
         instance = this;
-        XLogger.info("成功注册 PlaceholderAPI 扩展");
+        XLogger.info(Translation.Messages_PlaceholderAPIRegisterSuccess);
     }
 
     @Override

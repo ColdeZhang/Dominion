@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +22,7 @@ public class ControllerUtils {
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             MemberDTO privileges = MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
-                player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你不是领地 %s 的拥有者或管理员，无权修改权限", dominion.getName()));
+                player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_NotDominionOwnerOrAdmin, dominion.getName()));
                 return true;
             }
         }
@@ -38,7 +39,7 @@ public class ControllerUtils {
     public static DominionDTO getPlayerCurrentDominion(AbstractOperator player) {
         Location location = player.getLocation();
         if (location == null) {
-            player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "无法获取你的位置信息"));
+            player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CannotGetDominionAuto));
             return null;
         }
         DominionDTO dominion = Cache.instance.getDominionByLoc(location);
@@ -48,7 +49,7 @@ public class ControllerUtils {
         if (dominion.getParentDomId() == -1) {
             return dominion;
         } else {
-            player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "你当前在子领地内，请指定要操作的领地名称"));
+            player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_InSubDominion));
             return null;
         }
     }

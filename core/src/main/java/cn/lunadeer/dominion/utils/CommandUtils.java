@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class CommandUtils {
     public static Player playerOnly(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            Notification.error(sender, "该命令只能由玩家执行");
+            Notification.error(sender, Translation.Messages_CommandPlayerOnly);
             return null;
         }
         return (Player) sender;
@@ -20,7 +21,7 @@ public class CommandUtils {
 
     public static boolean hasPermission(CommandSender sender, String permission) {
         if (!sender.hasPermission(permission)) {
-            Notification.error(sender, "你没有 %s 权限执行此命令", permission);
+            Notification.error(sender, Translation.Messages_NoPermission, permission);
             return false;
         }
         return true;

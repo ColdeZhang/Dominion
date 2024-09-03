@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.cuis;
 import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -44,8 +45,8 @@ public class CreateDominion {
         Player player = playerOnly(sender);
         if (player == null) return;
         CuiTextInput.InputCallback createDominionCB = new createDominionCB(player);
-        CuiTextInput view = CuiTextInput.create(createDominionCB).setText("未命名领地").title("输入要创建的领地名称");
-        view.setSuggestCommand("/dominion auto_create <领地名称>");
+        CuiTextInput view = CuiTextInput.create(createDominionCB).setText(Translation.Commands_NewDominionName.trans()).title(Translation.CUI_Input_CreateDominion.trans());
+        view.setSuggestCommand(Translation.Commands_Dominion_AutoCreateDominionUsage.trans());
         view.open(player);
     }
 }

@@ -35,7 +35,7 @@ public class Group {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, Translation.Commands_CreateGroupUsage);
+                Notification.error(sender, Translation.Commands_Group_CreateGroupUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -60,7 +60,7 @@ public class Group {
                 return;
             }
             if (args.length < 4) {
-                Notification.error(sender, Translation.Commands_DeleteGroupUsage);
+                Notification.error(sender, Translation.Commands_Group_DeleteGroupUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -85,7 +85,7 @@ public class Group {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, Translation.Commands_RenameGroupUsage);
+                Notification.error(sender, Translation.Commands_Group_RenameGroupUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -111,7 +111,7 @@ public class Group {
                 return;
             }
             if (args.length < 6) {
-                Notification.error(sender, Translation.Commands_SetGroupFlagUsage);
+                Notification.error(sender, Translation.Commands_Group_SetGroupFlagUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -139,7 +139,7 @@ public class Group {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, Translation.Commands_AddGroupMemberUsage);
+                Notification.error(sender, Translation.Commands_Group_AddGroupMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -166,7 +166,7 @@ public class Group {
                 return;
             }
             if (args.length < 5) {
-                Notification.error(sender, Translation.Commands_RemoveGroupMemberUsage);
+                Notification.error(sender, Translation.Commands_Group_RemoveGroupMemberUsage);
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
@@ -183,7 +183,7 @@ public class Group {
 
     public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
         if (args.length < 2) {
-            Notification.error(sender, Translation.Commands_GroupUsage);
+            Notification.error(sender, Translation.Commands_Group_GroupUsage);
             return;
         }
         switch (args[1]) {
@@ -239,7 +239,7 @@ public class Group {
         if (args.length == 4) {
             switch (args[1]) {
                 case "create":
-                    return Collections.singletonList(Translation.Commands_NewGroupName.trans());
+                    return Collections.singletonList(Translation.Commands_Group_NewGroupName.trans());
                 case "delete":
                 case "rename":
                 case "set_flag":
@@ -253,7 +253,7 @@ public class Group {
         if (args.length == 5) {
             switch (args[1]) {
                 case "rename":
-                    return Collections.singletonList(Translation.Commands_NewGroupName.trans());
+                    return Collections.singletonList(Translation.Commands_Group_NewGroupName.trans());
                 case "set_flag":
                     return playerPrivileges();
                 case "remove_member":

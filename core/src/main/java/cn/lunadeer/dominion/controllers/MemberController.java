@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.managers.Translation;
 
 import static cn.lunadeer.dominion.utils.ControllerUtils.*;
 
@@ -14,26 +15,26 @@ public class MemberController {
      * @param dominionName 领地名称
      */
     public static void memberRemove(AbstractOperator operator, String dominionName, String player_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "将玩家 %s 从领地 %s 移除失败", player_name, dominionName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "将玩家 %s 从领地 %s 移除成功", player_name, dominionName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_RemoveMemberFailed, player_name, dominionName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_RemoveMemberSuccess, player_name, dominionName);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, player_name));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotMember, player_name, dominionName));
             return;
         }
         if (isAdmin(privilege) && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法移除一个领地管理员", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwnerForRemoveAdmin, dominionName));
             return;
         }
         MemberDTO.delete(player.getUuid(), dominion.getId());
@@ -50,31 +51,31 @@ public class MemberController {
      * @param dominionName 领地名称
      */
     public static void setMemberFlag(AbstractOperator operator, String dominionName, String player_name, String flag, boolean value) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置玩家 %s 在领地 %s 的权限 %s 为 %s 失败", player_name, dominionName, flag, value);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置玩家 %s 在领地 %s 的权限 %s 为 %s 成功", player_name, dominionName, flag, value);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetMemberFlagFailed, player_name, dominionName, flag, value);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetMemberFlagSuccess, player_name, dominionName, flag, value);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, player_name));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", player_name, dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotMember, player_name, dominionName));
             return;
         }
         GroupDTO group = GroupDTO.select(privilege.getGroupId());
         if (group != null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 属于 %s 权限组，无法单独设置权限", player_name, group.getName()));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerBelongToGroup, player_name, group.getName()));
             return;
         }
         if ((flag.equals("admin") || isAdmin(privilege)) && notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他玩家管理员的权限", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwnerForSetAdmin, dominionName));
             return;
         }
         if (flag.equals("admin")) {
@@ -82,7 +83,7 @@ public class MemberController {
         } else {
             Flag f = Flag.getFlag(flag);
             if (f == null) {
-                operator.setResponse(FAIL.addMessage("未知的领地权限 %s", flag));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_UnknownFlag, flag));
                 return;
             }
             privilege.setFlagValue(f, value);
@@ -91,26 +92,26 @@ public class MemberController {
     }
 
     public static void memberAdd(AbstractOperator operator, String dominionName, String player_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "将玩家 %s 添加到领地成员 %s 失败", player_name, dominionName);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "将玩家 %s 添加到领地成员 %s 成功", player_name, dominionName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_AddMemberFailed, player_name, dominionName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_AddMemberSuccess, player_name, dominionName);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", player_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, player_name));
             return;
         }
         if (dominion.getOwner().equals(player.getUuid())) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 是领地 %s 的拥有者，不可以被添加为成员", player_name, dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_OwnerCannotBeMember, player_name, dominionName));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege != null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 已经是领地 %s 的成员", player_name, dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerAlreadyMember, player_name, dominionName));
             return;
         }
         privilege = MemberDTO.insert(new MemberDTO(player.getUuid(), dominion));
@@ -122,31 +123,31 @@ public class MemberController {
     }
 
     public static void applyTemplate(AbstractOperator operator, String dominionName, String playerName, String templateName) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "应用模板 %s 到玩家 %s 在领地 %s 的权限成功", templateName, playerName, dominionName);
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "应用模板 %s 到玩家 %s 在领地 %s 的权限失败", templateName, playerName, dominionName);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_ApplyTemplateSuccess, templateName, playerName, dominionName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_ApplyTemplateFailed, templateName, playerName, dominionName);
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage("领地 %s 不存在", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, dominionName));
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         PlayerDTO player = PlayerDTO.select(playerName);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不存在或没有登录过", playerName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, playerName));
             return;
         }
         MemberDTO privilege = MemberDTO.select(player.getUuid(), dominion.getId());
         if (privilege == null) {
-            operator.setResponse(FAIL.addMessage("玩家 %s 不是领地 %s 的成员", playerName, dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotMember, playerName, dominionName));
             return;
         }
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage("模板 %s 不存在", templateName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
             return;
         }
         if (notOwner(operator, dominion) && (isAdmin(privilege) || template.getAdmin())) {
-            operator.setResponse(FAIL.addMessage("你不是领地 %s 的拥有者，无法修改其他管理员的权限", dominionName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwnerForSetAdmin, dominionName));
             return;
         }
         privilege = privilege.applyTemplate(template);

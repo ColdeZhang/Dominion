@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.*;
-import cn.lunadeer.dominion.utils.MapRender;
+import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.AutoTimer;

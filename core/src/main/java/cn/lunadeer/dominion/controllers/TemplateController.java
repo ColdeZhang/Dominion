@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
+import cn.lunadeer.dominion.managers.Translation;
 
 import java.util.List;
 
@@ -14,25 +15,25 @@ public class TemplateController {
      * @param templateName 模板名称
      */
     public static void createTemplate(AbstractOperator operator, String templateName) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "创建成功");
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "创建失败");
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_CreateTemplateSuccess, templateName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CreateTemplateFailed, templateName);
         if (templateName.contains(" ")) {
-            operator.setResponse(FAIL.addMessage("模板名称不能包含空格"));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNameInvalid));
             return;
         }
         List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(operator.getUniqueId());
         for (PrivilegeTemplateDTO template : templates) {
             if (template.getName().equals(templateName)) {
-                operator.setResponse(FAIL.addMessage("已经存在名为 %s 的权限模板", templateName));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNameExist, templateName));
                 return;
             }
         }
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.create(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage("可能是数据库错误，请联系管理员"));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
-        operator.setResponse(SUCCESS.addMessage("成功创建名为 %s 的权限模板", templateName));
+        operator.setResponse(SUCCESS);
     }
 
     /**
@@ -42,15 +43,15 @@ public class TemplateController {
      * @param templateName 模板名称
      */
     public static void deleteTemplate(AbstractOperator operator, String templateName) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "删除成功");
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "删除失败");
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_DeleteTemplateSuccess, templateName);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DeleteTemplateFailed, templateName);
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage("模板不存在"));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
             return;
         }
         if (!template.getCreator().equals(operator.getUniqueId())) {
-            operator.setResponse(FAIL.addMessage("这不是你的模板"));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
             return;
         }
         PrivilegeTemplateDTO.delete(operator.getUniqueId(), templateName);
@@ -66,11 +67,11 @@ public class TemplateController {
      * @param value        权限值
      */
     public static void setTemplateFlag(AbstractOperator operator, String templateName, String flag_name, boolean value) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, "设置成功");
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "设置失败");
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetTemplateFlagSuccess, templateName, flag_name, value);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetTemplateFlagFailed, templateName, flag_name, value);
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage("模板不存在"));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
             return;
         }
         if (flag_name.equals("admin")) {
@@ -78,12 +79,12 @@ public class TemplateController {
         } else {
             Flag f = Flag.getFlag(flag_name);
             if (f == null) {
-                operator.setResponse(FAIL.addMessage("未知的权限 %s", flag_name));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_UnknownFlag, flag_name));
                 return;
             }
             template.setFlagValue(f, value);
         }
-        operator.setResponse(SUCCESS.addMessage("成功设置模板 " + template.getName() + " 的权限 " + flag_name + " 为 " + value));
+        operator.setResponse(SUCCESS);
     }
 
 }

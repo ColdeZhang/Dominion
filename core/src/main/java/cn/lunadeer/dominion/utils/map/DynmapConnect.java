@@ -1,6 +1,7 @@
-package cn.lunadeer.dominion.utils;
+package cn.lunadeer.dominion.utils.map;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.dynmap.DynmapCommonAPI;
@@ -29,13 +30,13 @@ public class DynmapConnect extends DynmapCommonAPIListener {
         MarkerAPI markerAPI = dynmapCommonAPI.getMarkerAPI();
         this.markerSet_dominion = markerAPI.getMarkerSet("dominion");
         if (this.markerSet_dominion == null) {
-            this.markerSet_dominion = markerAPI.createMarkerSet("dominion", "Dominion领地", null, false);
+            this.markerSet_dominion = markerAPI.createMarkerSet("dominion", "Dominion", null, false);
         }
         this.markerSet_mca = markerAPI.getMarkerSet("mca");
         if (this.markerSet_mca == null) {
             this.markerSet_mca = markerAPI.createMarkerSet("mca", "MCA文件", null, false);
         }
-        XLogger.info("Dynmap 成功注册");
+        XLogger.info(Translation.Messages_DynmapRegisterSuccess);
     }
 
     private void setDominionMarker(DominionDTO dominion) {
@@ -62,7 +63,7 @@ public class DynmapConnect extends DynmapCommonAPIListener {
     public void setDominionMarkers(List<DominionDTO> dominions) {
         Scheduler.runTaskAsync(() -> {
             if (this.markerSet_dominion == null) {
-                XLogger.warn("无法连接到 Dynmap，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能。");
+                XLogger.warn(Translation.Messages_DynmapConnectFailed);
                 return;
             }
             this.markerSet_dominion.getAreaMarkers().forEach(AreaMarker::deleteMarker);
@@ -75,7 +76,7 @@ public class DynmapConnect extends DynmapCommonAPIListener {
     public void setMCAMarkers(Map<String, List<String>> mca_files) {
         Scheduler.runTaskAsync(() -> {
             if (this.markerSet_mca == null) {
-                XLogger.warn("无法连接到 Dynmap，如果你不打算使用卫星地图渲染建议前往配置文件关闭此功能。");
+                XLogger.warn(Translation.Messages_DynmapConnectFailed);
                 return;
             }
             this.markerSet_mca.getAreaMarkers().forEach(AreaMarker::deleteMarker);

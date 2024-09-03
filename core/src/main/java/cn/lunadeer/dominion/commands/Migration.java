@@ -29,27 +29,27 @@ public class Migration {
             if (player == null) return;
 
             if (!Dominion.config.getResidenceMigration()) {
-                Notification.error(sender, Translation.Commands_ResidenceMigrationDisabled);
+                Notification.error(sender, Translation.Commands_Residence_MigrationDisabled);
                 return;
             }
 
             if (args.length < 2) {
-                Notification.error(sender, Translation.Commands_MigrateUsage);
+                Notification.error(sender, Translation.Commands_Residence_MigrateUsage);
                 return;
             }
             String resName = args[1];
             List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
             if (res_data == null) {
-                Notification.error(sender, Translation.Commands_NoMigrationData);
+                Notification.error(sender, Translation.Commands_Residence_NoMigrationData);
                 return;
             }
             ResMigration.ResidenceNode resNode = res_data.stream().filter(node -> node.name.equals(resName)).findFirst().orElse(null);
             if (resNode == null) {
-                Notification.error(sender, Translation.Commands_NoResidenceDominion);
+                Notification.error(sender, Translation.Commands_Residence_NoResidenceDominion);
                 return;
             }
             if (!resNode.owner.equals(player.getUniqueId())) {
-                Notification.error(sender, Translation.Commands_ResidenceNotOwner);
+                Notification.error(sender, Translation.Commands_Residence_ResidenceNotOwner);
                 return;
             }
             create(player, resNode, "");
@@ -61,7 +61,7 @@ public class Migration {
                 MigrateList.show(sender, newArgs);
             }
         } catch (Exception e) {
-            Notification.error(sender, Translation.Commands_MigrateFailed, e.getMessage());
+            Notification.error(sender, Translation.Commands_Residence_MigrateFailed, e.getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ public class Migration {
                 for (String msg : result.getMessages()) {
                     Notification.info(player, msg);
                 }
-                Notification.info(player, Translation.Commands_MigrateSuccess, node.name);
+                Notification.info(player, Translation.Commands_Residence_MigrateSuccess, node.name);
                 if (node.children != null) {
                     for (ResMigration.ResidenceNode child : node.children) {
                         create(player, child, node.name);

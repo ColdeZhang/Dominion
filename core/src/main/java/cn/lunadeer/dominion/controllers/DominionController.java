@@ -85,32 +85,32 @@ public class DominionController {
     public static void create(AbstractOperator operator, String name,
                               Location loc1, Location loc2,
                               @NotNull String parent_dominion_name, boolean skipEco) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_CreateDominionFailed);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_CreateDominionSuccess, name);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CreateDominionFailed);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_CreateDominionSuccess, name);
         if (name.isEmpty()) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNameShouldNotEmpty));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameShouldNotEmpty));
             return;
         }
         if (name.contains(" ") || name.contains(".")) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNameInvalid));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameInvalid));
             return;
         }
         if (DominionDTO.select(name) != null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNameExist, name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameExist, name));
             return;
         }
         if (!loc1.getWorld().getUID().equals(loc2.getWorld().getUID())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_SelectPointsWorldNotSame));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SelectPointsWorldNotSame));
             return;
         }
         // 检查世界是否可以创建
         if (worldNotValid(operator, loc1.getWorld().getName())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CreateDominionDisabledWorld, loc1.getWorld().getName()));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CreateDominionDisabledWorld, loc1.getWorld().getName()));
             return;
         }
         // 检查领地数量是否达到上限
         if (amountNotValid(operator)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionAmountLimit, Dominion.config.getLimitAmount(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionAmountLimit, Dominion.config.getLimitAmount(operator.getPlayer())));
             return;
         }
         int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
@@ -130,16 +130,16 @@ public class DominionController {
             parent_dominion = DominionDTO.select(parent_dominion_name);
         }
         if (parent_dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_ParentDominionNotExist, parent_dominion_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_ParentDominionNotExist, parent_dominion_name));
             if (parent_dominion_name.isEmpty()) {
-                XLogger.err(Translation.Controller_RootDominionLost);
+                XLogger.err(Translation.Messages_RootDominionLost);
             }
             return;
         }
         // 是否是父领地的拥有者
         if (parent_dominion.getId() != -1) {
             if (notOwner(operator, parent_dominion)) {
-                operator.setResponse(FAIL.addMessage(Translation.Controller_NotParentDominionOwner, parent_dominion_name));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_NotParentDominionOwner, parent_dominion_name));
                 return;
             }
         }
@@ -148,7 +148,7 @@ public class DominionController {
                 minX, minY, minZ, maxX, maxY, maxZ, parent_dominion);
         // 如果parent_dominion不为-1 检查是否在同一世界
         if (parent_dominion.getId() != -1 && !parent_dominion.getWorldUid().equals(dominion.getWorldUid())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_ParentDominionNotInSameWorld));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_ParentDominionNotInSameWorld));
             return;
         }
         // 检查深度是否达到上限
@@ -157,20 +157,20 @@ public class DominionController {
         }
         // 检查是否超出父领地范围
         if (!isContained(dominion, parent_dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_OutOfParentDominionRange, parent_dominion.getName()));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_OutOfParentDominionRange, parent_dominion.getName()));
             return;
         }
         // 获取此领地的所有同级领地
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), parent_dominion.getId());
         // 检查是否与出生点保护冲突
         if (isIntersectSpawn(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_ConflictWithSpawnProtect));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_ConflictWithSpawnProtect));
             return;
         }
         // 检查是否与其他子领地冲突
         for (DominionDTO sub_dominion : sub_dominions) {
             if (isIntersect(sub_dominion, dominion)) {
-                operator.setResponse(FAIL.addMessage(Translation.Controller_ConflictWithDominion, sub_dominion.getName()));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_ConflictWithDominion, sub_dominion.getName()));
                 return;
             }
         }
@@ -182,7 +182,7 @@ public class DominionController {
         }
         dominion = DominionDTO.insert(dominion);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DatabaseError));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
             return;
         }
         // 显示粒子效果
@@ -231,7 +231,7 @@ public class DominionController {
     public static void expand(AbstractOperator operator, Integer size) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_CannotGetDominionAuto));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CannotGetDominionAuto));
             return;
         }
         expand(operator, size, dominion.getName());
@@ -245,7 +245,7 @@ public class DominionController {
      * @param dominion_name 领地名称
      */
     public static void expand(AbstractOperator operator, Integer size, String dominion_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_ExpandDominionFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_ExpandDominionFailed);
         DominionDTO dominion = expandContractPreCheck(operator, getExistDomAndIsOwner(operator, dominion_name), FAIL);
         if (dominion == null) {
             return;
@@ -257,21 +257,21 @@ public class DominionController {
         // 检查是否与出生点保护冲突
         World world = Dominion.instance.getServer().getWorld(dominion.getWorldUid());
         if (world == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionWorldLost));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionWorldLost));
             return;
         }
         if (isIntersectSpawn(operator, world, newCords)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_ConflictWithSpawnProtect));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_ConflictWithSpawnProtect));
             return;
         }
         // 校验是否超出父领地范围
         DominionDTO parent_dominion = DominionDTO.select(dominion.getParentDomId());
         if (parent_dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_ParentDominionLost));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_ParentDominionLost));
             return;
         }
         if (!isContained(newCords, parent_dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_OutOfParentDominionRange, parent_dominion.getName()));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_OutOfParentDominionRange, parent_dominion.getName()));
             return;
         }
         // 获取同世界下的所有同级领地
@@ -280,11 +280,11 @@ public class DominionController {
             if (isIntersect(exist_dominion, newCords)) {
                 // 如果是自己，跳过
                 if (exist_dominion.getId().equals(dominion.getId())) continue;
-                operator.setResponse(FAIL.addMessage(Translation.Controller_ConflictWithDominion, exist_dominion.getName()));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_ConflictWithDominion, exist_dominion.getName()));
                 return;
             }
         }
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_ExpandDominionSuccess, dominion_name, size);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_ExpandDominionSuccess, dominion_name, size);
         // 检查经济
         if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ(operator.getPlayer()) ? sqr(newCords) - dominion.getSquare() : vol(newCords) - dominion.getVolume()
                 , true, FAIL, SUCCESS)) return;
@@ -305,7 +305,7 @@ public class DominionController {
     public static void contract(AbstractOperator operator, Integer size) {
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_CannotGetDominionAuto));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CannotGetDominionAuto));
             return;
         }
         contract(operator, size, dominion.getName());
@@ -319,7 +319,7 @@ public class DominionController {
      * @param dominion_name 领地名称
      */
     public static void contract(AbstractOperator operator, Integer size, String dominion_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_ContractDominionFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_ContractDominionFailed);
         DominionDTO dominion = expandContractPreCheck(operator, getExistDomAndIsOwner(operator, dominion_name), FAIL);
         if (dominion == null) {
             return;
@@ -332,11 +332,11 @@ public class DominionController {
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), dominion.getId());
         for (DominionDTO sub_dominion : sub_dominions) {
             if (!isContained(sub_dominion, newCords)) {
-                operator.setResponse(FAIL.addMessage(Translation.Controller_ContractDominionConflict, sub_dominion.getName()));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_ContractDominionConflict, sub_dominion.getName()));
                 return;
             }
         }
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_ContractDominionSuccess, dominion_name, size);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_ContractDominionSuccess, dominion_name, size);
         // 退还经济
         if (handleEconomyFailed(operator, Dominion.config.getEconomyOnlyXZ(operator.getPlayer()) ? dominion.getSquare() - sqr(newCords) : dominion.getVolume() - vol(newCords)
                 , false, FAIL, SUCCESS)) return;
@@ -370,18 +370,18 @@ public class DominionController {
      * @param force         是否强制删除
      */
     public static void delete(AbstractOperator operator, String dominion_name, boolean force) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DeleteDominionFailed);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_DeleteDominionSuccess, dominion_name);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DeleteDominionFailed);
+        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_DeleteDominionSuccess, dominion_name);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
             return;
         }
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
-            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, Translation.Controller_DeleteDominionConfirm, dominion_name);
+            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, Translation.Messages_DeleteDominionConfirm, dominion_name);
             showSubNamesWarning(sub_dominions, WARNING);
             if (operator instanceof BukkitPlayerOperator) {
-                Notification.warn(operator.getPlayer(), Translation.Controller_DeleteDominionForceConfirm, dominion_name);
+                Notification.warn(operator.getPlayer(), Translation.Messages_DeleteDominionForceConfirm, dominion_name);
             }
             operator.setResponse(WARNING);
             return;
@@ -431,7 +431,7 @@ public class DominionController {
             return;
         }
         dominion.setJoinMessage(message);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetEnterMessageSuccess, dominion_name));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetEnterMessageSuccess, dominion_name));
     }
 
     /**
@@ -461,7 +461,7 @@ public class DominionController {
             return;
         }
         dominion.setLeaveMessage(message);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetLeaveMessageSuccess, dominion_name));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetLeaveMessageSuccess, dominion_name));
     }
 
     /**
@@ -484,15 +484,15 @@ public class DominionController {
      * @param dominion_name 领地名称
      */
     public static void setTpLocation(AbstractOperator operator, int x, int y, int z, String dominion_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_SetTpLocationFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetTpLocationFailed);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DominionNotExist, dominion_name));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DominionNotExist, dominion_name));
             return;
         }
         World world = dominion.getWorld();
         if (world == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DominionWorldNotExist));
+            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DominionWorldNotExist));
             return;
         }
         Location loc = new Location(world, x, y, z);
@@ -501,10 +501,10 @@ public class DominionController {
             loc.setY(loc.getY() + 1.5);
             dominion.setTpLocation(loc);
             operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS,
-                    Translation.Controller_SetTpLocationSuccess, dominion_name
+                    Translation.Messages_SetTpLocationSuccess, dominion_name
                     , loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         } else {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_TpLocationNotInDominion, dominion_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_TpLocationNotInDominion, dominion_name));
         }
     }
 
@@ -516,17 +516,17 @@ public class DominionController {
      * @param new_name 新名称
      */
     public static void rename(AbstractOperator operator, String old_name, String new_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_RenameDominionFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_RenameDominionFailed);
         if (new_name.isEmpty()) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNameShouldNotEmpty));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameShouldNotEmpty));
             return;
         }
         if (new_name.contains(" ") || new_name.contains(".")) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNameInvalid));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameInvalid));
             return;
         }
         if (Objects.equals(old_name, new_name)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_RenameDominionSameName));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_RenameDominionSameName));
             return;
         }
         DominionDTO dominion = getExistDomAndIsOwner(operator, old_name);
@@ -534,11 +534,11 @@ public class DominionController {
             return;
         }
         if (DominionDTO.select(new_name) != null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNameExist, new_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameExist, new_name));
             return;
         }
         dominion.setName(new_name);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_RenameDominionSuccess, old_name, new_name));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_RenameDominionSuccess, old_name, new_name));
     }
 
     /**
@@ -550,30 +550,30 @@ public class DominionController {
      * @param force       是否强制转让
      */
     public static void give(AbstractOperator operator, String dom_name, String player_name, boolean force) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_GiveDominionFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_GiveDominionFailed);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
         if (dominion == null) {
             return;
         }
         PlayerDTO player = PlayerController.getPlayerDTO(player_name);
         if (player == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_PlayerNotExist, player_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, player_name));
             return;
         }
         if (Objects.equals(dominion.getOwner(), player.getUuid())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionAlreadyBelong, dom_name, player_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionAlreadyBelong, dom_name, player_name));
             return;
         }
         if (dominion.getParentDomId() != -1) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_SubDominionCannotGive, player_name, dom_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SubDominionCannotGive, player_name, dom_name));
             return;
         }
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!force) {
-            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, Translation.Controller_GiveDominionConfirm, dom_name, player_name);
+            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, Translation.Messages_GiveDominionConfirm, dom_name, player_name);
             showSubNamesWarning(sub_dominions, WARNING);
             if (operator instanceof BukkitPlayerOperator) {
-                Notification.warn(operator.getPlayer(), Translation.Controller_GiveDominionForceConfirm, dom_name, player_name);
+                Notification.warn(operator.getPlayer(), Translation.Messages_GiveDominionForceConfirm, dom_name, player_name);
             }
             operator.setResponse(WARNING);
             return;
@@ -582,7 +582,7 @@ public class DominionController {
         for (DominionDTO sub_dominion : sub_dominions) {
             sub_dominion.setOwner(player.getUuid());
         }
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_GiveDominionSuccess, dom_name, player_name));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_GiveDominionSuccess, dom_name, player_name));
     }
 
     /**
@@ -593,18 +593,18 @@ public class DominionController {
      * @param dom_name 领地名称
      */
     public static void setMapColor(AbstractOperator operator, String color, String dom_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_SetMapColorFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetMapColorFailed);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
         if (dominion == null) {
             return;
         }
         color = color.toUpperCase();    // 转换为大写
         if (!color.matches("^#[0-9a-fA-F]{6}$")) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_MapColorInvalid));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_MapColorInvalid));
             return;
         }
         dominion.setColor(color);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Controller_SetMapColorSuccess, dom_name, color));
+        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetMapColorSuccess, dom_name, color));
     }
 
     /**
@@ -614,10 +614,10 @@ public class DominionController {
      * @param color    16进制颜色 例如 #ff0000
      */
     public static void setMapColor(AbstractOperator operator, String color) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_SetMapColorFailed);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetMapColorFailed);
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CannotGetDominionAuto));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CannotGetDominionAuto));
             return;
         }
         setMapColor(operator, color, dominion.getName());
@@ -696,7 +696,7 @@ public class DominionController {
     }
 
     private static boolean sizeNotValid(AbstractOperator operator, int x1, int y1, int z1, int x2, int y2, int z2) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_SizeInvalid);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SizeInvalid);
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
@@ -720,34 +720,34 @@ public class DominionController {
         int y_length = y2 - y1;
         int z_length = z2 - z1;
         if (x_length < 4 || y_length < 4 || z_length < 4) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_SizeShouldBeGreaterThan4));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeShouldBeGreaterThan4));
             return true;
         }
         if (x_length > Dominion.config.getLimitSizeX(operator.getPlayer()) && Dominion.config.getLimitSizeX(operator.getPlayer()) > 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_SizeXShouldBeLessThan, Dominion.config.getLimitSizeX(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeXShouldBeLessThan, Dominion.config.getLimitSizeX(operator.getPlayer())));
             return true;
         }
         if (y_length > Dominion.config.getLimitSizeY(operator.getPlayer()) && Dominion.config.getLimitSizeY(operator.getPlayer()) > 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_SizeYShouldBeLessThan, Dominion.config.getLimitSizeY(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeYShouldBeLessThan, Dominion.config.getLimitSizeY(operator.getPlayer())));
             return true;
         }
         if (z_length > Dominion.config.getLimitSizeZ(operator.getPlayer()) && Dominion.config.getLimitSizeZ(operator.getPlayer()) > 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_SizeZShouldBeLessThan, Dominion.config.getLimitSizeZ(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeZShouldBeLessThan, Dominion.config.getLimitSizeZ(operator.getPlayer())));
             return true;
         }
         if (y2 > Dominion.config.getLimitMaxY(operator.getPlayer())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_MaxYShouldBeLessThan, Dominion.config.getLimitMaxY(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_MaxYShouldBeLessThan, Dominion.config.getLimitMaxY(operator.getPlayer())));
             return true;
         }
         if (y1 < Dominion.config.getLimitMinY(operator.getPlayer())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_MinYShouldBeLessThan, Dominion.config.getLimitMinY(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_MinYShouldBeLessThan, Dominion.config.getLimitMinY(operator.getPlayer())));
             return true;
         }
         return false;
     }
 
     private static boolean depthNotValid(AbstractOperator operator, DominionDTO parent_dom) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Controller_DepthInvalid);
+        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DepthInvalid);
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
@@ -755,7 +755,7 @@ public class DominionController {
             return false;
         }
         if (parent_dom.getId() != -1 && Dominion.config.getLimitDepth(operator.getPlayer()) == 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CreateSubDominionDisabled));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CreateSubDominionDisabled));
             return true;
         }
         if (parent_dom.getId() == -1) {
@@ -767,7 +767,7 @@ public class DominionController {
             level++;
         }
         if (level >= Dominion.config.getLimitDepth(operator.getPlayer())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DepthShouldBeLessThan, Dominion.config.getLimitDepth(operator.getPlayer())));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DepthShouldBeLessThan, Dominion.config.getLimitDepth(operator.getPlayer())));
             return true;
         }
         return false;
@@ -791,11 +791,11 @@ public class DominionController {
         AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "");
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_DominionNotExist, dominion_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, dominion_name));
             return null;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotDominionOwner, dominion_name));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwner, dominion_name));
             return null;
         }
         return dominion;
@@ -813,25 +813,25 @@ public class DominionController {
     private static boolean handleEconomyFailed(AbstractOperator operator, Integer count, boolean paid, AbstractOperator.Result FAIL, AbstractOperator.Result SUCCESS) {
         if (Dominion.config.getEconomyEnable()) {
             if (!VaultConnect.instance.economyAvailable()) {
-                operator.setResponse(FAIL.addMessage(Translation.Controller_NoEconomyPlugin));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_NoEconomyPlugin));
                 return true;
             }
             if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
-                SUCCESS.addMessage(Translation.Controller_OpBypassEconomyCheck);
+                SUCCESS.addMessage(Translation.Messages_OpBypassEconomyCheck);
                 return false;
             }
             float priceOrRefund = count * Dominion.config.getEconomyPrice(operator.getPlayer());
             if (paid) {
                 if (VaultConnect.instance.getBalance(operator.getPlayer()) < priceOrRefund) {
-                    operator.setResponse(FAIL.addMessage(Translation.Controller_NotEnoughMoney, priceOrRefund, VaultConnect.instance.currencyNamePlural()));
+                    operator.setResponse(FAIL.addMessage(Translation.Messages_NotEnoughMoney, priceOrRefund, VaultConnect.instance.currencyNamePlural()));
                     return true;
                 }
-                SUCCESS.addMessage(Translation.Controller_ChargeMoney, priceOrRefund, VaultConnect.instance.currencyNamePlural());
+                SUCCESS.addMessage(Translation.Messages_ChargeMoney, priceOrRefund, VaultConnect.instance.currencyNamePlural());
                 VaultConnect.instance.withdrawPlayer(operator.getPlayer(), priceOrRefund);
             } else {
                 float refund = priceOrRefund * Dominion.config.getEconomyRefund(operator.getPlayer());
                 VaultConnect.instance.depositPlayer(operator.getPlayer(), refund);
-                SUCCESS.addMessage(Translation.Controller_RefundMoney, refund, VaultConnect.instance.currencyNamePlural());
+                SUCCESS.addMessage(Translation.Messages_RefundMoney, refund, VaultConnect.instance.currencyNamePlural());
             }
         }
         return false;
@@ -854,15 +854,15 @@ public class DominionController {
             return null;
         }
         if (operator.getLocation() == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CannotGetLocation));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CannotGetLocation));
             return null;
         }
         if (!operator.getLocation().getWorld().getUID().equals(dominion.getWorldUid())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CrossWorldOperationDisallowed));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CrossWorldOperationDisallowed));
             return null;
         }
         if (!isInDominion(dominion, operator.getLocation())) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_NotInDominion, dominion.getName()));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_NotInDominion, dominion.getName()));
             return null;
         }
         return dominion;
@@ -871,7 +871,7 @@ public class DominionController {
     private static int[] expandContractSizeChange(AbstractOperator operator, @NotNull DominionDTO dominion, boolean expand, int size, AbstractOperator.Result FAIL) {
         BlockFace face = operator.getDirection();
         if (face == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Controller_CannotGetDirection));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CannotGetDirection));
             return null;
         }
         int[] result = new int[6];
@@ -904,13 +904,13 @@ public class DominionController {
                 result[1] -= size;
                 break;
             default:
-                operator.setResponse(FAIL.addMessage(Translation.Controller_InvalidDirection, face));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_InvalidDirection, face));
                 return null;
         }
         if (!expand) {
             // 校验第二组坐标是否小于第一组坐标
             if (result[0] > result[3] || result[1] > result[4] || result[2] > result[5]) {
-                operator.setResponse(FAIL.addMessage(Translation.Controller_ContractSizeInvalid));
+                operator.setResponse(FAIL.addMessage(Translation.Messages_ContractSizeInvalid));
                 return null;
             }
         }
@@ -934,7 +934,7 @@ public class DominionController {
         }
         if (!sub_dominions.isEmpty()) {
             sub_names = sub_names.substring(0, sub_names.length() - 2);
-            WARNING.addMessage(Translation.Controller_SubDominionList, sub_names);
+            WARNING.addMessage(Translation.Messages_SubDominionList, sub_names);
         }
     }
 

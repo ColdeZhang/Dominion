@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.utils;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -47,7 +48,7 @@ public class TuiUtils {
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             MemberDTO privileges = MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
-                Notification.error(player, "你不是领地 %s 的拥有者或管理员，无权访问此页面", dominion.getName());
+                Notification.error(player, Translation.TUI_NotDominionOwnerOrAdminForPage, dominion.getName());
                 return true;
             }
         }
@@ -67,27 +68,9 @@ public class TuiUtils {
         if (player == null) return;
         int page = getPage(args, 1);
         ListView view = ListView.create(10, "/dominion help");
-        view.title("领地插件命令帮助 <>表示必填参数 []表示可选参数")
-                .add(Line.create().append("打开交互菜单").append("/dominion menu"))
-                .add(Line.create().append("查看帮助").append("/dominion help [页码]"))
-                .add(Line.create().append("创建领地").append("/dominion create <领地名称>"))
-                .add(Line.create().append("自动创建领地").append("/dominion auto_create <领地名称>"))
-                .add(Line.create().append("创建子领地").append("/dominion create_sub <子领地名称> [父领地名称]"))
-                .add(Line.create().append("自动创建子领地").append("/dominion auto_create_sub <子领地名称> [父领地名称]"))
-                .add(Line.create().append("管理领地").append("/dominion manage <领地名称>"))
-                .add(Line.create().append("扩张领地").append("/dominion expand [大小] [领地名称]"))
-                .add(Line.create().append("缩小领地").append("/dominion contract [大小] [领地名称]"))
-                .add(Line.create().append("设置进入领地的提示语").append("/dominion set_enter_msg <提示语> [领地名称]"))
-                .add(Line.create().append("设置离开领地的提示语").append("/dominion set_leave_msg <提示语> [领地名称]"))
-                .add(Line.create().append("设置领地传送点").append("/dominion set_tp_location [领地名称]"))
-                .add(Line.create().append("传送到领地").append("/dominion tp <领地名称>"))
-                .add(Line.create().append("重命名领地").append("/dominion rename <原领地名称> <新领地名称>"))
-                .add(Line.create().append("转让领地").append("/dominion give <领地名称> <玩家名称> [force]"))
-                .add(Line.create().append("删除领地").append("/dominion delete <领地名称> [force]"))
-                // 管理员指令
-                .add(Line.create().append("---[管理员指令]---"))
-                .add(Line.create().append("刷新缓存").append(Button.create("/dominion reload_cache").setExecuteCommand("/dominion reload_cache").build()))
-                .add(Line.create().append("重载配置").append(Button.create("/dominion reload_config").setExecuteCommand("/dominion reload_config").build()))
+        view.title(Translation.TUI_CommandHelp_Title.trans())
+                .subtitle(Line.create().append(Translation.TUI_CommandHelp_SubTitle.trans()))
+                // todo ...
                 .showOn(player, page);
     }
 
