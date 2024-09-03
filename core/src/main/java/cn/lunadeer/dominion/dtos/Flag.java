@@ -1,11 +1,15 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.JsonFile;
 import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.minecraftpluginutils.i18n.Localization;
 import com.alibaba.fastjson.JSONObject;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +89,6 @@ public enum Flag {
     private Boolean default_value;
     private Boolean enable;
     private final Boolean dominion_only;
-    private Boolean custom_text = false;
     private final String default_display_name;
     private final String default_description;
 
@@ -134,6 +137,14 @@ public enum Flag {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
+    }
+
+    public String getDisplayNameKey() {
+        return "Flags." + flag_name + ".DisplayName";
+    }
+
+    public String getDescriptionKey() {
+        return "Flags." + flag_name + ".Description";
     }
 
     public static List<Flag> getAllFlags() {
@@ -209,84 +220,73 @@ public enum Flag {
         return Arrays.stream(Flag.values()).filter(flag -> flag.getFlagName().equals(flagName)).findFirst().orElse(null);
     }
 
-    /*
-            {
-                flag_name: {
-                    display_name: "",
-                    description: "",
-                    default_value: true,
-                    enable: true
-                }
-            }
-    */
-
-    public static JSONObject serializeToJson(Flag flag) {
-        JSONObject json = new JSONObject();
-        json.put("display_name", flag.getDisplayName());
-        json.put("description", flag.getDescription());
-        json.put("default_value", flag.getDefaultValue());
-        json.put("enable", flag.getEnable());
-        json.put("custom_text", flag.custom_text);
-        return json;
-    }
-
-    public static JSONObject serializeToJson() {
-        JSONObject json = new JSONObject();
-        for (Flag flag : getAllFlags()) {
-            JSONObject flagJson = serializeToJson(flag);
-            json.put(flag.getFlagName(), flagJson);
+    /**
+     * 从文件中加载Flag配置
+     */
+    public static void loadFromFile() {
+        try {
+            loadLegacyJsonFlags();
+            loadFlagsConfiguration();
+        } catch (Exception e) {
+            XLogger.err(Translation.Config_Check_LoadFlagError, e.getMessage());
         }
-        return json;
     }
 
+    private static void loadLegacyJsonFlags() throws Exception {
+        File jsonFile = new File(Dominion.instance.getDataFolder(), "flags.json");
+        if (jsonFile.exists()) {
+            JSONObject jsonObject = JsonFile.loadFromFile(jsonFile);
+            if (jsonObject != null) {
+                deserializeFromJson(jsonObject);
+            }
+            jsonFile.delete();
+        }
+    }
+
+    private static void loadFlagsConfiguration() throws IOException {
+        File yamlFile = new File(Dominion.instance.getDataFolder(), "flags.yml");
+        if (!yamlFile.exists()) {
+            Dominion.instance.saveResource("flags.yml", false);
+        }
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(yamlFile);
+        for (Flag flag : getAllFlags()) {
+            // load flags name & description translations
+            ((Translation)(Localization.instance)).loadOrSetFlagTranslation(flag);
+            // load flags default value & enable
+            String defaultValueKey;
+            String enableKey;
+            if (flag.dominion_only) {
+                defaultValueKey = "environment." + flag.getFlagName() + ".default";
+                enableKey = "environment." + flag.getFlagName() + ".enable";
+            } else {
+                defaultValueKey = "privilege." + flag.getFlagName() + ".default";
+                enableKey = "privilege." + flag.getFlagName() + ".enable";
+            }
+            if (yaml.contains(defaultValueKey)) {
+                flag.setDefaultValue(yaml.getBoolean(defaultValueKey));
+            } else {
+                yaml.set(defaultValueKey, flag.getDefaultValue());
+            }
+            if (yaml.contains(enableKey)) {
+                flag.setEnable(yaml.getBoolean(enableKey));
+            } else {
+                yaml.set(enableKey, flag.getEnable());
+            }
+        }
+        yaml.save(yamlFile);
+    }
+
+    @Deprecated
     public static void deserializeFromJson(JSONObject jsonObject) {
         for (Flag flag : getAllFlags()) {
             try {
                 JSONObject flagJson = (JSONObject) jsonObject.get(flag.getFlagName());
                 if (flagJson != null) {
-                    flag.custom_text = (Boolean) flagJson.getOrDefault("custom_text", false);
                     flag.setDefaultValue((Boolean) flagJson.getOrDefault("default_value", flag.getDefaultValue()));
                     flag.setEnable((Boolean) flagJson.getOrDefault("enable", flag.getEnable()));
-                    if (flag.custom_text) { // 如果使用自定义文本 则从配置文件中读取
-                        flag.setDisplayName((String) flagJson.getOrDefault("display_name", flag.getDisplayName()));
-                        flag.setDescription((String) flagJson.getOrDefault("description", flag.getDescription()));
-                    } else {    // 否则设置为默认文本
-                        flag.setDisplayName(flag.default_display_name);
-                        flag.setDescription(flag.default_description);
-                    }
                 }
-            } catch (Exception e) {
-                XLogger.warn("读取权限 %s 配置失败：%s，已跳过，使用默认配置", flag.getFlagName(), e.getMessage());
+            } catch (Exception ignored) {
             }
-        }
-    }
-
-    public static void loadFromJson() {
-        try {
-            File flagFile = new File(Dominion.instance.getDataFolder(), "flags.json");
-            if (!flagFile.exists()) {
-                saveToJson();
-            }
-            JSONObject jsonObject = JsonFile.loadFromFile(flagFile);
-            if (jsonObject == null) {
-                XLogger.warn("读取权限配置失败，已重置");
-                saveToJson();
-            }
-            deserializeFromJson(jsonObject);
-            saveToJson(); // 复写一遍，确保文件中包含所有权限
-        } catch (Exception e) {
-            XLogger.err("读取权限配置失败：%s", e.getMessage());
-        }
-    }
-
-    public static void saveToJson() {
-        try {
-            JSONObject json = serializeToJson();
-            XLogger.debug("保存权限配置：%s", json.toJSONString());
-            File flagFile = new File(Dominion.instance.getDataFolder(), "flags.json");
-            JsonFile.saveToFile(json, flagFile);
-        } catch (Exception e) {
-            XLogger.err("保存权限配置失败：%s", e.getMessage());
         }
     }
 }
