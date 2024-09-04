@@ -38,7 +38,7 @@ jobs:
         run: |
           gitbook install docs
           gitbook build docs
-          mv docs/_book public
+          mv docs/_book _site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
