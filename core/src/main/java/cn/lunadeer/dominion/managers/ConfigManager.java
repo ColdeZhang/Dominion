@@ -154,21 +154,21 @@ public class ConfigManager {
 
         _file.setComments("Limit", List.of(Translation.Config_Comment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
-        _file.setInlineComments("Limit.SpawnProtection", Arrays.asList(Translation.Config_Comment_SpawnProtectRadius.trans(), Translation.Config_Comment_NegativeOneDisabled.trans()));
+        _file.setInlineComments("Limit.SpawnProtection", List.of(Translation.Config_Comment_SpawnProtectRadius.trans() + Translation.Config_Comment_NegativeOneDisabled.trans()));
         _file.set("Limit.MinY", limits.get("default").getLimitMinY());
         _file.setInlineComments("Limit.MinY", List.of(Translation.Config_Comment_MinY.trans()));
         _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
         _file.setInlineComments("Limit.MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
         _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
-        _file.setInlineComments("Limit.SizeX", Arrays.asList(Translation.Config_Comment_SizeX.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
-        _file.setInlineComments("Limit.SizeY", Arrays.asList(Translation.Config_Comment_SizeY.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
-        _file.setInlineComments("Limit.SizeZ", Arrays.asList(Translation.Config_Comment_SizeZ.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Amount", limits.get("default").getLimitAmount());
-        _file.setInlineComments("Limit.Amount", List.of(Translation.Config_Comment_Amount.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Depth", limits.get("default").getLimitDepth());
-        _file.setInlineComments("Limit.Depth", List.of(Translation.Config_Comment_Depth.trans(), Translation.Config_Comment_ZeroDisabled.trans(), Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.setInlineComments("Limit.Depth", List.of(Translation.Config_Comment_Depth.trans() + Translation.Config_Comment_ZeroDisabled.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Vert", limits.get("default").getLimitVert());
         _file.setInlineComments("Limit.Vert", List.of(Translation.Config_Comment_Vert.trans()));
         _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());

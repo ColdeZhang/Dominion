@@ -20,7 +20,7 @@ Limit:
   Amount: 10
   Depth: 3
   Vert: false
-  WorldBlackList: [ ]
+  WorldBlackList: ['some_world']
   OpByPass: true
 
 Teleport:
