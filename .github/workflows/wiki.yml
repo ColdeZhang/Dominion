@@ -34,9 +34,9 @@ jobs:
       - name: Install gitbook-cli
         run: |
           npm install -g gitbook-cli
-          gitbook install
       - name: Build with gitbook
         run: |
+          gitbook install
           gitbook build docs
           mv docs/_book public
       - name: Upload artifact
