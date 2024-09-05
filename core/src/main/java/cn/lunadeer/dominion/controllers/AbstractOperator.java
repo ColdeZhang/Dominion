@@ -24,7 +24,7 @@ public interface AbstractOperator {
         public Result(Integer success, i18n message, Object... args) {
             this.success = success;
             this.messages = new ArrayList<>();
-            this.messages.add(message.trans());
+            this.messages.add(String.format(message.trans(), args));
         }
 
         public Result(Integer success, String message, Object... args) {
