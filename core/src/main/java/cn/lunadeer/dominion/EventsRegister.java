@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.minecraftpluginutils.Common;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -22,12 +23,22 @@ public class EventsRegister {
                     registerEvents("cn.lunadeer.dominion.events_v1_21.PlayerEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_21.EnvironmentEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_21.SelectPointEvents");
+                    if (Common.isPaper()) {
+                        registerEvents("cn.lunadeer.dominion.events_v1_21.special.Paper");
+                    } else {
+                        registerEvents("cn.lunadeer.dominion.events_v1_21.special.Spigot");
+                    }
                     break;
                 case v1_20_1:
                     XLogger.debug("Load API version: 1.20.1");
                     registerEvents("cn.lunadeer.dominion.events_v1_20_1.PlayerEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_20_1.EnvironmentEvents");
                     registerEvents("cn.lunadeer.dominion.events_v1_20_1.SelectPointEvents");
+                    if (Common.isPaper()) {
+                        registerEvents("cn.lunadeer.dominion.events_v1_20_1.special.Paper");
+                    } else {
+                        registerEvents("cn.lunadeer.dominion.events_v1_20_1.special.Spigot");
+                    }
                     break;
             }
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {

@@ -38,6 +38,8 @@ Res 迁移数据）。
 > 需要使用 Java21 运行你的服务端，如果你还在使用 Java17 可以放心替换为 Java21，理论上 1.20.1+ 版本的服务端核心可以直接升级到
 > Java21 启动。
 
+> 虽然本插件支持 Spigot，但是我们强烈建议您将您的核心升级到 Paper 或其分支核心（如 Purpur）以获得更好的性能体验。
+
 ## 建议与反馈
 
 请优先在 [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues) 提交您的问题
