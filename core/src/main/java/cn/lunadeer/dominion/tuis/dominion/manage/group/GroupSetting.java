@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.tuis.dominion.manage.group;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.TuiUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -26,36 +27,38 @@ public class GroupSetting {
 
     public static void show(CommandSender sender, String[] args) {
         if (args.length < 4) {
-            Notification.error(sender, "用法: /dominion group setting <领地名称> <权限组名称> [页码]");
+            Notification.error(sender, Translation.TUI_GroupSetting_Usage);
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[2]);
         if (dominion == null) {
-            Notification.error(sender, "领地 %s 不存在", args[2]);
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
             return;
         }
         if (noAuthToManage(player, dominion)) return;
         int page = TuiUtils.getPage(args, 4);
         GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
         if (group == null) {
-            Notification.error(sender, "权限组 %s 不存在", args[3]);
+            Notification.error(sender, Translation.Messages_GroupNotExist, args[2], args[3]);
             return;
         }
 
         ListView view = ListView.create(10, "/dominion group setting " + dominion.getName() + " " + group.getName());
-        view.title(Component.text("权限组 ").append(group.getNameColoredComponent()).append(Component.text(" 管理")));
+        view.title(Component.text(Translation.TUI_GroupSetting_TitleL.trans())
+                .append(group.getNameColoredComponent())
+                .append(Component.text(Translation.TUI_GroupSetting_TitleR.trans())));
         view.navigator(
                 Line.create()
-                        .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
-                        .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
-                        .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("权限组列表").setExecuteCommand("/dominion group list " + dominion.getName()).build())
-                        .append("权限组管理")
+                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
+                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
+                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
+                        .append(Button.create(Translation.TUI_Navigation_GroupList).setExecuteCommand("/dominion group list " + dominion.getName()).build())
+                        .append(Translation.TUI_Navigation_GroupSetting)
         );
-        Button rename_btn = Button.create("重命名此权限组")
-                .setHoverText("重命名权限组 " + group.getName())
+        Button rename_btn = Button.create(Translation.TUI_GroupSetting_RenameButton)
+                .setHoverText(String.format(Translation.TUI_GroupSetting_RenameDescription.trans(), group.getName()))
                 .setExecuteCommand("/dominion cui_rename_group " + dominion.getName() + " " + group.getName());
         view.add(Line.create().append(rename_btn.build()));
 
@@ -64,14 +67,20 @@ public class GroupSetting {
                     .append(Button.createGreen("☑")
                             .setExecuteCommand(parseCommand(dominion.getName(), group.getName(), "admin", false, page))
                             .build())
-                    .append("管理员"));
+                    .append(
+                            Component.text(Translation.Flags_admin_DisplayName.trans())
+                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
+                    ));
             view.add(createOption(Flag.GLOW, group.getFlagValue(Flag.GLOW), dominion.getName(), group.getName(), page));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐")
                             .setExecuteCommand(parseCommand(dominion.getName(), group.getName(), "admin", true, page))
                             .build())
-                    .append("管理员"));
+                    .append(
+                            Component.text(Translation.Flags_admin_DisplayName.trans())
+                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
+                    ));
             for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
                 view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getName(), page));
             }
