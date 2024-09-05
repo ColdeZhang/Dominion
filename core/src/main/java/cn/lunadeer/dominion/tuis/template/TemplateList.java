@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.tuis.template;
 
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -29,17 +30,17 @@ public class TemplateList {
         ListView view = ListView.create(10, "/dominion template list");
 
         List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(player.getUniqueId());
-        view.title("成员权限模板列表");
-        view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("模板列表"));
+        view.title(Translation.TUI_TemplateList_Title);
+        view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_TemplateList));
 
-        Button create = Button.create("创建成员权限模板").setExecuteCommand("/dominion cui_template_create")
-                .setHoverText("创建一个新的成员权限模板");
+        Button create = Button.create(Translation.TUI_TemplateList_CreateButton).setExecuteCommand("/dominion cui_template_create")
+                .setHoverText(Translation.TUI_TemplateList_CreateDescription);
 
         view.add(Line.create().append(create.build()));
 
         for (PrivilegeTemplateDTO template : templates) {
-            Button manage = Button.createGreen("配置").setExecuteCommand("/dominion template setting " + template.getName());
-            Button delete = Button.createRed("删除").setExecuteCommand("/dominion template delete " + template.getName());
+            Button manage = Button.createGreen(Translation.TUI_EditButton).setExecuteCommand("/dominion template setting " + template.getName());
+            Button delete = Button.createRed(Translation.TUI_DeleteButton).setExecuteCommand("/dominion template delete " + template.getName());
             Line line = Line.create()
                     .append(delete.build())
                     .append(manage.build())

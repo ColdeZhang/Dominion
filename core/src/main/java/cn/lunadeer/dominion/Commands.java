@@ -115,12 +115,9 @@ public class Commands implements TabExecutor {
             case "export_mca":
                 Operator.exportMca(sender, args);
                 break;
-            case "sys_config":
-                SysConfig.show(sender, args);
-                break;
-            case "set_config":
-                SetConfig.handler(sender, args);
-                break;
+//            case "set_config":
+//                SetConfig.handler(sender, args);
+//                break;
             case "all_dominion":
                 AllDominion.show(sender, args);
                 break;

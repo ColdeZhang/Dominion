@@ -15,7 +15,7 @@ public class PrivilegeTemplateDTO {
         try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
             return getDTOFromRS(rs);
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("查询权限模版失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("PrivilegeTemplateDTO.query ", e, sql);
         }
         return templates;
     }
@@ -39,7 +39,7 @@ public class PrivilegeTemplateDTO {
                 templates.add(template);
             }
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("查询权限模版失败: ", e, null);
+            DatabaseManager.handleDatabaseError("PrivilegeTemplateDTO.getDTOFromRS", e, null);
         }
         return templates;
     }
@@ -53,10 +53,10 @@ public class PrivilegeTemplateDTO {
                 .returningAll();
         try (ResultSet rs = insertRow.execute()) {
             List<PrivilegeTemplateDTO> templates = getDTOFromRS(rs);
-            if (templates.size() == 0) return null;
-            return templates.get(0);
+            if (templates.isEmpty()) return null;
+            return templates.getFirst();
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("创建权限模版失败: ", e, null);
+            DatabaseManager.handleDatabaseError("PrivilegeTemplateDTO.create ", e, null);
             return null;
         }
     }
@@ -68,10 +68,10 @@ public class PrivilegeTemplateDTO {
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
             List<PrivilegeTemplateDTO> templates = getDTOFromRS(rs);
-            if (templates.size() == 0) return null;
-            return templates.get(0);
+            if (templates.isEmpty()) return null;
+            return templates.getFirst();
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("更新权限模版失败: ", e, null);
+            DatabaseManager.handleDatabaseError("PrivilegeTemplateDTO.doUpdate ", e, null);
             return null;
         }
     }
@@ -79,8 +79,8 @@ public class PrivilegeTemplateDTO {
     public static PrivilegeTemplateDTO select(UUID creator, String name) {
         String sql = "SELECT * FROM privilege_template WHERE creator = ? AND name = ?;";
         List<PrivilegeTemplateDTO> templates = query(sql, creator.toString(), name);
-        if (templates.size() == 0) return null;
-        return templates.get(0);
+        if (templates.isEmpty()) return null;
+        return templates.getFirst();
     }
 
     public static List<PrivilegeTemplateDTO> selectAll(UUID creator) {
@@ -101,9 +101,9 @@ public class PrivilegeTemplateDTO {
         this.flags.putAll(flags);
     }
 
-    private Integer id;
-    private UUID creator;
-    private String name;
+    private final Integer id;
+    private final UUID creator;
+    private final String name;
     private Boolean admin;
 
     private final Map<Flag, Boolean> flags = new HashMap<>();

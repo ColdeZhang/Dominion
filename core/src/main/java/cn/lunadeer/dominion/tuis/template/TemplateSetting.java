@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.tuis.template;
 
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -30,16 +31,16 @@ public class TemplateSetting {
         int page = getPage(args, 3);
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[2]);
         if (template == null) {
-            Notification.error(sender, "模板 %s 不存在", args[2]);
+            Notification.error(sender, Translation.Messages_TemplateNotExist, args[2]);
             return;
         }
 
         ListView view = ListView.create(10, "/dominion template setting " + template.getName());
-        view.title("模板 " + args[1] + " 权限管理");
+        view.title(String.format(Translation.TUI_TemplateSetting_Title.trans(), args[1]));
         view.navigator(Line.create()
-                .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
-                .append(Button.create("模板列表").setExecuteCommand("/dominion template list").build())
-                .append("模板管理")
+                .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
+                .append(Button.create(Translation.TUI_Navigation_TemplateList).setExecuteCommand("/dominion template list").build())
+                .append(Translation.TUI_Navigation_TemplateSetting)
         );
 
         // /dominion template_set_flag <模板名称> <权限名称> <true/false> [页码]
@@ -47,11 +48,17 @@ public class TemplateSetting {
         if (template.getAdmin()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + template.getName() + " admin false " + page).build())
-                    .append("管理员"));
+                    .append(
+                            Component.text(Translation.Flags_admin_DisplayName.trans())
+                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
+                    ));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐").setExecuteCommand("/dominion template set_flag " + template.getName() + " admin true " + page).build())
-                    .append("管理员"));
+                    .append(
+                            Component.text(Translation.Flags_admin_DisplayName.trans())
+                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
+                    ));
         }
         for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
             view.add(createOption(flag, template.getFlagValue(flag), template.getName(), page));

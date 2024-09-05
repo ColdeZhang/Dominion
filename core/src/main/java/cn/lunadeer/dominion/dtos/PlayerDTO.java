@@ -53,7 +53,7 @@ public class PlayerDTO {
         try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
             return getDTOFromRS(rs);
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("查询玩家信息失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("PlayerDTO.query ", e, sql);
         }
         return players;
     }
@@ -116,7 +116,7 @@ public class PlayerDTO {
             if (players.isEmpty()) return null;
             return players.getFirst();
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("插入玩家信息失败: ", e, insertRow.toString());
+            DatabaseManager.handleDatabaseError("PlayerDTO.insert ", e, insertRow.toString());
             return null;
         }
     }
@@ -138,7 +138,7 @@ public class PlayerDTO {
             if (players.isEmpty()) return null;
             return players.getFirst();
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("更新玩家信息失败: ", e, updateRow.toString());
+            DatabaseManager.handleDatabaseError("PlayerDTO.update ", e, updateRow.toString());
             return null;
         }
     }

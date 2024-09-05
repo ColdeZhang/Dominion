@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.DominionNode;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -27,8 +28,8 @@ public class AllDominion {
 
         ListView view = ListView.create(10, "/dominion all_dominion");
 
-        view.title("所有领地");
-        view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("所有领地"));
+        view.title(Translation.TUI_Navigation_AllDominion);
+        view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append((Translation.TUI_Navigation_AllDominion)));
         view.addLines(BuildTreeLines(allDominions, 0));
         view.showOn(player, page);
     }

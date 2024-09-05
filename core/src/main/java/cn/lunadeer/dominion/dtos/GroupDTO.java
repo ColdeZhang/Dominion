@@ -102,7 +102,7 @@ public class GroupDTO {
             Cache.instance.loadGroups(groups.getFirst().getId());
             return groups.getFirst();
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("创建权限组失败: ", e, "");
+            DatabaseManager.handleDatabaseError("GroupDTO.create ", e, "");
             return null;
         }
     }

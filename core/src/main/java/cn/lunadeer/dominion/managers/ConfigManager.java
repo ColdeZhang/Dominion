@@ -21,7 +21,6 @@ public class ConfigManager {
         _plugin = plugin;
         _plugin.saveDefaultConfig();
         reload();
-        _plugin.saveConfig();
     }
 
     public void reload() {
@@ -55,7 +54,15 @@ public class ConfigManager {
         _check_update = _file.getBoolean("CheckUpdate", true);
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
         _tp_delay = _file.getInt("Teleport.Delay", 0);
+        if (_tp_delay < 0) {
+            XLogger.err(Translation.Config_Check_TpDelayError);
+            setTpDelay(0);
+        }
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
+        if (_tp_cool_down < 0) {
+            XLogger.err(Translation.Config_Check_TpCoolDownError);
+            setTpCoolDown(0);
+        }
         _tool = _file.getString("Tool", "ARROW");
         if (Material.getMaterial(_tool) == null) {
             XLogger.err(Translation.Config_Check_ToolNameError);
@@ -84,6 +91,8 @@ public class ConfigManager {
         defaultGroup.setPrice(_file.getDouble("Economy.Price", 10.0));
         defaultGroup.setPriceOnlyXZ(_file.getBoolean("Economy.OnlyXZ", false));
         defaultGroup.setRefundRatio(_file.getDouble("Economy.Refund", 0.85));
+        limits.put("default", defaultGroup);
+
         if (defaultGroup.getLimitSizeX() <= 4 && defaultGroup.getLimitSizeX() != -1) {
             XLogger.err(Translation.Config_Check_LimitSizeXError);
             setLimitSizeX(128);
@@ -121,7 +130,6 @@ public class ConfigManager {
             XLogger.err(Translation.Config_Check_DepthError);
             setLimitDepth(3);
         }
-        limits.put("default", defaultGroup);
 
         limits.putAll(GroupLimit.loadGroups(_plugin));
 

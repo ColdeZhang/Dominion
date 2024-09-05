@@ -23,7 +23,7 @@ public class DominionDTO {
         try (ResultSet rs = DatabaseManager.instance.query(sql, args)) {
             return getDTOFromRS(rs);
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("DominionDTO.query ", e, sql);
         }
         return dominions;
     }
@@ -134,7 +134,7 @@ public class DominionDTO {
             if (dominions.isEmpty()) return null;
             return dominions.getFirst();
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("数据库操作失败: ", e, insert.toString());
+            DatabaseManager.handleDatabaseError("DominionDTO.insert ", e, insert.toString());
             return null;
         }
     }
@@ -234,7 +234,7 @@ public class DominionDTO {
             Cache.instance.loadDominions((Integer) id.value);
             return dominions.getFirst();
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("更新领地信息失败: ", e, updateRow.toString());
+            DatabaseManager.handleDatabaseError("DominionDTO.doUpdate ", e, updateRow.toString());
             return null;
         }
     }

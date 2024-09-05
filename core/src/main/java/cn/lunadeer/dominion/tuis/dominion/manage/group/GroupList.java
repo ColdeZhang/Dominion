@@ -46,7 +46,7 @@ public class GroupList {
         int page = TuiUtils.getPage(args, 3);
         List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
         ListView view = ListView.create(10, "/dominion group list " + dominion.getName());
-        view.title(Translation.TUI_GroupList_Title);
+        view.title(String.format(Translation.TUI_GroupList_Title.trans(), dominion.getName()));
         view.navigator(
                 Line.create()
                         .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())

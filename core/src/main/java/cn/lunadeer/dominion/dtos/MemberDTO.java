@@ -17,7 +17,7 @@ public class MemberDTO {
         try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
             return getDTOFromRS(rs);
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("查询玩家权限失败: ", e, sql);
+            DatabaseManager.handleDatabaseError("MemberDTO.query ", e, sql);
         }
         return players;
     }
@@ -42,7 +42,7 @@ public class MemberDTO {
                 players.add(player);
             }
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("查询玩家权限失败: ", e, "");
+            DatabaseManager.handleDatabaseError("MemberDTO.getDTOFromRS ", e, "");
         }
         return players;
     }
@@ -53,11 +53,11 @@ public class MemberDTO {
                 .where("id = ?", id.value);
         try (ResultSet rs = updateRow.execute()) {
             List<MemberDTO> players = getDTOFromRS(rs);
-            if (players.size() == 0) return null;
+            if (players.isEmpty()) return null;
             Cache.instance.loadMembers(getPlayerUUID());
-            return players.get(0);
+            return players.getFirst();
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("更新玩家权限失败: ", e, "");
+            DatabaseManager.handleDatabaseError("MemberDTO.doUpdate ", e, "");
             return null;
         }
     }
@@ -74,10 +74,10 @@ public class MemberDTO {
         try (ResultSet rs = insertRow.execute()) {
             Cache.instance.loadMembers(player.getPlayerUUID());
             List<MemberDTO> players = getDTOFromRS(rs);
-            if (players.size() == 0) return null;
-            return players.get(0);
+            if (players.isEmpty()) return null;
+            return players.getFirst();
         } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("插入玩家权限失败: ", e, "");
+            DatabaseManager.handleDatabaseError("MemberDTO.insert ", e, "");
             return null;
         }
     }
@@ -85,8 +85,8 @@ public class MemberDTO {
     public static MemberDTO select(UUID playerUUID, Integer dom_id) {
         String sql = "SELECT * FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
         List<MemberDTO> p = query(sql, playerUUID.toString(), dom_id);
-        if (p.size() == 0) return null;
-        return p.get(0);
+        if (p.isEmpty()) return null;
+        return p.getFirst();
     }
 
     public static List<MemberDTO> select(Integer dom_id) {
