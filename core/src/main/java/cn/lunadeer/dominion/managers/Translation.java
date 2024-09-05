@@ -376,6 +376,8 @@ public class Translation extends Localization {
     public static i18n Messages_SetDominionFlagSuccess;
     @i18nField(defaultValue = "未知的权限 %s")
     public static i18n Messages_UnknownFlag;
+    @i18nField(defaultValue = "你没有权限访问此页面")
+    public static i18n Messages_PageNoPermission;
 
     @i18nField(defaultValue = "创建权限组 %s 失败")
     public static i18n Messages_CreateGroupFailed;
@@ -535,6 +537,16 @@ public class Translation extends Localization {
     public static i18n TUI_Navigation_GroupList;
     @i18nField(defaultValue = "权限组管理")
     public static i18n TUI_Navigation_GroupSetting;
+    @i18nField(defaultValue = "所有领地")
+    public static i18n TUI_Navigation_AllDominion;
+    @i18nField(defaultValue = "模板列表")
+    public static i18n TUI_Navigation_TemplateList;
+    @i18nField(defaultValue = "模板管理")
+    public static i18n TUI_Navigation_TemplateSetting;
+    @i18nField(defaultValue = "Res数据列表")
+    public static i18n TUI_Navigation_MigrateList;
+    @i18nField(defaultValue = "权限组称号列表")
+    public static i18n TUI_Navigation_TitleList;
 
     @i18nField(defaultValue = "管理")
     public static i18n TUI_ManageButton;
@@ -733,7 +745,7 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "用法: /dominion member select_template <领地名称> <玩家名称>  [页码]")
     public static i18n TUI_SelectTemplate_Usage;
 
-    @i18nField(defaultValue = "权限组列表")
+    @i18nField(defaultValue = "领地 %s 权限组列表")
     public static i18n TUI_GroupList_Title;
     @i18nField(defaultValue = "创建权限组")
     public static i18n TUI_GroupList_CreateButton;
@@ -767,6 +779,37 @@ public class Translation extends Localization {
     public static i18n TUI_SelectMember_Description;
     @i18nField(defaultValue = "用法: /dominion group select_member <领地名称> <权限组名称> [回显页码] [页码]")
     public static i18n TUI_SelectMember_Usage;
+
+    @i18nField(defaultValue = "成员权限模板列表")
+    public static i18n TUI_TemplateList_Title;
+    @i18nField(defaultValue = "创建成员权限模板")
+    public static i18n TUI_TemplateList_CreateButton;
+    @i18nField(defaultValue = "创建一个新的成员权限模板")
+    public static i18n TUI_TemplateList_CreateDescription;
+
+    @i18nField(defaultValue = "模板 %s 权限管理")
+    public static i18n TUI_TemplateSetting_Title;
+
+    @i18nField(defaultValue = "从 Residence 迁移数据")
+    public static i18n TUI_Migrate_Title;
+    @i18nField(defaultValue = "你没有可迁移的数据")
+    public static i18n TUI_Migrate_NoData;
+    @i18nField(defaultValue = "迁移")
+    public static i18n TUI_Migrate_Button;
+    @i18nField(defaultValue = "子领地无法手动迁移，会随父领地自动迁移")
+    public static i18n TUI_Migrate_SubDominion;
+
+    @i18nField(defaultValue = "我可使用的权限组称号")
+    public static i18n TUI_TitleList_Title;
+    @i18nField(defaultValue = "卸下")
+    public static i18n TUI_TitleList_RemoveButton;
+    @i18nField(defaultValue = "使用")
+    public static i18n TUI_TitleList_ApplyButton;
+    @i18nField(defaultValue = "来自领地：")
+    public static i18n TUI_TitleList_FromDominion;
+
+    @i18nField(defaultValue = "Dominion 系统配置")
+    public static i18n TUI_Config_Title;
 
     @i18nField(defaultValue = "输入要创建的领地名称")
     public static i18n CUI_Input_CreateDominion;
@@ -829,6 +872,10 @@ public class Translation extends Localization {
     public static i18n Config_Check_GroupRefundError;
     @i18nField(defaultValue = "读取权限配置失败：%s")
     public static i18n Config_Check_LoadFlagError;
+    @i18nField(defaultValue = "传送延迟不能小于 0，已重置为 0")
+    public static i18n Config_Check_TpDelayError;
+    @i18nField(defaultValue = "传送冷却不能小于 0，已重置为 0")
+    public static i18n Config_Check_TpCoolDownError;
 
     @i18nField(defaultValue = "语言设置，参考 languages 文件夹下的文件名")
     public static i18n Config_Comment_Language;

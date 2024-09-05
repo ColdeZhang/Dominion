@@ -2,7 +2,6 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.tuis.SysConfig;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 
@@ -10,6 +9,7 @@ import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
 
 public class SetConfig {
 
+    @Deprecated
     public static void handler(CommandSender sender, String[] args) {
         if (!hasPermission(sender, "dominion.admin")) {
             return;
@@ -87,7 +87,7 @@ public class SetConfig {
             String[] newArgs = new String[2];
             newArgs[0] = "config";
             newArgs[1] = String.valueOf(page);
-            SysConfig.show(sender, newArgs);
+            // SysConfig.show(sender, newArgs);
         }
     }
 

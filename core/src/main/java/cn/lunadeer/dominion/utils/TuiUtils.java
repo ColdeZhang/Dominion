@@ -57,7 +57,7 @@ public class TuiUtils {
 
     public static boolean notOp(CommandSender sender) {
         if (!sender.isOp()) {
-            Notification.error(sender, "你没有权限访问此页面");
+            Notification.error(sender, Translation.Messages_PageNoPermission);
             return true;
         }
         return false;

@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.dominion.utils.TuiUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -28,7 +29,7 @@ public class MigrateList {
         if (player == null) return;
 
         if (!Dominion.config.getResidenceMigration()) {
-            Notification.error(sender, "Residence 迁移功能没有开启");
+            Notification.error(sender, Translation.Commands_Residence_MigrationDisabled);
             return;
         }
 
@@ -36,13 +37,13 @@ public class MigrateList {
 
         ListView view = ListView.create(10, "/dominion migrate_list");
 
-        view.title("从 Residence 迁移数据");
-        view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("Res数据"));
+        view.title(Translation.TUI_Migrate_Title);
+        view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_MigrateList));
 
         List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
 
         if (res_data == null) {
-            view.add(Line.create().append("你没有可迁移的数据"));
+            view.add(Line.create().append(Translation.TUI_Migrate_NoData));
         } else {
             view.addLines(BuildTreeLines(res_data, 0, page));
         }
@@ -53,19 +54,14 @@ public class MigrateList {
     public static List<Line> BuildTreeLines(List<ResMigration.ResidenceNode> dominionTree, Integer depth, int page) {
         List<Line> lines = new ArrayList<>();
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            prefix.append(" | ");
-        }
+        prefix.append(" | ".repeat(Math.max(0, depth)));
         for (ResMigration.ResidenceNode node : dominionTree) {
-            TextComponent migrate = Button.create("迁移").setExecuteCommand("/dominion migrate " + node.name + " " + page).build();
+            Button migrate = Button.create(Translation.TUI_Migrate_Button).setExecuteCommand("/dominion migrate " + node.name + " " + page);
             Line line = Line.create();
             if (depth == 0) {
-                line.append(migrate);
+                line.append(migrate.build());
             } else {
-                line.append(Component.text("[迁移]",
-                                Style.style(TextColor.color(190, 190, 190),
-                                        TextDecoration.STRIKETHROUGH))
-                        .hoverEvent(Component.text("子领地无法手动迁移，会随父领地自动迁移")));
+                line.append(migrate.setDisabled(Translation.TUI_Migrate_SubDominion).build());
             }
             line.append(prefix + node.name);
             lines.add(line);

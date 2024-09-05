@@ -53,9 +53,6 @@ public class Menu {
         Line all = Line.create()
                 .append(Button.create(Translation.TUI_Menu_AllDominionButton).setExecuteCommand("/dominion all_dominion").build())
                 .append(Translation.TUI_Menu_AllDominionDescription);
-        Line config = Line.create()
-                .append(Button.create(Translation.TUI_Menu_ConfigButton).setExecuteCommand("/dominion sys_config").build())
-                .append(Translation.TUI_Menu_ConfigDescription);
         Line reload_cache = Line.create()
                 .append(Button.create(Translation.TUI_Menu_ReloadCacheButton).setExecuteCommand("/dominion reload_cache").build())
                 .append(Translation.TUI_Menu_ReloadCacheDescription);
@@ -78,7 +75,6 @@ public class Menu {
             view.add(Line.create().append(""));
             view.add(Line.create().append(Component.text(Translation.TUI_Menu_OpOnlySection.trans(), ViewStyles.main_color)));
             view.add(all);
-            view.add(config);
             view.add(reload_cache);
             view.add(reload_config);
         }
