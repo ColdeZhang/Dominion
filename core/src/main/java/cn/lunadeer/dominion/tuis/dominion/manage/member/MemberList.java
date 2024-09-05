@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.tuis.dominion.manage.member;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -32,29 +33,29 @@ public class MemberList {
 
     public static void show(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            Notification.error(sender, "用法: /dominion member list <领地名称> [页码]");
+            Notification.error(sender, Translation.TUI_MemberList_Usage);
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[2]);
         if (dominion == null) {
-            Notification.error(sender, "领地 %s 不存在", args[2]);
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
             return;
         }
         int page = getPage(args, 3);
         ListView view = ListView.create(10, "/dominion member list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
         List<MemberDTO> privileges = MemberDTO.select(dominion.getId());
-        view.title("领地 " + dominion.getName() + " 成员列表");
+        view.title(String.format(Translation.TUI_MemberList_Title.trans(), dominion.getName()));
         view.navigator(
                 Line.create()
-                        .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
-                        .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
-                        .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append("成员列表")
+                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
+                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
+                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
+                        .append(Translation.TUI_Navigation_MemberList)
         );
-        view.add(Line.create().append(Button.create("添加成员")
+        view.add(Line.create().append(Button.create(Translation.TUI_MemberList_AddButton)
                 .setExecuteCommand(CommandParser("/dominion member select_player %s", dominion.getName())).build()));
         for (MemberDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
@@ -74,11 +75,11 @@ public class MemberList {
                 }
             }
 
-            Button prev = Button.createGreen("权限")
-                    .setHoverText("配置成员权限")
+            Button prev = Button.createGreen(Translation.TUI_MemberList_FlagButton)
+                    .setHoverText(Translation.TUI_MemberList_FlagDescription)
                     .setExecuteCommand(CommandParser("/dominion member setting %s %s", dominion.getName(), p_player.getLastKnownName()));
-            Button remove = Button.createRed("移除")
-                    .setHoverText("将此成员移出（变为访客）")
+            Button remove = Button.createRed(Translation.TUI_MemberList_RemoveButton)
+                    .setHoverText(Translation.TUI_MemberList_RemoveDescription)
                     .setExecuteCommand(CommandParser("/dominion member remove %s %s", dominion.getName(), p_player.getLastKnownName()));
 
             if (!player.getUniqueId().equals(dominion.getOwner())) {
@@ -93,12 +94,12 @@ public class MemberList {
                     }
                 }
                 if (disable) {
-                    prev.setDisabled("你不是领地主人，无法编辑管理员权限");
-                    remove.setDisabled("你不是领地主人，无法移除管理员");
+                    prev.setDisabled(Translation.TUI_MemberList_NoPermissionSet);
+                    remove.setDisabled(Translation.TUI_MemberList_NoPermissionRemove);
                 }
             }
             if (group != null) {
-                prev.setDisabled(String.format("此成员属于权限组 %s 无法单独编辑权限", group.getName()));
+                prev.setDisabled(String.format(Translation.TUI_MemberList_BelongToGroup.trans(), group.getName()));
             }
             line.append(remove.build());
             line.append(prev.build());
@@ -109,11 +110,11 @@ public class MemberList {
     }
 
     private static final TextComponent adminTag = Component.text("[A]", Style.style(TextColor.color(97, 97, 210)))
-            .hoverEvent(Component.text("这是一个管理员"));
+            .hoverEvent(Component.text(Translation.TUI_MemberList_AdminTag.trans()));
     private static final TextComponent normalTag = Component.text("[N]", Style.style(TextColor.color(255, 255, 255)))
-            .hoverEvent(Component.text("这是一个普通成员"));
+            .hoverEvent(Component.text(Translation.TUI_MemberList_NormalTag.trans()));
     private static final TextComponent banTag = Component.text("[B]", Style.style(TextColor.color(255, 67, 0)))
-            .hoverEvent(Component.text("这是一个黑名单成员"));
+            .hoverEvent(Component.text(Translation.TUI_MemberList_BlacklistTag.trans()));
     private static final TextComponent groupTag = Component.text("[G]", Style.style(TextColor.color(0, 185, 153)))
-            .hoverEvent(Component.text("这个成员在一个权限组里"));
+            .hoverEvent(Component.text(Translation.TUI_MemberList_GroupTag.trans()));
 }

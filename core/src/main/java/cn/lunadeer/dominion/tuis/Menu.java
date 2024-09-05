@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.tuis;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -25,53 +26,57 @@ public class Menu {
         }
 
         Line create = Line.create()
-                .append(Button.create("创建领地").setExecuteCommand("/dominion cui_create").build())
-                .append("以你为中心自动创建一个新的领地");
+                .append(Button.create(Translation.TUI_Menu_CreateDominionButton).setExecuteCommand("/dominion cui_create").build())
+                .append(Translation.TUI_Menu_CreateDominionDescription);
         Line list = Line.create()
-                .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
-                .append("查看我的领地");
+                .append(Button.create(Translation.TUI_Menu_MyDominionButton).setExecuteCommand("/dominion list").build())
+                .append(Translation.TUI_Menu_MyDominionDescription);
         Line title = Line.create()
-                .append(Button.create("称号列表").setExecuteCommand("/dominion title_list").build())
-                .append("查看/使用权限组称号");
+                .append(Button.create(Translation.TUI_Menu_TitleListButton).setExecuteCommand("/dominion title_list").build())
+                .append(Translation.TUI_Menu_TitleListDescription);
         Line template = Line.create()
-                .append(Button.create("模板列表").setExecuteCommand("/dominion template list").build())
-                .append("成员权限模板列表");
-//        Line help = Line.create()
-//                .append(Button.create("指令帮助").setExecuteCommand("/dominion help").build())
-//                .append("查看指令帮助");
+                .append(Button.create(Translation.TUI_Menu_TemplateListButton).setExecuteCommand("/dominion template list").build())
+                .append(Translation.TUI_Menu_TemplateListDescription);
+        Line help = Line.create()
+                .append(Button.create(Translation.TUI_Menu_CommandHelpButton).setOpenURL(
+                        String.format("https://dominion.lunadeer.cn/%s/command-list.html", Dominion.config.getLanguage())
+                ).build())
+                .append(Translation.TUI_Menu_CommandHelpDescription);
         Line link = Line.create()
-                .append(Button.create("使用文档").setOpenURL("https://ssl.lunadeer.cn:14448/doc/23/").build())
-                .append("在浏览器中打开使用文档");
+                .append(Button.create(Translation.TUI_Menu_DocumentButton).setOpenURL(
+                        String.format("https://dominion.lunadeer.cn/%s", Dominion.config.getLanguage())
+                ).build())
+                .append(Translation.TUI_Menu_DocumentDescription);
         Line migrate = Line.create()
-                .append(Button.create("迁移数据").setExecuteCommand("/dominion migrate_list").build())
-                .append("把你的领地从Residence迁移到Dominion");
+                .append(Button.create(Translation.TUI_Menu_MigrateButton).setExecuteCommand("/dominion migrate_list").build())
+                .append(Translation.TUI_Menu_MigrateDescription);
         Line all = Line.create()
-                .append(Button.create("所有领地").setExecuteCommand("/dominion all_dominion").build())
-                .append("查看所有领地");
+                .append(Button.create(Translation.TUI_Menu_AllDominionButton).setExecuteCommand("/dominion all_dominion").build())
+                .append(Translation.TUI_Menu_AllDominionDescription);
         Line config = Line.create()
-                .append(Button.create("系统配置").setExecuteCommand("/dominion sys_config").build())
-                .append("查看/修改系统配置");
+                .append(Button.create(Translation.TUI_Menu_ConfigButton).setExecuteCommand("/dominion sys_config").build())
+                .append(Translation.TUI_Menu_ConfigDescription);
         Line reload_cache = Line.create()
-                .append(Button.create("重载缓存").setExecuteCommand("/dominion reload_cache").build())
-                .append("手动刷新缓存可解决一些玩家操作无效问题，不建议频繁操作");
+                .append(Button.create(Translation.TUI_Menu_ReloadCacheButton).setExecuteCommand("/dominion reload_cache").build())
+                .append(Translation.TUI_Menu_ReloadCacheDescription);
         Line reload_config = Line.create()
-                .append(Button.create("重载配置").setExecuteCommand("/dominion reload_config").build())
-                .append("重载配置文件");
+                .append(Button.create(Translation.TUI_Menu_ReloadConfigButton).setExecuteCommand("/dominion reload_config").build())
+                .append(Translation.TUI_Menu_ReloadConfigDescription);
         ListView view = ListView.create(10, "/dominion menu");
-        view.title("Dominion 领地系统");
-        view.navigator(Line.create().append("主菜单"));
+        view.title(Translation.TUI_Menu_Title);
+        view.navigator(Line.create().append(Translation.TUI_Navigation_Menu));
         view.add(create);
         view.add(list);
         if (Dominion.config.getGroupTitleEnable()) view.add(title);
         view.add(template);
-//        view.add(help);
+        view.add(help);
         view.add(link);
         if (Dominion.config.getResidenceMigration()) {
             view.add(migrate);
         }
         if (player.isOp()) {
             view.add(Line.create().append(""));
-            view.add(Line.create().append(Component.text("--- 以下选项仅OP可见 ---", ViewStyles.main_color)));
+            view.add(Line.create().append(Component.text(Translation.TUI_Menu_OpOnlySection.trans(), ViewStyles.main_color)));
             view.add(all);
             view.add(config);
             view.add(reload_cache);

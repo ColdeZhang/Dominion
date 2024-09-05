@@ -517,6 +517,257 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "<>表示必填参数 []表示可选参数")
     public static i18n TUI_CommandHelp_SubTitle;
 
+    @i18nField(defaultValue = "主菜单")
+    public static i18n TUI_Navigation_Menu;
+    @i18nField(defaultValue = "我的领地")
+    public static i18n TUI_Navigation_DominionList;
+    @i18nField(defaultValue = "管理界面")
+    public static i18n TUI_Navigation_Manage;
+    @i18nField(defaultValue = "环境设置")
+    public static i18n TUI_Navigation_EnvSetting;
+    @i18nField(defaultValue = "访客权限")
+    public static i18n TUI_Navigation_GuestSetting;
+    @i18nField(defaultValue = "成员列表")
+    public static i18n TUI_Navigation_MemberList;
+    @i18nField(defaultValue = "成员权限")
+    public static i18n TUI_Navigation_MemberSetting;
+    @i18nField(defaultValue = "权限组列表")
+    public static i18n TUI_Navigation_GroupList;
+    @i18nField(defaultValue = "权限组管理")
+    public static i18n TUI_Navigation_GroupSetting;
+
+    @i18nField(defaultValue = "管理")
+    public static i18n TUI_ManageButton;
+    @i18nField(defaultValue = "删除")
+    public static i18n TUI_DeleteButton;
+    @i18nField(defaultValue = "搜索")
+    public static i18n TUI_SearchButton;
+    @i18nField(defaultValue = "返回")
+    public static i18n TUI_BackButton;
+    @i18nField(defaultValue = "选择")
+    public static i18n TUI_SelectButton;
+    @i18nField(defaultValue = "编辑")
+    public static i18n TUI_EditButton;
+
+    @i18nField(defaultValue = "Dominion 领地系统")
+    public static i18n TUI_Menu_Title;
+    @i18nField(defaultValue = "创建领地")
+    public static i18n TUI_Menu_CreateDominionButton;
+    @i18nField(defaultValue = "以你为中心自动创建一个新的领地")
+    public static i18n TUI_Menu_CreateDominionDescription;
+    @i18nField(defaultValue = "我的领地")
+    public static i18n TUI_Menu_MyDominionButton;
+    @i18nField(defaultValue = "查看我的领地列表")
+    public static i18n TUI_Menu_MyDominionDescription;
+    @i18nField(defaultValue = "称号列表")
+    public static i18n TUI_Menu_TitleListButton;
+    @i18nField(defaultValue = "查看/使用权限组称号")
+    public static i18n TUI_Menu_TitleListDescription;
+    @i18nField(defaultValue = "模板列表")
+    public static i18n TUI_Menu_TemplateListButton;
+    @i18nField(defaultValue = "成员权限模板列表")
+    public static i18n TUI_Menu_TemplateListDescription;
+    @i18nField(defaultValue = "指令帮助")
+    public static i18n TUI_Menu_CommandHelpButton;
+    @i18nField(defaultValue = "查看指令列表")
+    public static i18n TUI_Menu_CommandHelpDescription;
+    @i18nField(defaultValue = "使用文档")
+    public static i18n TUI_Menu_DocumentButton;
+    @i18nField(defaultValue = "在浏览器中打开使用文档")
+    public static i18n TUI_Menu_DocumentDescription;
+    @i18nField(defaultValue = "迁移数据")
+    public static i18n TUI_Menu_MigrateButton;
+    @i18nField(defaultValue = "把你的领地从Residence迁移到Dominion")
+    public static i18n TUI_Menu_MigrateDescription;
+    @i18nField(defaultValue = "所有领地")
+    public static i18n TUI_Menu_AllDominionButton;
+    @i18nField(defaultValue = "查看所有领地")
+    public static i18n TUI_Menu_AllDominionDescription;
+    @i18nField(defaultValue = "系统配置")
+    public static i18n TUI_Menu_ConfigButton;
+    @i18nField(defaultValue = "查看/修改系统配置")
+    public static i18n TUI_Menu_ConfigDescription;
+    @i18nField(defaultValue = "重载缓存")
+    public static i18n TUI_Menu_ReloadCacheButton;
+    @i18nField(defaultValue = "手动刷新缓存可解决一些玩家操作无效问题，不建议频繁操作")
+    public static i18n TUI_Menu_ReloadCacheDescription;
+    @i18nField(defaultValue = "重载配置")
+    public static i18n TUI_Menu_ReloadConfigButton;
+    @i18nField(defaultValue = "重载配置文件")
+    public static i18n TUI_Menu_ReloadConfigDescription;
+    @i18nField(defaultValue = "--- 以下选项仅OP可见 ---")
+    public static i18n TUI_Menu_OpOnlySection;
+
+    @i18nField(defaultValue = "我的领地列表")
+    public static i18n TUI_DominionList_Title;
+    @i18nField(defaultValue = "--- 以下为你拥有管理员权限的领地 ---")
+    public static i18n TUI_DominionList_AdminSection;
+
+    @i18nField(defaultValue = "领地 %s 管理界面")
+    public static i18n TUI_DominionManage_Title;
+    @i18nField(defaultValue = "详细信息")
+    public static i18n TUI_DominionManage_InfoButton;
+    @i18nField(defaultValue = "查看领地详细信息")
+    public static i18n TUI_DominionManage_InfoDescription;
+    @i18nField(defaultValue = "环境设置")
+    public static i18n TUI_DominionManage_EnvSettingButton;
+    @i18nField(defaultValue = "设置领地内的一些环境行为")
+    public static i18n TUI_DominionManage_EnvSettingDescription;
+    @i18nField(defaultValue = "访客权限")
+    public static i18n TUI_DominionManage_GuestSettingButton;
+    @i18nField(defaultValue = "配置访客在此领地的权限")
+    public static i18n TUI_DominionManage_GuestSettingDescription;
+    @i18nField(defaultValue = "成员管理")
+    public static i18n TUI_DominionManage_MemberListButton;
+    @i18nField(defaultValue = "管理此领地成员的权限")
+    public static i18n TUI_DominionManage_MemberListDescription;
+    @i18nField(defaultValue = "权限组")
+    public static i18n TUI_DominionManage_GroupListButton;
+    @i18nField(defaultValue = "管理此领地的权限组")
+    public static i18n TUI_DominionManage_GroupListDescription;
+    @i18nField(defaultValue = "设置传送点")
+    public static i18n TUI_DominionManage_SetTpLocationButton;
+    @i18nField(defaultValue = "设置你当前位置为此领地传送点")
+    public static i18n TUI_DominionManage_SetTpLocationDescription;
+    @i18nField(defaultValue = "重命名")
+    public static i18n TUI_DominionManage_RenameButton;
+    @i18nField(defaultValue = "重命名领地")
+    public static i18n TUI_DominionManage_RenameDescription;
+    @i18nField(defaultValue = "编辑欢迎提示语")
+    public static i18n TUI_DominionManage_EditJoinMessageButton;
+    @i18nField(defaultValue = "当玩家进入领地时显示的消息")
+    public static i18n TUI_DominionManage_EditJoinMessageDescription;
+    @i18nField(defaultValue = "编辑离开提示语")
+    public static i18n TUI_DominionManage_EditLeaveMessageButton;
+    @i18nField(defaultValue = "当玩家离开领地时显示的消息")
+    public static i18n TUI_DominionManage_EditLeaveMessageDescription;
+    @i18nField(defaultValue = "设置地块颜色")
+    public static i18n TUI_DominionManage_SetMapColorButton;
+    @i18nField(defaultValue = "设置卫星地图上的地块颜色")
+    public static i18n TUI_DominionManage_SetMapColorDescription;
+    @i18nField(defaultValue = "你不在任何领地内，请指定领地名称 /dominion manage <领地名称>")
+    public static i18n TUI_DominionManage_NotInDominion;
+
+    @i18nField(defaultValue = "领地 %s 环境设置")
+    public static i18n TUI_EnvSetting_Title;
+    @i18nField(defaultValue = "用法: /dominion env_setting <领地名称> [页码]")
+    public static i18n TUI_EnvSetting_Usage;
+
+    @i18nField(defaultValue = "领地 %s 访客权限")
+    public static i18n TUI_GuestSetting_Title;
+    @i18nField(defaultValue = "用法: /dominion guest_setting <领地名称> [页码]")
+    public static i18n TUI_GuestSetting_Usage;
+
+    @i18nField(defaultValue = "领地 %s 的尺寸信息")
+    public static i18n TUI_SizeInfo_Title;
+    @i18nField(defaultValue = "领地所有者：")
+    public static i18n TUI_SizeInfo_Owner;
+    @i18nField(defaultValue = "领地大小：")
+    public static i18n TUI_SizeInfo_Size;
+    @i18nField(defaultValue = "中心坐标：")
+    public static i18n TUI_SizeInfo_Center;
+    @i18nField(defaultValue = "垂直高度：")
+    public static i18n TUI_SizeInfo_Vertical;
+    @i18nField(defaultValue = "Y轴坐标：")
+    public static i18n TUI_SizeInfo_VertY;
+    @i18nField(defaultValue = "水平面积：")
+    public static i18n TUI_SizeInfo_Square;
+    @i18nField(defaultValue = "领地体积：")
+    public static i18n TUI_SizeInfo_Volume;
+    @i18nField(defaultValue = "传送点坐标：")
+    public static i18n TUI_SizeInfo_TpLocation;
+    @i18nField(defaultValue = "无")
+    public static i18n TUI_SizeInfo_NoneTp;
+    @i18nField(defaultValue = "你不在任何领地内，请指定领地名称 /dominion info <领地名称>")
+    public static i18n TUI_SizeInfo_Usage;
+
+    @i18nField(defaultValue = "领地 %s 成员列表")
+    public static i18n TUI_MemberList_Title;
+    @i18nField(defaultValue = "添加成员")
+    public static i18n TUI_MemberList_AddButton;
+    @i18nField(defaultValue = "权限")
+    public static i18n TUI_MemberList_FlagButton;
+    @i18nField(defaultValue = "配置成员权限")
+    public static i18n TUI_MemberList_FlagDescription;
+    @i18nField(defaultValue = "移除")
+    public static i18n TUI_MemberList_RemoveButton;
+    @i18nField(defaultValue = "将此成员移出（变为访客）")
+    public static i18n TUI_MemberList_RemoveDescription;
+    @i18nField(defaultValue = "你不是领地主人，无法编辑管理员权限")
+    public static i18n TUI_MemberList_NoPermissionSet;
+    @i18nField(defaultValue = "你不是领地主人，无法移除管理员")
+    public static i18n TUI_MemberList_NoPermissionRemove;
+    @i18nField(defaultValue = "此成员属于权限组 %s 无法单独编辑权限")
+    public static i18n TUI_MemberList_BelongToGroup;
+    @i18nField(defaultValue = "用法: /dominion member list <领地名称> [页码]")
+    public static i18n TUI_MemberList_Usage;
+    @i18nField(defaultValue = "这是一个管理员")
+    public static i18n TUI_MemberList_AdminTag;
+    @i18nField(defaultValue = "这是一个普通成员")
+    public static i18n TUI_MemberList_NormalTag;
+    @i18nField(defaultValue = "这是一个黑名单成员")
+    public static i18n TUI_MemberList_BlacklistTag;
+    @i18nField(defaultValue = "这个成员在一个权限组里")
+    public static i18n TUI_MemberList_GroupTag;
+
+    @i18nField(defaultValue = "玩家 %s 在领地 %s 的权限设置")
+    public static i18n TUI_MemberSetting_Title;
+    @i18nField(defaultValue = "套用模板")
+    public static i18n TUI_MemberSetting_ApplyTemplateButton;
+    @i18nField(defaultValue = "选择一个权限模板套用")
+    public static i18n TUI_MemberSetting_ApplyTemplateDescription;
+    @i18nField(defaultValue = "用法: /dominion member setting <领地名称> <玩家名称> [页码]")
+    public static i18n TUI_MemberSetting_Usage;
+
+    @i18nField(defaultValue = "选择玩家添加为成员")
+    public static i18n TUI_SelectPlayer_Title;
+    @i18nField(defaultValue = "只能选择已经登录过的玩家")
+    public static i18n TUI_SelectPlayer_Description;
+    @i18nField(defaultValue = "用法: /dominion member select_player <领地名称> [页码]")
+    public static i18n TUI_SelectPlayer_Usage;
+
+    @i18nField(defaultValue = "选择一个模板")
+    public static i18n TUI_SelectTemplate_Title;
+    @i18nField(defaultValue = "套用在领地 %s 的成员 %s 身上")
+    public static i18n TUI_SelectTemplate_Description;
+    @i18nField(defaultValue = "用法: /dominion member select_template <领地名称> <玩家名称>  [页码]")
+    public static i18n TUI_SelectTemplate_Usage;
+
+    @i18nField(defaultValue = "权限组列表")
+    public static i18n TUI_GroupList_Title;
+    @i18nField(defaultValue = "创建权限组")
+    public static i18n TUI_GroupList_CreateButton;
+    @i18nField(defaultValue = "创建一个新的权限组")
+    public static i18n TUI_GroupList_CreateDescription;
+    @i18nField(defaultValue = "删除权限组 %s")
+    public static i18n TUI_GroupList_DeleteDescription;
+    @i18nField(defaultValue = "编辑权限组 %s")
+    public static i18n TUI_GroupList_EditDescription;
+    @i18nField(defaultValue = "添加成员到权限组 %s")
+    public static i18n TUI_GroupList_AddMemberDescription;
+    @i18nField(defaultValue = "把 %s 移出权限组 %s")
+    public static i18n TUI_GroupList_RemoveMemberDescription;
+    @i18nField(defaultValue = "用法: /dominion group list <领地名称> [页码]")
+    public static i18n TUI_GroupList_Usage;
+
+    @i18nField(defaultValue = "重命名此权限组")
+    public static i18n TUI_GroupSetting_RenameButton;
+    @i18nField(defaultValue = "用法: /dominion group setting <领地名称> <权限组名称> [页码]")
+    public static i18n TUI_GroupSetting_Usage;
+    @i18nField(defaultValue = "权限组 ")
+    public static i18n TUI_GroupSetting_TitleL;
+    @i18nField(defaultValue = " 管理")
+    public static i18n TUI_GroupSetting_TitleR;
+    @i18nField(defaultValue = "重命名权限组 %s")
+    public static i18n TUI_GroupSetting_RenameDescription;
+
+    @i18nField(defaultValue = "选择成员")
+    public static i18n TUI_SelectMember_Title;
+    @i18nField(defaultValue = "选择成员添加到权限组 %s")
+    public static i18n TUI_SelectMember_Description;
+    @i18nField(defaultValue = "用法: /dominion group select_member <领地名称> <权限组名称> [回显页码] [页码]")
+    public static i18n TUI_SelectMember_Usage;
+
     @i18nField(defaultValue = "输入要创建的领地名称")
     public static i18n CUI_Input_CreateDominion;
     @i18nField(defaultValue = "输入要创建的权限组名称")
@@ -643,6 +894,11 @@ public class Translation extends Localization {
     public static i18n Config_Comment_GroupTitleColor;
     @i18nField(defaultValue = "性能测试计时器")
     public static i18n Config_Comment_PerformanceTimer;
+
+    @i18nField(defaultValue = "管理员")
+    public static i18n Flags_admin_DisplayName;
+    @i18nField(defaultValue = "管理领地内的其他成员权限")
+    public static i18n Flags_admin_Description;
 
 
     public Translation(JavaPlugin plugin) {

@@ -549,6 +549,17 @@ public class ConfigManager {
         _plugin.saveConfig();
     }
 
+    public String getLanguage() {
+        return _language;
+    }
+
+    public void setLanguage(String language) {
+        _language = language;
+        _file.set("Language", language);
+        _plugin.saveConfig();
+        Translation.instance.loadLocale(language);
+    }
+
     private final Dominion _plugin;
     private FileConfiguration _file;
     private Boolean _debug;

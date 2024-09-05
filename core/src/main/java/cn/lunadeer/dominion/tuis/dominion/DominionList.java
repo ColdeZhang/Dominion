@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.tuis.dominion;
 
 import cn.lunadeer.dominion.DominionNode;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -25,16 +26,18 @@ public class DominionList {
         int page = getPage(args, 1);
         ListView view = ListView.create(10, "/dominion list");
 
-        view.title("我的领地列表");
-        view.navigator(Line.create().append(Button.create("主菜单").setExecuteCommand("/dominion menu").build()).append("我的领地"));
+        view.title(Translation.TUI_DominionList_Title);
+        view.navigator(Line.create()
+                .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
+                .append(Translation.TUI_Navigation_DominionList));
         view.addLines(BuildTreeLines(DominionNode.BuildNodeTree(-1, DominionDTO.selectByOwner(player.getUniqueId())), 0));
         List<String> admin_dominions = playerAdminDominions(sender);
         if (!admin_dominions.isEmpty()) {
             view.add(Line.create().append(""));
-            view.add(Line.create().append(Component.text("--- 以下为你拥有管理员权限的领地 ---", ViewStyles.main_color)));
+            view.add(Line.create().append(Component.text(Translation.TUI_DominionList_AdminSection.trans(), ViewStyles.main_color)));
         }
         for (String dominion : admin_dominions) {
-            TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + dominion).build();
+            TextComponent manage = Button.createGreen(Translation.TUI_ManageButton).setExecuteCommand("/dominion manage " + dominion).build();
             view.add(Line.create().append(manage).append(dominion));
         }
         view.showOn(player, page);
@@ -45,8 +48,8 @@ public class DominionList {
         StringBuilder prefix = new StringBuilder();
         prefix.append(" | ".repeat(Math.max(0, depth)));
         for (DominionNode node : dominionTree) {
-            TextComponent manage = Button.createGreen("管理").setExecuteCommand("/dominion manage " + node.getDominion().getName()).build();
-            TextComponent delete = Button.createRed("删除").setExecuteCommand("/dominion delete " + node.getDominion().getName()).build();
+            TextComponent manage = Button.createGreen(Translation.TUI_ManageButton).setExecuteCommand("/dominion manage " + node.getDominion().getName()).build();
+            TextComponent delete = Button.createRed(Translation.TUI_DeleteButton).setExecuteCommand("/dominion delete " + node.getDominion().getName()).build();
             Line line = Line.create().append(delete).append(manage).append(prefix + node.getDominion().getName());
             lines.add(line);
             lines.addAll(BuildTreeLines(node.getChildren(), depth + 1));

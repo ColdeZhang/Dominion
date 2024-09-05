@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.TuiUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -31,44 +32,44 @@ public class GroupList {
 
     public static void show(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            Notification.error(sender, "用法: /dominion group list <领地名称> [页码]");
+            Notification.error(sender, Translation.TUI_GroupList_Usage);
             return;
         }
         Player player = playerOnly(sender);
         if (player == null) return;
         DominionDTO dominion = DominionDTO.select(args[2]);
         if (dominion == null) {
-            Notification.error(sender, "领地 %s 不存在", args[2]);
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
             return;
         }
         if (noAuthToManage(player, dominion)) return;
         int page = TuiUtils.getPage(args, 3);
         List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
         ListView view = ListView.create(10, "/dominion group list " + dominion.getName());
-        view.title("权限组列表");
+        view.title(Translation.TUI_GroupList_Title);
         view.navigator(
                 Line.create()
-                        .append(Button.create("主菜单").setExecuteCommand("/dominion menu").build())
-                        .append(Button.create("我的领地").setExecuteCommand("/dominion list").build())
-                        .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append("权限组列表")
+                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
+                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
+                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
+                        .append(Translation.TUI_Navigation_GroupList)
         );
 
-        Button create_btn = Button.createGreen("创建权限组")
-                .setHoverText("创建一个新的权限组")
+        Button create_btn = Button.createGreen(Translation.TUI_GroupList_CreateButton)
+                .setHoverText(Translation.TUI_GroupList_CreateDescription)
                 .setExecuteCommand("/dominion cui_create_group " + dominion.getName());
         view.add(new Line().append(create_btn.build()));
 
         for (GroupDTO group : groups) {
             Line line = new Line();
-            Button del = Button.createRed("删除")
-                    .setHoverText("删除权限组 " + group.getName())
+            Button del = Button.createRed(Translation.TUI_DeleteButton)
+                    .setHoverText(String.format(Translation.TUI_GroupList_DeleteDescription.trans(), group.getName()))
                     .setExecuteCommand("/dominion group delete " + dominion.getName() + " " + group.getName());
-            Button edit = Button.create("编辑")
-                    .setHoverText("编辑权限组 " + group.getName())
+            Button edit = Button.create(Translation.TUI_EditButton)
+                    .setHoverText(String.format(Translation.TUI_GroupList_EditDescription.trans(), group.getName()))
                     .setExecuteCommand("/dominion group setting " + dominion.getName() + " " + group.getName());
             Button add = Button.createGreen("+")
-                    .setHoverText("添加成员到权限组 " + group.getName())
+                    .setHoverText(String.format(Translation.TUI_GroupList_AddMemberDescription.trans(), group.getName()))
                     .setExecuteCommand("/dominion group select_member " + dominion.getName() + " " + group.getName() + " " + page);
             line.append(del.build()).append(edit.build()).append(group.getNameColoredComponent()).append(add.build());
             view.add(line);
@@ -78,7 +79,9 @@ public class GroupList {
                 PlayerDTO p = PlayerDTO.select(playerPrivilege.getPlayerUUID());
                 if (p == null) continue;
                 Button remove = Button.createRed("-")
-                        .setHoverText("把 " + p.getLastKnownName() + " 移出权限组 " + group.getName())
+                        .setHoverText(
+                                String.format(Translation.TUI_GroupList_RemoveMemberDescription.trans(), p.getLastKnownName(), group.getName())
+                        )
                         .setExecuteCommand("/dominion group remove_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + page);
                 Line playerLine = new Line().setDivider("");
                 playerLine.append(Component.text("        "));

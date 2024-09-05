@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.tuis.dominion.manage;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.View;
@@ -20,7 +21,7 @@ public class SizeInfo {
         if (player == null) return;
         DominionDTO dominion = getDominionNameArg_1(player, args);
         if (dominion == null) {
-            Notification.error(sender, "你不在任何领地内，请指定领地名称 /dominion info <领地名称>");
+            Notification.error(sender, Translation.TUI_SizeInfo_Usage);
             return;
         }
         PlayerDTO owner = PlayerController.getPlayerDTO(dominion.getOwner());
@@ -31,22 +32,22 @@ public class SizeInfo {
         Integer y2 = dominion.getY2();
         Integer z2 = dominion.getZ2();
         View view = View.create();
-        view.title("领地 " + dominion.getName() + " 的尺寸信息")
-                .subtitle("领地所有者：" + owner.getLastKnownName())
-                .addLine(Line.create().append("领地大小：").append(dominion.getWidthX() + " x " + dominion.getHeight() + " x " + dominion.getWidthZ()))
-                .addLine(Line.create().append("中心坐标：").append((x1 + (x2 - x1) / 2) + " " + (y1 + (y2 - y1) / 2) + " " + (z1 + (z2 - z1) / 2)))
-                .addLine(Line.create().append("垂直高度：").append(String.valueOf(dominion.getHeight())))
-                .addLine(Line.create().append("Y轴坐标：").append(y1 + " ~ " + y2))
-                .addLine(Line.create().append("水平面积：").append(String.valueOf(dominion.getSquare())))
-                .addLine(Line.create().append("领地体积：").append(String.valueOf(dominion.getVolume())))
-                .addLine(Line.create().append("传送点坐标：").append(
+        view.title(String.format(Translation.TUI_SizeInfo_Title.trans(), dominion.getName()))
+                .subtitle(Translation.TUI_SizeInfo_Owner.trans() + owner.getLastKnownName())
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_Size).append(dominion.getWidthX() + " x " + dominion.getHeight() + " x " + dominion.getWidthZ()))
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_Center).append((x1 + (x2 - x1) / 2) + " " + (y1 + (y2 - y1) / 2) + " " + (z1 + (z2 - z1) / 2)))
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_Vertical).append(String.valueOf(dominion.getHeight())))
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_VertY).append(y1 + " ~ " + y2))
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_Square).append(String.valueOf(dominion.getSquare())))
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_Volume).append(String.valueOf(dominion.getVolume())))
+                .addLine(Line.create().append(Translation.TUI_SizeInfo_TpLocation).append(
                         dominion.getTpLocation() == null ?
-                                "无" :
+                                Translation.TUI_SizeInfo_NoneTp.trans() :
                                 dominion.getTpLocation().getX() + " " + dominion.getTpLocation().getY() + " " + dominion.getTpLocation().getZ()
                 ))
                 .actionBar(Line.create()
-                        .append(Button.create("管理界面").setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create("访客权限").setExecuteCommand("/dominion guest_setting " + dominion.getName()).build()))
+                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
+                        .append(Button.create(Translation.TUI_Navigation_GuestSetting).setExecuteCommand("/dominion guest_setting " + dominion.getName()).build()))
                 .showOn(player);
         Particle.showBorder(player, dominion);
     }
