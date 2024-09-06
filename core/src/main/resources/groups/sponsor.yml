@@ -9,3 +9,14 @@ Vert: false
 Price: 10.0
 OnlyXZ: false
 Refund: 0.85
+WorldSettings:
+  some_world_name:
+    MinY: -64
+    MaxY: 320
+    SizeX: 128
+    SizeY: 64
+    SizeZ: 128
+    Amount: 10
+    Depth: 3
+    Vert: false
+    Allow: false

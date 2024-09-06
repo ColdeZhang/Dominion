@@ -21,6 +21,17 @@ Limit:
   Depth: 3
   Vert: false
   OpByPass: true
+  WorldSettings:
+    some_world_name:
+      MinY: -64
+      MaxY: 320
+      SizeX: 128
+      SizeY: 64
+      SizeZ: 128
+      Amount: 10
+      Depth: 3
+      Vert: false
+      Allow: false
 
 Teleport:
   Enable: true
