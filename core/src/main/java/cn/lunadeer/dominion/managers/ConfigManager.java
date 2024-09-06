@@ -133,6 +133,7 @@ public class ConfigManager {
         _file.set("Limit.OpByPass", _limit_op_bypass);
         _file.setInlineComments("Limit.OpByPass", List.of(Translation.Config_Comment_OpBypass.trans()));
         _file.set("Limit.WorldSettings", groupLimits.get("default").getWorldSettings());
+        _file.setInlineComments("Limit.WorldSettings", List.of(Translation.Config_Comment_WorldSettings.trans()));
 
         _file.set("Teleport.Enable", _tp_enable);
         _file.set("Teleport.Delay", _tp_delay);
