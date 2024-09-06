@@ -808,9 +808,6 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "来自领地：")
     public static i18n TUI_TitleList_FromDominion;
 
-    @i18nField(defaultValue = "Dominion 系统配置")
-    public static i18n TUI_Config_Title;
-
     @i18nField(defaultValue = "输入要创建的领地名称")
     public static i18n CUI_Input_CreateDominion;
     @i18nField(defaultValue = "输入要创建的权限组名称")
@@ -907,8 +904,6 @@ public class Translation extends Localization {
     public static i18n Config_Comment_ZeroDisabled;
     @i18nField(defaultValue = "是否自动延伸到 MaxY 和 MinY")
     public static i18n Config_Comment_Vert;
-    @i18nField(defaultValue = "不允许圈地的世界列表")
-    public static i18n Config_Comment_DisabledWorlds;
     @i18nField(defaultValue = "是否允许OP无视领地限制")
     public static i18n Config_Comment_OpBypass;
     @i18nField(defaultValue = "传送延迟 秒")
@@ -941,6 +936,22 @@ public class Translation extends Localization {
     public static i18n Config_Comment_GroupTitleColor;
     @i18nField(defaultValue = "性能测试计时器")
     public static i18n Config_Comment_PerformanceTimer;
+    @i18nField(defaultValue = ">---------------------------------<")
+    public static i18n Config_Comment_GroupLine1;
+    @i18nField(defaultValue = "|       圈地限制特殊权限组配置       |")
+    public static i18n Config_Comment_GroupLine2;
+    @i18nField(defaultValue = ">---------------------------------<")
+    public static i18n Config_Comment_GroupLine3;
+    @i18nField(defaultValue = "此文件可以作为模板，你可以将此文件复制后重命名为你想要的")
+    public static i18n Config_Comment_GroupLine4;
+    @i18nField(defaultValue = "权限组名，然后修改里面的配置如果你想给赞助玩家（或者VIP）")
+    public static i18n Config_Comment_GroupLine5;
+    @i18nField(defaultValue = "一些特殊优惠，例如更少的圈地价格、更大的领地等，你可以在")
+    public static i18n Config_Comment_GroupLine6;
+    @i18nField(defaultValue = "这里配置。详细说明参阅以下链接：")
+    public static i18n Config_Comment_GroupLine7;
+    @i18nField(defaultValue = "> https://dominion.lunadeer.cn/%s/operator/privilege.html")
+    public static i18n Config_Comment_GroupLine8DocumentAddress;
 
     @i18nField(defaultValue = "管理员")
     public static i18n Flags_admin_DisplayName;

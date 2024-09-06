@@ -1,16 +1,18 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class GroupLimit {
-    private final YamlConfiguration config;
+    private YamlConfiguration config;
     private final File file_path;
     private Integer min_y;
     private Integer max_y;
@@ -20,7 +22,6 @@ public class GroupLimit {
     private Integer amount;
     private Integer depth;
     private Boolean vert;
-    private List<String> world_black_list;
     private Double price;
     private Boolean only_xz;
     private Double refund;
@@ -33,52 +34,52 @@ public class GroupLimit {
     public GroupLimit(File filePath) {
         this.file_path = filePath;
         config = YamlConfiguration.loadConfiguration(this.file_path);
-        setLimitMinY(config.getInt("MinY", -64));
-        setLimitMaxY(config.getInt("MaxY", 320));
+        min_y = config.getInt("MinY", -64);
+        max_y = config.getInt("MaxY", 320);
         if (getLimitMinY() >= getLimitMaxY()) {
             XLogger.err(Translation.Config_Check_GroupMinYError, this.file_path.getName());
             setLimitMinY(-64);
             setLimitMaxY(320);
         }
-        setLimitSizeX(config.getInt("SizeX", 128));
+        size_x = config.getInt("SizeX", 128);
         if (getLimitSizeX() <= 4 && getLimitSizeX() != -1) {
             XLogger.err(Translation.Config_Check_GroupSizeXError, this.file_path.getName());
             setLimitSizeX(128);
         }
-        setLimitSizeY(config.getInt("SizeY", 64));
+        size_y = config.getInt("SizeY", 64);
         if (getLimitSizeY() <= 4 && getLimitSizeY() != -1) {
             XLogger.err(Translation.Config_Check_GroupSizeYError, this.file_path.getName());
             setLimitSizeY(64);
         }
-        setLimitSizeZ(config.getInt("SizeZ", 128));
+        size_z = config.getInt("SizeZ", 128);
         if (getLimitSizeZ() <= 4 && getLimitSizeZ() != -1) {
             XLogger.err(Translation.Config_Check_GroupSizeZError, this.file_path.getName());
             setLimitSizeZ(128);
         }
-        setLimitAmount(config.getInt("Amount", 10));
+        amount = config.getInt("Amount", 10);
         if (getLimitAmount() <= 0 && getLimitAmount() != -1) {
             XLogger.err(Translation.Config_Check_GroupAmountError, this.file_path.getName());
             setLimitAmount(10);
         }
-        setLimitDepth(config.getInt("Depth", 3));
+        depth = config.getInt("Depth", 3);
         if (getLimitDepth() <= 0 && getLimitDepth() != -1) {
             XLogger.err(Translation.Config_Check_GroupDepthError, this.file_path.getName());
             setLimitDepth(3);
         }
-        setLimitVert(config.getBoolean("Vert", false));
-        setWorldBlackList(config.getStringList("WorldBlackList"));
-        setPrice(config.getDouble("Price", 10.0));
+        vert = config.getBoolean("Vert", false);
+        price = config.getDouble("Price", 10.0);
         if (getPrice() < 0.0) {
             XLogger.err(Translation.Config_Check_GroupPriceError, this.file_path.getName());
             setPrice(10.0);
         }
-        setPriceOnlyXZ(config.getBoolean("OnlyXZ", false));
-        setRefundRatio(config.getDouble("Refund", 0.85));
+        only_xz = config.getBoolean("OnlyXZ", false);
+        refund = config.getDouble("Refund", 0.85);
         if (getRefundRatio() < 0.0 || getRefundRatio() > 1.0) {
             XLogger.err(Translation.Config_Check_GroupRefundError, this.file_path.getName());
             setRefundRatio(0.85);
         }
         save(); // 保存一次，确保文件中的数据是合法的
+        saveAll();
     }
 
     public Integer getLimitMinY() {
@@ -111,10 +112,6 @@ public class GroupLimit {
 
     public Boolean getLimitVert() {
         return vert;
-    }
-
-    public List<String> getWorldBlackList() {
-        return world_black_list;
     }
 
     public Double getPrice() {
@@ -178,12 +175,6 @@ public class GroupLimit {
         this.save();
     }
 
-    public void setWorldBlackList(List<String> world_black_list) {
-        this.world_black_list = world_black_list;
-        this.config.set("WorldBlackList", world_black_list);
-        this.save();
-    }
-
     public void setPrice(Double price) {
         this.price = price;
         this.config.set("Price", price);
@@ -237,5 +228,48 @@ public class GroupLimit {
         }
         XLogger.info(Translation.Messages_LoadedGroupAmount, groups.size());
         return groups;
+    }
+
+    private void saveAll() {
+        this.file_path.delete();
+        this.config = new YamlConfiguration();
+        this.config.set("MinY", min_y);
+        this.config.setComments("MinY", Arrays.asList(
+                Translation.Config_Comment_GroupLine1.trans(),
+                Translation.Config_Comment_GroupLine2.trans(),
+                Translation.Config_Comment_GroupLine3.trans(),
+                Translation.Config_Comment_GroupLine4.trans(),
+                Translation.Config_Comment_GroupLine5.trans(),
+                Translation.Config_Comment_GroupLine6.trans(),
+                Translation.Config_Comment_GroupLine7.trans(),
+                String.format(Translation.Config_Comment_GroupLine8DocumentAddress.trans(), ConfigManager.instance.getLanguage())
+        ));
+        this.config.setInlineComments("MinY", List.of(Translation.Config_Comment_MinY.trans()));
+        this.config.set("MaxY", max_y);
+        this.config.setInlineComments("MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
+        this.config.set("SizeX", size_x);
+        this.config.setInlineComments("SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("SizeY", size_y);
+        this.config.setInlineComments("SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("SizeZ", size_z);
+        this.config.setInlineComments("SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Amount", amount);
+        this.config.setInlineComments("Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Depth", depth);
+        this.config.setInlineComments("Depth", List.of(Translation.Config_Comment_Depth.trans() + Translation.Config_Comment_ZeroDisabled.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Vert", vert);
+        this.config.setInlineComments("Vert", List.of(Translation.Config_Comment_Vert.trans()));
+        this.config.set("Price", price);
+        this.config.setInlineComments("Price", List.of(Translation.Config_Comment_Price.trans()));
+        this.config.set("OnlyXZ", only_xz);
+        this.config.setInlineComments("OnlyXZ", List.of(Translation.Config_Comment_OnlyXZ.trans()));
+        this.config.set("Refund", refund);
+        this.config.setInlineComments("Refund", List.of(Translation.Config_Comment_Refund.trans()));
+
+        try {
+            this.config.save(this.file_path);
+        } catch (Exception e) {
+            XLogger.err("Failed to save group limit file: " + this.file_path.getName());
+        }
     }
 }
