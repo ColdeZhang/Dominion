@@ -7,7 +7,7 @@
 [![bStats](https://img.shields.io/badge/bStats-Statistics-eacd76?logo=google-analytics)](https://bstats.org/plugin/bukkit/Dominion/21445)
 [![Hangar](https://img.shields.io/badge/Hangar-Project-bacac6?logo=paper)](https://hangar.papermc.io/zhangyuheng/Dominion)
 
-[![Documentation](https://img.shields.io/badge/在线文档-点击跳转-70f3ff?logo=readthedocs)](https://ssl.lunadeer.cn:14448/doc/23/)
+[![Documentation](https://img.shields.io/badge/在线文档-点击跳转-70f3ff?logo=readthedocs)](https://dominion.lunadeer.cn/)
 [![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E6%9C%80%E6%96%B0%E6%9E%84%E5%BB%BA%E4%B8%8B%E8%BD%BD&logo=github&color=0aa344)](https://github.com/ColdeZhang/Dominion/releases/latest)
 [![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E5%A4%87%E7%94%A8%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80&logo=gitea&color=0aa344)](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
 
