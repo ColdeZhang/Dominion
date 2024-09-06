@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigManager {
+    public static ConfigManager instance;
+
     public ConfigManager(Dominion plugin) {
+        instance = this;
         new Translation(plugin);
         _plugin = plugin;
         _plugin.saveDefaultConfig();
@@ -87,11 +90,10 @@ public class ConfigManager {
         defaultGroup.setLimitAmount(_file.getInt("Limit.Amount", 10));
         defaultGroup.setLimitDepth(_file.getInt("Limit.Depth", 3));
         defaultGroup.setLimitVert(_file.getBoolean("Limit.Vert", false));
-        defaultGroup.setWorldBlackList(_file.getStringList("Limit.WorldBlackList"));
         defaultGroup.setPrice(_file.getDouble("Economy.Price", 10.0));
         defaultGroup.setPriceOnlyXZ(_file.getBoolean("Economy.OnlyXZ", false));
         defaultGroup.setRefundRatio(_file.getDouble("Economy.Refund", 0.85));
-        limits.put("default", defaultGroup);
+        groupLimits.put("default", defaultGroup);
 
         if (defaultGroup.getLimitSizeX() <= 4 && defaultGroup.getLimitSizeX() != -1) {
             XLogger.err(Translation.Config_Check_LimitSizeXError);
@@ -131,7 +133,7 @@ public class ConfigManager {
             setLimitDepth(3);
         }
 
-        limits.putAll(GroupLimit.loadGroups(_plugin));
+        groupLimits.putAll(GroupLimit.loadGroups(_plugin));
 
         saveAll();  // 回写文件 防止文件中的数据不完整
         Flag.loadFromFile();    // 加载 Flag 配置
@@ -163,24 +165,22 @@ public class ConfigManager {
         _file.setComments("Limit", List.of(Translation.Config_Comment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
         _file.setInlineComments("Limit.SpawnProtection", List.of(Translation.Config_Comment_SpawnProtectRadius.trans() + Translation.Config_Comment_NegativeOneDisabled.trans()));
-        _file.set("Limit.MinY", limits.get("default").getLimitMinY());
+        _file.set("Limit.MinY", groupLimits.get("default").getLimitMinY());
         _file.setInlineComments("Limit.MinY", List.of(Translation.Config_Comment_MinY.trans()));
-        _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
+        _file.set("Limit.MaxY", groupLimits.get("default").getLimitMaxY());
         _file.setInlineComments("Limit.MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
-        _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
+        _file.set("Limit.SizeX", groupLimits.get("default").getLimitSizeX());
         _file.setInlineComments("Limit.SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
+        _file.set("Limit.SizeY", groupLimits.get("default").getLimitSizeY());
         _file.setInlineComments("Limit.SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
+        _file.set("Limit.SizeZ", groupLimits.get("default").getLimitSizeZ());
         _file.setInlineComments("Limit.SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.Amount", limits.get("default").getLimitAmount());
+        _file.set("Limit.Amount", groupLimits.get("default").getLimitAmount());
         _file.setInlineComments("Limit.Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.Depth", limits.get("default").getLimitDepth());
+        _file.set("Limit.Depth", groupLimits.get("default").getLimitDepth());
         _file.setInlineComments("Limit.Depth", List.of(Translation.Config_Comment_Depth.trans() + Translation.Config_Comment_ZeroDisabled.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.Vert", limits.get("default").getLimitVert());
+        _file.set("Limit.Vert", groupLimits.get("default").getLimitVert());
         _file.setInlineComments("Limit.Vert", List.of(Translation.Config_Comment_Vert.trans()));
-        _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());
-        _file.setInlineComments("Limit.WorldBlackList", List.of(Translation.Config_Comment_DisabledWorlds.trans()));
         _file.set("Limit.OpByPass", _limit_op_bypass);
         _file.setInlineComments("Limit.OpByPass", List.of(Translation.Config_Comment_OpBypass.trans()));
 
@@ -198,11 +198,11 @@ public class ConfigManager {
 
         _file.setComments("Economy", Arrays.asList(Translation.Config_Comment_Economy.trans(), Translation.Config_Comment_VaultRequired.trans()));
         _file.set("Economy.Enable", _economy_enable);
-        _file.set("Economy.Price", limits.get("default").getPrice());
+        _file.set("Economy.Price", groupLimits.get("default").getPrice());
         _file.setInlineComments("Economy.Price", List.of(Translation.Config_Comment_Price.trans()));
-        _file.set("Economy.OnlyXZ", limits.get("default").getPriceOnlyXZ());
+        _file.set("Economy.OnlyXZ", groupLimits.get("default").getPriceOnlyXZ());
         _file.setInlineComments("Economy.OnlyXZ", List.of(Translation.Config_Comment_OnlyXZ.trans()));
-        _file.set("Economy.Refund", limits.get("default").getRefundRatio());
+        _file.set("Economy.Refund", groupLimits.get("default").getRefundRatio());
         _file.setInlineComments("Economy.Refund", List.of(Translation.Config_Comment_Refund.trans()));
 
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
@@ -292,31 +292,31 @@ public class ConfigManager {
     }
 
     public Integer getLimitSizeX(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitSizeX();
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeX();
     }
 
     public void setLimitSizeX(Integer max_x) {
-        limits.get("default").setLimitSizeX(max_x);
+        groupLimits.get("default").setLimitSizeX(max_x);
         _file.set("Limit.SizeX", max_x);
         _plugin.saveConfig();
     }
 
     public Integer getLimitSizeY(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitSizeY();
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeY();
     }
 
     public void setLimitSizeY(Integer max_y) {
-        limits.get("default").setLimitSizeY(max_y);
+        groupLimits.get("default").setLimitSizeY(max_y);
         _file.set("Limit.SizeY", max_y);
         _plugin.saveConfig();
     }
 
     public Integer getLimitSizeZ(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitSizeZ();
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeZ();
     }
 
     public void setLimitSizeZ(Integer max_z) {
-        limits.get("default").setLimitSizeZ(max_z);
+        groupLimits.get("default").setLimitSizeZ(max_z);
         _file.set("Limit.SizeZ", max_z);
         _plugin.saveConfig();
     }
@@ -350,57 +350,59 @@ public class ConfigManager {
     }
 
     public Integer getLimitMinY(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitMinY();
+        return groupLimits.get(getPlayerGroup(player)).getLimitMinY();
     }
 
     public void setLimitMinY(Integer limit_bottom) {
-        limits.get("default").setLimitMinY(limit_bottom);
+        groupLimits.get("default").setLimitMinY(limit_bottom);
         _file.set("Limit.MinY", limit_bottom);
         _plugin.saveConfig();
     }
 
     public Integer getLimitMaxY(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitMaxY();
+        return groupLimits.get(getPlayerGroup(player)).getLimitMaxY();
     }
 
     public void setLimitMaxY(Integer limit_top) {
-        limits.get("default").setLimitMaxY(limit_top);
+        groupLimits.get("default").setLimitMaxY(limit_top);
         _file.set("Limit.MaxY", limit_top);
         _plugin.saveConfig();
     }
 
     public Integer getLimitAmount(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitAmount();
+        return groupLimits.get(getPlayerGroup(player)).getLimitAmount();
     }
 
     public void setLimitAmount(Integer limit_amount) {
-        limits.get("default").setLimitAmount(limit_amount);
+        groupLimits.get("default").setLimitAmount(limit_amount);
         _file.set("Limit.Amount", limit_amount);
         _plugin.saveConfig();
     }
 
     public Integer getLimitDepth(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitDepth();
+        return groupLimits.get(getPlayerGroup(player)).getLimitDepth();
     }
 
     public void setLimitDepth(Integer limit_depth) {
-        limits.get("default").setLimitDepth(limit_depth);
+        groupLimits.get("default").setLimitDepth(limit_depth);
         _file.set("Limit.Depth", limit_depth);
         _plugin.saveConfig();
     }
 
     public Boolean getLimitVert(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitVert();
+        return groupLimits.get(getPlayerGroup(player)).getLimitVert();
     }
 
     public void setLimitVert(Boolean limit_vert) {
-        limits.get("default").setLimitVert(limit_vert);
+        groupLimits.get("default").setLimitVert(limit_vert);
         _file.set("Limit.Vert", limit_vert);
         _plugin.saveConfig();
     }
 
     public List<String> getWorldBlackList(Player player) {
-        return limits.get(getPlayerGroup(player)).getWorldBlackList();
+        // todo
+        // return groupLimits.get(getPlayerGroup(player)).getWorldBlackList();
+        return null;
     }
 
     public Boolean getLimitOpBypass() {
@@ -468,31 +470,31 @@ public class ConfigManager {
     }
 
     public Float getEconomyPrice(Player player) {
-        return limits.get(getPlayerGroup(player)).getPrice().floatValue();
+        return groupLimits.get(getPlayerGroup(player)).getPrice().floatValue();
     }
 
     public void setEconomyPrice(Float economy_price) {
-        limits.get("default").setPrice((double) economy_price);
+        groupLimits.get("default").setPrice((double) economy_price);
         _file.set("Economy.Price", economy_price);
         _plugin.saveConfig();
     }
 
     public Boolean getEconomyOnlyXZ(Player player) {
-        return limits.get(getPlayerGroup(player)).getPriceOnlyXZ();
+        return groupLimits.get(getPlayerGroup(player)).getPriceOnlyXZ();
     }
 
     public void setEconomyOnlyXZ(Boolean economy_only_xz) {
-        limits.get("default").setPriceOnlyXZ(economy_only_xz);
+        groupLimits.get("default").setPriceOnlyXZ(economy_only_xz);
         _file.set("Economy.OnlyXZ", economy_only_xz);
         _plugin.saveConfig();
     }
 
     public Float getEconomyRefund(Player player) {
-        return limits.get(getPlayerGroup(player)).getRefundRatio().floatValue();
+        return groupLimits.get(getPlayerGroup(player)).getRefundRatio().floatValue();
     }
 
     public void setEconomyRefund(Float economy_refund) {
-        limits.get("default").setRefundRatio((double) economy_refund);
+        groupLimits.get("default").setRefundRatio((double) economy_refund);
         _file.set("Economy.Refund", economy_refund);
         _plugin.saveConfig();
     }
@@ -607,13 +609,13 @@ public class ConfigManager {
     private String _group_title_prefix;
     private String _group_title_suffix;
 
-    private final Map<String, GroupLimit> limits = new HashMap<>();
+    private final Map<String, GroupLimit> groupLimits = new HashMap<>();
 
     private String getPlayerGroup(@Nullable Player player) {
         if (player == null) {
             return "default";
         }
-        for (String group : limits.keySet()) {
+        for (String group : groupLimits.keySet()) {
             if (group.equals("default")) {
                 continue;
             }

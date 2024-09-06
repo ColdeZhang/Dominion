@@ -410,8 +410,6 @@ TUI:
     RemoveButton: 卸下
     ApplyButton: 使用
     FromDominion: 来自领地：
-  Config:
-    Title: Dominion 系统配置
 CUI:
   Input:
     CreateDominion: 输入要创建的领地名称
@@ -465,7 +463,6 @@ Config:
     Depth: 子领地深度
     ZeroDisabled: 0表示不开启
     Vert: 是否自动延伸到 MaxY 和 MinY
-    DisabledWorlds: 不允许圈地的世界列表
     OpBypass: 是否允许OP无视领地限制
     TpDelay: 传送延迟 秒
     TpCoolDown: 传送冷却 秒
@@ -482,6 +479,14 @@ Config:
     GroupTitleVariable: '变量: %dominion_group_title%'
     GroupTitleColor: 前后缀如需要加颜色请使用这种格式 &#ffffff
     PerformanceTimer: 性能测试计时器
+    GroupLine1: '>---------------------------------<'
+    GroupLine2: '|       圈地限制特殊权限组配置       |'
+    GroupLine3: '>---------------------------------<'
+    GroupLine4: 此文件可以作为模板，你可以将此文件复制后重命名为你想要的
+    GroupLine5: 权限组名，然后修改里面的配置如果你想给赞助玩家（或者VIP）
+    GroupLine6: 一些特殊优惠，例如更少的圈地价格、更大的领地等，你可以在
+    GroupLine7: 这里配置。详细说明参阅以下链接：
+    GroupLine8DocumentAddress: '> https://dominion.lunadeer.cn/%s/operator/privilege.html'
 Flags:
   admin:
     DisplayName: 管理员
