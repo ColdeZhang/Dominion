@@ -250,6 +250,7 @@ Messages:
   AutoCleanStart: 开始自动清理长时间未登录玩家领地数据
   AutoCleanPlayer: 已清理玩家 %s 的领地数据
   AutoCleanEnd: 自动清理完成
+  MapInfoDetail: <div>%s</div><div>所有人：%s</div>
 TUI:
   NotDominionOwnerOrAdminForPage: 你不是领地 %s 的拥有者或管理员，无权访问此页面
   CommandHelp:
