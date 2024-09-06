@@ -270,6 +270,7 @@ public class GroupLimit {
         this.config.setInlineComments("Refund", List.of(Translation.Config_Comment_Refund.trans()));
 
         this.config.set("WorldSettings", getWorldSettings());
+        this.config.setInlineComments("WorldSettings", List.of(Translation.Config_Comment_WorldSettings.trans()));
 
         try {
             this.config.save(this.file_path);
