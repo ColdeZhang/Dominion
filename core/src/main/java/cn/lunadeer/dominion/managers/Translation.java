@@ -504,6 +504,8 @@ public class Translation extends Localization {
     public static i18n Messages_PlaceholderAPIRegisterSuccess;
     @i18nField(defaultValue = "共加载了 %d 个领地组")
     public static i18n Messages_LoadedGroupAmount;
+    @i18nField(defaultValue = "<div>%s</div><div>所有人：%s</div>")
+    public static i18n Messages_MapInfoDetail;
 
     @i18nField(defaultValue = "开始自动清理长时间未登录玩家领地数据")
     public static i18n Messages_AutoCleanStart;
