@@ -20,7 +20,7 @@ If you encounter any problems during use, or have any suggestions, please feel f
 
 ## Help translate this documentation
 
-If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#documentation).
+If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translate-documentation).
 
 ❤ Thank you for your support and contribution! ❤
 

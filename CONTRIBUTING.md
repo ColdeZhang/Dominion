@@ -25,7 +25,7 @@ We welcome suggestions for new features or improvements. Please open an issue on
 
 ---
 
-#### **Documentation**
+#### **Translate Documentation**
 
 Documentations are located in the `docs` directory. Translate the files in the language you want to contribute to.
 
@@ -35,7 +35,7 @@ Documentations are located in the `docs` directory. Translate the files in the l
 
 ---
 
-#### **Plugin Messages**
+#### **Translate Plugin Messages**
 
 The plugin messages are located in the `languages` directory. Translate the files in the language you want to contribute to.
 
@@ -47,4 +47,4 @@ The plugin messages are located in the `languages` directory. Translate the file
 
 If you need help, feel free to ask questions by opening an issue on our GitHub repository.
 
-Thank you for contributing!
+Thank you for contributing ❤!
