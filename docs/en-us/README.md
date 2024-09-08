@@ -8,9 +8,9 @@ Dominion is a completely open-source, free, future-proof, territory protection p
 
 If you encounter any problems during use, or have any suggestions, please feel free to submit your questions or ideas at [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues).
 
-## Quick start for players
+## Quick start (for players)
 
-1. [How to create a territory](create-dominion.md)
+1. [How to create a dominion](create-dominion.md)
 2. [Managing your dominion](manage-dominion/README.md)
 
 ## Server Administrator Quick Start
@@ -18,7 +18,7 @@ If you encounter any problems during use, or have any suggestions, please feel f
 1. [Installation, Required Readings, FAQ](operator/README.md)
 2. [Configuration File Reference](operator/config.md)
 
-## Help us to translate the documentation
+## Quick start (for server administrators)
 
-If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](../CONTRIBUTING.md#documentation).
+If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#documentation).
 
