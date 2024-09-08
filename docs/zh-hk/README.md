@@ -21,3 +21,5 @@ Dominion 是一個完全開源、免費，專為高版本開發，面向未來�
 ## 幫助翻譯本文檔
 
 如果您想幫助翻譯本文檔，請參考 [翻譯指南](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#documentation)。
+
+❤ 感謝您的支持和貢獻！ ❤

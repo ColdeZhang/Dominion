@@ -13,12 +13,14 @@ If you encounter any problems during use, or have any suggestions, please feel f
 1. [How to create a dominion](create-dominion.md)
 2. [Managing your dominion](manage-dominion/README.md)
 
-## Server Administrator Quick Start
+## Quick start (for server administrators)
 
 1. [Installation, Required Readings, FAQ](operator/README.md)
 2. [Configuration File Reference](operator/config.md)
 
-## Quick start (for server administrators)
+## Help translate this documentation
 
 If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#documentation).
+
+❤ Thank you for your support and contribution! ❤
 
