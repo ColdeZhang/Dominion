@@ -31,6 +31,7 @@ Documentations are located in the `docs` directory. Translate the files in the l
 
 - If the language you want to translate to does not exist, create a new directory with the language code (e.g., `zh-cn` for Simplified Chinese).
 - If the documentation is not up-to-date, please update it from the `zh-cn` directory.
+- Don't forget to leave your name and contact information in `docs/YOUR_LANGUAGE_CODE/README.md` below.
 
 ---
 
@@ -40,6 +41,7 @@ The plugin messages are located in the `languages` directory. Translate the file
 
 - If the language you want to translate to does not exist, create a new file with the language code (e.g., `zh-cn.yml` for Simplified Chinese).
 - If the plugin messages are not up-to-date, please update them from the `zh-cn.yml` file.
+- Don't forget to leave your name and contact information in `languages/YOUR_LANGUAGE_CODE.yml`'s header.
 
 ## 🫴Getting Help
 
