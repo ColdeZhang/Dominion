@@ -22,6 +22,3 @@ If you encounter any problems during use, or have any suggestions, please feel f
 
 If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](../CONTRIBUTING.md#documentation).
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
