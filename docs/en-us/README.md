@@ -18,6 +18,10 @@ If you encounter any problems during use, or have any suggestions, please feel f
 1. [Installation, Required Readings, FAQ](operator/README.md)
 2. [Configuration File Reference](operator/config.md)
 
-## Help to translate this document
+## Help us to translate the documentation
 
-If you want to help translate this document, please refer to the [translation guide](../CONTRIBUTING.md#documentation).
+If you want to help us translate the documentation, please refer to [CONTRIBUTING.md](../CONTRIBUTING.md#documentation).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
