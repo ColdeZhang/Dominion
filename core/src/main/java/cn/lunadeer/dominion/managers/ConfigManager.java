@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.VaultConnect.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -16,7 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfigManager {
+    public static ConfigManager instance;
+
     public ConfigManager(Dominion plugin) {
+        instance = this;
         new Translation(plugin);
         _plugin = plugin;
         _plugin.saveDefaultConfig();
@@ -38,36 +42,17 @@ public class ConfigManager {
         _db_user = _file.getString("Database.User", "postgres");
         _db_pass = _file.getString("Database.Pass", "postgres");
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
-        if (_auto_create_radius == 0) {
-            XLogger.err(Translation.Config_Check_AutoCreateRadiusError);
-            setAutoCreateRadius(10);
-        }
         _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
         _blue_map = _file.getBoolean("BlueMap", false);
         _dynmap = _file.getBoolean("Dynmap", false);
         _auto_clean_after_days = _file.getInt("AutoCleanAfterDays", 180);
-        if (_auto_clean_after_days == 0) {
-            XLogger.err(Translation.Config_Check_AutoCleanAfterDaysError);
-            setAutoCleanAfterDays(180);
-        }
         _limit_op_bypass = _file.getBoolean("Limit.OpByPass", true);
         _check_update = _file.getBoolean("CheckUpdate", true);
         _tp_enable = _file.getBoolean("Teleport.Enable", false);
         _tp_delay = _file.getInt("Teleport.Delay", 0);
-        if (_tp_delay < 0) {
-            XLogger.err(Translation.Config_Check_TpDelayError);
-            setTpDelay(0);
-        }
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
-        if (_tp_cool_down < 0) {
-            XLogger.err(Translation.Config_Check_TpCoolDownError);
-            setTpCoolDown(0);
-        }
         _tool = _file.getString("Tool", "ARROW");
-        if (Material.getMaterial(_tool) == null) {
-            XLogger.err(Translation.Config_Check_ToolNameError);
-            setTool("ARROW");
-        }
+
         _economy_enable = _file.getBoolean("Economy.Enable", false);
         if (getEconomyEnable()) {
             new VaultConnect(this._plugin);
@@ -79,60 +64,26 @@ public class ConfigManager {
         _group_title_suffix = _file.getString("GroupTitle.Suffix", "&#ffffff]");
 
         GroupLimit defaultGroup = new GroupLimit();
-        defaultGroup.setLimitSizeX(_file.getInt("Limit.SizeX", 128));
-        defaultGroup.setLimitSizeY(_file.getInt("Limit.SizeY", 64));
-        defaultGroup.setLimitSizeZ(_file.getInt("Limit.SizeZ", 128));
-        defaultGroup.setLimitMinY(_file.getInt("Limit.MinY", -64));
-        defaultGroup.setLimitMaxY(_file.getInt("Limit.MaxY", 320));
-        defaultGroup.setLimitAmount(_file.getInt("Limit.Amount", 10));
-        defaultGroup.setLimitDepth(_file.getInt("Limit.Depth", 3));
-        defaultGroup.setLimitVert(_file.getBoolean("Limit.Vert", false));
-        defaultGroup.setWorldBlackList(_file.getStringList("Limit.WorldBlackList"));
+        defaultGroup.setLimitSizeX(_file.getInt("Limit.SizeX", 128), null);
+        defaultGroup.setLimitSizeY(_file.getInt("Limit.SizeY", 64), null);
+        defaultGroup.setLimitSizeZ(_file.getInt("Limit.SizeZ", 128), null);
+        defaultGroup.setLimitMinY(_file.getInt("Limit.MinY", -64), null);
+        defaultGroup.setLimitMaxY(_file.getInt("Limit.MaxY", 320), null);
+        defaultGroup.setLimitAmount(_file.getInt("Limit.Amount", 10), null);
+        defaultGroup.setLimitDepth(_file.getInt("Limit.Depth", 3), null);
+        defaultGroup.setLimitVert(_file.getBoolean("Limit.Vert", false), null);
         defaultGroup.setPrice(_file.getDouble("Economy.Price", 10.0));
         defaultGroup.setPriceOnlyXZ(_file.getBoolean("Economy.OnlyXZ", false));
         defaultGroup.setRefundRatio(_file.getDouble("Economy.Refund", 0.85));
-        limits.put("default", defaultGroup);
+        ConfigurationSection worldSettings = _file.getConfigurationSection("Limit.WorldSettings");
+        if (worldSettings != null) {
+            defaultGroup.addWorldLimits(WorldSetting.load("config.yml", worldSettings));
+        }
+        groupLimits.put("default", defaultGroup);
 
-        if (defaultGroup.getLimitSizeX() <= 4 && defaultGroup.getLimitSizeX() != -1) {
-            XLogger.err(Translation.Config_Check_LimitSizeXError);
-            setLimitSizeX(128);
-        }
-        if (defaultGroup.getLimitSizeY() <= 4 && defaultGroup.getLimitSizeY() != -1) {
-            XLogger.err(Translation.Config_Check_LimitSizeYError);
-            setLimitSizeY(64);
-        }
-        if (defaultGroup.getLimitSizeZ() <= 4 && defaultGroup.getLimitSizeZ() != -1) {
-            XLogger.err(Translation.Config_Check_LimitSizeZError);
-            setLimitSizeZ(128);
-        }
-        if (defaultGroup.getLimitMinY() >= defaultGroup.getLimitMaxY()) {
-            XLogger.err(Translation.Config_Check_LimitMinYError);
-            setLimitMinY(-64);
-            setLimitMaxY(320);
-        }
-        if (defaultGroup.getRefundRatio() < 0.0 || defaultGroup.getRefundRatio() > 1.0) {
-            XLogger.err(Translation.Config_Check_RefundError);
-            setEconomyRefund(0.85f);
-        }
-        if (defaultGroup.getPrice() < 0.0) {
-            XLogger.err(Translation.Config_Check_PriceError);
-            setEconomyPrice(10.0f);
-        }
-        if (defaultGroup.getLimitVert() && defaultGroup.getLimitSizeY() <= defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY()) {
-            XLogger.warn(Translation.Config_Check_LimitSizeYAutoAdjust, (defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1));
-            setLimitSizeY(defaultGroup.getLimitMaxY() - defaultGroup.getLimitMinY() + 1);
-        }
-        if (defaultGroup.getLimitAmount() < 0 && defaultGroup.getLimitAmount() != -1) {
-            XLogger.err(Translation.Config_Check_AmountError);
-            setLimitAmount(10);
-        }
-        if (defaultGroup.getLimitDepth() < 0 && defaultGroup.getLimitDepth() != -1) {
-            XLogger.err(Translation.Config_Check_DepthError);
-            setLimitDepth(3);
-        }
+        groupLimits.putAll(GroupLimit.loadGroups(_plugin));
 
-        limits.putAll(GroupLimit.loadGroups(_plugin));
-
+        checkRules();
         saveAll();  // 回写文件 防止文件中的数据不完整
         Flag.loadFromFile();    // 加载 Flag 配置
     }
@@ -163,26 +114,26 @@ public class ConfigManager {
         _file.setComments("Limit", List.of(Translation.Config_Comment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
         _file.setInlineComments("Limit.SpawnProtection", List.of(Translation.Config_Comment_SpawnProtectRadius.trans() + Translation.Config_Comment_NegativeOneDisabled.trans()));
-        _file.set("Limit.MinY", limits.get("default").getLimitMinY());
+        _file.set("Limit.MinY", groupLimits.get("default").getLimitMinY(null));
         _file.setInlineComments("Limit.MinY", List.of(Translation.Config_Comment_MinY.trans()));
-        _file.set("Limit.MaxY", limits.get("default").getLimitMaxY());
+        _file.set("Limit.MaxY", groupLimits.get("default").getLimitMaxY(null));
         _file.setInlineComments("Limit.MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
-        _file.set("Limit.SizeX", limits.get("default").getLimitSizeX());
+        _file.set("Limit.SizeX", groupLimits.get("default").getLimitSizeX(null));
         _file.setInlineComments("Limit.SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.SizeY", limits.get("default").getLimitSizeY());
+        _file.set("Limit.SizeY", groupLimits.get("default").getLimitSizeY(null));
         _file.setInlineComments("Limit.SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.SizeZ", limits.get("default").getLimitSizeZ());
+        _file.set("Limit.SizeZ", groupLimits.get("default").getLimitSizeZ(null));
         _file.setInlineComments("Limit.SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.Amount", limits.get("default").getLimitAmount());
+        _file.set("Limit.Amount", groupLimits.get("default").getLimitAmount(null));
         _file.setInlineComments("Limit.Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.Depth", limits.get("default").getLimitDepth());
+        _file.set("Limit.Depth", groupLimits.get("default").getLimitDepth(null));
         _file.setInlineComments("Limit.Depth", List.of(Translation.Config_Comment_Depth.trans() + Translation.Config_Comment_ZeroDisabled.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.Vert", limits.get("default").getLimitVert());
+        _file.set("Limit.Vert", groupLimits.get("default").getLimitVert(null));
         _file.setInlineComments("Limit.Vert", List.of(Translation.Config_Comment_Vert.trans()));
-        _file.set("Limit.WorldBlackList", limits.get("default").getWorldBlackList());
-        _file.setInlineComments("Limit.WorldBlackList", List.of(Translation.Config_Comment_DisabledWorlds.trans()));
         _file.set("Limit.OpByPass", _limit_op_bypass);
         _file.setInlineComments("Limit.OpByPass", List.of(Translation.Config_Comment_OpBypass.trans()));
+        _file.set("Limit.WorldSettings", groupLimits.get("default").getWorldSettings());
+        _file.setInlineComments("Limit.WorldSettings", List.of(Translation.Config_Comment_WorldSettings.trans()));
 
         _file.set("Teleport.Enable", _tp_enable);
         _file.set("Teleport.Delay", _tp_delay);
@@ -198,11 +149,11 @@ public class ConfigManager {
 
         _file.setComments("Economy", Arrays.asList(Translation.Config_Comment_Economy.trans(), Translation.Config_Comment_VaultRequired.trans()));
         _file.set("Economy.Enable", _economy_enable);
-        _file.set("Economy.Price", limits.get("default").getPrice());
+        _file.set("Economy.Price", groupLimits.get("default").getPrice());
         _file.setInlineComments("Economy.Price", List.of(Translation.Config_Comment_Price.trans()));
-        _file.set("Economy.OnlyXZ", limits.get("default").getPriceOnlyXZ());
+        _file.set("Economy.OnlyXZ", groupLimits.get("default").getPriceOnlyXZ());
         _file.setInlineComments("Economy.OnlyXZ", List.of(Translation.Config_Comment_OnlyXZ.trans()));
-        _file.set("Economy.Refund", limits.get("default").getRefundRatio());
+        _file.set("Economy.Refund", groupLimits.get("default").getRefundRatio());
         _file.setInlineComments("Economy.Refund", List.of(Translation.Config_Comment_Refund.trans()));
 
         _file.set("FlyPermissionNodes", _fly_permission_nodes);
@@ -250,12 +201,6 @@ public class ConfigManager {
         return _db_type;
     }
 
-    public void setDbType(String db_type) {
-        _db_type = db_type;
-        _file.set("Database.Type", db_type);
-        _plugin.saveConfig();
-    }
-
     public String getDbHost() {
         return _db_host;
     }
@@ -271,7 +216,6 @@ public class ConfigManager {
     public void setDbUser(String db_user) {
         _db_user = db_user;
         _file.set("Database.User", db_user);
-        _plugin.saveConfig();
     }
 
     public String getDbUser() {
@@ -284,7 +228,6 @@ public class ConfigManager {
     public void setDbPass(String db_pass) {
         _db_pass = db_pass;
         _file.set("Database.Pass", db_pass);
-        _plugin.saveConfig();
     }
 
     public String getDbPass() {
@@ -292,33 +235,15 @@ public class ConfigManager {
     }
 
     public Integer getLimitSizeX(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitSizeX();
-    }
-
-    public void setLimitSizeX(Integer max_x) {
-        limits.get("default").setLimitSizeX(max_x);
-        _file.set("Limit.SizeX", max_x);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeX(player.getWorld());
     }
 
     public Integer getLimitSizeY(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitSizeY();
-    }
-
-    public void setLimitSizeY(Integer max_y) {
-        limits.get("default").setLimitSizeY(max_y);
-        _file.set("Limit.SizeY", max_y);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeY(player.getWorld());
     }
 
     public Integer getLimitSizeZ(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitSizeZ();
-    }
-
-    public void setLimitSizeZ(Integer max_z) {
-        limits.get("default").setLimitSizeZ(max_z);
-        _file.set("Limit.SizeZ", max_z);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeZ(player.getWorld());
     }
 
     public Integer getAutoCreateRadius() {
@@ -328,7 +253,6 @@ public class ConfigManager {
     public void setAutoCreateRadius(Integer radius) {
         _auto_create_radius = radius;
         _file.set("AutoCreateRadius", radius);
-        _plugin.saveConfig();
     }
 
     public Boolean getBlueMap() {
@@ -346,71 +270,34 @@ public class ConfigManager {
     public void setAutoCleanAfterDays(Integer auto_clean_after_days) {
         _auto_clean_after_days = auto_clean_after_days;
         _file.set("AutoCleanAfterDays", auto_clean_after_days);
-        _plugin.saveConfig();
     }
 
     public Integer getLimitMinY(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitMinY();
-    }
-
-    public void setLimitMinY(Integer limit_bottom) {
-        limits.get("default").setLimitMinY(limit_bottom);
-        _file.set("Limit.MinY", limit_bottom);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitMinY(player.getWorld());
     }
 
     public Integer getLimitMaxY(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitMaxY();
-    }
-
-    public void setLimitMaxY(Integer limit_top) {
-        limits.get("default").setLimitMaxY(limit_top);
-        _file.set("Limit.MaxY", limit_top);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitMaxY(player.getWorld());
     }
 
     public Integer getLimitAmount(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitAmount();
-    }
-
-    public void setLimitAmount(Integer limit_amount) {
-        limits.get("default").setLimitAmount(limit_amount);
-        _file.set("Limit.Amount", limit_amount);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitAmount(player.getWorld());
     }
 
     public Integer getLimitDepth(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitDepth();
-    }
-
-    public void setLimitDepth(Integer limit_depth) {
-        limits.get("default").setLimitDepth(limit_depth);
-        _file.set("Limit.Depth", limit_depth);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitDepth(player.getWorld());
     }
 
     public Boolean getLimitVert(Player player) {
-        return limits.get(getPlayerGroup(player)).getLimitVert();
-    }
-
-    public void setLimitVert(Boolean limit_vert) {
-        limits.get("default").setLimitVert(limit_vert);
-        _file.set("Limit.Vert", limit_vert);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getLimitVert(player.getWorld());
     }
 
     public List<String> getWorldBlackList(Player player) {
-        return limits.get(getPlayerGroup(player)).getWorldBlackList();
+        return groupLimits.get(getPlayerGroup(player)).getWorldBlackList();
     }
 
     public Boolean getLimitOpBypass() {
         return _limit_op_bypass;
-    }
-
-    public void setLimitOpBypass(Boolean limit_op_bypass) {
-        _limit_op_bypass = limit_op_bypass;
-        _file.set("Limit.OpByPass", limit_op_bypass);
-        _plugin.saveConfig();
     }
 
     public Boolean getCheckUpdate() {
@@ -421,12 +308,6 @@ public class ConfigManager {
         return _tp_enable;
     }
 
-    public void setTpEnable(Boolean tp_enable) {
-        _tp_enable = tp_enable;
-        _file.set("Teleport.Enable", tp_enable);
-        _plugin.saveConfig();
-    }
-
     public Integer getTpDelay() {
         return _tp_delay;
     }
@@ -434,7 +315,6 @@ public class ConfigManager {
     public void setTpDelay(Integer tp_delay) {
         _tp_delay = tp_delay;
         _file.set("Teleport.Delay", tp_delay);
-        _plugin.saveConfig();
     }
 
     public Integer getTpCoolDown() {
@@ -444,7 +324,6 @@ public class ConfigManager {
     public void setTpCoolDown(Integer tp_cool_down) {
         _tp_cool_down = tp_cool_down;
         _file.set("Teleport.CoolDown", tp_cool_down);
-        _plugin.saveConfig();
     }
 
     public Material getTool() {
@@ -454,77 +333,34 @@ public class ConfigManager {
     public void setTool(String tool) {
         _tool = tool;
         _file.set("Tool", tool);
-        _plugin.saveConfig();
     }
 
     public Boolean getEconomyEnable() {
         return _economy_enable;
     }
 
-    public void setEconomyEnable(Boolean economy_enable) {
-        _economy_enable = economy_enable;
-        _file.set("Economy.Enable", economy_enable);
-        _plugin.saveConfig();
-    }
-
     public Float getEconomyPrice(Player player) {
-        return limits.get(getPlayerGroup(player)).getPrice().floatValue();
-    }
-
-    public void setEconomyPrice(Float economy_price) {
-        limits.get("default").setPrice((double) economy_price);
-        _file.set("Economy.Price", economy_price);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getPrice().floatValue();
     }
 
     public Boolean getEconomyOnlyXZ(Player player) {
-        return limits.get(getPlayerGroup(player)).getPriceOnlyXZ();
-    }
-
-    public void setEconomyOnlyXZ(Boolean economy_only_xz) {
-        limits.get("default").setPriceOnlyXZ(economy_only_xz);
-        _file.set("Economy.OnlyXZ", economy_only_xz);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getPriceOnlyXZ();
     }
 
     public Float getEconomyRefund(Player player) {
-        return limits.get(getPlayerGroup(player)).getRefundRatio().floatValue();
-    }
-
-    public void setEconomyRefund(Float economy_refund) {
-        limits.get("default").setRefundRatio((double) economy_refund);
-        _file.set("Economy.Refund", economy_refund);
-        _plugin.saveConfig();
+        return groupLimits.get(getPlayerGroup(player)).getRefundRatio().floatValue();
     }
 
     public List<String> getFlyPermissionNodes() {
         return _fly_permission_nodes;
     }
 
-    public void setFlyPermissionNodes(List<String> fly_permission_nodes) {
-        _fly_permission_nodes = fly_permission_nodes;
-        _file.set("FlyPermissionNodes", fly_permission_nodes);
-        _plugin.saveConfig();
-    }
-
     public Boolean getResidenceMigration() {
         return _residence_migration;
     }
 
-    public void setResidenceMigration(Boolean residence_migration) {
-        _residence_migration = residence_migration;
-        _file.set("ResidenceMigration", residence_migration);
-        _plugin.saveConfig();
-    }
-
     public Integer getSpawnProtection() {
         return _spawn_protection;
-    }
-
-    public void setSpawnProtection(Integer spawn_protection) {
-        _spawn_protection = spawn_protection;
-        _file.set("Limit.SpawnProtection", spawn_protection);
-        _plugin.saveConfig();
     }
 
     public Boolean getGroupTitleEnable() {
@@ -534,38 +370,45 @@ public class ConfigManager {
     public void setGroupTitleEnable(Boolean group_title_enable) {
         _group_title_enable = group_title_enable;
         _file.set("GroupTitle.Enable", group_title_enable);
-        _plugin.saveConfig();
     }
 
     public String getGroupTitlePrefix() {
         return _group_title_prefix;
     }
 
-    public void setGroupTitlePrefix(String group_title_prefix) {
-        _group_title_prefix = group_title_prefix;
-        _file.set("GroupTitle.Prefix", group_title_prefix);
-        _plugin.saveConfig();
-    }
-
     public String getGroupTitleSuffix() {
         return _group_title_suffix;
-    }
-
-    public void setGroupTitleSuffix(String group_title_suffix) {
-        _group_title_suffix = group_title_suffix;
-        _file.set("GroupTitle.Suffix", group_title_suffix);
-        _plugin.saveConfig();
     }
 
     public String getLanguage() {
         return _language;
     }
 
-    public void setLanguage(String language) {
-        _language = language;
-        _file.set("Language", language);
-        _plugin.saveConfig();
-        Translation.instance.loadLocale(language);
+    public void checkRules() {
+        if (Material.getMaterial(_tool) == null) {
+            XLogger.err(Translation.Config_Check_ToolNameError);
+            setTool("ARROW");
+        }
+        if (getAutoCreateRadius() == 0) {
+            XLogger.err(Translation.Config_Check_AutoCreateRadiusError);
+            setAutoCreateRadius(10);
+        }
+        if (getAutoCleanAfterDays() == 0) {
+            XLogger.err(Translation.Config_Check_AutoCleanAfterDaysError);
+            setAutoCleanAfterDays(180);
+        }
+        if (getTpDelay() < 0) {
+            XLogger.err(Translation.Config_Check_TpDelayError);
+            setTpDelay(0);
+        }
+        if (getTpCoolDown() < 0) {
+            XLogger.err(Translation.Config_Check_TpCoolDownError);
+            setTpCoolDown(0);
+        }
+
+        for (GroupLimit limit : groupLimits.values()) {
+            limit.checkRules();
+        }
     }
 
     private final Dominion _plugin;
@@ -607,13 +450,13 @@ public class ConfigManager {
     private String _group_title_prefix;
     private String _group_title_suffix;
 
-    private final Map<String, GroupLimit> limits = new HashMap<>();
+    private final Map<String, GroupLimit> groupLimits = new HashMap<>();
 
     private String getPlayerGroup(@Nullable Player player) {
         if (player == null) {
             return "default";
         }
-        for (String group : limits.keySet()) {
+        for (String group : groupLimits.keySet()) {
             if (group.equals("default")) {
                 continue;
             }

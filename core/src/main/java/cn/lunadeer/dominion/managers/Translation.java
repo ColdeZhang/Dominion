@@ -504,6 +504,8 @@ public class Translation extends Localization {
     public static i18n Messages_PlaceholderAPIRegisterSuccess;
     @i18nField(defaultValue = "共加载了 %d 个领地组")
     public static i18n Messages_LoadedGroupAmount;
+    @i18nField(defaultValue = "<div>%s</div><div>所有人：%s</div>")
+    public static i18n Messages_MapInfoDetail;
 
     @i18nField(defaultValue = "开始自动清理长时间未登录玩家领地数据")
     public static i18n Messages_AutoCleanStart;
@@ -808,9 +810,6 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "来自领地：")
     public static i18n TUI_TitleList_FromDominion;
 
-    @i18nField(defaultValue = "Dominion 系统配置")
-    public static i18n TUI_Config_Title;
-
     @i18nField(defaultValue = "输入要创建的领地名称")
     public static i18n CUI_Input_CreateDominion;
     @i18nField(defaultValue = "输入要创建的权限组名称")
@@ -836,39 +835,21 @@ public class Translation extends Localization {
     public static i18n Config_Check_AutoCleanAfterDaysError;
     @i18nField(defaultValue = "工具名称设置错误，已重置为 ARROW")
     public static i18n Config_Check_ToolNameError;
-    @i18nField(defaultValue = "Limit.SizeX 尺寸不能小于 4，已重置为 128")
-    public static i18n Config_Check_LimitSizeXError;
-    @i18nField(defaultValue = "Limit.SizeY 尺寸不能小于 4，已重置为 64")
-    public static i18n Config_Check_LimitSizeYError;
-    @i18nField(defaultValue = "Limit.SizeZ 尺寸不能小于 4，已重置为 128")
-    public static i18n Config_Check_LimitSizeZError;
-    @i18nField(defaultValue = "Limit.MinY 不能大于或等于 Limit.MaxY，已重置为 -64 320")
-    public static i18n Config_Check_LimitMinYError;
-    @i18nField(defaultValue = "Economy.Refund 设置不合法，已重置为 0.85")
-    public static i18n Config_Check_RefundError;
-    @i18nField(defaultValue = "Economy.Price 设置不合法，已重置为 10.0")
-    public static i18n Config_Check_PriceError;
-    @i18nField(defaultValue = "启用 Limit.Vert 时 Limit.SizeY 不能小于 Limit.MaxY - Limit.MinY，已自动调整为 %d")
-    public static i18n Config_Check_LimitSizeYAutoAdjust;
-    @i18nField(defaultValue = "Limit.Amount 设置不合法，已重置为 10")
-    public static i18n Config_Check_AmountError;
-    @i18nField(defaultValue = "Limit.Depth 设置不合法，已重置为 3")
-    public static i18n Config_Check_DepthError;
-    @i18nField(defaultValue = "权限组 %s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320")
+    @i18nField(defaultValue = "%s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320")
     public static i18n Config_Check_GroupMinYError;
-    @i18nField(defaultValue = "权限组 %s 的 SizeX 设置过小，已重置为 128")
+    @i18nField(defaultValue = "%s 的 SizeX 设置过小，已重置为 128")
     public static i18n Config_Check_GroupSizeXError;
-    @i18nField(defaultValue = "权限组 %s 的 SizeY 设置过小，已重置为 64")
+    @i18nField(defaultValue = "%s 的 SizeY 设置过小，已重置为 64")
     public static i18n Config_Check_GroupSizeYError;
-    @i18nField(defaultValue = "权限组 %s 的 SizeZ 设置过小，已重置为 128")
+    @i18nField(defaultValue = "%s 的 SizeZ 设置过小，已重置为 128")
     public static i18n Config_Check_GroupSizeZError;
-    @i18nField(defaultValue = "权限组 %s 的 Amount 设置不合法，已重置为 10")
+    @i18nField(defaultValue = "%s 的 Amount 设置不合法，已重置为 10")
     public static i18n Config_Check_GroupAmountError;
-    @i18nField(defaultValue = "权限组 %s 的 Depth 设置不合法，已重置为 3")
+    @i18nField(defaultValue = "%s 的 Depth 设置不合法，已重置为 3")
     public static i18n Config_Check_GroupDepthError;
-    @i18nField(defaultValue = "权限组 %s 的 Price 设置不合法，已重置为 10.0")
+    @i18nField(defaultValue = "%s 的 Price 设置不合法，已重置为 10.0")
     public static i18n Config_Check_GroupPriceError;
-    @i18nField(defaultValue = "权限组 %s 的 Refund 设置不合法，已重置为 0.85")
+    @i18nField(defaultValue = "%s 的 Refund 设置不合法，已重置为 0.85")
     public static i18n Config_Check_GroupRefundError;
     @i18nField(defaultValue = "读取权限配置失败：%s")
     public static i18n Config_Check_LoadFlagError;
@@ -907,10 +888,10 @@ public class Translation extends Localization {
     public static i18n Config_Comment_ZeroDisabled;
     @i18nField(defaultValue = "是否自动延伸到 MaxY 和 MinY")
     public static i18n Config_Comment_Vert;
-    @i18nField(defaultValue = "不允许圈地的世界列表")
-    public static i18n Config_Comment_DisabledWorlds;
     @i18nField(defaultValue = "是否允许OP无视领地限制")
     public static i18n Config_Comment_OpBypass;
+    @i18nField(defaultValue = "单独设置某个世界的圈地规则（如不设置则使用以上规则）")
+    public static i18n Config_Comment_WorldSettings;
     @i18nField(defaultValue = "传送延迟 秒")
     public static i18n Config_Comment_TpDelay;
     @i18nField(defaultValue = "传送冷却 秒")
@@ -941,6 +922,22 @@ public class Translation extends Localization {
     public static i18n Config_Comment_GroupTitleColor;
     @i18nField(defaultValue = "性能测试计时器")
     public static i18n Config_Comment_PerformanceTimer;
+    @i18nField(defaultValue = ">---------------------------------<")
+    public static i18n Config_Comment_GroupLine1;
+    @i18nField(defaultValue = "|       圈地限制特殊权限组配置       |")
+    public static i18n Config_Comment_GroupLine2;
+    @i18nField(defaultValue = ">---------------------------------<")
+    public static i18n Config_Comment_GroupLine3;
+    @i18nField(defaultValue = "此文件可以作为模板，你可以将此文件复制后重命名为你想要的")
+    public static i18n Config_Comment_GroupLine4;
+    @i18nField(defaultValue = "权限组名，然后修改里面的配置如果你想给赞助玩家（或者VIP）")
+    public static i18n Config_Comment_GroupLine5;
+    @i18nField(defaultValue = "一些特殊优惠，例如更少的圈地价格、更大的领地等，你可以在")
+    public static i18n Config_Comment_GroupLine6;
+    @i18nField(defaultValue = "这里配置。详细说明参阅以下链接：")
+    public static i18n Config_Comment_GroupLine7;
+    @i18nField(defaultValue = "> https://dominion.lunadeer.cn/%s/operator/privilege.html")
+    public static i18n Config_Comment_GroupLine8DocumentAddress;
 
     @i18nField(defaultValue = "管理员")
     public static i18n Flags_admin_DisplayName;

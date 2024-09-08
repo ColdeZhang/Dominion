@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.utils.map;
 
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -40,7 +41,11 @@ public class DynmapConnect extends DynmapCommonAPIListener {
     }
 
     private void setDominionMarker(DominionDTO dominion) {
-        String nameLabel = "<div>" + dominion.getName() + "</div>";
+        PlayerDTO p = PlayerDTO.select(dominion.getOwner());
+        if (p == null) {
+            return;
+        }
+        String nameLabel = String.format(Translation.Messages_MapInfoDetail.trans(), dominion.getName(), p.getLastKnownName());
         double[] xx = {dominion.getX1(), dominion.getX2()};
         double[] zz = {dominion.getZ1(), dominion.getZ2()};
         if (dominion.getWorld() == null) {

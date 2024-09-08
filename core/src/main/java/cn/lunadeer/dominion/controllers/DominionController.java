@@ -103,6 +103,14 @@ public class DominionController {
             operator.setResponse(FAIL.addMessage(Translation.Messages_SelectPointsWorldNotSame));
             return;
         }
+        if (operator.getLocation() == null) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CommandPlayerOnly));
+            return;
+        }
+        if (!loc1.getWorld().getUID().equals(operator.getLocation().getWorld().getUID())) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_CrossWorldOperationDisallowed));
+            return;
+        }
         // 检查世界是否可以创建
         if (worldNotValid(operator, loc1.getWorld().getName())) {
             operator.setResponse(FAIL.addMessage(Translation.Messages_CreateDominionDisabledWorld, loc1.getWorld().getName()));
