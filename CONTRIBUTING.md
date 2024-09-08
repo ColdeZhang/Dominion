@@ -23,14 +23,18 @@ We welcome suggestions for new features or improvements. Please open an issue on
 7. Open a pull request.
 8. Wait for your pull request to be reviewed and merged.
 
-#### Documentation
+---
+
+#### **Documentation**
 
 Documentations are located in the `docs` directory. Translate the files in the language you want to contribute to.
 
 - If the language you want to translate to does not exist, create a new directory with the language code (e.g., `zh-cn` for Simplified Chinese).
 - If the documentation is not up-to-date, please update it from the `zh-cn` directory.
 
-#### Plugin Messages
+---
+
+#### **Plugin Messages**
 
 The plugin messages are located in the `languages` directory. Translate the files in the language you want to contribute to.
 
