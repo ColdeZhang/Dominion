@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "2.5.7-beta"
+version = "2.5.8-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -41,6 +41,10 @@ allprojects {
 
     tasks.processResources {
         outputs.upToDateWhen { false }
+        // copy languages folder from PROJECT_DIR/languages to core/src/main/resources
+        from(file("${projectDir}/languages")) {
+            into("languages")
+        }
         // replace @version@ in plugin.yml with project version
         filesMatching("**/plugin.yml") {
             filter {
