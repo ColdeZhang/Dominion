@@ -27,9 +27,18 @@ Limit:
   Amount: 10 # 最大领地数量-1表示不限制
   Depth: 3 # 子领地深度0表示不开启-1表示不限制
   Vert: false # 是否自动延伸到 MaxY 和 MinY
-  WorldBlackList: # 不允许圈地的世界列表
-    - some_world
   OpByPass: true # 是否允许OP无视领地限制
+  WorldSettings:
+    some_world_name:
+      MinY: -64
+      MaxY: 320
+      SizeX: 128
+      SizeY: 64
+      SizeZ: 128
+      Amount: 10
+      Depth: 3
+      Vert: false
+      Allow: false
 
 Teleport:
   Enable: true
@@ -102,13 +111,16 @@ Timer: false # 性能测试计时器
 - SpawnProtection：出生点半径保护，此半径范围内普通玩家无法创建领地
 - MinY：领地的最小Y坐标
 - MaxY：领地的最大Y坐标
-- SizeX：X方向最大长度
-- SizeY：Y方向最大长度
-- SizeZ：Z方向最大长度
-- Amount：每个玩家拥有的最大领地数量
+- SizeX：X方向最大长度 1表示不限制
+- SizeY：Y方向最大长度 1表示不限制
+- SizeZ：Z方向最大长度 1表示不限制
+- Amount：每个玩家拥有的最大领地数量 1表示不限制
 - Depth：子领地深度、0表示不允许子领地、 -1表示不限制
-- WorldBlackList：不允许创建领地的世界
 - Vert：当设置为 `true` 时，玩家选择区域创建或者自动创建领地，会自动将Y向下向上延伸到MinY和MaxY。**同时也会根据 MinY 和 MaxY 的设置自动调整 SizeY 的配置保证数值逻辑一致。**
+- WorldSettings：单独设置某个世界的圈地规则（如不设置则使用上述默认规则）
+  - Allow：是否允许在此世界圈地
+
+> 您服务器世界的名称应该避免使用 `default` 这样的特殊单词，否则会导致不可预料的意外错误。
 
 ### Teleport
 

@@ -1,26 +1,21 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.minecraftpluginutils.XLogger;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GroupLimit {
-    private final YamlConfiguration config;
+
+
+    private YamlConfiguration config;
     private final File file_path;
-    private Integer min_y;
-    private Integer max_y;
-    private Integer size_x;
-    private Integer size_y;
-    private Integer size_z;
-    private Integer amount;
-    private Integer depth;
-    private Boolean vert;
-    private List<String> world_black_list;
+    private final Map<String, WorldSetting> world_limits = new HashMap<>();
     private Double price;
     private Boolean only_xz;
     private Double refund;
@@ -28,93 +23,96 @@ public class GroupLimit {
     public GroupLimit() {
         this.file_path = null;
         this.config = new YamlConfiguration();
+        WorldSetting defaultSetting = new WorldSetting("config.yml");
+        world_limits.put("default", defaultSetting);
     }
 
-    public GroupLimit(File filePath) {
+    private GroupLimit(File filePath) {
         this.file_path = filePath;
         config = YamlConfiguration.loadConfiguration(this.file_path);
-        setLimitMinY(config.getInt("MinY", -64));
-        setLimitMaxY(config.getInt("MaxY", 320));
-        if (getLimitMinY() >= getLimitMaxY()) {
-            XLogger.err(Translation.Config_Check_GroupMinYError, this.file_path.getName());
-            setLimitMinY(-64);
-            setLimitMaxY(320);
+        WorldSetting defaultSetting = new WorldSetting(filePath.getName());
+        defaultSetting.min_y = config.getInt("MinY", -64);
+        defaultSetting.max_y = config.getInt("MaxY", 320);
+        defaultSetting.size_x = config.getInt("SizeX", 128);
+        defaultSetting.size_y = config.getInt("SizeY", 64);
+        defaultSetting.size_z = config.getInt("SizeZ", 128);
+        defaultSetting.amount = config.getInt("Amount", 10);
+        defaultSetting.depth = config.getInt("Depth", 3);
+        defaultSetting.vert = config.getBoolean("Vert", false);
+        world_limits.put("default", defaultSetting);
+        ConfigurationSection worldSettings = config.getConfigurationSection("WorldSettings");
+        if (worldSettings != null) {
+            addWorldLimits(WorldSetting.load(filePath.getName() + ":WorldSettings", worldSettings));
         }
-        setLimitSizeX(config.getInt("SizeX", 128));
-        if (getLimitSizeX() <= 4 && getLimitSizeX() != -1) {
-            XLogger.err(Translation.Config_Check_GroupSizeXError, this.file_path.getName());
-            setLimitSizeX(128);
+        price = config.getDouble("Price", 10.0);
+        only_xz = config.getBoolean("OnlyXZ", false);
+        refund = config.getDouble("Refund", 0.85);
+        checkRules();
+        saveAll();
+    }
+
+    public Integer getLimitMinY(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").min_y;
+        } else {
+            return world_limits.get(world.getName()).min_y;
         }
-        setLimitSizeY(config.getInt("SizeY", 64));
-        if (getLimitSizeY() <= 4 && getLimitSizeY() != -1) {
-            XLogger.err(Translation.Config_Check_GroupSizeYError, this.file_path.getName());
-            setLimitSizeY(64);
+    }
+
+    public Integer getLimitMaxY(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").max_y;
+        } else {
+            return world_limits.get(world.getName()).max_y;
         }
-        setLimitSizeZ(config.getInt("SizeZ", 128));
-        if (getLimitSizeZ() <= 4 && getLimitSizeZ() != -1) {
-            XLogger.err(Translation.Config_Check_GroupSizeZError, this.file_path.getName());
-            setLimitSizeZ(128);
+    }
+
+    public Integer getLimitSizeX(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").size_x;
+        } else {
+            return world_limits.get(world.getName()).size_x;
         }
-        setLimitAmount(config.getInt("Amount", 10));
-        if (getLimitAmount() <= 0 && getLimitAmount() != -1) {
-            XLogger.err(Translation.Config_Check_GroupAmountError, this.file_path.getName());
-            setLimitAmount(10);
+    }
+
+    public Integer getLimitSizeY(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").size_y;
+        } else {
+            return world_limits.get(world.getName()).size_y;
         }
-        setLimitDepth(config.getInt("Depth", 3));
-        if (getLimitDepth() <= 0 && getLimitDepth() != -1) {
-            XLogger.err(Translation.Config_Check_GroupDepthError, this.file_path.getName());
-            setLimitDepth(3);
+    }
+
+    public Integer getLimitSizeZ(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").size_z;
+        } else {
+            return world_limits.get(world.getName()).size_z;
         }
-        setLimitVert(config.getBoolean("Vert", false));
-        setWorldBlackList(config.getStringList("WorldBlackList"));
-        setPrice(config.getDouble("Price", 10.0));
-        if (getPrice() < 0.0) {
-            XLogger.err(Translation.Config_Check_GroupPriceError, this.file_path.getName());
-            setPrice(10.0);
+    }
+
+    public Integer getLimitAmount(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").amount;
+        } else {
+            return world_limits.get(world.getName()).amount;
         }
-        setPriceOnlyXZ(config.getBoolean("OnlyXZ", false));
-        setRefundRatio(config.getDouble("Refund", 0.85));
-        if (getRefundRatio() < 0.0 || getRefundRatio() > 1.0) {
-            XLogger.err(Translation.Config_Check_GroupRefundError, this.file_path.getName());
-            setRefundRatio(0.85);
+    }
+
+    public Integer getLimitDepth(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").depth;
+        } else {
+            return world_limits.get(world.getName()).depth;
         }
-        save(); // 保存一次，确保文件中的数据是合法的
     }
 
-    public Integer getLimitMinY() {
-        return min_y;
-    }
-
-    public Integer getLimitMaxY() {
-        return max_y;
-    }
-
-    public Integer getLimitSizeX() {
-        return size_x;
-    }
-
-    public Integer getLimitSizeY() {
-        return size_y;
-    }
-
-    public Integer getLimitSizeZ() {
-        return size_z;
-    }
-
-    public Integer getLimitAmount() {
-        return amount;
-    }
-
-    public Integer getLimitDepth() {
-        return depth;
-    }
-
-    public Boolean getLimitVert() {
-        return vert;
-    }
-
-    public List<String> getWorldBlackList() {
-        return world_black_list;
+    public Boolean getLimitVert(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").vert;
+        } else {
+            return world_limits.get(world.getName()).vert;
+        }
     }
 
     public Double getPrice() {
@@ -130,89 +128,85 @@ public class GroupLimit {
     }
 
 
-    public void setLimitMinY(Integer min_y) {
-        this.min_y = min_y;
-        this.config.set("MinY", min_y);
-        this.save();
+    public void setLimitMinY(Integer min_y, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").min_y = min_y;
+        } else {
+            world_limits.get(world.getName()).min_y = min_y;
+        }
     }
 
-    public void setLimitMaxY(Integer max_y) {
-        this.max_y = max_y;
-        this.config.set("MaxY", max_y);
-        this.save();
+    public void setLimitMaxY(Integer max_y, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").max_y = max_y;
+        } else {
+            world_limits.get(world.getName()).max_y = max_y;
+        }
     }
 
-    public void setLimitSizeX(Integer size_x) {
-        this.size_x = size_x;
-        this.config.set("SizeX", size_x);
-        this.save();
+    public void setLimitSizeX(Integer size_x, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").size_x = size_x;
+        } else {
+            world_limits.get(world.getName()).size_x = size_x;
+        }
     }
 
-    public void setLimitSizeY(Integer size_y) {
-        this.size_y = size_y;
-        this.config.set("SizeY", size_y);
-        this.save();
+    public void setLimitSizeY(Integer size_y, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").size_y = size_y;
+        } else {
+            world_limits.get(world.getName()).size_y = size_y;
+        }
     }
 
-    public void setLimitSizeZ(Integer size_z) {
-        this.size_z = size_z;
-        this.config.set("SizeZ", size_z);
-        this.save();
+    public void setLimitSizeZ(Integer size_z, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").size_z = size_z;
+        } else {
+            world_limits.get(world.getName()).size_z = size_z;
+        }
     }
 
-    public void setLimitAmount(Integer amount) {
-        this.amount = amount;
-        this.config.set("Amount", amount);
-        this.save();
+    public void setLimitAmount(Integer amount, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").amount = amount;
+        } else {
+            world_limits.get(world.getName()).amount = amount;
+        }
     }
 
-    public void setLimitDepth(Integer depth) {
-        this.depth = depth;
-        this.config.set("Depth", depth);
-        this.save();
+    public void setLimitDepth(Integer depth, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").depth = depth;
+        } else {
+            world_limits.get(world.getName()).depth = depth;
+        }
     }
 
-    public void setLimitVert(Boolean vert) {
-        this.vert = vert;
-        this.config.set("Vert", vert);
-        this.save();
-    }
-
-    public void setWorldBlackList(List<String> world_black_list) {
-        this.world_black_list = world_black_list;
-        this.config.set("WorldBlackList", world_black_list);
-        this.save();
+    public void setLimitVert(Boolean vert, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").vert = vert;
+        } else {
+            world_limits.get(world.getName()).vert = vert;
+        }
     }
 
     public void setPrice(Double price) {
         this.price = price;
-        this.config.set("Price", price);
-        this.save();
     }
 
     public void setPriceOnlyXZ(Boolean only_xz) {
         this.only_xz = only_xz;
-        this.config.set("OnlyXZ", only_xz);
-        this.save();
     }
 
     public void setRefundRatio(Double refund) {
         this.refund = refund;
-        this.config.set("Refund", refund);
-        this.save();
     }
 
-    private void save() {
-        if (file_path == null) {
-            return;
-        }
-        try {
-            config.save(file_path);
-        } catch (Exception e) {
-            XLogger.err("Failed to save group limit file: " + file_path.getName());
-        }
+    public void addWorldLimits(Map<String, WorldSetting> limits) {
+        world_limits.putAll(limits);
     }
-
 
     public static Map<String, GroupLimit> loadGroups(JavaPlugin plugin) {
         Map<String, GroupLimit> groups = new HashMap<>();
@@ -237,5 +231,89 @@ public class GroupLimit {
         }
         XLogger.info(Translation.Messages_LoadedGroupAmount, groups.size());
         return groups;
+    }
+
+    private void saveAll() {
+        this.file_path.delete();
+        this.config = new YamlConfiguration();
+        this.config.set("MinY", world_limits.get("default").min_y);
+        this.config.setComments("MinY", Arrays.asList(
+                Translation.Config_Comment_GroupLine1.trans(),
+                Translation.Config_Comment_GroupLine2.trans(),
+                Translation.Config_Comment_GroupLine3.trans(),
+                Translation.Config_Comment_GroupLine4.trans(),
+                Translation.Config_Comment_GroupLine5.trans(),
+                Translation.Config_Comment_GroupLine6.trans(),
+                Translation.Config_Comment_GroupLine7.trans(),
+                String.format(Translation.Config_Comment_GroupLine8DocumentAddress.trans(), ConfigManager.instance.getLanguage())
+        ));
+        this.config.setInlineComments("MinY", List.of(Translation.Config_Comment_MinY.trans()));
+        this.config.set("MaxY", world_limits.get("default").max_y);
+        this.config.setInlineComments("MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
+        this.config.set("SizeX", world_limits.get("default").size_x);
+        this.config.setInlineComments("SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("SizeY", world_limits.get("default").size_y);
+        this.config.setInlineComments("SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("SizeZ", world_limits.get("default").size_z);
+        this.config.setInlineComments("SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Amount", world_limits.get("default").amount);
+        this.config.setInlineComments("Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Depth", world_limits.get("default").depth);
+        this.config.setInlineComments("Depth", List.of(Translation.Config_Comment_Depth.trans() + Translation.Config_Comment_ZeroDisabled.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Vert", world_limits.get("default").vert);
+        this.config.setInlineComments("Vert", List.of(Translation.Config_Comment_Vert.trans()));
+        this.config.set("Price", price);
+        this.config.setInlineComments("Price", List.of(Translation.Config_Comment_Price.trans()));
+        this.config.set("OnlyXZ", only_xz);
+        this.config.setInlineComments("OnlyXZ", List.of(Translation.Config_Comment_OnlyXZ.trans()));
+        this.config.set("Refund", refund);
+        this.config.setInlineComments("Refund", List.of(Translation.Config_Comment_Refund.trans()));
+
+        this.config.set("WorldSettings", getWorldSettings());
+        this.config.setInlineComments("WorldSettings", List.of(Translation.Config_Comment_WorldSettings.trans()));
+
+        try {
+            this.config.save(this.file_path);
+        } catch (Exception e) {
+            XLogger.err("Failed to save group limit file: " + this.file_path.getName());
+        }
+    }
+
+    public YamlConfiguration getWorldSettings() {
+        YamlConfiguration section = new YamlConfiguration();
+        if (world_limits.size() <= 1) {
+            return WorldSetting.getDefaultList();
+        }
+        for (Map.Entry<String, WorldSetting> entry : world_limits.entrySet()) {
+            if (entry.getKey().equals("default")) {
+                continue;
+            }
+            section.set(entry.getKey(), entry.getValue().getYaml());
+        }
+        return section;
+    }
+
+    public void checkRules() {
+        if (getPrice() < 0.0) {
+            XLogger.err(Translation.Config_Check_GroupPriceError, this.file_path.getName());
+            setPrice(10.0);
+        }
+        if (getRefundRatio() < 0.0 || getRefundRatio() > 1.0) {
+            XLogger.err(Translation.Config_Check_GroupRefundError, this.file_path.getName());
+            setRefundRatio(0.85);
+        }
+        for (WorldSetting w : world_limits.values()) {
+            w.checkRules();
+        }
+    }
+
+    public List<String> getWorldBlackList() {
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<String, WorldSetting> entry : world_limits.entrySet()) {
+            if (!entry.getValue().allow) {
+                list.add(entry.getKey());
+            }
+        }
+        return list;
     }
 }
