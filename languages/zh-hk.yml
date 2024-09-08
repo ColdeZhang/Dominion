@@ -1,0 +1,733 @@
+Commands:
+  Dominion:
+    SetFlagUsage: '用法: /dominion set <權限名稱> <true/false> [領地名稱]'
+    CreateDominionUsage: '用法: /dominion create <領地名稱>'
+    CreateSelectPointsFirst: 請先使用工具選擇領地的對角線兩點，或使用 /dominion auto_create <領地名稱> 創建自動領地
+    CreateSubDominionUsage: '用法: /dominion create_sub <子領地名稱> [父領地名稱]'
+    CreateSubSelectPointsFirst: 請先使用工具選擇子領地的對角線兩點，或使用 /dominion auto_create_sub <子領地名稱>
+      [父領地名稱] 創建自動子領地
+    AutoCreateDominionUsage: '用法: /dominion auto_create <領地名稱>'
+    AutoCreateSubDominionUsage: '用法: /dominion auto_create_sub <子領地名稱> [父領地名稱]'
+    AutoCreateDominionDisabled: 自動創建領地功能已關閉
+    ExpandDominionUsage: '用法: /dominion expand [大小] [領地名稱]'
+    ContractDominionUsage: '用法: /dominion contract [大小] [領地名稱]'
+    SizeShouldBeInteger: 大小應當為整數
+    SizeShouldBePositive: 大小應當大於0
+    DeleteDominionUsage: '用法: /dominion delete <領地名稱>'
+    SetEnterMessageUsage: '用法: /dominion set_enter_msg <提示語> [領地名稱]'
+    SetLeaveMessageUsage: '用法: /dominion set_leave_msg <提示語> [領地名稱]'
+    SetTpLocationUsage: '用法: /dominion set_tp_location [領地名稱]'
+    RenameDominionUsage: '用法: /dominion rename <原領地名稱> <新領地名稱>'
+    GiveDominionUsage: '用法: /dominion give <領地名稱> <玩家名稱>'
+    TpDominionUsage: '用法: /dominion tp <領地名稱>'
+    DominionNotExist: 領地不存在
+    SetMapColorUsage: '用法: /dominion set_map_color <顏色> [領地名稱]'
+  Group:
+    CreateGroupUsage: '用法: /dominion group create <領地名稱> <權限組名稱>'
+    DeleteGroupUsage: '用法: /dominion group delete <領地名稱> <權限組名稱>'
+    RenameGroupUsage: '用法: /dominion group rename <領地名稱> <權限組舊名稱> <新名稱>'
+    SetGroupFlagUsage: '用法: /dominion group set_flag <領地名稱> <權限組名稱> <權限名稱> <true|false>'
+    AddGroupMemberUsage: '用法: /dominion group add_member <領地名稱> <權限組名稱> <玩家名稱>'
+    RemoveGroupMemberUsage: '用法: /dominion group remove_member <領地名稱> <權限組名稱> <玩家名稱>'
+    GroupUsage: '用法: /dominion group <create|delete|rename|set_flag|add_member|remove_member|select_member|setting|list>'
+    NewGroupName: 新權限組名稱
+  Member:
+    DominionAddMemberUsage: '用法: /dominion member add <領地名稱> <玩家名稱>'
+    DominionSetFlagUsage: '用法: /dominion member set_flag <領地名稱> <玩家名稱> <權限名稱> <true/false>'
+    DominionRemoveMemberUsage: '用法: /dominion member remove <領地名稱> <玩家名稱>'
+    DominionApplyTemplateUsage: '用法: /dominion member apply_template <領地名稱> <玩家名稱>
+      <模板名稱>'
+    MemberUsage: '用法: /dominion member <add/set_flag/remove/apply_template/list/setting/select_player/select_template>'
+  PageOptional: 頁碼(可選)
+  ArgumentsNotEnough: 參數不足
+  UnknownArgument: 未知參數
+  SizeInteger: 大小(整數)
+  DominionName: 領地名稱
+  SubDominionName: 子領地名稱
+  EnterMessageContent: 進入提示語內容
+  LeaveMessageContent: 離開提示語內容
+  InputColor: 輸入顏色(16進製)
+  NewDominionName: 新領地名稱
+  Residence:
+    MigrationDisabled: Residence 遷移功能沒有開啟
+    MigrateUsage: '用法: /dominion migrate <res領地名稱>'
+    NoMigrationData: 你沒有可遷移的數據
+    NoResidenceDominion: 未找到指定的 Residence 領地
+    ResidenceNotOwner: 你不是該領地的所有者，無法遷移此領地
+    MigrateFailed: '遷移失敗: %s'
+    MigrateSuccess: 領地 %s 已從 Residence 遷移至 Dominion
+  Operator:
+    ReloadingDominionCache: 正在從數據庫重新加載領地緩存...
+    ReloadedDominionCache: 領地緩存已重新加載
+    ReloadingPrivilegeCache: 正在從數據庫重新加載玩家權限緩存...
+    ReloadedPrivilegeCache: 玩家權限緩存已重新加載
+    ReloadingGroupCache: 正在從數據庫重新加載權限組緩存...
+    ReloadedGroupCache: 權限組緩存已重新加載
+    ExportingMCAList: 正在導出擁有領地的MCA文件列表...
+    CreateExportFolderFailed: 創建導出文件夾失敗
+    ExportingMCAListForWorld: 正在導出 %s 的MCA文件列表...
+    DeleteMCAListFailed: 刪除 %s 的MCA文件列表失敗
+    CreateMCAListFailed: 創建 %s 的MCA文件列表失敗
+    WriteMCAListFailed: 寫入 %s 失敗
+    ExportMCAListFailed: 導出 %s 的MCA文件列表失敗
+    ExportedMCAList: MCA文件列表已導出到 %s
+    ReloadingConfig: 正在重新加載配置文件...
+    ReloadedConfig: 配置文件已重新加載
+  SetConfig:
+    MinYShouldBeLessThanMaxY: 最高Y坐標限製不能小於最低Y坐標限製
+    MaxYShouldBeGreaterThanMinY: 最低Y坐標限製不能大於最高Y坐標限製
+    SizeXShouldBeGreaterThan4: X軸(東西)最大尺寸不能小於4
+    SizeZShouldBeGreaterThan4: Z軸(南北)最大尺寸不能小於4
+    SizeYShouldBeGreaterThan4: Y軸(垂直)最大尺寸不能小於4
+    AmountShouldBeGreaterThan0: 每個玩家領地數量限製不能小於0
+    DepthShouldBeGreaterThan0: 領地深度限製不能小於0
+    TpDelayShouldBeGreaterThan0: 傳送延遲不能小於0
+    TpCoolDownShouldBeGreaterThan0: 傳送冷卻時間不能小於0
+    PriceShouldBeGreaterThan0: 每方塊單價不能小於0
+    RefundShouldBeGreaterThan0: 領地退款比例不能小於0
+    SpawnProtectRadiusShouldBeGreaterThan0: 出生點保護半徑不能小於或等於0
+  Template:
+    CreateTemplateUsage: '用法: /dominion template create <模板名稱>'
+    DeleteTemplateUsage: '用法: /dominion template delete <模板名稱>'
+    SetTemplateFlagUsage: '用法: /dominion template set_flag <模板名稱> <權限名稱> <true/false>'
+    TemplateUsage: '用法: /dominion template <list|setting|delete|create|set_flag>'
+    NewTemplateName: 新模板名稱
+  Title:
+    UseTitleUsage: '用法: /dominion use_title <權限組ID>'
+    RemoveTitleSuccess: 成功卸下權限組稱號
+    GroupNotExist: 權限組不存在
+    GroupDominionNotExist: 權限組 %s 所屬領地不存在
+    NotDominionMember: 你不是領地 %s 的成員，無法使用其稱號
+    NotGroupMember: 你不屬於權限組 %s，無法使用其稱號
+    UseTitleSuccess: 成功使用權限組 %s 稱號
+    UseTitleFailed: 使用稱號失敗：%s
+Messages:
+  OpBypassTpLimit: 你是OP，將忽略領地傳送限製
+  WorldNotExist: 領地所在世界不存在
+  NoTpLocation: 領地 %s 沒有設置傳送點，將嘗試傳送到中心點
+  TpLocationNotInside: 領地 %s 傳送點不在領地內，將嘗試傳送到中心點
+  TpToDominion: 已將你傳送到 %s
+  TpDisabled: 管理員沒有開啟領地傳送功能
+  DominionNoTp: 此領地禁止傳送
+  GroupNoTp: 你所在的權限組組不被允許傳送到這個領地
+  PrivilegeNoTp: 你不被允許傳送到這個領地
+  TpCoolDown: 請等待 %d 秒後再傳送
+  TpDelay: 傳送將在 %d 秒後執行
+  TpCountDown: 傳送倒計時 %d 秒
+  TpFailed: 傳送失敗，請重試
+  CreateDominionFailed: 創建領地失敗
+  CreateDominionSuccess: 成功創建領地 %s
+  DominionNameShouldNotEmpty: 領地名稱不能為空
+  DominionNameInvalid: 領地名稱不能包含空格或點
+  DominionNameExist: 已經存在名稱為 %s 的領地
+  SelectPointsWorldNotSame: 兩個選點世界不一致
+  CreateDominionDisabledWorld: 禁止在世界 %s 創建領地
+  DominionAmountLimit: 你的領地數量已達上限(%d個)
+  ParentDominionNotExist: 父領地 %s 不存在
+  RootDominionLost: 根領地丟失！
+  NotParentDominionOwner: 你不是父領地 %s 的擁有者，無法創建子領地
+  ParentDominionNotInSameWorld: 父領地與子領地不在同一世界
+  OutOfParentDominionRange: 超出父領地 %s 範圍
+  ConflictWithSpawnProtect: 與出生點保護沖突
+  ConflictWithDominion: 與領地 %s 沖突
+  DatabaseError: 數據庫錯誤，請聯系管理員
+  CannotGetDominionAuto: 無法獲取你所處的領地，請指定名稱
+  ExpandDominionFailed: 擴展領地失敗
+  DominionWorldLost: 領地所在世界丟失
+  ParentDominionLost: 父領地丟失
+  ExpandDominionSuccess: 成功擴展領地 %s %d格
+  ContractDominionFailed: 縮小領地失敗
+  ContractDominionConflict: 縮小後的領地無法包含子領地 %s
+  ContractDominionSuccess: 成功縮小領地 %s %d格
+  DeleteDominionFailed: 刪除領地失敗
+  DeleteDominionSuccess: 領地 %s 及其所有子領地已刪除
+  DeleteDominionConfirm: 刪除領地 %s 會同時刪除其所有子領地，是否繼續？
+  DeleteDominionForceConfirm: 輸入 /dominion delete %s force 確認刪除
+  SetEnterMessageSuccess: 成功設置領地 %s 的進入消息
+  SetLeaveMessageSuccess: 成功設置領地 %s 的離開消息
+  SetTpLocationFailed: 設置領地傳送點失敗
+  DominionNotExist: 領地 %s 不存在
+  DominionWorldNotExist: 領地所在世界不存在
+  SetTpLocationSuccess: 成功設置領地 %s 的傳送點 %d %d %d
+  TpLocationNotInDominion: 傳送點不在領地 %s 內
+  RenameDominionFailed: 重命名領地失敗
+  RenameDominionSameName: 新名稱與舊名稱相同
+  RenameDominionSuccess: 成功將領地 %s 重命名為 %s
+  GiveDominionFailed: 轉讓領地失敗
+  PlayerNotExist: 玩家 %s 不存在或沒有登錄過
+  DominionAlreadyBelong: 領地 %s 已經屬於 %s，無需轉移
+  SubDominionCannotGive: 子領地無法轉讓，你可以通過將 %s 設置為管理員來讓其管理領地 %s
+  GiveDominionConfirm: 轉讓領地 %s 給 %s 會同時轉讓其所有子領地，是否繼續？
+  GiveDominionForceConfirm: 輸入 /dominion give %s %s force 確認轉讓
+  GiveDominionSuccess: 成功將領地 %s 及其所有子領地轉讓給 %s
+  SetMapColorFailed: 設置領地地圖顏色失敗
+  MapColorInvalid: 顏色格式不正確
+  SetMapColorSuccess: 成功設置領地 %s 的衛星地圖顏色為 %s
+  SizeInvalid: 尺寸不合法
+  SizeShouldBeGreaterThan4: 領地的任意一邊長度不得小於4
+  SizeXShouldBeLessThan: 領地X方向(東西)長度不能超過 %d
+  SizeYShouldBeLessThan: 領地Y方向(上下)高度不能超過 %d
+  SizeZShouldBeLessThan: 領地Z方向(南北)長度不能超過 %d
+  MaxYShouldBeLessThan: 領地Y坐標上限不能超過 %d
+  MinYShouldBeLessThan: 領地Y坐標下限不能超過 %d
+  DepthInvalid: 子領地深度不合法
+  CreateSubDominionDisabled: 不允許創建子領地
+  DepthShouldBeLessThan: 子領地嵌套深度不能超過 %d
+  NotDominionOwner: 你不是領地 %s 的擁有者
+  NoEconomyPlugin: 沒有可用的經濟插件系統，請聯系服主
+  OpBypassEconomyCheck: 你是OP，已跳過經濟檢查
+  NotEnoughMoney: 你的余額不足，需要 %.2f %s
+  ChargeMoney: 已扣除 %.2f %s
+  RefundMoney: 已退還 %.2f %s
+  CannotGetLocation: 無法獲取你的位置
+  CrossWorldOperationDisallowed: 禁止跨世界操作
+  NotInDominion: 你不在領地 %s 內，無法執行此操作
+  CannotGetDirection: 無法獲取你的方向
+  InvalidDirection: 無效的方向 %s
+  ContractSizeInvalid: 縮小後的領地大小無效
+  SubDominionList: (子領地：%s)
+  SetDominionFlagSuccess: 成功設置領地權限 %s 為 %s
+  UnknownFlag: 未知的權限 %s
+  PageNoPermission: 你沒有權限訪問此頁面
+  CreateGroupFailed: 創建權限組 %s 失敗
+  CreateGroupSuccess: 創建權限組 %s 成功
+  GroupNameInvalid: 權限組名稱不能包含空格
+  GroupNameExist: 領地 %s 已存在名為 %s 的權限組
+  DeleteGroupFailed: 刪除權限組 %s 失敗
+  DeleteGroupSuccess: 刪除權限組 %s 成功
+  GroupNotExist: 領地 %s 不存在名為 %s 的權限組
+  SetGroupFlagFailed: 設置權限組 %s 的權限 %s 為 %s 失敗
+  SetGroupFlagSuccess: 設置權限組 %s 的權限 %s 為 %s 成功
+  NotDominionOwnerForGroup: 你不是領地 %s 的擁有者，無法修改管理員權限組權限
+  RenameGroupFailed: 重命名權限組 %s 為 %s 失敗
+  RenameGroupSuccess: 重命名權限組 %s 為 %s 成功
+  AddGroupMemberFailed: 添加成員 %s 到權限組 %s 失敗
+  AddGroupMemberSuccess: 添加成員 %s 到權限組 %s 成功
+  NoPermissionForGroupMember: 你沒有權限修改領地 %s 的權限組 %s 成員
+  NotDominionOwnerForGroupMember: 你不是領地 %s 的擁有者，無法添加成員到管理員權限組
+  PlayerNotDominionMember: 玩家 %s 不是領地 %s 的成員，無法直接加入權限組
+  PlayerAlreadyInGroup: 玩家 %s 已在權限組 %s 中
+  PlayerIsOwnerForGroupMember: '%s 是管理員，你不是領地 %s 的擁有者，無法添加管理員到權限組'
+  RemoveGroupMemberFailed: 從權限組 %s 移除成員 %s 失敗
+  RemoveGroupMemberSuccess: 從權限組 %s 移除成員 %s 成功
+  NoPermissionForRemoveGroupMember: 你沒有權限移除領地 %s 的權限組 %s 成員
+  NotDominionOwnerForRemoveGroupMember: 你不是領地 %s 的擁有者，無法從管理員權限組移除成員
+  PlayerNotMember: 玩家 %s 不是領地 %s 的成員
+  PlayerNotInGroup: 玩家 %s 不在權限組 %s 中
+  RemoveMemberFailed: 將玩家 %s 從領地 %s 移除失敗
+  RemoveMemberSuccess: 將玩家 %s 從領地 %s 移除成功
+  SetMemberFlagFailed: 設置玩家 %s 在領地 %s 的權限 %s 為 %s 失敗
+  SetMemberFlagSuccess: 設置玩家 %s 在領地 %s 的權限 %s 為 %s 成功
+  PlayerBelongToGroup: 玩家 %s 屬於 %s 權限組，無法單獨設置權限
+  AddMemberFailed: 將玩家 %s 添加到領地成員 %s 失敗
+  AddMemberSuccess: 將玩家 %s 添加到領地成員 %s 成功
+  PlayerAlreadyMember: 玩家 %s 已經是領地 %s 的成員
+  ApplyTemplateSuccess: 應用模板 %s 到玩家 %s 在領地 %s 的權限成功
+  ApplyTemplateFailed: 應用模板 %s 到玩家 %s 在領地 %s 的權限失敗
+  TemplateNotExist: 模板 %s 不存在
+  NotDominionOwnerForRemoveAdmin: 你不是領地 %s 的擁有者，無法移除一個領地管理員
+  NotDominionOwnerForSetAdmin: 你不是領地 %s 的擁有者，無法修改其他玩家管理員的權限
+  OwnerCannotBeMember: 玩家 %s 是領地 %s 的擁有者，不可以被添加為成員
+  CreateTemplateSuccess: 創建模板 %s 成功
+  CreateTemplateFailed: 創建模板 %s 失敗
+  TemplateNameInvalid: 模板名稱不能包含空格
+  TemplateNameExist: 已經存在名為 %s 的權限模板
+  DeleteTemplateSuccess: 刪除模板 %s 成功
+  DeleteTemplateFailed: 刪除模板 %s 失敗
+  SetTemplateFlagSuccess: 設置模板 %s 的權限 %s 為 %s 成功
+  SetTemplateFlagFailed: 設置模板 %s 的權限 %s 為 %s 失敗
+  CommandPlayerOnly: 該命令只能由玩家執行
+  NoPermission: 你沒有 %s 權限執行此命令
+  NotDominionOwnerOrAdmin: 你不是領地 %s 的擁有者或管理員，無權修改權限
+  InSubDominion: 你當前在子領地內，請指定要操作的領地名稱
+  NoPermissionForFlag: 你沒有 %s (%s) 權限
+  BlueMapConnectFailed: 無法連接 BlueMap 插件，如果你不打算使用衛星地圖渲染建議前往配置文件關閉此功能以避免下方的報錯
+  DynmapRegisterSuccess: Dynmap 成功註冊
+  DynmapConnectFailed: 無法連接到 Dynmap，如果你不打算使用衛星地圖渲染建議前往配置文件關閉此功能
+  PlaceholderAPINotFound: 未找到 PlaceholderAPI 插件，無法使用權限組稱號功能，已自動關閉
+  PluginEnabled: 領地插件已啟動
+  PluginVersion: 版本：%s
+  PlaceholderAPIRegisterSuccess: 成功註冊 PlaceholderAPI 擴展
+  LoadedGroupAmount: 共加載了 %d 個領地組
+  AutoCleanStart: 開始自動清理長時間未登錄玩家領地數據
+  AutoCleanPlayer: 已清理玩家 %s 的領地數據
+  AutoCleanEnd: 自動清理完成
+TUI:
+  NotDominionOwnerOrAdminForPage: 你不是領地 %s 的擁有者或管理員，無權訪問此頁面
+  CommandHelp:
+    Title: 領地插件命令幫助
+    SubTitle: <>表示必填參數 []表示可選參數
+  Navigation:
+    Menu: 主菜單
+    DominionList: 我的領地
+    Manage: 管理界面
+    EnvSetting: 環境設置
+    GuestSetting: 訪客權限
+    MemberList: 成員列表
+    MemberSetting: 成員權限
+    GroupList: 權限組列表
+    GroupSetting: 權限組管理
+    AllDominion: 所有領地
+    TemplateList: 模板列表
+    TemplateSetting: 模板管理
+    MigrateList: Res數據列表
+    TitleList: 權限組稱號列表
+  ManageButton: 管理
+  DeleteButton: 刪除
+  SearchButton: 搜索
+  BackButton: 返回
+  SelectButton: 選擇
+  EditButton: 編輯
+  Menu:
+    Title: Dominion 領地系統
+    CreateDominionButton: 創建領地
+    CreateDominionDescription: 以你為中心自動創建一個新的領地
+    MyDominionButton: 我的領地
+    MyDominionDescription: 查看我的領地列表
+    TitleListButton: 稱號列表
+    TitleListDescription: 查看/使用權限組稱號
+    TemplateListButton: 模板列表
+    TemplateListDescription: 成員權限模板列表
+    CommandHelpButton: 指令幫助
+    CommandHelpDescription: 查看指令列表
+    DocumentButton: 使用文檔
+    DocumentDescription: 在瀏覽器中打開使用文檔
+    MigrateButton: 遷移數據
+    MigrateDescription: 把你的領地從Residence遷移到Dominion
+    AllDominionButton: 所有領地
+    AllDominionDescription: 查看所有領地
+    ConfigButton: 系統配置
+    ConfigDescription: 查看/修改系統配置
+    ReloadCacheButton: 重載緩存
+    ReloadCacheDescription: 手動刷新緩存可解決一些玩家操作無效問題，不建議頻繁操作
+    ReloadConfigButton: 重載配置
+    ReloadConfigDescription: 重載配置文件
+    OpOnlySection: '--- 以下選項僅OP可見 ---'
+  DominionList:
+    Title: 我的領地列表
+    AdminSection: '--- 以下為你擁有管理員權限的領地 ---'
+  DominionManage:
+    Title: 領地 %s 管理界面
+    InfoButton: 詳細信息
+    InfoDescription: 查看領地詳細信息
+    EnvSettingButton: 環境設置
+    EnvSettingDescription: 設置領地內的一些環境行為
+    GuestSettingButton: 訪客權限
+    GuestSettingDescription: 配置訪客在此領地的權限
+    MemberListButton: 成員管理
+    MemberListDescription: 管理此領地成員的權限
+    GroupListButton: 權限組
+    GroupListDescription: 管理此領地的權限組
+    SetTpLocationButton: 設置傳送點
+    SetTpLocationDescription: 設置你當前位置為此領地傳送點
+    RenameButton: 重命名
+    RenameDescription: 重命名領地
+    EditJoinMessageButton: 編輯歡迎提示語
+    EditJoinMessageDescription: 當玩家進入領地時顯示的消息
+    EditLeaveMessageButton: 編輯離開提示語
+    EditLeaveMessageDescription: 當玩家離開領地時顯示的消息
+    SetMapColorButton: 設置地塊顏色
+    SetMapColorDescription: 設置衛星地圖上的地塊顏色
+    NotInDominion: 你不在任何領地內，請指定領地名稱 /dominion manage <領地名稱>
+  EnvSetting:
+    Title: 領地 %s 環境設置
+    Usage: '用法: /dominion env_setting <領地名稱> [頁碼]'
+  GuestSetting:
+    Title: 領地 %s 訪客權限
+    Usage: '用法: /dominion guest_setting <領地名稱> [頁碼]'
+  SizeInfo:
+    Title: 領地 %s 的尺寸信息
+    Owner: 領地所有者：
+    Size: 領地大小：
+    Center: 中心坐標：
+    Vertical: 垂直高度：
+    VertY: Y軸坐標：
+    Square: 水平面積：
+    Volume: 領地體積：
+    TpLocation: 傳送點坐標：
+    NoneTp: 無
+    Usage: 你不在任何領地內，請指定領地名稱 /dominion info <領地名稱>
+  MemberList:
+    Title: 領地 %s 成員列表
+    AddButton: 添加成員
+    FlagButton: 權限
+    FlagDescription: 配置成員權限
+    RemoveButton: 移除
+    RemoveDescription: 將此成員移出（變為訪客）
+    NoPermissionSet: 你不是領地主人，無法編輯管理員權限
+    NoPermissionRemove: 你不是領地主人，無法移除管理員
+    BelongToGroup: 此成員屬於權限組 %s 無法單獨編輯權限
+    Usage: '用法: /dominion member list <領地名稱> [頁碼]'
+    AdminTag: 這是一個管理員
+    NormalTag: 這是一個普通成員
+    BlacklistTag: 這是一個黑名單成員
+    GroupTag: 這個成員在一個權限組裏
+  MemberSetting:
+    Title: 玩家 %s 在領地 %s 的權限設置
+    ApplyTemplateButton: 套用模板
+    ApplyTemplateDescription: 選擇一個權限模板套用
+    Usage: '用法: /dominion member setting <領地名稱> <玩家名稱> [頁碼]'
+  SelectPlayer:
+    Title: 選擇玩家添加為成員
+    Description: 只能選擇已經登錄過的玩家
+    Usage: '用法: /dominion member select_player <領地名稱> [頁碼]'
+  SelectTemplate:
+    Title: 選擇一個模板
+    Description: 套用在領地 %s 的成員 %s 身上
+    Usage: '用法: /dominion member select_template <領地名稱> <玩家名稱>  [頁碼]'
+  GroupList:
+    Title: 領地 %s 權限組列表
+    CreateButton: 創建權限組
+    CreateDescription: 創建一個新的權限組
+    DeleteDescription: 刪除權限組 %s
+    EditDescription: 編輯權限組 %s
+    AddMemberDescription: 添加成員到權限組 %s
+    RemoveMemberDescription: 把 %s 移出權限組 %s
+    Usage: '用法: /dominion group list <領地名稱> [頁碼]'
+  GroupSetting:
+    RenameButton: 重命名此權限組
+    Usage: '用法: /dominion group setting <領地名稱> <權限組名稱> [頁碼]'
+    TitleL: '權限組 '
+    TitleR: ' 管理'
+    RenameDescription: 重命名權限組 %s
+  SelectMember:
+    Title: 選擇成員
+    Description: 選擇成員添加到權限組 %s
+    Usage: '用法: /dominion group select_member <領地名稱> <權限組名稱> [回顯頁碼] [頁碼]'
+  TemplateList:
+    Title: 成員權限模板列表
+    CreateButton: 創建成員權限模板
+    CreateDescription: 創建一個新的成員權限模板
+  TemplateSetting:
+    Title: 模板 %s 權限管理
+  Migrate:
+    Title: 從 Residence 遷移數據
+    NoData: 你沒有可遷移的數據
+    Button: 遷移
+    SubDominion: 子領地無法手動遷移，會隨父領地自動遷移
+  TitleList:
+    Title: 我可使用的權限組稱號
+    RemoveButton: 卸下
+    ApplyButton: 使用
+    FromDominion: 來自領地：
+  Config:
+    Title: Dominion 系統配置
+CUI:
+  Input:
+    CreateDominion: 輸入要創建的領地名稱
+    CreateGroup: 輸入要創建的權限組名稱
+    CreateTemplate: 輸入要創建的模板名稱
+    EditEnterMessage: 編輯進入領地提示語內容
+    EditLeaveMessage: 編輯離開領地提示語內容
+    AddMember: 輸入玩家名稱以添加為成員
+    RenameDominion: 領地重命名
+    RenameGroup: 權限組重命名
+    SetMapColor: 輸入衛星地圖地塊顏色（16進製）
+Config:
+  Check:
+    AutoCreateRadiusError: AutoCreateRadius 不能等於 0，已重置為 10
+    AutoCleanAfterDaysError: AutoCleanAfterDays 不能等於 0，已重置為 180
+    ToolNameError: 工具名稱設置錯誤，已重置為 ARROW
+    LimitSizeXError: Limit.SizeX 尺寸不能小於 4，已重置為 128
+    LimitSizeYError: Limit.SizeY 尺寸不能小於 4，已重置為 64
+    LimitSizeZError: Limit.SizeZ 尺寸不能小於 4，已重置為 128
+    LimitMinYError: Limit.MinY 不能大於或等於 Limit.MaxY，已重置為 -64 320
+    RefundError: Economy.Refund 設置不合法，已重置為 0.85
+    PriceError: Economy.Price 設置不合法，已重置為 10.0
+    LimitSizeYAutoAdjust: 啟用 Limit.Vert 時 Limit.SizeY 不能小於 Limit.MaxY - Limit.MinY，已自動調整為
+      %d
+    AmountError: Limit.Amount 設置不合法，已重置為 10
+    DepthError: Limit.Depth 設置不合法，已重置為 3
+    GroupMinYError: 權限組 %s 的 MinY 不能大於等於 MaxY，已重置為 -64 和 320
+    GroupSizeXError: 權限組 %s 的 SizeX 設置過小，已重置為 128
+    GroupSizeYError: 權限組 %s 的 SizeY 設置過小，已重置為 64
+    GroupSizeZError: 權限組 %s 的 SizeZ 設置過小，已重置為 128
+    GroupAmountError: 權限組 %s 的 Amount 設置不合法，已重置為 10
+    GroupDepthError: 權限組 %s 的 Depth 設置不合法，已重置為 3
+    GroupPriceError: 權限組 %s 的 Price 設置不合法，已重置為 10.0
+    GroupRefundError: 權限組 %s 的 Refund 設置不合法，已重置為 0.85
+    LoadFlagError: 讀取權限配置失敗：%s
+    TpDelayError: 傳送延遲不能小於 0，已重置為 0
+    TpCoolDownError: 傳送冷卻不能小於 0，已重置為 0
+  Comment:
+    Language: 語言設置，參考 languages 文件夾下的文件名
+    AutoCreateRadius: 自動創建領地的半徑，單位為方塊
+    NegativeOneDisabled: -1表示不開啟
+    DefaultLimit: 默認玩家圈地限製
+    SpawnProtectRadius: 出生點保護半徑 出生點此範圍內不允許圈地
+    MinY: 最小Y坐標
+    MaxY: 最大Y坐標
+    NegativeOneUnlimited: -1表示不限製
+    SizeX: X方向最大長度
+    SizeY: Y方向最大長度
+    SizeZ: Z方向最大長度
+    Amount: 最大領地數量
+    Depth: 子領地深度
+    ZeroDisabled: 0表示不開啟
+    Vert: 是否自動延伸到 MaxY 和 MinY
+    DisabledWorlds: 不允許圈地的世界列表
+    OpBypass: 是否允許OP無視領地限製
+    TpDelay: 傳送延遲 秒
+    TpCoolDown: 傳送冷卻 秒
+    AutoCleanAfterDays: 自動清理長時間未上線玩家的領地（天）
+    ToolName: 圈地工具名稱
+    Economy: 經濟設置
+    VaultRequired: 需要安裝 Vault 前置及插件
+    Price: 圈地價格 單位每方塊
+    OnlyXZ: 是否只計算xz平面積
+    Refund: 刪除或縮小領地時的退款比例
+    FlyPermission: 飛行權限節點 - 擁有以下任意一個權限節點的玩家不會被本插件攔截飛行
+    ResidenceMigration: 是否允許玩家從 Residence 遷移領地數據
+    GroupTitle: 權限組稱號 - 使用權限組當作稱號(需要PlaceholderAPI插件)
+    GroupTitleVariable: '變量: %dominion_group_title%'
+    GroupTitleColor: 前後綴如需要加顏色請使用這種格式 &#ffffff
+    PerformanceTimer: 性能測試計時器
+Flags:
+  admin:
+    DisplayName: 管理員
+    Description: 管理領地內的其他成員權限
+  anchor:
+    DisplayName: 重生錨
+    Description: 是否允許設置/使用重生錨
+  animal_killing:
+    DisplayName: 對動物造成傷害
+    Description: 是否允許對動物造成傷害
+  animal_spawn:
+    DisplayName: 動物生成（繁殖）
+    Description: 是否允許動物生成（包括繁殖）
+  animal_move:
+    DisplayName: 動物移動
+    Description: 是否允許動物在（向）領地內移動
+  anvil:
+    DisplayName: 使用鐵砧
+    Description: 是否允許使用鐵砧
+  beacon:
+    DisplayName: 信標交互
+    Description: 是否允許與信標交互
+  bed:
+    DisplayName: 床交互
+    Description: 是否允許使用床睡覺或設置重生點
+  brew:
+    DisplayName: 使用釀造臺
+    Description: 是否可以使用釀造臺
+  break:
+    DisplayName: 破壞方塊
+    Description: 是否可以破壞方塊（包括：一般方塊、展示框、盔甲架）
+  button:
+    DisplayName: 使用按鈕
+    Description: 是否可以使用各種材質的按鈕
+  cake:
+    DisplayName: 吃蛋糕
+    Description: 是否可以吃蛋糕
+  container:
+    DisplayName: 一般容器
+    Description: 包含：箱子/木桶/潛影盒/盔甲架/展示框
+  craft:
+    DisplayName: 使用工作臺
+    Description: 是否可以使用工作臺
+  crafter:
+    DisplayName: 合成器
+    Description: 是否可以修改自動合成器
+  creeper_explode:
+    DisplayName: 生物破壞/非TNT爆炸
+    Description: 包含：苦力怕/雕零頭顱/末影水晶/火球/床/重生錨爆炸等
+  comparer:
+    DisplayName: 比較器交互
+    Description: 是否可以修改比較器狀態
+  door:
+    DisplayName: 門交互
+    Description: 是否可以使用各種材質的門（包括活板門）
+  dragon_break_block:
+    DisplayName: 末影龍破壞方塊
+    Description: 末影龍沖撞是否可以破壞方塊
+  dragon_egg:
+    DisplayName: 觸碰龍蛋
+    Description: 是否可以觸碰龍蛋
+  dye:
+    DisplayName: 染色
+    Description: 是否可以使用染料（對羊、狗項圈、貓項圈）染色
+  edit_sign:
+    DisplayName: 編輯告示牌
+    Description: 是否可以編輯告示牌
+  egg:
+    DisplayName: 扔雞蛋
+    Description: 是否可以扔雞蛋
+  enchant:
+    DisplayName: 使用附魔臺
+    Description: 是否可以使用附魔臺
+  ender_man:
+    DisplayName: 末影人行為
+    Description: 包含：末影人是否可以生成、瞬移
+  ender_pearl:
+    DisplayName: 投擲末影珍珠
+    Description: 是否可以使用末影珍珠
+  feed:
+    DisplayName: 餵養動物
+    Description: 是否可以餵養動物
+  fire_spread:
+    DisplayName: 火焰蔓延
+    Description: 是否可以火焰蔓延
+  flow_in_protection:
+    DisplayName: 外部流體是否可以進入
+    Description: 包含：巖漿、水（不會阻止領地內部的流體蔓延）
+  fly:
+    DisplayName: 飛行
+    Description: 不是翅鞘飛行，是類似於創造模式的飛行
+  glow:
+    DisplayName: 玩家發光
+    Description: 類似光靈箭的高亮效果
+  harvest:
+    DisplayName: 收獲
+    Description: 收獲莊稼、作物
+  honey:
+    DisplayName: 蜂巢交互
+    Description: 是否可以采蜂蜜
+  hook:
+    DisplayName: 使用釣鉤
+    Description: 是否可以使用釣鉤
+  hopper:
+    DisplayName: 特殊容器
+    Description: 包含：漏鬥/熔爐/發射器/投擲器/高爐/煙熏爐
+  hopper_outside:
+    DisplayName: 領地外漏鬥對領地內箱子是否生效
+    Description: 領地外的漏鬥是否可以對領地內的箱子生效
+  ignite:
+    DisplayName: 點燃
+    Description: 是否可以使用打火石點火
+  item_frame_interactive:
+    DisplayName: 展示框交互
+    Description: 是否可以與物品展示框交互（旋轉展示框的東西）
+  item_frame_proj_damage:
+    DisplayName: 投擲物是否可以破壞展示框/畫
+    Description: 非玩家發出的投擲物是否可以破壞展示框/畫等懸掛物
+  lever:
+    DisplayName: 使用拉桿
+    Description: 是否可以使用拉桿
+  mob_drop_item:
+    DisplayName: 生物戰利品掉落
+    Description: 生物死亡時是否產生掉落物
+  monster_killing:
+    DisplayName: 對怪物造成傷害
+    Description: 玩家是否可以對怪物造成傷害
+  monster_spawn:
+    DisplayName: 怪物生成
+    Description: 是否可以生成怪物
+  monster_move:
+    DisplayName: 怪物移動
+    Description: 是否可以在（向）領地內移動
+  move:
+    DisplayName: 移動
+    Description: 是否可以移動
+  note_block:
+    DisplayName: 點擊音符盒
+    Description: 紅石音樂或者某些紅石機器會用到...
+  place:
+    DisplayName: 放置方塊
+    Description: 是否可以放置方塊（包括：一般方塊、展示框、巖漿、水）
+  piston_outside:
+    DisplayName: 活塞是否可以跨領地推動方塊
+    Description: 活塞是否可以往領地內推東西或推東西到領地外
+  pressure:
+    DisplayName: 壓力板交互
+    Description: 是否可以觸發各種材質的壓力板
+  riding:
+    DisplayName: 騎乘載具
+    Description: 是否可以騎乘各種載具
+  repeater:
+    DisplayName: 中繼器交互
+    Description: 是否可以與中繼器交互
+  shear:
+    DisplayName: 剪羊毛
+    Description: 是否可以剪羊毛
+  shoot:
+    DisplayName: 投擲型武器
+    Description: 包括：射箭/雪球/三叉戟/風彈
+  show_border:
+    DisplayName: 顯示領地邊界
+    Description: 是否顯示領地邊界
+  teleport:
+    DisplayName: 領地傳送
+    Description: 是否開啟領地傳送
+  tnt_explode:
+    DisplayName: TNT爆炸
+    Description: TNT是否可以爆炸
+  trade:
+    DisplayName: 村民交易
+    Description: 是否可以與村民交易
+  trample:
+    DisplayName: 作物踐踏
+    Description: 是否可以踐踏作物（關閉意味著保護耕地）
+  trig_pressure_proj:
+    DisplayName: 投擲物觸發壓力板
+    Description: 投擲物（箭/風彈/雪球）是否可以觸發壓力板
+  trig_pressure_mob:
+    DisplayName: 生物觸發壓力板
+    Description: 生物（不包含玩家）是否可以觸發壓力板
+  trig_pressure_drop:
+    DisplayName: 掉落物觸發壓力板
+    Description: 掉落物是否可以觸發壓力板
+  vehicle_destroy:
+    DisplayName: 破壞載具
+    Description: 是否可以破壞載具（主要是礦車）
+  vehicle_spawn:
+    DisplayName: 生成載具
+    Description: 是否可以生成載具（主要是礦車）
+  villager_killing:
+    DisplayName: 對村民造成傷害
+    Description: 是否可以對村民造成傷害
+  villager_spawn:
+    DisplayName: 村民繁殖
+    Description: 是否允許村民繁殖（包括村民蛋）
+  wither_spawn:
+    DisplayName: 雕零生成
+    Description: 雕零生成以及雕零生成時產生的爆炸
+Localization:
+  LoadLanguageSuccess: 成功加載語言文件 zh-cn
+  LoadLanguageFailed: 加載語言文件失敗：%s
+  LanguageFileNotFound: Language file %s not found, using default zh-cn.
+Utils:
+  TeleportUnsafe: 傳送目的地不安全，已取消傳送
+  CheckingUpdate: 正在檢查更新...
+  NewVersion: 發現新版本：%s
+  VersionInfo: 版本信息：
+  DownloadPage: 下載頁面：%s
+  CurrentVersion: 當前已是最新版本：%s
+  GetUpdateFailed: '獲取更新失敗: %s'
+  NewVersionConsole: 發現新版本：%s 詳細內容請查看控製臺或點擊下方鏈接
+  VaultNotAvailable: Vault 不可用
+  VaultUnlockedNotAvailable: VaultUnlocked 不可用
+  NoEconomyPlugin: 沒有可用的經濟插件
+  TUI:
+    Navigation: 導航
+    NoContent: 啊哦，這裏還沒有內容～
+    PageError: 頁碼錯誤
+    Add: 增加
+    Sub: 減少
+    PreviousPage: 上一頁
+    NextPage: 下一頁
+    PageL: '第 '
+    PageR: ' 頁 '
+  CUI:
+    Input: 請輸入
+    InputBox: 輸入框
+    NotAvailable: CUI TextInput 功能在非 Paper 系的服務端上不可用，請使用指令執行對應操作。
+    SuggestCommand: '參考指令: %s'
+    LeftRightClick: 左鍵確認 ｜ 右鍵取消
+    NoSpace: 輸入內容不能包含空格
+  Database:
+    Connecting: 正在連接到 %s 數據庫
+    UnsupportedType: '不支持的數據庫類型: '
+    ConnectionFailed: '數據庫連接失敗: '
+    ConnectionSuccess: 數據庫連接成功
+    Reconnecting: 正在嘗試重新連接數據庫
+    ReconnectionSuccess: 重新連接數據庫成功
+    ReconnectionFailed: 重新連接數據庫失敗
+    ErrorTitle: === 嚴重錯誤 ===
+    ReconnectionUnexpected: 數據庫連接意外關閉，正在嘗試重新連接
+    OperationAbort: 操作終止
+    OperationFailed: '數據庫操作失敗: '
+    Closing: 正在關閉數據庫連接
+    Closed: 數據庫連接已關閉
+    CloseFailed: '關閉數據庫連接失敗: '
+    CheckColumnFailed: 查詢列是否存在失敗
+    CheckTableFailed: 查詢表是否存在失敗
