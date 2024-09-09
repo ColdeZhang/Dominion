@@ -4,8 +4,8 @@ import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.FlagsController;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.tuis.dominion.manage.EnvSetting;
-import cn.lunadeer.dominion.tuis.dominion.manage.GuestSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 

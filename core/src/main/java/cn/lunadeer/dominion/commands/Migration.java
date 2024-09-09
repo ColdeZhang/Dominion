@@ -6,7 +6,7 @@ import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.tuis.MigrateList;
+import cn.lunadeer.dominion.uis.tuis.MigrateList;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;

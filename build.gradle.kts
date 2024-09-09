@@ -28,12 +28,14 @@ allprojects {
         maven("https://repo.mikeprimm.com/")
         maven("https://ssl.lunadeer.cn:14454/repository/maven-snapshots/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://repo.opencollab.dev/main/")
     }
 
     dependencies {
         compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v2.6.2")
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
         compileOnly("me.clip:placeholderapi:2.11.6")
+        compileOnly("org.geysermc.geyser:api:2.4.2-SNAPSHOT")
 
         implementation("cn.lunadeer:MinecraftPluginUtils:1.3.8-SNAPSHOT")
         implementation("org.yaml:snakeyaml:2.0")

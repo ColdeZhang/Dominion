@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.tuis.dominion.manage.group.GroupSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;

@@ -74,4 +74,12 @@ public class TuiUtils {
                 .showOn(player, page);
     }
 
+    public static boolean isBedRockPlayer(Player player) {
+        try {
+            Class.forName("org.geysermc.geyser.api.GeyserApi");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        return player.getUniqueId().toString().startsWith("00000000-");
+    }
 }
