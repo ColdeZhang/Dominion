@@ -20,8 +20,9 @@
 
 Dominion is a completely open-source, free, future-proof, territory anti-grief plugin developed specifically for
 high-versions minecraft server. The plugin is currently undergoing rapid development and iteration, and we will do our
-best to ensure the stability and functionality of the plugin. Regarding the functions and features of this plug-in, you
-can view [Introduction](intro/intro_en-us.md)
+best to ensure the stability and functionality of the plugin.
+
+For detail functions and features of Dominion, you can view [Introduction](intro/intro_en-us.md)
 
 ## Version Support
 
