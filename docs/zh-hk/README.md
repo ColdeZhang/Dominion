@@ -6,7 +6,8 @@
 
 Dominion 是一個完全開源、免費，專為高版本開發，面向未來的全新領地保護插件。插件目前處於快速的開發、叠代階段，我們會盡力保證插件的穩定性和功能性。
 
-如果您在使用過程中遇到任何問題，或者有任何建議，歡迎在 [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues) 提交您的問題或想法。
+如果您在使用過程中遇到任何問題，或者有任何建議，歡迎在 [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues)
+提交您的問題或想法。
 
 ## 玩家快速上手
 
@@ -20,6 +21,6 @@ Dominion 是一個完全開源、免費，專為高版本開發，面向未來�
 
 ## 幫助翻譯本文檔
 
-如果您想幫助翻譯本文檔，請參考 [翻譯指南](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translate-documentation)。
+如果您想幫助翻譯本文檔，請參考 [翻譯指南](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translating)。
 
 ❤ 感謝您的支持和貢獻！ ❤
