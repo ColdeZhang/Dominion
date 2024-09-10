@@ -11,10 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public enum Flag {
     ANCHOR("anchor", "重生锚", "是否允许设置/使用重生锚", false, false, true),
@@ -255,10 +252,13 @@ public enum Flag {
             // load flags default value & enable
             String defaultValueKey;
             String enableKey;
+            String descriptionKey;
             if (flag.dominion_only) {
+                descriptionKey = "environment." + flag.getFlagName();
                 defaultValueKey = "environment." + flag.getFlagName() + ".default";
                 enableKey = "environment." + flag.getFlagName() + ".enable";
             } else {
+                descriptionKey = "privilege." + flag.getFlagName();
                 defaultValueKey = "privilege." + flag.getFlagName() + ".default";
                 enableKey = "privilege." + flag.getFlagName() + ".enable";
             }
@@ -272,6 +272,7 @@ public enum Flag {
             } else {
                 yaml.set(enableKey, flag.getEnable());
             }
+            yaml.setInlineComments(descriptionKey, Collections.singletonList(flag.getDisplayName() + "-" + flag.getDescription()));
         }
         yaml.save(yamlFile);
     }
