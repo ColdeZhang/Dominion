@@ -6,7 +6,7 @@ import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.tuis.TitleList;
+import cn.lunadeer.dominion.uis.tuis.TitleList;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
