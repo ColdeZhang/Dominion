@@ -39,7 +39,7 @@ For detail functions and features of Dominion, you can view [Introduction](intro
 If you encounter any problems during use or have any suggestions, please feel free to open
 a [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues) about your questions or ideas.
 
-For detailed contribution guidelines, please see [CONTRIBUTING](CONTRIBUTING.md)。
+For detailed contribution guidelines (such as **translation** etc.), please see [CONTRIBUTING](CONTRIBUTING.md)。
 
 ## bStats Statics
 
