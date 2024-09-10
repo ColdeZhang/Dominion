@@ -38,6 +38,8 @@ Dominion 是一个完全开源、免费，专为高版本开发，面向未来�
 
 详细的参与贡献指南请查看 [CONTRIBUTING](CONTRIBUTING.md)。
 
+交流QQ群：309428300
+
 ## 统计
 
 <div align="center">
