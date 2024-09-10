@@ -24,7 +24,7 @@ at [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues).
 ## Help translate this documentation
 
 If you want to help us translate the documentation, please refer
-to [CONTRIBUTING.md](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translating).
+to [CONTRIBUTING.md](https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translate-documentation).
 
 ❤ Thank you for your support and contribution! ❤
 
