@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logos/logo3.png" alt="" width="70%">
+<img src="logos/logo3.png" alt="" width="30%">
 
 
 [![GitHub Repository](https://img.shields.io/badge/SourceCode-GitHub-blue?logo=github)](https://github.com/ColdeZhang/Dominion)
@@ -18,11 +18,10 @@
 
 ## What's this?
 
-Dominion is a completely open-source, free, future-proof, territory protection plugin developed specifically for
-high-level releases. The plugin is currently undergoing rapid development and iteration, and we will do our best to
-ensure the stability and functionality of the plugin.
-
-Regarding the functions and features of this plug-in, you can view [Introduction](intro/intro_en-us.md)
+Dominion is a completely open-source, free, future-proof, territory anti-grief plugin developed specifically for
+high-versions minecraft server. The plugin is currently undergoing rapid development and iteration, and we will do our
+best to ensure the stability and functionality of the plugin. Regarding the functions and features of this plug-in, you
+can view [Introduction](intro/intro_en-us.md)
 
 ## Version Support
 

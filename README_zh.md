@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logos/logo3.png" alt="" width="70%">
+<img src="logos/logo3.png" alt="" width="30%">
 
 
 [![GitHub Repository](https://img.shields.io/badge/开源地址-GitHub-blue?logo=github)](https://github.com/ColdeZhang/Dominion)
