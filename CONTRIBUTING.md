@@ -17,10 +17,9 @@ enhancement you would like to see, why you think it would be useful, and any oth
 
 ### 🌐Translating
 
-#### **Translate Plugin Messages**
+#### **Translate Plugin Messages** ![Crowdin](https://badges.crowdin.net/dominion/localized.svg)
 
-If you would like to help translation, please refer to
-the [Crowdin project](https://crowdin.com/project/dominion) [![Crowdin](https://badges.crowdin.net/dominion/localized.svg)](https://crowdin.com/project/dominion).
+If you would like to help translation, please refer to the [Crowdin project](https://crowdin.com/project/dominion).
 
 #### **Translate Documentation**
 
