@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    #	配置权限
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
@@ -17,66 +18,42 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
           cache: gradle
-
       - name: "Build with Gradle"
         run: ./gradlew buildPlugin
-
       - name: "Copy jar to staging"
         run: |
-          mkdir -p staging
-          cp build/libs/*.jar staging/
-
-      - name: "Set release tag"
-        run: echo "RELEASE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
-
-  github_release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Repository"
-        uses: actions/checkout@v3
-      - name: "Upload to GitHub Release"
-        uses: marvinpinto/action-automatic-releases@latest
+          mkdir staging && cp build/libs/*.jar staging/
+      - name: "Build & test"
+        run: |
+          TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
+          echo "done!"
+      - name: "GitHub Release"
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ env.RELEASE_TAG }}"
+          automatic_release_tag: "${{ steps.build.outputs.TAG }}"
           prerelease: false
           files: |
             staging/*.jar
-
-  modrinth_release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Repository"
-        uses: actions/checkout@v3
-      - name: "Debug tag"
-        run: echo "${{ env.RELEASE_TAG }}"
       - name: "Modrinth Release"
         uses: dsx137/modrinth-release-action@main
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         with:
-          name: "${{ env.RELEASE_TAG }}"
+          name: ${{ env.AUTOMATIC_RELEASES_TAG }}
           project_id: vVZc7jAV
           loaders: bukkit,folia,paper,purpur,spigot
           game_versions: 1.20.1:1.20.6,1.21,1.21.1
-          version_number: "${{ env.RELEASE_TAG }}"
+          version_number: ${{ env.AUTOMATIC_RELEASES_TAG }}
           files: |
             staging/*.jar
-          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.RELEASE_TAG }}"
+          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.AUTOMATIC_RELEASES_TAG }}"
           version_type: beta
           featured: false
           updatable: false
           delete_old_files: false
-
-  hangar_release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Repository"
-        uses: actions/checkout@v3
       - name: "Hangar Release"
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace
+        continue-on-error: true
