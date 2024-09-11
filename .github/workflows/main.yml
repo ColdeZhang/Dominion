@@ -39,15 +39,16 @@ jobs:
         uses: dsx137/modrinth-release-action@main
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          VERSION: ${{ steps.build.outputs.TAG }}
         with:
-          name: "${{ steps.build.outputs.TAG }}"
+          name: ${{ env.VERSION }}
           project_id: vVZc7jAV
           loaders: Bukkit,Folia,Paper,Purpur,Spigot
           game_versions: 1.20.1:1.20.6,1.21,1.21.1
-          version_number: "${{ steps.build.outputs.TAG }}"
+          version_number: ${{ env.VERSION }}
           files: |
             staging/*.jar
-          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ steps.build.outputs.TAG }}"
+          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.VERSION }}"
           version_type: beta # or beta, alpha
           featured: false
           updatable: false # default true, means updating existing version
