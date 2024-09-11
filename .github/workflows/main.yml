@@ -10,7 +10,7 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     outputs:
-      release_tag: ${{ steps.set_tag.outputs.tag }}
+      release_tag: ${{ steps.get_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
       - name: "Set up JDK 21"
@@ -19,60 +19,67 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
           cache: gradle
+
       - name: "Build with Gradle"
         run: ./gradlew buildPlugin
-      - name: "Prepare release artifacts"
+
+      - name: "Copy jar to staging"
         run: |
           mkdir -p staging
           cp build/libs/*.jar staging/
-      - name: "Set release tag"
-        id: set_tag
+
+      - name: "Get Tag Name"
+        id: get_tag
         run: echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
-  github-release:
+  github_release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: "GitHub Release"
+      - name: "Checkout Repository"
+        uses: actions/checkout@v3
+      - name: "Upload to GitHub Release"
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "${{ needs.build.outputs.release_tag }}"
           prerelease: false
           files: |
-            build/libs/*.jar
+            staging/*.jar
 
-  modrinth-release:
+  modrinth_release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: "Checkout Repository"
+        uses: actions/checkout@v3
+      - name: "Debug tag"
+        run: echo ${{ needs.build.outputs.release_tag }}
       - name: "Modrinth Release"
         uses: dsx137/modrinth-release-action@main
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-          TAG: ${{ needs.build.outputs.release_tag }}
         with:
-          name: ${{ env.TAG }}
+          name: ${{ needs.build.outputs.release_tag }}
           project_id: vVZc7jAV
           loaders: bukkit,folia,paper,purpur,spigot
           game_versions: 1.20.1:1.20.6,1.21,1.21.1
-          version_number: ${{ env.TAG }}
+          version_number: ${{ needs.build.outputs.release_tag }}
           files: |
-            build/libs/*.jar
-          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.TAG }}"
+            staging/*.jar
+          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ needs.build.outputs.release_tag }}"
           version_type: beta
           featured: false
           updatable: false
           delete_old_files: false
 
-  hangar-release:
+  hangar_release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: "Checkout Repository"
+        uses: actions/checkout@v3
       - name: "Hangar Release"
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
-        run: ./gradlew publishPluginPublicationToHangar --stacktrace
+        run: ./gradlew build publishPluginPublicationToHangar --stacktrace
