@@ -9,8 +9,6 @@ jobs:
   build:
     permissions: write-all
     runs-on: ubuntu-latest
-    outputs:
-      release_tag: ${{ steps.get_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
       - name: "Set up JDK 21"
@@ -28,9 +26,8 @@ jobs:
           mkdir -p staging
           cp build/libs/*.jar staging/
 
-      - name: "Get Tag Name"
-        id: get_tag
-        run: echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+      - name: "Set release tag"
+        run: echo "RELEASE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
   github_release:
     needs: build
@@ -42,7 +39,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ needs.build.outputs.release_tag }}"
+          automatic_release_tag: "${{ env.RELEASE_TAG }}"
           prerelease: false
           files: |
             staging/*.jar
@@ -54,20 +51,20 @@ jobs:
       - name: "Checkout Repository"
         uses: actions/checkout@v3
       - name: "Debug tag"
-        run: echo ${{ needs.build.outputs.release_tag }}
+        run: echo "${{ env.RELEASE_TAG }}"
       - name: "Modrinth Release"
         uses: dsx137/modrinth-release-action@main
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         with:
-          name: ${{ needs.build.outputs.release_tag }}
+          name: "${{ env.RELEASE_TAG }}"
           project_id: vVZc7jAV
           loaders: bukkit,folia,paper,purpur,spigot
           game_versions: 1.20.1:1.20.6,1.21,1.21.1
-          version_number: ${{ needs.build.outputs.release_tag }}
+          version_number: "${{ env.RELEASE_TAG }}"
           files: |
             staging/*.jar
-          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ needs.build.outputs.release_tag }}"
+          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.RELEASE_TAG }}"
           version_type: beta
           featured: false
           updatable: false
