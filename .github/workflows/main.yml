@@ -52,15 +52,16 @@ jobs:
         uses: dsx137/modrinth-release-action@main
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          TAG: ${{ needs.build.outputs.release_tag }}
         with:
-          name: ${{ needs.build.outputs.release_tag }}
+          name: ${{ env.TAG }}
           project_id: vVZc7jAV
           loaders: bukkit,folia,paper,purpur,spigot
           game_versions: 1.20.1:1.20.6,1.21,1.21.1
-          version_number: ${{ needs.build.outputs.release_tag }}
+          version_number: ${{ env.TAG }}
           files: |
             build/libs/*.jar
-          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ needs.build.outputs.release_tag }}"
+          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.TAG }}"
           version_type: beta
           featured: false
           updatable: false
