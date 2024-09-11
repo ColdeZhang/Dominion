@@ -23,8 +23,6 @@ jobs:
       - name: "Copy jar to staging"
         run: |
           mkdir staging && cp build/libs/*.jar staging/
-        env:
-          JAR_FILE: "staging/$(ls staging | grep .jar)"
       - name: "Build & test"
         run: |
           TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
@@ -37,16 +35,20 @@ jobs:
           prerelease: false
           files: |
             staging/*.jar
-      - name: "Upload to Modrinth"
-        uses: RubixDev/modrinth-upload@v1
+      - name: Modrinth Release
+        uses: dsx137/modrinth-release-action@main
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
         with:
-          token: ${{ secrets.MODRINTH_TOKEN }}
-          file_path: ${{ env.JAR_FILE }}
-          name: $${{ steps.build.outputs.TAG }}
-          version: ${{ steps.build.outputs.TAG }}
-          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ steps.build.outputs.TAG }}"
-          game_versions: 1.20.1,1.20.2,1.20.3,1.20.4,1.20.5,1.20.6,1.21,1.21.1
-          release_type: beta
-          loaders: Bukkit,Folia,Paper,Purpur,Spigot
-          featured: true
+          name:  ${{ steps.build.outputs.TAG }}
           project_id: vVZc7jAV
+          loaders: Bukkit,Folia,Paper,Purpur,Spigot
+          game_versions: 1.20.1:1.20.6,1.21,1.21.1
+          version_number:  ${{ steps.build.outputs.TAG }}
+          files: |
+            staging/*.jar
+          changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ steps.build.outputs.TAG }}"
+          version_type: beta # or beta, alpha
+          featured: false
+          updatable: false # default true, means updating existing version
+          delete_old_files: false # default true
