@@ -2,14 +2,16 @@
 
 <img src="logos/logo3.png" alt="" width="30%">
 
-
+[![Documentation](https://img.shields.io/badge/在线文档-点击跳转-70f3ff?logo=readthedocs)](https://dominion.lunadeer.cn/)
 [![GitHub Repository](https://img.shields.io/badge/开源地址-GitHub-blue?logo=github)](https://github.com/ColdeZhang/Dominion)
 [![bStats](https://img.shields.io/badge/bStats-Statistics-eacd76?logo=google-analytics)](https://bstats.org/plugin/bukkit/Dominion/21445)
-[![Hangar](https://img.shields.io/badge/Hangar-Project-bacac6?logo=paper)](https://hangar.papermc.io/zhangyuheng/Dominion)
 
-[![Documentation](https://img.shields.io/badge/在线文档-点击跳转-70f3ff?logo=readthedocs)](https://dominion.lunadeer.cn/)
 [![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E6%9C%80%E6%96%B0%E6%9E%84%E5%BB%BA%E4%B8%8B%E8%BD%BD&logo=github&color=0aa344)](https://github.com/ColdeZhang/Dominion/releases/latest)
 [![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E5%A4%87%E7%94%A8%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80&logo=gitea&color=0aa344)](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
+
+[![Hangar](https://img.shields.io/badge/To-Hangar-004ee9)](https://hangar.papermc.io/zhangyuheng/Dominion)
+[![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/zhangyuheng-dominion)
+[![Spigot](https://img.shields.io/badge/To-Spigot-ed8106)](https://www.spigotmc.org/resources/dominion.119514/)
 
 </div>
 
