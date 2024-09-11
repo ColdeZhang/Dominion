@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "2.6.6-beta"
+version = "2.6.7-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
