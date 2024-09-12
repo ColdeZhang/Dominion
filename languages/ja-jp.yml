@@ -690,7 +690,7 @@ Flags:
     DisplayName: ウィザー生成
     Description: 死にゆくもの生成および死にゆくもの生成時に発生する爆発
 Localization:
-  LoadLanguageSuccess: 言語ファイル zh-cn を正常にロードしました
+  LoadLanguageSuccess: 言語ファイル ja-jp を正常にロードしました
   LoadLanguageFailed: 言語ファイルのロードに失敗しました：%s
   LanguageFileNotFound: 言語ファイル %s が見つかりませんでした。デフォルトの zh-cn を使用します。
 Utils:

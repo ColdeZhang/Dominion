@@ -690,7 +690,7 @@ Flags:
     DisplayName: 雕零生成
     Description: 雕零生成以及雕零生成時產生的爆炸
 Localization:
-  LoadLanguageSuccess: 成功加載語言文件 zh-cn
+  LoadLanguageSuccess: 成功加載語言文件 zh-hk
   LoadLanguageFailed: 加載語言文件失敗：%s
   LanguageFileNotFound: Language file %s not found, using default zh-cn.
 Utils:
