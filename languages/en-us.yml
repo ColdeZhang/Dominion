@@ -690,7 +690,7 @@ Flags:
     DisplayName: Wither Spawn
     Description: Wither spawn and the explosion caused by wither spawn
 Localization:
-  LoadLanguageSuccess: Successfully loaded language file zh-cn
+  LoadLanguageSuccess: Successfully loaded language file en-us
   LoadLanguageFailed: 'Failed to load language file: %s'
   LanguageFileNotFound: Language file %s not found, using default zh-cn.
 Utils:
