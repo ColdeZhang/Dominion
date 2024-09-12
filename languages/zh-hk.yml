@@ -1,16 +1,14 @@
 # Help us to translate this file into your language.
-# Guide: https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#plugin-messages
+# Guide: https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translate-plugin-messages-
 # Don't forget to leave your name here, so that we can give you credit for your translation.
 # Translated by:  YOUR_NAME_HERE
-
 Commands:
   Dominion:
     SetFlagUsage: '用法: /dominion set <權限名稱> <true/false> [領地名稱]'
     CreateDominionUsage: '用法: /dominion create <領地名稱>'
     CreateSelectPointsFirst: 請先使用工具選擇領地的對角線兩點，或使用 /dominion auto_create <領地名稱> 創建自動領地
     CreateSubDominionUsage: '用法: /dominion create_sub <子領地名稱> [父領地名稱]'
-    CreateSubSelectPointsFirst: 請先使用工具選擇子領地的對角線兩點，或使用 /dominion auto_create_sub <子領地名稱>
-      [父領地名稱] 創建自動子領地
+    CreateSubSelectPointsFirst: 請先使用工具選擇子領地的對角線兩點，或使用 /dominion auto_create_sub <子領地名稱> [父領地名稱] 創建自動子領地
     AutoCreateDominionUsage: '用法: /dominion auto_create <領地名稱>'
     AutoCreateSubDominionUsage: '用法: /dominion auto_create_sub <子領地名稱> [父領地名稱]'
     AutoCreateDominionDisabled: 自動創建領地功能已關閉
@@ -40,8 +38,7 @@ Commands:
     DominionAddMemberUsage: '用法: /dominion member add <領地名稱> <玩家名稱>'
     DominionSetFlagUsage: '用法: /dominion member set_flag <領地名稱> <玩家名稱> <權限名稱> <true/false>'
     DominionRemoveMemberUsage: '用法: /dominion member remove <領地名稱> <玩家名稱>'
-    DominionApplyTemplateUsage: '用法: /dominion member apply_template <領地名稱> <玩家名稱>
-      <模板名稱>'
+    DominionApplyTemplateUsage: '用法: /dominion member apply_template <領地名稱> <玩家名稱> <模板名稱>'
     MemberUsage: '用法: /dominion member <add/set_flag/remove/apply_template/list/setting/select_player/select_template>'
   PageOptional: 頁碼(可選)
   ArgumentsNotEnough: 參數不足
@@ -257,6 +254,7 @@ Messages:
   AutoCleanStart: 開始自動清理長時間未登錄玩家領地數據
   AutoCleanPlayer: 已清理玩家 %s 的領地數據
   AutoCleanEnd: 自動清理完成
+  MapInfoDetail: <div>%s</div><div>所有人：%s</div>
 TUI:
   NotDominionOwnerOrAdminForPage: 你不是領地 %s 的擁有者或管理員，無權訪問此頁面
   CommandHelp:
@@ -415,8 +413,6 @@ TUI:
     RemoveButton: 卸下
     ApplyButton: 使用
     FromDominion: 來自領地：
-  Config:
-    Title: Dominion 系統配置
 CUI:
   Input:
     CreateDominion: 輸入要創建的領地名稱
@@ -439,8 +435,7 @@ Config:
     LimitMinYError: Limit.MinY 不能大於或等於 Limit.MaxY，已重置為 -64 320
     RefundError: Economy.Refund 設置不合法，已重置為 0.85
     PriceError: Economy.Price 設置不合法，已重置為 10.0
-    LimitSizeYAutoAdjust: 啟用 Limit.Vert 時 Limit.SizeY 不能小於 Limit.MaxY - Limit.MinY，已自動調整為
-      %d
+    LimitSizeYAutoAdjust: 啟用 Limit.Vert 時 Limit.SizeY 不能小於 Limit.MaxY - Limit.MinY，已自動調整為 %d
     AmountError: Limit.Amount 設置不合法，已重置為 10
     DepthError: Limit.Depth 設置不合法，已重置為 3
     GroupMinYError: 權限組 %s 的 MinY 不能大於等於 MaxY，已重置為 -64 和 320
@@ -457,12 +452,12 @@ Config:
   Comment:
     Language: 語言設置，參考 languages 文件夾下的文件名
     AutoCreateRadius: 自動創建領地的半徑，單位為方塊
-    NegativeOneDisabled: -1表示不開啟
+    NegativeOneDisabled: '-1表示不開啟'
     DefaultLimit: 默認玩家圈地限製
     SpawnProtectRadius: 出生點保護半徑 出生點此範圍內不允許圈地
     MinY: 最小Y坐標
     MaxY: 最大Y坐標
-    NegativeOneUnlimited: -1表示不限製
+    NegativeOneUnlimited: '-1表示不限製'
     SizeX: X方向最大長度
     SizeY: Y方向最大長度
     SizeZ: Z方向最大長度
@@ -470,7 +465,6 @@ Config:
     Depth: 子領地深度
     ZeroDisabled: 0表示不開啟
     Vert: 是否自動延伸到 MaxY 和 MinY
-    DisabledWorlds: 不允許圈地的世界列表
     OpBypass: 是否允許OP無視領地限製
     TpDelay: 傳送延遲 秒
     TpCoolDown: 傳送冷卻 秒
@@ -485,8 +479,17 @@ Config:
     ResidenceMigration: 是否允許玩家從 Residence 遷移領地數據
     GroupTitle: 權限組稱號 - 使用權限組當作稱號(需要PlaceholderAPI插件)
     GroupTitleVariable: '變量: %dominion_group_title%'
-    GroupTitleColor: 前後綴如需要加顏色請使用這種格式 &#ffffff
+    GroupTitleColor: '前後綴如需要加顏色請使用這種格式 &#ffffff'
     PerformanceTimer: 性能測試計時器
+    GroupLine1: '>---------------------------------<'
+    GroupLine2: '|       圈地限制特殊權限組配置       |'
+    GroupLine3: '>---------------------------------<'
+    GroupLine4: 此文件可以作為模板，你可以將此文件複製後重命名為你想要的
+    GroupLine5: 權限組名，然後修改裡面的配置如果你想給贊助玩家（或者VIP）
+    GroupLine6: 一些特殊優惠，例如更少的圈地價格、更大的領地等，你可以在
+    GroupLine7: 這裡配置。詳細說明參閱以下鏈接：
+    GroupLine8DocumentAddress: '> https://dominion.lunadeer.cn/%s/operator/privilege.html'
+    WorldSettings: 單獨設置某個世界的圈地規則（如不設置則使用以上規則）
 Flags:
   admin:
     DisplayName: 管理員
@@ -586,7 +589,7 @@ Flags:
     Description: 收獲莊稼、作物
   honey:
     DisplayName: 蜂巢交互
-    Description: 是否可以采蜂蜜
+    Description: 是否可以採蜂蜜
   hook:
     DisplayName: 使用釣鉤
     Description: 是否可以使用釣鉤
@@ -727,7 +730,7 @@ Utils:
     Reconnecting: 正在嘗試重新連接數據庫
     ReconnectionSuccess: 重新連接數據庫成功
     ReconnectionFailed: 重新連接數據庫失敗
-    ErrorTitle: === 嚴重錯誤 ===
+    ErrorTitle: '=== 嚴重錯誤 ==='
     ReconnectionUnexpected: 數據庫連接意外關閉，正在嘗試重新連接
     OperationAbort: 操作終止
     OperationFailed: '數據庫操作失敗: '

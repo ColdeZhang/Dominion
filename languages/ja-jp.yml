@@ -1,0 +1,741 @@
+# Help us to translate this file into your language.
+# Guide: https://github.com/ColdeZhang/Dominion/blob/master/CONTRIBUTING.md#translate-plugin-messages-
+# Don't forget to leave your name here, so that we can give you credit for your translation.
+# Translated by:  YOUR_NAME_HERE
+Commands:
+  Dominion:
+    SetFlagUsage: '使い方: /dominion set <権限名> <true/false> [領地名]'
+    CreateDominionUsage: '使い方: /dominion create <領地名>'
+    CreateSelectPointsFirst: 最初にツールを使用して領地の対角線の2点を選択してください。または、/dominion auto_create <領地名> を使用して自動領地を作成します。
+    CreateSubDominionUsage: '使い方: /dominion create_sub <子領地名> [親領地名]'
+    CreateSubSelectPointsFirst: 最初にツールを使用して子領地の対角線の2点を選択してください。または、/dominion auto_create_sub <子領地名> [親領地名] を使用して自動子領地を作成します。
+    AutoCreateDominionUsage: '使い方: /dominion auto_create <領地名>'
+    AutoCreateSubDominionUsage: '使い方: /dominion auto_create_sub <子領地名> [親領地名]'
+    AutoCreateDominionDisabled: 自動領地作成機能は無効になっています
+    ExpandDominionUsage: '使い方: /dominion expand [サイズ] [領地名]'
+    ContractDominionUsage: '使い方: /dominion contract [サイズ] [領地名]'
+    SizeShouldBeInteger: サイズは整数である必要があります
+    SizeShouldBePositive: サイズは0より大きい必要があります
+    DeleteDominionUsage: '使い方: /dominion delete <領地名>'
+    SetEnterMessageUsage: '使い方: /dominion set_enter_msg <説明文> [領地名]'
+    SetLeaveMessageUsage: '使い方: /dominion set_leave_msg <説明文> [領地名]'
+    SetTpLocationUsage: '使い方: /dominion set_tp_location [領地名]'
+    RenameDominionUsage: '使い方: /dominion rename <元領地名> <新領地名>'
+    GiveDominionUsage: '使い方: /dominion give <領地名> <プレイヤー名>'
+    TpDominionUsage: '使い方: /dominion tp <領地名>'
+    DominionNotExist: 領地は存在しません
+    SetMapColorUsage: '使い方: /dominion set_map_color <色> [領地名]'
+  Group:
+    CreateGroupUsage: '使い方: /dominion group create <領地名> <権限グループ名>'
+    DeleteGroupUsage: '使い方: /dominion group delete <領地名> <権限グループ名>'
+    RenameGroupUsage: '使い方: /dominion group rename <領地名> <権限グループ古い名前> <新しい名前>'
+    SetGroupFlagUsage: '使い方: /dominion group set_flag <領地名> <権限グループ名> <権限名> <true|false>'
+    AddGroupMemberUsage: '使い方: /dominion group add_member <領地名> <権限グループ名> <プレイヤー名>'
+    RemoveGroupMemberUsage: '使い方: /dominion group remove_member <領地名> <権限グループ名> <プレイヤー名>'
+    GroupUsage: '使い方: /dominion group <create|delete|rename|set_flag|add_member|remove_member|select_member|setting|list>'
+    NewGroupName: 新しい権限グループ名
+  Member:
+    DominionAddMemberUsage: '使い方: /dominion member add <領地名> <プレイヤー名>'
+    DominionSetFlagUsage: '使い方: /dominion member set_flag <領地名> <プレイヤー名> <権限名> <true/false>'
+    DominionRemoveMemberUsage: '使い方: /dominion member remove <領地名> <プレイヤー名>'
+    DominionApplyTemplateUsage: '使い方: /dominion member apply_template <領地名> <プレイヤー名> <テンプレート名>'
+    MemberUsage: '使い方: /dominion member <add/set_flag/remove/apply_template/list/setting/select_player/select_template>'
+  PageOptional: ページ番号（オプション）
+  ArgumentsNotEnough: 引数が足りません
+  UnknownArgument: 不明な引数
+  SizeInteger: サイズ（整数）
+  DominionName: 領地名
+  SubDominionName: 子領地名
+  EnterMessageContent: 入場メッセージ内容
+  LeaveMessageContent: 離脱メッセージ内容
+  InputColor: 色を入力（16進数）
+  NewDominionName: 新しい領地名
+  Residence:
+    MigrationDisabled: Residence 移行機能は無効にされています
+    MigrateUsage: '使い方: /dominion migrate <res領地名>'
+    NoMigrationData: 移行可能なデータがありません
+    NoResidenceDominion: 指定した Residence 領地が見つかりません
+    ResidenceNotOwner: あなたはこの領地の所有者ではないので、移行できません
+    MigrateFailed: '移行に失敗しました: %s'
+    MigrateSuccess: 領地 %s が Residence から Dominion に移行されました
+  Operator:
+    ReloadingDominionCache: データベースから領地キャッシュを再読み込みしています...
+    ReloadedDominionCache: 領地キャッシュが再読み込みされました
+    ReloadingPrivilegeCache: データベースからプレイヤー権限キャッシュを再読み込みしています...
+    ReloadedPrivilegeCache: プレイヤー権限キャッシュが再読み込みされました
+    ReloadingGroupCache: データベースから権限グループキャッシュを再読み込みしています...
+    ReloadedGroupCache: 権限グループキャッシュが再読み込みされました
+    ExportingMCAList: 所有している領地のMCAファイルのリストをエクスポートしています...
+    CreateExportFolderFailed: エクスポートフォルダの作成に失敗しました
+    ExportingMCAListForWorld: '%s のMCAファイルリストをエクスポート中...'
+    DeleteMCAListFailed: '%s のMCAファイルリストの削除に失敗しました'
+    CreateMCAListFailed: '%s のMCAファイルリストの作成に失敗しました'
+    WriteMCAListFailed: '%s の書き込みに失敗しました'
+    ExportMCAListFailed: '%s のMCAファイルリストのエクスポートに失敗しました'
+    ExportedMCAList: '%s に MCA ファイルのリストがエクスポートされました'
+    ReloadingConfig: 設定ファイルを再読み込みしています...
+    ReloadedConfig: 設定ファイルが再読み込みされました
+  SetConfig:
+    MinYShouldBeLessThanMaxY: 最高Y座標制限は最低Y座標制限より小さくすることはできません
+    MaxYShouldBeGreaterThanMinY: 最低Y座標制限は最高Y座標制限より大きくすることはできません
+    SizeXShouldBeGreaterThan4: X軸（東西）の最大サイズは4未満にできません
+    SizeZShouldBeGreaterThan4: Z軸（南北）の最大サイズは4未満にできません
+    SizeYShouldBeGreaterThan4: Y軸（垂直）の最大サイズは4未満にできません
+    AmountShouldBeGreaterThan0: 各プレイヤーの領地数制限は0未満にすることはできません
+    DepthShouldBeGreaterThan0: 領地の深さ制限は0未満にすることはできません
+    TpDelayShouldBeGreaterThan0: テレポート遅延は0未満にすることはできません
+    TpCoolDownShouldBeGreaterThan0: テレポートクールダウンは0未満にすることはできません
+    PriceShouldBeGreaterThan0: 各ブロック単価は0未満にすることはできません
+    RefundShouldBeGreaterThan0: 領地の返金率は0未満にすることはできません
+    SpawnProtectRadiusShouldBeGreaterThan0: スポーンポイント保護半径は0以下にはできません
+  Template:
+    CreateTemplateUsage: '使い方: /dominion template create <テンプレート名>'
+    DeleteTemplateUsage: '使い方: /dominion template delete <テンプレート名>'
+    SetTemplateFlagUsage: '使い方: /dominion template set_flag <テンプレート名> <権限名> <true/false>'
+    TemplateUsage: '使い方: /dominion template <list|setting|delete|create|set_flag>'
+    NewTemplateName: 新しいテンプレート名
+  Title:
+    UseTitleUsage: '使い方: /dominion use_title <権限グループID>'
+    RemoveTitleSuccess: 権限グループ称号を正常に解除しました
+    GroupNotExist: 権限グループが存在しません
+    GroupDominionNotExist: 権限グループ %s に属する領地が存在しません
+    NotDominionMember: あなたは領地 %s のメンバーではないため、称号を使用できません
+    NotGroupMember: あなたは権限グループ %s に属していないため、称号を使用できません
+    UseTitleSuccess: 権限グループ %s の称号を正常に使用しました
+    UseTitleFailed: 称号の使用に失敗しました：%s
+Messages:
+  OpBypassTpLimit: あなたはOPですので、領地テレポート制限を無視します
+  WorldNotExist: 領地が存在しない世界です
+  NoTpLocation: 領地 %s にテレポートポイントが設定されていないため、中心点へのテレポートを試みます
+  TpLocationNotInside: 領地 %s のテレポートポイントが領地内にないため、中心点へのテレポートを試みます
+  TpToDominion: '%s にテレポートしました'
+  TpDisabled: 管理者が領地テレポート機能を有効にしていません
+  DominionNoTp: この領地ではテレポートが禁止されています
+  GroupNoTp: あなたのいる権限グループはこの領地にテレポートすることが許可されていません
+  PrivilegeNoTp: あなたはこの領地にテレポートすることが許可されていません
+  TpCoolDown: テレポートは %d 秒後に実行されます
+  TpDelay: テレポートは %d 秒後に実行されます
+  TpCountDown: テレポートカウントダウン %d 秒
+  TpFailed: テレポートに失敗しました。再試行してください
+  CreateDominionFailed: 領地を作成できませんでした
+  CreateDominionSuccess: 領地 %s を作成しました
+  DominionNameShouldNotEmpty: 領地名は空にできません
+  DominionNameInvalid: 領地名にはスペースやドットを含めることはできません
+  DominionNameExist: '%s という名前の領地はすでに存在します'
+  SelectPointsWorldNotSame: 2つの選点の世界が一致していません
+  CreateDominionDisabledWorld: 世界 %s で領地を作成することは禁止されています
+  DominionAmountLimit: あなたの領地数が上限に達しました(%d個)
+  ParentDominionNotExist: 親領地 %s は存在しません
+  RootDominionLost: ルート領地が失われました！
+  NotParentDominionOwner: あなたは親領地 %s の所有者ではないため、子領地を作成できません
+  ParentDominionNotInSameWorld: 親領地と子領地は同じ世界に存在しません
+  OutOfParentDominionRange: 親領地 %s の範囲を超えています
+  ConflictWithSpawnProtect: 出生点保護と衝突しています
+  ConflictWithDominion: 領地 %s と衝突しています
+  DatabaseError: データベースエラーが発生しました。管理者に連絡してください
+  CannotGetDominionAuto: 現在いる領地を取得できません。名前を指定してください
+  ExpandDominionFailed: 領地の拡張に失敗しました
+  DominionWorldLost: 領地のある世界が失われました
+  ParentDominionLost: 親領地が失われました
+  ExpandDominionSuccess: 領地 %s を %dブロック拡張しました
+  ContractDominionFailed: 領地の縮小に失敗しました
+  ContractDominionConflict: 縮小後の領地には子領地 %s を含めることができません
+  ContractDominionSuccess: 領地 %s を %dブロック縮小しました
+  DeleteDominionFailed: 領地の削除に失敗しました
+  DeleteDominionSuccess: 領地 %s とそのすべての子領地が削除されました
+  DeleteDominionConfirm: 領地 %s を削除すると、そのすべての子領地も削除されます。続行しますか？
+  DeleteDominionForceConfirm: /dominion delete %s force を入力して削除を確認してください
+  SetEnterMessageSuccess: 領地 %s の入場メッセージを設定しました
+  SetLeaveMessageSuccess: 領地 %s の離脱メッセージを設定しました
+  SetTpLocationFailed: 領地のテレポートポイントの設定に失敗しました
+  DominionNotExist: 領地 %s は存在しません
+  DominionWorldNotExist: 領地が存在しない世界です
+  SetTpLocationSuccess: 領地 %s のテレポートポイント %d %d %d を設定しました
+  TpLocationNotInDominion: テレポートポイントは領地 %s に存在しません
+  RenameDominionFailed: 領地の名前の変更に失敗しました
+  RenameDominionSameName: 新しい名前は旧い名前と同じです
+  RenameDominionSuccess: 領地 %s を %s に名前を変更しました
+  GiveDominionFailed: 領地の譲渡に失敗しました
+  PlayerNotExist: プレイヤー %s は存在しないか、ログインしたことがありません
+  DominionAlreadyBelong: 領地 %s はすでに %s に属しているため、移行する必要はありません
+  SubDominionCannotGive: 子領地は譲渡できません。管理者として %s を設定することで、この領地 %s を管理することができます
+  GiveDominionConfirm: 領地 %s を %s に譲渡すると、そのすべての子領地も譲渡されます。続行しますか？
+  GiveDominionForceConfirm: /dominion give %s %s force を入力して譲渡を確認してください
+  GiveDominionSuccess: 領地 %s とそのすべての子領地を %s に譲渡しました
+  SetMapColorFailed: 領地の地図の色の設定に失敗しました
+  MapColorInvalid: 色の形式が正しくありません
+  SetMapColorSuccess: 領地 %s の衛星地図の色を %s に設定しました
+  SizeInvalid: サイズが無効です
+  SizeShouldBeGreaterThan4: 領地の任意の一辺の長さは4未満にはできません
+  SizeXShouldBeLessThan: 領地X方向（東西）の長さは %d を超えることができません
+  SizeYShouldBeLessThan: 領地Y方向（上下）の高さは %d を超えることができません
+  SizeZShouldBeLessThan: 領地Z方向（南北）の長さは %d を超えることができません
+  MaxYShouldBeLessThan: 領地のY座標の上限は %d を超えてはいけません
+  MinYShouldBeLessThan: 領地のY座標の下限は %d を超えてはいけません
+  DepthInvalid: 子領地の深さが無効です
+  CreateSubDominionDisabled: 子領地の作成は許可されていません
+  DepthShouldBeLessThan: 子領地のネストの深さは %d を超えてはいけません
+  NotDominionOwner: あなたは領地 %s の所有者ではありません
+  NoEconomyPlugin: 使用可能な経済プラグインシステムがありません。サーバー管理者に連絡してください
+  OpBypassEconomyCheck: あなたはOPですので、経済チェックをスキップしました
+  NotEnoughMoney: 残高が不足しています。 %.2f %s が必要です
+  ChargeMoney: '%.2f %s が差し引かれました'
+  RefundMoney: '%.2f %s が返金されました'
+  CannotGetLocation: あなたの位置を取得できません
+  CrossWorldOperationDisallowed: 世界を超えた操作は禁止されています
+  NotInDominion: あなたは領地 %s にいないため、この操作を実行できません
+  CannotGetDirection: あなたの方向を取得できません
+  InvalidDirection: 無効な方向 %s
+  ContractSizeInvalid: 縮小後の領地サイズが無効です
+  SubDominionList: (子領地：%s)
+  SetDominionFlagSuccess: 領地の権限 %s を %s に設定しました
+  UnknownFlag: 不明な権限 %s
+  PageNoPermission: このページにアクセスする権限がありません
+  CreateGroupFailed: 権限グループ %s の作成に失敗しました
+  CreateGroupSuccess: 権限グループ %s の作成に成功しました
+  GroupNameInvalid: 権限グループ名にスペースを含めることはできません
+  GroupNameExist: 領地 %s にはすでに %s という名前の権限グループが存在します
+  DeleteGroupFailed: 権限グループ %s の削除に失敗しました
+  DeleteGroupSuccess: 権限グループ %s の削除に成功しました
+  GroupNotExist: 領地 %s に %s という名前の権限グループは存在しません
+  SetGroupFlagFailed: 権限グループ %s の権限 %s を %s に設定するのに失敗しました
+  SetGroupFlagSuccess: 権限グループ %s の権限 %s を %s に設定しました
+  NotDominionOwnerForGroup: あなたは領地 %s の所有者ではないため、管理者権限グループの権限を変更できません
+  RenameGroupFailed: 権限グループ %s を %s にリネームするのに失敗しました
+  RenameGroupSuccess: 権限グループ %s を %s にリネームしました
+  AddGroupMemberFailed: メンバー %s を権限グループ %s に追加するのに失敗しました
+  AddGroupMemberSuccess: メンバー %s を権限グループ %s に追加しました
+  NoPermissionForGroupMember: 領地 %s の権限グループ %s メンバーを変更する権限がありません
+  NotDominionOwnerForGroupMember: あなたは領地 %s の所有者ではないため、管理者権限グループにメンバーを追加できません
+  PlayerNotDominionMember: プレイヤー %s は領地 %s のメンバーではなく、直接権限グループに参加できません
+  PlayerAlreadyInGroup: プレイヤー %s はすでに権限グループ %s にいます
+  PlayerIsOwnerForGroupMember: '%s は管理者であり、あなたは領地 %s の所有者ではないため、管理者を権限グループに追加できません'
+  RemoveGroupMemberFailed: 権限グループ %s からメンバー %s を削除するのに失敗しました
+  RemoveGroupMemberSuccess: 権限グループ %s からメンバー %s を削除しました
+  NoPermissionForRemoveGroupMember: 領地 %s の権限グループ %s メンバーを削除する権限がありません
+  NotDominionOwnerForRemoveGroupMember: あなたは領地 %s の所有者ではないため、管理者権限グループからメンバーを削除できません
+  PlayerNotMember: プレイヤー %s は領地 %s のメンバーではありません
+  PlayerNotInGroup: プレイヤー %s は権限グループ %s にいません
+  RemoveMemberFailed: プレイヤー %s を領地 %s から削除するのに失敗しました
+  RemoveMemberSuccess: プレイヤー %s を領地 %s から削除しました
+  SetMemberFlagFailed: プレイヤー %s の領地 %s の権限 %s を %s に設定するのに失敗しました
+  SetMemberFlagSuccess: プレイヤー %s の領地 %s の権限 %s を %s に設定しました
+  PlayerBelongToGroup: プレイヤー %s は %s 権限グループに所属しているため、個別に権限を設定できません
+  AddMemberFailed: プレイヤー %s を領地メンバー %s に追加するのに失敗しました
+  AddMemberSuccess: プレイヤー %s を領地メンバー %s に追加しました
+  PlayerAlreadyMember: プレイヤー %s はすでに領地 %s のメンバーです
+  ApplyTemplateSuccess: テンプレート %s をプレイヤー %s の領地 %s の権限に適用しました
+  ApplyTemplateFailed: テンプレート %s をプレイヤー %s の領地 %s の権限に適用するのに失敗しました
+  TemplateNotExist: テンプレート %s は存在しません
+  NotDominionOwnerForRemoveAdmin: あなたは領地 %s の所有者ではないため、領地管理者を削除できません
+  NotDominionOwnerForSetAdmin: あなたは領地 %s の所有者ではないため、他のプレイヤーの管理者権限を変更できません
+  OwnerCannotBeMember: プレイヤー %s は領地 %s の所有者であるため、メンバーとして追加できません
+  CreateTemplateSuccess: テンプレート %s を作成しました
+  CreateTemplateFailed: テンプレート %s を作成するのに失敗しました
+  TemplateNameInvalid: テンプレート名にスペースを含めることはできません
+  TemplateNameExist: すでに %s という名前の権限テンプレートが存在します
+  DeleteTemplateSuccess: テンプレート %s を削除しました
+  DeleteTemplateFailed: テンプレート %s を削除するのに失敗しました
+  SetTemplateFlagSuccess: テンプレート %s の権限 %s を %s に設定しました
+  SetTemplateFlagFailed: テンプレート %s の権限 %s を %s に設定するのに失敗しました
+  CommandPlayerOnly: このコマンドはプレイヤーによってのみ実行できます
+  NoPermission: あなたには %s 権限がないため、このコマンドを実行できません
+  NotDominionOwnerOrAdmin: あなたは領地 %s の所有者または管理者ではありません。権限を変更する権限がありません
+  InSubDominion: あなたは現在子領地の中にいます。操作する領地名を指定してください
+  NoPermissionForFlag: あなたには %s (%s) 権限がありません
+  BlueMapConnectFailed: BlueMap プラグインに接続できません。衛星地図レンダリングを使用しない予定の場合は、設定ファイルで機能を無効にすることをお勧めします。
+  DynmapRegisterSuccess: Dynmap 登録成功
+  DynmapConnectFailed: Dynmap に接続できませんでした。衛星地図レンダリングを使用しない予定の場合は、設定ファイルで機能を無効にすることをお勧めします。
+  PlaceholderAPINotFound: PlaceholderAPI プラグインが見つかりません。権限グループ称号機能が使用できず、無効化されました
+  PluginEnabled: 領地プラグインが起動しました
+  PluginVersion: バージョン：%s
+  PlaceholderAPIRegisterSuccess: PlaceholderAPI 拡張が成功しました
+  LoadedGroupAmount: 合計 %d の領地グループがロードされました
+  AutoCleanStart: 長期間ログインしていないプレイヤーの領地データを自動クリーニングするプロセスを開始します
+  AutoCleanPlayer: プレイヤー %s の領地データをクリーニングしました
+  AutoCleanEnd: 自動クリーニング完了
+  MapInfoDetail: <div>%s</div><div>すべての人：%s</div>
+TUI:
+  NotDominionOwnerOrAdminForPage: あなたは領地 %s の所有者または管理者ではありません。このページにアクセスする権限がありません
+  CommandHelp:
+    Title: 領地プラグインコマンドヘルプ
+    SubTitle: <>は必須パラメータを、[]はオプションパラメータを表します
+  Navigation:
+    Menu: メインメニュー
+    DominionList: 私の領地
+    Manage: 管理インターフェース
+    EnvSetting: 環境設定
+    GuestSetting: ゲスト権限
+    MemberList: メンバーリスト
+    MemberSetting: メンバー権限
+    GroupList: 権限グループリスト
+    GroupSetting: 権限グループ管理
+    AllDominion: すべての領地
+    TemplateList: テンプレートリスト
+    TemplateSetting: テンプレート管理
+    MigrateList: Resデータリスト
+    TitleList: 権限グループ称号リスト
+  ManageButton: 管理
+  DeleteButton: 削除
+  SearchButton: 検索
+  BackButton: 戻る
+  SelectButton: 選択
+  EditButton: 編集
+  Menu:
+    Title: Dominion 領地システム
+    CreateDominionButton: 領地を作成
+    CreateDominionDescription: あなたを中心に新しい領地を自動で作成します
+    MyDominionButton: 私の領地
+    MyDominionDescription: 私の領地リストを表示
+    TitleListButton: 称号リスト
+    TitleListDescription: 権限グループ称号を表示/使用
+    TemplateListButton: テンプレートリスト
+    TemplateListDescription: メンバー権限テンプレートリスト
+    CommandHelpButton: コマンドヘルプ
+    CommandHelpDescription: コマンドリストを表示
+    DocumentButton: 使用ドキュメント
+    DocumentDescription: ブラウザで使用ドキュメントを開く
+    MigrateButton: データを移行
+    MigrateDescription: あなたの領地をResidenceからDominionに移行します
+    AllDominionButton: すべての領地
+    AllDominionDescription: すべての領地を表示
+    ConfigButton: システム設定
+    ConfigDescription: システム設定を表示/変更
+    ReloadCacheButton: キャッシュをリロード
+    ReloadCacheDescription: 手動でキャッシュをリロードすると、一部のプレイヤー操作が無効になる問題を解決できます。ただし頻繁に行うことは推奨されません
+    ReloadConfigButton: 設定をリロード
+    ReloadConfigDescription: 設定ファイルをリロード
+    OpOnlySection: '--- 以下のオプションはOP専用 ---'
+  DominionList:
+    Title: 私の領地リスト
+    AdminSection: '--- あなたが管理者権限を持つ領地 ---'
+  DominionManage:
+    Title: 領地 %s 管理インターフェース
+    InfoButton: 詳細情報
+    InfoDescription: 領地の詳細情報を表示
+    EnvSettingButton: 環境設定
+    EnvSettingDescription: 領地内の環境の行動を設定します
+    GuestSettingButton: ゲスト権限
+    GuestSettingDescription: この領地でのゲストの権限を設定します
+    MemberListButton: メンバー管理
+    MemberListDescription: この領地メンバーの権限を管理します
+    GroupListButton: 権限グループ
+    GroupListDescription: この領地の権限グループを管理します
+    SetTpLocationButton: テレポートポイントを設定
+    SetTpLocationDescription: 現在地をこの領地のテレポートポイントとして設定します
+    RenameButton: リネーム
+    RenameDescription: 領地をリネームします
+    EditJoinMessageButton: ウェルカムメッセージを編集
+    EditJoinMessageDescription: プレイヤーが領地に入ると表示されるメッセージ
+    EditLeaveMessageButton: 離脱メッセージを編集
+    EditLeaveMessageDescription: プレイヤーが領地を離れると表示されるメッセージ
+    SetMapColorButton: 地塊の色を設定
+    SetMapColorDescription: 衛星地図上の地塊の色を設定します
+    NotInDominion: あなたはどの領地内にもいないため、領地名を指定してください /dominion manage <領地名>
+  EnvSetting:
+    Title: 領地 %s の環境設定
+    Usage: '用法: /dominion env_setting <領地名> [ページ番号]'
+  GuestSetting:
+    Title: 領地 %s のゲスト権限
+    Usage: '用法: /dominion guest_setting <領地名> [ページ番号]'
+  SizeInfo:
+    Title: 領地 %s のサイズ情報
+    Owner: 領地の所有者：
+    Size: 領地のサイズ：
+    Center: 中心座標：
+    Vertical: 垂直高さ：
+    VertY: Y軸座標：
+    Square: 水平面積：
+    Volume: 領地の体積：
+    TpLocation: テレポートポイント座標：
+    NoneTp: なし
+    Usage: あなたはどの領地内にもいないため、領地名を指定してください /dominion info <領地名>
+  MemberList:
+    Title: 領地 %s のメンバーリスト
+    AddButton: メンバーを追加
+    FlagButton: 権限
+    FlagDescription: メンバー権限を設定
+    RemoveButton: 削除
+    RemoveDescription: このメンバーを削除（訪問者に変更）します
+    NoPermissionSet: あなたは領地主人ではないため、管理者権限を編集できません
+    NoPermissionRemove: あなたは領地主人ではないため、管理者を削除できません
+    BelongToGroup: このメンバーは権限グループ %s に属しているため、個別に権限を編集できません
+    Usage: '用法: /dominion member list <領地名> [ページ番号]'
+    AdminTag: これは管理者です
+    NormalTag: これは一般メンバーです
+    BlacklistTag: これはブラックリストメンバーです
+    GroupTag: このメンバーは権限グループに所属しています
+  MemberSetting:
+    Title: プレイヤー %s の領地 %s の権限設定
+    ApplyTemplateButton: テンプレートを適用
+    ApplyTemplateDescription: 権限テンプレートを選択して適用します
+    Usage: '用法: /dominion member setting <領地名> <プレイヤー名> [ページ番号]'
+  SelectPlayer:
+    Title: プレイヤーを選択してメンバーに追加
+    Description: ログイン済みのプレイヤーのみを選択できます
+    Usage: '用法: /dominion member select_player <領地名> [ページ番号]'
+  SelectTemplate:
+    Title: テンプレートを選択
+    Description: 領地 %s のメンバー %s に適用します
+    Usage: '用法: /dominion member select_template <領地名> <プレイヤー名>  [ページ番号]'
+  GroupList:
+    Title: 領地 %s 権限グループリスト
+    CreateButton: 権限グループを作成
+    CreateDescription: 新しい権限グループを作成します
+    DeleteDescription: 権限グループ %s を削除
+    EditDescription: 権限グループ %s を編集
+    AddMemberDescription: メンバーを権限グループ %s に追加
+    RemoveMemberDescription: '%s を権限グループ %s から削除'
+    Usage: '用法: /dominion group list <領地名> [ページ番号]'
+  GroupSetting:
+    RenameButton: この権限グループの名前を変更
+    Usage: '用法: /dominion group setting <領地名> <権限グループ名> [ページ番号]'
+    TitleL: '権限グループ '
+    TitleR: ' 管理'
+    RenameDescription: 権限グループ %s をリネーム
+  SelectMember:
+    Title: メンバーを選択
+    Description: メンバーを権限グループ %s に追加するためにメンバーを選択します
+    Usage: '用法: /dominion group select_member <領地名> <権限グループ名> [回声ページ番号] [ページ番号]'
+  TemplateList:
+    Title: メンバー権限テンプレートリスト
+    CreateButton: メンバー権限テンプレートを作成
+    CreateDescription: 新しいメンバー権限テンプレートを作成します
+  TemplateSetting:
+    Title: テンプレート %s 権限管理
+  Migrate:
+    Title: Residence からデータを移行
+    NoData: 移行可能なデータがありません
+    Button: 移行
+    SubDominion: 子領地は手動で移行できず、親領地に従って自動的に移行します
+  TitleList:
+    Title: 私が使用できる権限グループ称号
+    RemoveButton: 取り除く
+    ApplyButton: 使用
+    FromDominion: 領地から：
+CUI:
+  Input:
+    CreateDominion: 作成する領地の名前を入力してください
+    CreateGroup: 作成する権限グループの名前を入力してください
+    CreateTemplate: 作成するテンプレート名を入力してください
+    EditEnterMessage: テリトリーの入場メッセージ内容を編集
+    EditLeaveMessage: テリトリーの退場メッセージ内容を編集
+    AddMember: メンバーとして追加するプレイヤー名を入力してください
+    RenameDominion: テリトリーをリネーム
+    RenameGroup: 権限グループのリネーム
+    SetMapColor: 地図のブロックの色を入力してください（16進数）
+Config:
+  Check:
+    AutoCreateRadiusError: AutoCreateRadiusは0にできません、10にリセットされました
+    AutoCleanAfterDaysError: AutoCleanAfterDaysは0にできません、180にリセットされました
+    ToolNameError: ツール名の設定が誤っています、ARROWにリセットされました
+    LimitSizeXError: Limit.SizeXは4未満にはできません、128にリセットされました
+    LimitSizeYError: Limit.SizeYは4未満にはできません、64にリセットされました
+    LimitSizeZError: Limit.SizeZは4未満にはできません、128にリセットされました
+    LimitMinYError: Limit.MinYはLimit.MaxY以上にはできません、-64と320にリセットされました
+    RefundError: Economy.Refundの設定が不正です、0.85にリセットされました
+    PriceError: Economy.Priceの設定が不正です、10.0にリセットされました
+    LimitSizeYAutoAdjust: Limit.Vertを有効にするとき、Limit.SizeYはLimit.MaxY - Limit.MinY未満にできません、自動調整されました%d
+    AmountError: Limit.Amountの設定が不正です、10にリセットされました
+    DepthError: Limit.Depthの設定が不正です、3にリセットされました
+    GroupMinYError: 権限グループ%sのMinYはMaxY以上にできません-64と320にリセットされました
+    GroupSizeXError: 権限グループ%sのSizeX設定が小さすぎます、128にリセットされました
+    GroupSizeYError: 権限グループ%sのSizeY設定が小さすぎます、64にリセットされました
+    GroupSizeZError: 権限グループ%sのSizeZ設定が小さすぎます、128にリセットされました
+    GroupAmountError: 権限グループ%sのAmountの設定が不正です、10にリセットされました
+    GroupDepthError: 権限グループ%sのDepthの設定が不正です、3にリセットされました
+    GroupPriceError: 権限グループ%sのPriceの設定が不正です、10.0にリセットされました
+    GroupRefundError: 権限グループ%sのRefundの設定が不正です、0.85にリセットされました
+    LoadFlagError: 権限設定の読み込みに失敗しました：%s
+    TpDelayError: テレポート遅延は0未満にできません、0にリセットされました
+    TpCoolDownError: テレポートクールダウンは0未満にできません、0にリセットされました
+  Comment:
+    Language: 言語設定は、languagesフォルダ内のファイル名を参照してください
+    AutoCreateRadius: 自動で作成される領土の半径、単位はブロック
+    NegativeOneDisabled: '-1は無効化を示します'
+    DefaultLimit: デフォルトプレイヤー制限
+    SpawnProtectRadius: スポーン点保護半径 スポーン点この範囲内では領土を取ることはできません
+    MinY: 最小Y座標
+    MaxY: 最大Y座標
+    NegativeOneUnlimited: '-1は制限なしを示します'
+    SizeX: X方向の最大長さ
+    SizeY: Y方向の最大長さ
+    SizeZ: Z方向の最大長さ
+    Amount: 最大領土数
+    Depth: サブ領土の深さ
+    ZeroDisabled: 0は無効化を示します
+    Vert: MaxYとMinYに自動延長するか
+    OpBypass: OP が領地制限を無視することを許可しますか？
+    TpDelay: テレポート遅延 秒
+    TpCoolDown: テレポートクールダウン 秒
+    AutoCleanAfterDays: 長期間オフラインのプレイヤーの領土を自動的にクリーンアップする（日）
+    ToolName: 領土ツール名
+    Economy: 経済設定
+    VaultRequired: Vault事前プラグインとプラグインのインストールが必要
+    Price: 領土の価格 各ブロックの単位
+    OnlyXZ: xz平面の面積のみを計算するか
+    Refund: 領土を削除または縮小する際の返金比率
+    FlyPermission: フライト権限ノード - 次のいずれかの権限ノードを持つプレイヤーはこのプラグインによりフライトを阻止されません
+    ResidenceMigration: プレイヤーがResidenceから領土データを移行できるか
+    GroupTitle: 権限グループ称号 - 権限グループを称号として使用する（PlaceholderAPIプラグインが必要）
+    GroupTitleVariable: '変数: %dominion_group_title%'
+    GroupTitleColor: '前後の接頭辞に色を追加する場合はこの形式を使用してください &#ffffff'
+    PerformanceTimer: パフォーマンステストタイマー
+    GroupLine1: '>---------------------------------<'
+    GroupLine2: '|       領土制限特別権限グループ設定       |'
+    GroupLine3: '>---------------------------------<'
+    GroupLine4: このファイルはテンプレートとして使用できます。このファイルをコピーして任意の名前に変更し、
+    GroupLine5: 権限グループ名を変更した後、サポートプレイヤー（またはVIP）に特典を付与するには、
+    GroupLine6: 例えば、低価格での領土取得や広い領土など、
+    GroupLine7: ここで設定します。詳細な説明については、以下のリンクを参照してください：
+    GroupLine8DocumentAddress: '> https://dominion.lunadeer.cn/%s/operator/privilege.html'
+    WorldSettings: 特定のワールドの領土ルールを単独で設定（設定しない場合は上記のルールを使用）
+Flags:
+  admin:
+    DisplayName: 管理者
+    Description: 領土内の他のメンバーの権限を管理
+  anchor:
+    DisplayName: リスポーンアンカー
+    Description: リスポーンアンカーの設定/使用を許可しているか
+  animal_killing:
+    DisplayName: 動物にダメージを与える
+    Description: 動物にダメージを与えることを許可しているか
+  animal_spawn:
+    DisplayName: 動物生成（繁殖）
+    Description: 動物の生成（繁殖を含む）を許可しているか
+  animal_move:
+    DisplayName: 動物の移動
+    Description: 動物が（向かって）領土内で移動することを許可しているか
+  anvil:
+    DisplayName: 金床を使用
+    Description: 金床を使用することを許可しているか
+  beacon:
+    DisplayName: ビーコントランザクション
+    Description: ビーコンと相互作用することを許可しているか
+  bed:
+    DisplayName: ベッドの相互作用
+    Description: ベッドで寝るまたはリスポーンポイントを設定することを許可しているか
+  brew:
+    DisplayName: 醸造台を使用
+    Description: 醸造台を使用できるか
+  break:
+    DisplayName: ブロックを破壊
+    Description: ブロックを破壊することを許可しているか（一般ブロック、展示フレーム、アーマースタンドを含む）
+  button:
+    DisplayName: ボタンを使用
+    Description: さまざまな素材のボタンを使用することを許可しているか
+  cake:
+    DisplayName: ケーキを食べる
+    Description: ケーキを食べることを許可しているか
+  container:
+    DisplayName: 一般的な容器
+    Description: 含まれます：箱、バレル、シャドウボックス、アーマースタンド、展示用フレーム
+  craft:
+    DisplayName: 作業台を使用
+    Description: 作業台を使用できるか
+  crafter:
+    DisplayName: クラフター
+    Description: 自動クラフターを変更することを許可しているか
+  creeper_explode:
+    DisplayName: クリーパーの爆発/非TNT爆発
+    Description: 含まれます：クリーパー、ウィザーの頭、エンダークリスタル、ファイアボール、ベッド、リスポーンアンカーの爆発など
+  comparer:
+    DisplayName: コンパレータの相互作用
+    Description: コンパレータの状態を変更することを許可しているか
+  door:
+    DisplayName: ドアの相互作用
+    Description: さまざまな素材のドア（トラップドアを含む）を使用することを許可しているか
+  dragon_break_block:
+    DisplayName: エンダードラゴンのブロック破壊
+    Description: エンダードラゴンがブロックを破壊することを許可するか
+  dragon_egg:
+    DisplayName: ドラゴンエッグを触る
+    Description: ドラゴンエッグに触れることを許可しているか
+  dye:
+    DisplayName: 染色
+    Description: 染料（羊、犬の首輪、猫の首輪）で染色することを許可しているか
+  edit_sign:
+    DisplayName: 看板を編集
+    Description: 看板を編集することを許可しているか
+  egg:
+    DisplayName: 卵を投げる
+    Description: 卵を投げることを許可しているか
+  enchant:
+    DisplayName: エンチャントテーブルを使用
+    Description: エンチャントテーブルを使用できるか
+  ender_man:
+    DisplayName: エンダーマンの行動
+    Description: エンダーマンが生成されるか、ワープできるか
+  ender_pearl:
+    DisplayName: エンダーパールを投げる
+    Description: エンダーパールを使用できるか
+  feed:
+    DisplayName: 動物を餌やり
+    Description: 動物を餌やりできるか
+  fire_spread:
+    DisplayName: 火の広がり
+    Description: 火が広がることを許可しているか
+  flow_in_protection:
+    DisplayName: 外部液体が入ることができるか
+    Description: 含む：マグマ、水（領土内の液体の拡大を妨げない）
+  fly:
+    DisplayName: 飛行
+    Description: エリトラの飛行ではなく、クリエイティブモードのように飛行します
+  glow:
+    DisplayName: プレイヤーの光
+    Description: 発光の矢のようなハイライト効果
+  harvest:
+    DisplayName: 収穫
+    Description: 作物、植物を収穫する
+  honey:
+    DisplayName: 蜂の巣との相互作用
+    Description: 蜂蜜を採取できるか
+  hook:
+    DisplayName: フックを使用
+    Description: フックを使用できるか
+  hopper:
+    DisplayName: 特殊容器
+    Description: 含む：ホッパー/炉/発射器/投擲器/高炉/燻製器
+  hopper_outside:
+    DisplayName: 領土外のホッパーが領土内のチェストに対して有効か
+    Description: 領土外のホッパーが領土内のチェストに対して有効か
+  ignite:
+    DisplayName: 点火
+    Description: 火打石を使用して点火できるか
+  item_frame_interactive:
+    DisplayName: アイテムフレームとの相互作用
+    Description: アイテムフレームと相互作用できるか（アイテムフレームのものを回転）
+  item_frame_proj_damage:
+    DisplayName: 投げ物で展示フレーム/絵を壊せるか
+    Description: 非プレイヤーが発した投げ物で展示フレーム/絵などの吊るし物を壊せるか
+  lever:
+    DisplayName: レバーを使用
+    Description: レバーを使用できるか
+  mob_drop_item:
+    DisplayName: モンスターアイテムドロップ
+    Description: モンスター死亡時ドロップを生成するか
+  monster_killing:
+    DisplayName: モンスターにダメージを与える
+    Description: プレイヤーがモンスターにダメージを与えることができるか
+  monster_spawn:
+    DisplayName: モンスター生成
+    Description: モンスターを生成できるか
+  monster_move:
+    DisplayName: モンスター移動
+    Description: '（領土内へ）移動できるか'
+  move:
+    DisplayName: 移動
+    Description: 移動できるか
+  note_block:
+    DisplayName: ノートブロックをクリック
+    Description: レッドストーン音楽や一部のレッドストーン装置で使用される...
+  place:
+    DisplayName: ブロックを設置
+    Description: ブロックを設置できるか（一般ブロック、展示フレーム、マグマ、水を含む）
+  piston_outside:
+    DisplayName: ピストンは領土を越えてブロックを押すことができるか
+    Description: ピストンが領土内に物を押したり外に押し出すことができるか
+  pressure:
+    DisplayName: プレッシャープレートの相互作用
+    Description: さまざまな材料のプレッシャープレートを触発できるか
+  riding:
+    DisplayName: 乗り物に乗る
+    Description: さまざまな乗り物に乗ることを許可しているか
+  repeater:
+    DisplayName: リピーターの相互作用
+    Description: リピーターとの相互作用を許可しているか
+  shear:
+    DisplayName: 羊毛を刈る
+    Description: 羊毛を刈ることを許可しているか
+  shoot:
+    DisplayName: 投げ型武器
+    Description: 矢を射る/雪球/トライデント/風弾を含む
+  show_border:
+    DisplayName: 領土境界を表示
+    Description: 領土境界を表示するか
+  teleport:
+    DisplayName: 領土テレポート
+    Description: 領土テレポートを有効にするか
+  tnt_explode:
+    DisplayName: TNT爆発
+    Description: TNTが爆発することを許可しているか
+  trade:
+    DisplayName: 村人との取引
+    Description: 村人と取引することを許可しているか
+  trample:
+    DisplayName: 作物を踏む
+    Description: 作物を踏むことを許可しているか（無効にすると耕作地を保護）
+  trig_pressure_proj:
+    DisplayName: 投げ物でプレッシャープレートを触発
+    Description: 投げ物（矢/風弾/雪球）をプレッシャープレートに触発できるか
+  trig_pressure_mob:
+    DisplayName: 生物がプレッシャープレートを触発
+    Description: 生物（プレイヤーを含まない）がプレッシャープレートを触発できるか
+  trig_pressure_drop:
+    DisplayName: 落下物がプレッシャープレートを触発
+    Description: 落下物がプレッシャープレートを触発できるか
+  vehicle_destroy:
+    DisplayName: 乗り物を破壊
+    Description: 乗り物（主に鉱車）を破壊することを許可しているか
+  vehicle_spawn:
+    DisplayName: 乗り物を生成
+    Description: 乗り物（主に鉱車）を生成することを許可しているか
+  villager_killing:
+    DisplayName: 村人にダメージを与える
+    Description: 村人にダメージを与えることを許可しているか
+  villager_spawn:
+    DisplayName: 村人の繁殖
+    Description: ウィザーの生成とウィザーが生成する爆発
+  wither_spawn:
+    DisplayName: ウィザー生成
+    Description: 死にゆくもの生成および死にゆくもの生成時に発生する爆発
+Localization:
+  LoadLanguageSuccess: 言語ファイル zh-cn を正常にロードしました
+  LoadLanguageFailed: 言語ファイルのロードに失敗しました：%s
+  LanguageFileNotFound: 言語ファイル %s が見つかりませんでした。デフォルトの zh-cn を使用します。
+Utils:
+  TeleportUnsafe: テレポート先が安全ではないため、テレポートがキャンセルされました
+  CheckingUpdate: 更新を確認中...
+  NewVersion: 新しいバージョンが見つかりました：%s
+  VersionInfo: バージョン情報：
+  DownloadPage: ダウンロードページ：%s
+  CurrentVersion: 現在は最新バージョンです：%s
+  GetUpdateFailed: '更新の取得に失敗しました: %s'
+  NewVersionConsole: 新しいバージョンが見つかりました：%s 詳細はコンソールを確認するか、下のリンクをクリックしてください
+  VaultNotAvailable: Vault は利用できません
+  VaultUnlockedNotAvailable: VaultUnlocked は利用できません
+  NoEconomyPlugin: 利用可能な経済プラグインがありません
+  TUI:
+    Navigation: ナビゲーション
+    NoContent: ああ、ここにはまだ内容がありません～
+    PageError: ページ番号エラー
+    Add: 追加
+    Sub: 削除
+    PreviousPage: 前のページ
+    NextPage: 次のページ
+    PageL: '第 '
+    PageR: ' ページ '
+  CUI:
+    Input: 入力してください
+    InputBox: 入力ボックス
+    NotAvailable: CUI テキスト入力機能は非 Paper 系サーバーでは利用できません。コマンドを使用して対応する操作を実行してください。
+    SuggestCommand: '参考コマンド: %s'
+    LeftRightClick: 左クリックで確認 ｜ 右クリックでキャンセル
+    NoSpace: 入力内容にスペースを含めることはできません
+  Database:
+    Connecting: '%s データベースに接続中'
+    UnsupportedType: 'サポートされていないデータベースタイプ: '
+    ConnectionFailed: 'データベース接続失敗: '
+    ConnectionSuccess: データベース接続成功
+    Reconnecting: データベースへの再接続を試みています
+    ReconnectionSuccess: データベースへの再接続に成功しました
+    ReconnectionFailed: データベースへの再接続に失敗しました
+    ErrorTitle: '=== 深刻なエラー ==='
+    ReconnectionUnexpected: データベース接続が予期せず閉じられました。再接続を試みています
+    OperationAbort: 操作が中止されました
+    OperationFailed: 'データベース操作に失敗しました: '
+    Closing: データベース接続を閉じています
+    Closed: データベース接続は閉じられました
+    CloseFailed: 'データベース接続のクローズに失敗しました: '
+    CheckColumnFailed: 列の存在確認に失敗しました
+    CheckTableFailed: テーブルの存在確認に失敗しました
