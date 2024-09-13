@@ -43,6 +43,10 @@ a [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues) about your quest
 
 For detailed contribution guidelines (such as **translation** etc.), please see [CONTRIBUTING](CONTRIBUTING.md)。
 
+> **This project was developed under chinese-simplified originally. It's Multi-Language was translated by AI currently.**
+> **So, there must be some mistakes in the translation. If you find any mistakes (or inappropriate translations), please**
+> **feel free to modify it and submit a pull request. See [Translating](CONTRIBUTING.md#translating) for more details.**
+
 ## bStats Statics
 
 <div align="center">
