@@ -17,9 +17,15 @@ enhancement you would like to see, why you think it would be useful, and any oth
 
 ### 🌐Translating
 
-#### **Translate Plugin Messages** ![Crowdin](https://badges.crowdin.net/dominion/localized.svg)
+#### **Translate Plugin Messages**
 
-If you would like to help translation, please refer to the [Crowdin project](https://crowdin.com/project/dominion).
+Since the plugin messages are translated by AI, there must be some mistakes in the translation. If you find any mistakes
+(or inappropriate translations), there are two ways to help us improve the translation:
+
+1. By Pull Request **[Recommended]**:
+You can fork the repository, modify the translation in the `languages` directory, and open a pull request.
+2. By Crowdin: You can directly modify the translation on the [Crowdin project](https://crowdin.com/project/dominion) ![Crowdin](https://badges.crowdin.net/dominion/localized.svg).
+
 
 #### **Translate Documentation**
 
