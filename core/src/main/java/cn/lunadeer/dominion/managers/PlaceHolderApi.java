@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -29,6 +30,13 @@ public class PlaceHolderApi extends PlaceholderExpansion {
                 return "";
             }
             return group.getNameColoredBukkit();
+        }
+        if (params.equalsIgnoreCase("current_dominion")) {
+            DominionDTO dominion = Cache.instance.getDominionByLoc(bukkitPlayer.getLocation());
+            if (dominion == null) {
+                return "";
+            }
+            return dominion.getName();
         }
         return null; //
     }

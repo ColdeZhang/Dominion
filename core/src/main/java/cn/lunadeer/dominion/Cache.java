@@ -1,13 +1,12 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.*;
-import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.ResMigration;
-import cn.lunadeer.minecraftpluginutils.AutoTimer;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.Scheduler;
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.map.MapRender;
+import cn.lunadeer.minecraftpluginutils.*;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -240,12 +239,18 @@ public class Cache {
             }
             if (last_dom_id != -1) {
                 String msg = last_dominion.getLeaveMessage();
-                msg = msg.replace("${DOM_NAME}", last_dominion.getName());
+                if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    msg = PlaceholderAPI.setPlaceholders(player, msg);
+                }
+                msg = ColorParser.getBukkitType(msg);
                 Notification.actionBar(player, msg);
             }
             if (current_dom_id != -1) {
                 String msg = current_dominion.getJoinMessage();
-                msg = msg.replace("${DOM_NAME}", current_dominion.getName());
+                if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    msg = PlaceholderAPI.setPlaceholders(player, msg);
+                }
+                msg = ColorParser.getBukkitType(msg);
                 Notification.actionBar(player, msg);
             }
 
@@ -343,6 +348,12 @@ public class Cache {
         }
     }
 
+    /**
+     * 获取指定位置的领地信息
+     *
+     * @param loc 位置
+     * @return 领地信息    如果位置不在任何领地内，则返回null
+     */
     public DominionDTO getDominionByLoc(Location loc) {
         return dominion_trees.getLocInDominionDTO(loc);
     }
