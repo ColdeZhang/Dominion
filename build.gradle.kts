@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cn.lunadeer"
-version = "2.7.2-beta"
+version = "2.8.0-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -38,7 +38,7 @@ allprojects {
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
         compileOnly("me.clip:placeholderapi:2.11.6")
 
-        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.8-SNAPSHOT")
+        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.9-SNAPSHOT")
         implementation("org.yaml:snakeyaml:2.0")
     }
 

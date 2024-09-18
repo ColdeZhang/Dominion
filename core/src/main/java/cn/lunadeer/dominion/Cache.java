@@ -1,12 +1,13 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.dominion.utils.map.MapRender;
-import cn.lunadeer.minecraftpluginutils.*;
-import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Bukkit;
+import cn.lunadeer.minecraftpluginutils.AutoTimer;
+import cn.lunadeer.minecraftpluginutils.Scheduler;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -238,20 +239,10 @@ public class Cache {
                 return last_dominion;
             }
             if (last_dom_id != -1) {
-                String msg = last_dominion.getLeaveMessage();
-                if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    msg = PlaceholderAPI.setPlaceholders(player, msg);
-                }
-                msg = ColorParser.getBukkitType(msg);
-                Notification.actionBar(player, msg);
+                MessageDisplay.show(player, Dominion.config.getMessageDisplayJoinLeave(), last_dominion.getLeaveMessage());
             }
             if (current_dom_id != -1) {
-                String msg = current_dominion.getJoinMessage();
-                if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    msg = PlaceholderAPI.setPlaceholders(player, msg);
-                }
-                msg = ColorParser.getBukkitType(msg);
-                Notification.actionBar(player, msg);
+                MessageDisplay.show(player, Dominion.config.getMessageDisplayJoinLeave(), current_dominion.getJoinMessage());
             }
 
             lightOrNot(player, current_dominion);   // 发光检查

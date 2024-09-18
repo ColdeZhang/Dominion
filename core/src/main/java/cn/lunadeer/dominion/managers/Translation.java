@@ -831,6 +831,8 @@ public class Translation extends Localization {
 
     @i18nField(defaultValue = "AutoCreateRadius 不能等于 0，已重置为 10")
     public static i18n Config_Check_AutoCreateRadiusError;
+    @i18nField(defaultValue = "MessageDisplay 不能设置为 %s，已重置为 ACTION_BAR")
+    public static i18n Config_Check_MessageDisplayError;
     @i18nField(defaultValue = "AutoCleanAfterDays 不能等于 0，已重置为 180")
     public static i18n Config_Check_AutoCleanAfterDaysError;
     @i18nField(defaultValue = "工具名称设置错误，已重置为 ARROW")
@@ -862,6 +864,12 @@ public class Translation extends Localization {
     public static i18n Config_Comment_Language;
     @i18nField(defaultValue = "自动创建领地的半径，单位为方块")
     public static i18n Config_Comment_AutoCreateRadius;
+    @i18nField(defaultValue = "提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）")
+    public static i18n Config_Comment_MessageDisplay;
+    @i18nField(defaultValue = "玩家没有权限时的提示消息位置")
+    public static i18n Config_Comment_MessageDisplayNoPermission;
+    @i18nField(defaultValue = "进入/离开领地时的提示消息位置")
+    public static i18n Config_Comment_MessageDisplayJoinLeave;
     @i18nField(defaultValue = "-1表示不开启")
     public static i18n Config_Comment_NegativeOneDisabled;
     @i18nField(defaultValue = "默认玩家圈地限制")
