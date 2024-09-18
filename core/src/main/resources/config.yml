@@ -10,6 +10,10 @@ Language: zh-cn
 
 AutoCreateRadius: 10
 
+MessageDisplay:
+  NoPermission: ACTION_BAR
+  JoinLeave: ACTION_BAR
+
 Limit:
   SpawnProtection: 10
   MinY: -64

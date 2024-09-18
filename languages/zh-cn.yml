@@ -445,6 +445,7 @@ Config:
     LoadFlagError: 读取权限配置失败：%s
     TpDelayError: 传送延迟不能小于 0，已重置为 0
     TpCoolDownError: 传送冷却不能小于 0，已重置为 0
+    MessageDisplayError: MessageDisplay 不能设置为 %s，已重置为 ACTION_BAR
   Comment:
     Language: 语言设置，参考 languages 文件夹下的文件名
     AutoCreateRadius: 自动创建领地的半径，单位为方块
@@ -461,6 +462,7 @@ Config:
     Depth: 子领地深度
     ZeroDisabled: 0表示不开启
     Vert: 是否自动延伸到 MaxY 和 MinY
+    DisabledWorlds: 不允许圈地的世界列表
     OpBypass: 是否允许OP无视领地限制
     TpDelay: 传送延迟 秒
     TpCoolDown: 传送冷却 秒
@@ -486,6 +488,9 @@ Config:
     GroupLine7: 这里配置。详细说明参阅以下链接：
     GroupLine8DocumentAddress: '> https://dominion.lunadeer.cn/%s/operator/privilege.html'
     WorldSettings: 单独设置某个世界的圈地规则（如不设置则使用以上规则）
+    MessageDisplay: 领地提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）
+    MessageDisplayNoPermission: 玩家没有权限时的提示消息位置
+    MessageDisplayJoinLeave: 进入/离开领地时的提示消息位置
 Flags:
   admin:
     DisplayName: 管理员

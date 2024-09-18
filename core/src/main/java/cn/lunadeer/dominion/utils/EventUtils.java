@@ -7,12 +7,6 @@ import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.Inventory;
@@ -77,11 +71,9 @@ public class EventUtils {
                 return true;
             }
         }
-        TextComponent msg = Component.text(
-                        String.format(Translation.Messages_NoPermissionForFlag.trans(), flag.getDisplayName(), flag.getDescription()),
-                        Style.style(TextColor.color(0xFF0000), TextDecoration.BOLD))
-                .hoverEvent(Component.text(flag.getDescription()));
-        Notification.actionBar(player, msg);
+        String msg = String.format(Translation.Messages_NoPermissionForFlag.trans(), flag.getDisplayName(), flag.getDescription());
+        msg = "&#FF0000" + "&l" + msg;
+        MessageDisplay.show(player, Dominion.config.getMessageDisplayNoPermission(), msg);
         if (event != null) {
             event.setCancelled(true);
         }

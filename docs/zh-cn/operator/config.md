@@ -16,6 +16,13 @@ Language: zh-cn
 # -1表示不开启
 AutoCreateRadius: 10
 
+# 领地提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）
+MessageDisplay:
+  # 玩家没有权限时的提示消息位置
+  NoPermission: ACTION_BAR
+  # 进入/离开领地时的提示消息位置
+  JoinLeave: SUBTITLE
+
 # 默认玩家圈地限制
 Limit:
   SpawnProtection: 10 # 出生点保护半径 出生点此范围内不允许圈地-1表示不开启
@@ -104,6 +111,13 @@ Timer: false # 性能测试计时器
 ### AutoCreateRadius
 
 配置玩家在使用“自动创建”功能时会自动向XYZ三个方向延伸此距离创建领地。
+
+### MessageDisplay
+
+配置提示消息显示位置，可选项：`BOSS_BAR`, `ACTION_BAR`, `TITLE`, `SUBTITLE`, `CHAT`。
+
+- NoPermission：玩家没有权限时的提示消息位置
+- JoinLeave：进入/离开领地时的提示消息位置
 
 ### Limit
 

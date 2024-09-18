@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.minecraftpluginutils.VaultConnect.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Material;
@@ -11,10 +12,7 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigManager {
     public static ConfigManager instance;
@@ -41,7 +39,12 @@ public class ConfigManager {
         _db_name = _file.getString("Database.Name", "dominion");
         _db_user = _file.getString("Database.User", "postgres");
         _db_pass = _file.getString("Database.Pass", "postgres");
+
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
+
+        _message_display_no_permission = _file.getString("MessageDisplay.NoPermission", "ACTION_BAR");
+        _message_display_join_leave = _file.getString("MessageDisplay.JoinLeave", "ACTION_BAR");
+
         _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
         _blue_map = _file.getBoolean("BlueMap", false);
         _dynmap = _file.getBoolean("Dynmap", false);
@@ -110,6 +113,12 @@ public class ConfigManager {
 
         _file.set("AutoCreateRadius", _auto_create_radius);
         _file.setComments("AutoCreateRadius", Arrays.asList(Translation.Config_Comment_AutoCreateRadius.trans(), Translation.Config_Comment_NegativeOneDisabled.trans()));
+
+        _file.setComments("MessageDisplay", Collections.singletonList(Translation.Config_Comment_MessageDisplay.trans()));
+        _file.set("MessageDisplay.NoPermission", _message_display_no_permission);
+        _file.setComments("MessageDisplay.NoPermission", Collections.singletonList(Translation.Config_Comment_MessageDisplayNoPermission.trans()));
+        _file.set("MessageDisplay.JoinLeave", _message_display_join_leave);
+        _file.setComments("MessageDisplay.JoinLeave", Collections.singletonList(Translation.Config_Comment_MessageDisplayJoinLeave.trans()));
 
         _file.setComments("Limit", List.of(Translation.Config_Comment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
@@ -267,6 +276,14 @@ public class ConfigManager {
         return _auto_clean_after_days;
     }
 
+    public MessageDisplay.Place getMessageDisplayNoPermission() {
+        return MessageDisplay.Place.valueOf(_message_display_no_permission);
+    }
+
+    public MessageDisplay.Place getMessageDisplayJoinLeave() {
+        return MessageDisplay.Place.valueOf(_message_display_join_leave);
+    }
+
     public void setAutoCleanAfterDays(Integer auto_clean_after_days) {
         _auto_clean_after_days = auto_clean_after_days;
         _file.set("AutoCleanAfterDays", auto_clean_after_days);
@@ -397,6 +414,14 @@ public class ConfigManager {
             XLogger.err(Translation.Config_Check_AutoCleanAfterDaysError);
             setAutoCleanAfterDays(180);
         }
+        if (Arrays.stream(MessageDisplay.Place.values()).noneMatch(place -> place.name().equals(getMessageDisplayNoPermission().name()))) {
+            XLogger.err(Translation.Config_Check_MessageDisplayError, getMessageDisplayNoPermission());
+            _message_display_no_permission = "ACTION_BAR";
+        }
+        if (Arrays.stream(MessageDisplay.Place.values()).noneMatch(place -> place.name().equals(getMessageDisplayJoinLeave().name()))) {
+            XLogger.err(Translation.Config_Check_MessageDisplayError, getMessageDisplayJoinLeave());
+            _message_display_join_leave = "ACTION_BAR";
+        }
         if (getTpDelay() < 0) {
             XLogger.err(Translation.Config_Check_TpDelayError);
             setTpDelay(0);
@@ -449,6 +474,9 @@ public class ConfigManager {
     private Boolean _group_title_enable;
     private String _group_title_prefix;
     private String _group_title_suffix;
+
+    private String _message_display_no_permission;
+    private String _message_display_join_leave;
 
     private final Map<String, GroupLimit> groupLimits = new HashMap<>();
 
