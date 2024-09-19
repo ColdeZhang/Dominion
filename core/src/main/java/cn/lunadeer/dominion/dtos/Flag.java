@@ -44,6 +44,7 @@ public enum Flag {
     FLOW_IN_PROTECTION("flow_in_protection", "外部流体是否可以进入", "包含：岩浆、水（不会阻止领地内部的流体蔓延）", false, true, true),
     FLY("fly", "飞行", "不是翅鞘飞行，是类似于创造模式的飞行", false, false, false),
     GLOW("glow", "玩家发光", "类似光灵箭的高亮效果", false, false, true),
+    GRAVITY_BLOCK("gravity_block", "允许外部重力方块落入", "如果禁止则领地外重力方块进入领地会变为掉落物", false, true, true),
     HARVEST("harvest", "收获", "收获庄稼、作物", false, false, true),
     HONEY("honey", "蜂巢交互", "是否可以采蜂蜜", false, false, true),
     HOOK("hook", "使用钓钩", "是否可以使用钓钩", false, false, true),
