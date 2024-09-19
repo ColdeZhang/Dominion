@@ -92,6 +92,9 @@ Timer: false # 性能測試計時器
 
 語言設置，參考 languages 文件夾下的文件名。
 
+如果需要更新语言文件，请删除 `plugins/Dominion/languages` 文件夹下对应的文件，然后重启服务器。
+插件会自动生成最新的对应语言文件。
+
 ### AutoCreateRadius
 
 配置玩家在使用「自動創建」功能時會自動向XYZ三個方向延伸此距離創建領地。
