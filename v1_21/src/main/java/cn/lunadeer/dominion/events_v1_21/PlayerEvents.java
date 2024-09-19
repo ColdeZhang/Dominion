@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Common;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
+import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -787,6 +788,19 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
+        checkFlag(dom, Flag.SHOOT, player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) // shoot - wind_charge knock back
+    public void onWindChargeKnockBack(EntityKnockbackByEntityEvent event) {
+        Entity entity = event.getHitBy();
+        if (!(entity instanceof WindCharge windCharge)) {
+            return;
+        }
+        if (!(windCharge.getShooter() instanceof Player player)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(windCharge.getLocation());
         checkFlag(dom, Flag.SHOOT, player, event);
     }
 
