@@ -19,8 +19,11 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
 import static org.bukkit.Material.FARMLAND;
@@ -329,7 +332,7 @@ public class EnvironmentEvents implements Listener {
 
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onHopper(InventoryMoveItemEvent event) {
+    public void onHopper(InventoryMoveItemEvent event) {    // hopper_outside
         Inventory hopper = event.getDestination();
         Inventory inventory = event.getSource();
         DominionDTO hopperDom = Cache.instance.getDominionByLoc(hopper.getLocation());
@@ -345,7 +348,7 @@ public class EnvironmentEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockPushedByPiston(BlockPistonExtendEvent event) {
+    public void onBlockPushedByPiston(BlockPistonExtendEvent event) {   // piston_outside
         Block piston = event.getBlock();
         DominionDTO pistonDom = Cache.instance.getDominionByLoc(piston.getLocation());
         BlockFace direction = event.getDirection();
@@ -365,4 +368,38 @@ public class EnvironmentEvents implements Listener {
             }
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onGravityBlockFalling(EntityChangeBlockEvent event) {   // gravity_block
+        Entity entity = event.getEntity();
+        if (!(entity instanceof FallingBlock)) {
+            return;
+        }
+        Block block = event.getBlock();
+        if (event.getTo().isAir()) {
+            fallingBlockMap.put(entity.getUniqueId(), block.getLocation());
+        } else {
+            Location locStart = fallingBlockMap.get(entity.getUniqueId());
+            if (locStart == null) {
+                return;
+            }
+            fallingBlockMap.remove(entity.getUniqueId());
+            Location locEnd = block.getLocation();
+            DominionDTO domStart = Cache.instance.getDominionByLoc(locStart);
+            DominionDTO domEnd = Cache.instance.getDominionByLoc(locEnd);
+            if (domEnd == null) {
+                return;
+            }
+            if (domStart != null && domStart.getId().equals(domEnd.getId())) {
+                return;
+            }
+            if (!checkFlag(domEnd, Flag.GRAVITY_BLOCK, null)) {
+                event.setCancelled(true);
+                locEnd.getWorld().dropItemNaturally(locEnd, new ItemStack(((FallingBlock) entity).getBlockData().getMaterial()));
+                entity.remove();
+            }
+        }
+    }
+
+    private static final Map<UUID, Location> fallingBlockMap = new java.util.HashMap<>();
 }
