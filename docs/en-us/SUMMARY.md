@@ -5,7 +5,7 @@
 * [Territory Management](manage-dominion/README.md)
   * [Environment Settings](manage-dominion/environment.md)
   * [Permission Management](manage-dominion/permission/README.md)
-    * [Guest Permissions](manage-dominion/permission/guest)
+    * [Guest Permissions](manage-dominion/permission/guest.md)
     * [Territory members](manage-dominion/permission/member.md)
     * [Permission Groups](manage-dominion/permission/permission-group.md)
     * [Permission Templates](manage-dominion/permission/template.md)

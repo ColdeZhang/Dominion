@@ -5,7 +5,7 @@
 * [領地管理](manage-dominion/README.md)
   * [環境設置](manage-dominion/environment.md)
   * [權限管理](manage-dominion/permission/README.md)
-    * [訪客權限](manage-dominion/permission/guest)
+    * [訪客權限](manage-dominion/permission/guest.md)
     * [領地成員](manage-dominion/permission/member.md)
     * [權限組](manage-dominion/permission/permission-group.md)
     * [權限模板](manage-dominion/permission/template.md)
