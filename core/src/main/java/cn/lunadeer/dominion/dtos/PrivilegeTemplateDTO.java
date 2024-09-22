@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
+import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
@@ -8,7 +9,7 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import java.sql.ResultSet;
 import java.util.*;
 
-public class PrivilegeTemplateDTO {
+public class PrivilegeTemplateDTO implements cn.lunadeer.dominion.api.dtos.PrivilegeTemplateDTO {
 
     private static List<PrivilegeTemplateDTO> query(String sql, Object... params) {
         List<PrivilegeTemplateDTO> templates = new ArrayList<>();
@@ -26,7 +27,7 @@ public class PrivilegeTemplateDTO {
         try {
             while (rs.next()) {
                 Map<Flag, Boolean> flags = new HashMap<>();
-                for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
+                for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
                 PrivilegeTemplateDTO template = new PrivilegeTemplateDTO(
@@ -108,22 +109,27 @@ public class PrivilegeTemplateDTO {
 
     private final Map<Flag, Boolean> flags = new HashMap<>();
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public UUID getCreator() {
         return creator;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Boolean getAdmin() {
         return admin;
     }
 
+    @Override
     public Boolean getFlagValue(Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);

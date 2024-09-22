@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.events_v1_21;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -38,7 +38,7 @@ public class EnvironmentEvents implements Listener {
         }
         XLogger.debug("blockList" + event.blockList().size());
         event.blockList().removeIf(block -> {
-            DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
             return !checkFlag(dom, Flag.CREEPER_EXPLODE, null);
         });
     }
@@ -46,7 +46,7 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - bed anchor
     public void onBedAnchorExplosion(BlockExplodeEvent event) {
         event.blockList().removeIf(blockState -> {
-            DominionDTO dom = CacheImpl.instance.getDominionByLoc(blockState.getLocation());
+            DominionDTO dom = Cache.instance.getDominionByLoc(blockState.getLocation());
             return !checkFlag(dom, Flag.CREEPER_EXPLODE, null);
         });
     }
@@ -57,7 +57,7 @@ public class EnvironmentEvents implements Listener {
         if (event.getCause() != HangingBreakEvent.RemoveCause.EXPLOSION) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
@@ -73,7 +73,7 @@ public class EnvironmentEvents implements Listener {
         if (!(hit instanceof Hanging)) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(hit.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(hit.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
@@ -86,7 +86,7 @@ public class EnvironmentEvents implements Listener {
         if (isNotExplodeEntity(event.getDamager())) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.CREEPER_EXPLODE, event);
     }
 
@@ -103,7 +103,7 @@ public class EnvironmentEvents implements Listener {
             // 玩家破坏由 玩家 break 权限控制
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(event.getEntity().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flag.ITEM_FRAME_PROJ_DAMAGE, event);
     }
 
@@ -123,7 +123,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         event.blockList().removeIf(block -> {
-            DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
             return !checkFlag(dom, Flag.DRAGON_BREAK_BLOCK, null);
         });
     }
@@ -135,7 +135,7 @@ public class EnvironmentEvents implements Listener {
             // 如果点燃事件没有玩家触发，那么就是火焰蔓延
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(event.getBlock().getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getBlock().getLocation());
         checkFlag(dom, Flag.FIRE_SPREAD, event);
     }
 
@@ -143,11 +143,11 @@ public class EnvironmentEvents implements Listener {
     public void onLiquidFlowIn(BlockFromToEvent event) {
         Location from = event.getBlock().getLocation();
         Location to = event.getToBlock().getLocation();
-        DominionDTO dom_to = CacheImpl.instance.getDominionByLoc(to);
+        DominionDTO dom_to = Cache.instance.getDominionByLoc(to);
         if (dom_to == null) {
             return;
         }
-        DominionDTO dom_from = CacheImpl.instance.getDominionByLoc(from);
+        DominionDTO dom_from = Cache.instance.getDominionByLoc(from);
         if (dom_from != null) {
             if (Objects.equals(dom_from.getId(), dom_to.getId())) {
                 return;
@@ -162,7 +162,7 @@ public class EnvironmentEvents implements Listener {
         if (entity instanceof Player) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         if (dom == null) {
             return;
         }
@@ -182,7 +182,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         event.blockList().removeIf(block -> {
-            DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
             return !checkFlag(dom, Flag.TNT_EXPLODE, null);
         });
     }
@@ -194,7 +194,7 @@ public class EnvironmentEvents implements Listener {
         if (harmer.getType() != EntityType.TNT_MINECART && harmer.getType() != EntityType.TNT) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.TNT_EXPLODE, event);
     }
 
@@ -210,7 +210,7 @@ public class EnvironmentEvents implements Listener {
         if (block.getType() != FARMLAND) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.TRAMPLE, event);
     }
 
@@ -228,7 +228,7 @@ public class EnvironmentEvents implements Listener {
         if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.TRIG_PRESSURE_PROJ, event);
     }
 
@@ -241,7 +241,7 @@ public class EnvironmentEvents implements Listener {
         if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.TRIG_PRESSURE_MOB, event);
     }
 
@@ -254,7 +254,7 @@ public class EnvironmentEvents implements Listener {
         if (!Tag.PRESSURE_PLATES.isTagged(block.getType())) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
         checkFlag(dom, Flag.TRIG_PRESSURE_DROP, event);
     }
 
@@ -264,7 +264,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.WITHER) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.WITHER_SPAWN, event);
     }
 
@@ -275,7 +275,7 @@ public class EnvironmentEvents implements Listener {
             return;
         }
         event.blockList().removeIf(block -> {
-            DominionDTO dom = CacheImpl.instance.getDominionByLoc(block.getLocation());
+            DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
             return !checkFlag(dom, Flag.WITHER_SPAWN, null);
         });
     }
@@ -286,7 +286,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ENDERMAN) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.ENDER_MAN, event);
     }
 
@@ -296,7 +296,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ENDERMAN) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.ENDER_MAN, event);
     }
 
@@ -306,7 +306,7 @@ public class EnvironmentEvents implements Listener {
         if (!(entity instanceof Monster)) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.MONSTER_SPAWN, event);
     }
 
@@ -316,7 +316,7 @@ public class EnvironmentEvents implements Listener {
         if (!(entity instanceof Animals)) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.ANIMAL_SPAWN, event);
     }
 
@@ -326,7 +326,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.VILLAGER) {
             return;
         }
-        DominionDTO dom = CacheImpl.instance.getDominionByLoc(entity.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flag.VILLAGER_SPAWN, event);
     }
 
@@ -335,8 +335,8 @@ public class EnvironmentEvents implements Listener {
     public void onHopper(InventoryMoveItemEvent event) {    // hopper_outside
         Inventory hopper = event.getDestination();
         Inventory inventory = event.getSource();
-        DominionDTO hopperDom = CacheImpl.instance.getDominionByLoc(hopper.getLocation());
-        DominionDTO inventoryDom = CacheImpl.instance.getDominionByLoc(inventory.getLocation());
+        DominionDTO hopperDom = Cache.instance.getDominionByLoc(hopper.getLocation());
+        DominionDTO inventoryDom = Cache.instance.getDominionByLoc(inventory.getLocation());
         if (hopperDom == null && inventoryDom != null) {
             checkFlag(inventoryDom, Flag.HOPPER_OUTSIDE, event);
         }
@@ -350,10 +350,10 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPushedByPiston(BlockPistonExtendEvent event) {   // piston_outside
         Block piston = event.getBlock();
-        DominionDTO pistonDom = CacheImpl.instance.getDominionByLoc(piston.getLocation());
+        DominionDTO pistonDom = Cache.instance.getDominionByLoc(piston.getLocation());
         BlockFace direction = event.getDirection();
         Block endBlockAfterPush = piston.getRelative(direction, event.getBlocks().size() + 1);
-        DominionDTO endBlockDom = CacheImpl.instance.getDominionByLoc(endBlockAfterPush.getLocation());
+        DominionDTO endBlockDom = Cache.instance.getDominionByLoc(endBlockAfterPush.getLocation());
         if (pistonDom != null && endBlockDom == null) {
             checkFlag(pistonDom, Flag.PISTON_OUTSIDE, event);
         }
@@ -385,8 +385,8 @@ public class EnvironmentEvents implements Listener {
             }
             fallingBlockMap.remove(entity.getUniqueId());
             Location locEnd = block.getLocation();
-            DominionDTO domStart = CacheImpl.instance.getDominionByLoc(locStart);
-            DominionDTO domEnd = CacheImpl.instance.getDominionByLoc(locEnd);
+            DominionDTO domStart = Cache.instance.getDominionByLoc(locStart);
+            DominionDTO domEnd = Cache.instance.getDominionByLoc(locEnd);
             if (domEnd == null) {
                 return;
             }

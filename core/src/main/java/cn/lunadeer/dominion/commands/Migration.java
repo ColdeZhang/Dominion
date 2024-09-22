@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
@@ -38,7 +38,7 @@ public class Migration {
                 return;
             }
             String resName = args[1];
-            List<ResMigration.ResidenceNode> res_data = CacheImpl.instance.getResidenceData(player.getUniqueId());
+            List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
             if (res_data == null) {
                 Notification.error(sender, Translation.Commands_Residence_NoMigrationData);
                 return;

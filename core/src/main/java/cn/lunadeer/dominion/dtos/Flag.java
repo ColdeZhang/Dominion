@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.text.Collator;
 import java.util.*;
 
-public enum Flag {
+public enum Flag implements cn.lunadeer.dominion.api.dtos.Flag {
     ANCHOR("anchor", "重生锚", "是否允许设置/使用重生锚", false, false, true),
     ANIMAL_KILLING("animal_killing", "对动物造成伤害", "是否允许对动物造成伤害", false, false, true),
     ANIMAL_SPAWN("animal_spawn", "动物生成（繁殖）", "是否允许动物生成（包括繁殖）", true, true, false),
@@ -101,22 +101,27 @@ public enum Flag {
         this.enable = enable;
     }
 
+    @Override
     public String getFlagName() {
         return flag_name;
     }
 
+    @Override
     public String getDisplayName() {
         return display_name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public Boolean getDefaultValue() {
         return default_value;
     }
 
+    @Override
     public Boolean getEnable() {
         return enable;
     }

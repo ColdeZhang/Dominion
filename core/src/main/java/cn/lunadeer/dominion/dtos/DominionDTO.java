@@ -1,7 +1,8 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -17,7 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public class DominionDTO {
+public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     private static List<DominionDTO> query(String sql, Object... args) {
         List<DominionDTO> dominions = new ArrayList<>();
         try (ResultSet rs = DatabaseManager.instance.query(sql, args)) {
@@ -45,7 +46,7 @@ public class DominionDTO {
             Integer parentDomId = rs.getInt("parent_dom_id");
             String tp_location = rs.getString("tp_location");
             Map<Flag, Boolean> flags = new HashMap<>();
-            for (Flag f : Flag.getDominionFlagsEnabled()) {
+            for (Flag f : cn.lunadeer.dominion.dtos.Flag.getDominionFlagsEnabled()) {
                 flags.put(f, rs.getBoolean(f.getFlagName()));
             }
             String color = rs.getString("color");
@@ -125,11 +126,11 @@ public class DominionDTO {
                 .field(dominion.parentDomId)
                 .field(dominion.joinMessage).field(dominion.leaveMessage)
                 .field(dominion.tp_location);
-        for (Flag f : Flag.getDominionFlagsEnabled()) {
+        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getDominionFlagsEnabled()) {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
         try (ResultSet rs = insert.execute()) {
-            CacheImpl.instance.loadDominions();
+            Cache.instance.loadDominions();
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.isEmpty()) return null;
             return dominions.getFirst();
@@ -142,7 +143,7 @@ public class DominionDTO {
     public static void delete(DominionDTO dominion) {
         String sql = "DELETE FROM dominion WHERE id = ?;";
         query(sql, dominion.getId());
-        CacheImpl.instance.loadDominions();
+        Cache.instance.loadDominions();
     }
 
     private DominionDTO(Integer id, UUID owner, String name, UUID world_uid,
@@ -216,10 +217,12 @@ public class DominionDTO {
 
 
     // getters and setters
+    @Override
     public Integer getId() {
         return (Integer) id.value;
     }
 
+    @Override
     public UUID getOwner() {
         return UUID.fromString((String) owner.value);
     }
@@ -231,7 +234,7 @@ public class DominionDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.isEmpty()) return null;
-            CacheImpl.instance.loadDominions((Integer) id.value);
+            Cache.instance.loadDominions((Integer) id.value);
             return dominions.getFirst();
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("DominionDTO.doUpdate ", e, updateRow.toString());
@@ -244,6 +247,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.owner));
     }
 
+    @Override
     public String getName() {
         return (String) name.value;
     }
@@ -253,14 +257,17 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.name));
     }
 
+    @Override
     public @Nullable World getWorld() {
         return Dominion.instance.getServer().getWorld(getWorldUid());
     }
 
+    @Override
     public UUID getWorldUid() {
         return UUID.fromString((String) world_uid.value);
     }
 
+    @Override
     public Integer getX1() {
         return (Integer) x1.value;
     }
@@ -270,6 +277,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.x1));
     }
 
+    @Override
     public Integer getY1() {
         return (Integer) y1.value;
     }
@@ -279,6 +287,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.y1));
     }
 
+    @Override
     public Integer getZ1() {
         return (Integer) z1.value;
     }
@@ -288,6 +297,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.z1));
     }
 
+    @Override
     public Integer getX2() {
         return (Integer) x2.value;
     }
@@ -297,6 +307,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.x2));
     }
 
+    @Override
     public Integer getY2() {
         return (Integer) y2.value;
     }
@@ -306,6 +317,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.y2));
     }
 
+    @Override
     public Integer getZ2() {
         return (Integer) z2.value;
     }
@@ -315,30 +327,37 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.z2));
     }
 
+    @Override
     public Integer getSquare() {
         return getWidthX() * getWidthZ();
     }
 
+    @Override
     public Integer getVolume() {
         return getSquare() * getHeight();
     }
 
+    @Override
     public Integer getWidthX() {
         return getX2() - getX1();
     }
 
+    @Override
     public Integer getHeight() {
         return getY2() - getY1();
     }
 
+    @Override
     public Integer getWidthZ() {
         return getZ2() - getZ1();
     }
 
+    @Override
     public Integer getParentDomId() {
         return (Integer) parentDomId.value;
     }
 
+    @Override
     public String getJoinMessage() {
         return (String) joinMessage.value;
     }
@@ -348,6 +367,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.joinMessage));
     }
 
+    @Override
     public String getLeaveMessage() {
         return (String) leaveMessage.value;
     }
@@ -357,6 +377,7 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.leaveMessage));
     }
 
+    @Override
     public Boolean getFlagValue(Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
@@ -388,6 +409,7 @@ public class DominionDTO {
     }
 
 
+    @Override
     public Location getTpLocation() {
         if (Objects.equals(tp_location.value, "default")) {
             return null;
@@ -410,10 +432,12 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(tp_location));
     }
 
+    @Override
     public Location getLocation1() {
         return new Location(getWorld(), getX1(), getY1(), getZ1());
     }
 
+    @Override
     public Location getLocation2() {
         return new Location(getWorld(), getX2(), getY2(), getZ2());
     }
@@ -423,22 +447,27 @@ public class DominionDTO {
         return doUpdate(new UpdateRow().field(this.color));
     }
 
+    @Override
     public int getColorR() {
         return Integer.valueOf(getColor().substring(1, 3), 16);
     }
 
+    @Override
     public int getColorG() {
         return Integer.valueOf(getColor().substring(3, 5), 16);
     }
 
+    @Override
     public int getColorB() {
         return Integer.valueOf(getColor().substring(5, 7), 16);
     }
 
+    @Override
     public String getColor() {
         return (String) color.value;
     }
 
+    @Override
     public int getColorHex() {
         return (getColorR() << 16) + (getColorG() << 8) + getColorB();
     }

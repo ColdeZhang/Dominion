@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
@@ -194,7 +194,7 @@ public class PlayerDTO {
     public void setUsingGroupTitleID(Integer usingGroupTitleID) {
         this.using_group_title_id = usingGroupTitleID;
         update(this);
-        CacheImpl.instance.updatePlayerUsingGroupTitle(uuid, usingGroupTitleID);
+        Cache.instance.updatePlayerUsingGroupTitle(uuid, usingGroupTitleID);
     }
 
     private Integer id;

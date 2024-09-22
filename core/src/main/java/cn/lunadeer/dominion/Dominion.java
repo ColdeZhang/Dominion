@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public final class Dominion extends JavaPlugin {
+public final class Dominion extends JavaPlugin implements cn.lunadeer.dominion.api.Dominion {
 
     @Override
     public void onEnable() {
@@ -38,7 +38,7 @@ public final class Dominion extends JavaPlugin {
         DatabaseTables.migrate();
         new Scheduler(this);
         AutoClean.run();
-        CacheImpl.instance = new CacheImpl();
+        Cache.instance = new Cache();
 
         if (config.getGroupTitleEnable()) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -54,9 +54,9 @@ public final class Dominion extends JavaPlugin {
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> config.getDbType()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> CacheImpl.instance.getDominionCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> CacheImpl.instance.getGroupCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> CacheImpl.instance.getMemberCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> Cache.instance.getDominionCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> Cache.instance.getGroupCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> Cache.instance.getMemberCounts()));
 
         if (config.getCheckUpdate()) {
             giteaReleaseCheck = new GiteaReleaseCheck(this,

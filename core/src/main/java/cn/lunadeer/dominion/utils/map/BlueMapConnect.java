@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils.map;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
@@ -22,7 +22,7 @@ public class BlueMapConnect {
             try {
                 BlueMapAPI.getInstance().ifPresent(api -> {
                     Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
-                    for (DominionDTO dominion : CacheImpl.instance.getDominions()) {
+                    for (DominionDTO dominion : Cache.instance.getDominions()) {
                         if (dominion.getWorld() == null) {
                             continue;
                         }
