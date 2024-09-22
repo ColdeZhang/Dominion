@@ -45,7 +45,6 @@ Limit:
       Amount: 10
       Depth: 3
       Vert: false
-      Allow: false
 
 Teleport:
   Enable: true
@@ -135,7 +134,6 @@ Timer: false # 性能测试计时器
 - Depth：子领地深度、0表示不允许子领地、 -1表示不限制
 - Vert：当设置为 `true` 时，玩家选择区域创建或者自动创建领地，会自动将Y向下向上延伸到MinY和MaxY。**同时也会根据 MinY 和 MaxY 的设置自动调整 SizeY 的配置保证数值逻辑一致。**
 - WorldSettings：单独设置某个世界的圈地规则（如不设置则使用上述默认规则）
-  - Allow：是否允许在此世界圈地
 
 > 您服务器世界的名称应该避免使用 `default` 这样的特殊单词，否则会导致不可预料的意外错误。
 
