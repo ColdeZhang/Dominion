@@ -38,7 +38,7 @@ public final class Dominion extends JavaPlugin {
         DatabaseTables.migrate();
         new Scheduler(this);
         AutoClean.run();
-        Cache.instance = new Cache();
+        CacheImpl.instance = new CacheImpl();
 
         if (config.getGroupTitleEnable()) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -54,9 +54,9 @@ public final class Dominion extends JavaPlugin {
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> config.getDbType()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> Cache.instance.getDominionCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> Cache.instance.getGroupCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> Cache.instance.getMemberCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> CacheImpl.instance.getDominionCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> CacheImpl.instance.getGroupCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> CacheImpl.instance.getMemberCounts()));
 
         if (config.getCheckUpdate()) {
             giteaReleaseCheck = new GiteaReleaseCheck(this,

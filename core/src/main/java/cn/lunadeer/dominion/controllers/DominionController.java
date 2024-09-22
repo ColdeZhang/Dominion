@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
@@ -771,7 +771,7 @@ public class DominionController {
         }
         int level = 0;
         while (parent_dom.getParentDomId() != -1) {
-            parent_dom = Cache.instance.getDominion(parent_dom.getParentDomId());
+            parent_dom = CacheImpl.instance.getDominion(parent_dom.getParentDomId());
             level++;
         }
         if (level >= Dominion.config.getLimitDepth(operator.getPlayer())) {
@@ -785,7 +785,7 @@ public class DominionController {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount(operator.getPlayer()) && Dominion.config.getLimitAmount(operator.getPlayer()) != -1;
+        return CacheImpl.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount(operator.getPlayer()) && Dominion.config.getLimitAmount(operator.getPlayer()) != -1;
     }
 
     private static boolean worldNotValid(AbstractOperator operator, String worldName) {

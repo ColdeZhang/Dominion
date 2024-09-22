@@ -12,7 +12,7 @@ public class DominionNode {
     private List<DominionNode> children = new ArrayList<>();
 
     public DominionDTO getDominion() {
-        return Cache.instance.getDominion(dominion_id);
+        return CacheImpl.instance.getDominion(dominion_id);
     }
 
     public List<DominionNode> getChildren() {

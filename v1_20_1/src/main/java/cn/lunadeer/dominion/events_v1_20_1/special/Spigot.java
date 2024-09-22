@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.events_v1_20_1.special;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
@@ -33,7 +33,7 @@ public class Spigot implements Listener {
                     } else {
                         Location lastLoc = entityMap.get(entity.getUniqueId());
                         Location currentLoc = entity.getLocation();
-                        DominionDTO dom = Cache.instance.getDominionByLoc(currentLoc);
+                        DominionDTO dom = CacheImpl.instance.getDominionByLoc(currentLoc);
                         if (!checkFlag(dom, Flag.ANIMAL_MOVE, null) && entity instanceof Animals) {
                             entity.teleport(lastLoc);
                         } else if (!checkFlag(dom, Flag.MONSTER_MOVE, null) && entity instanceof Monster) {
