@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.events_v1_21.special;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
@@ -21,7 +21,7 @@ public class Paper implements Listener {
         if (!(entity instanceof Monster)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
+        DominionDTO dom = CacheImpl.instance.getDominionByLoc(event.getLoc());
         checkFlag(dom, Flag.MONSTER_MOVE, event);
     }
 
@@ -31,7 +31,7 @@ public class Paper implements Listener {
         if (!(entity instanceof Animals)) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
+        DominionDTO dom = CacheImpl.instance.getDominionByLoc(event.getLoc());
         checkFlag(dom, Flag.ANIMAL_MOVE, event);
     }
 

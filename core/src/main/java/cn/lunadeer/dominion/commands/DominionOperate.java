@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
@@ -421,7 +421,7 @@ public class DominionOperate {
                     return;
                 }
             } else {
-                GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
+                GroupDTO groupDTO = CacheImpl.instance.getGroup(privilegeDTO.getGroupId());
                 if (privilegeDTO.getGroupId() != -1 && groupDTO != null) {
                     if (!groupDTO.getFlagValue(Flag.TELEPORT)) {
                         Notification.error(sender, Translation.Messages_GroupNoTp);
@@ -437,7 +437,7 @@ public class DominionOperate {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime next_time = Cache.instance.NextTimeAllowTeleport.get(player.getUniqueId());
+        LocalDateTime next_time = CacheImpl.instance.NextTimeAllowTeleport.get(player.getUniqueId());
         if (next_time != null) {
             if (now.isBefore(next_time)) {
                 long secs_until_next = now.until(next_time, java.time.temporal.ChronoUnit.SECONDS);
@@ -463,7 +463,7 @@ public class DominionOperate {
                 }
             });
         }
-        Cache.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
+        CacheImpl.instance.NextTimeAllowTeleport.put(player.getUniqueId(), now.plusSeconds(Dominion.config.getTpCoolDown()));
         Scheduler.runTaskLater(() -> {
             Location location = dominionDTO.getTpLocation();
             int center_x = (dominionDTO.getX1() + dominionDTO.getX2()) / 2;

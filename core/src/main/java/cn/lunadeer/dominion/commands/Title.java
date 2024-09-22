@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
@@ -36,18 +36,18 @@ public class Title {
                 player.setUsingGroupTitleID(id);
                 Notification.info(sender, Translation.Commands_Title_RemoveTitleSuccess);
             } else {
-                GroupDTO group = Cache.instance.getGroup(id);
+                GroupDTO group = CacheImpl.instance.getGroup(id);
                 if (group == null) {
                     Notification.error(sender, Translation.Commands_Title_GroupNotExist);
                     return;
                 }
-                DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
+                DominionDTO dominion = CacheImpl.instance.getDominion(group.getDomID());
                 if (dominion == null) {
                     Notification.error(sender, Translation.Commands_Title_GroupDominionNotExist, group.getName());
                     return;
                 }
                 if (!dominion.getOwner().equals(bukkit_player.getUniqueId())) {
-                    MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
+                    MemberDTO member = CacheImpl.instance.getMember(bukkit_player, dominion);
                     if (member == null) {
                         Notification.error(sender, Translation.Commands_Title_NotDominionMember, dominion.getName());
                         return;

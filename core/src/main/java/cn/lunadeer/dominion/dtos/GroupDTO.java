@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
@@ -99,7 +99,7 @@ public class GroupDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.isEmpty()) return null;
-            Cache.instance.loadGroups(groups.getFirst().getId());
+            CacheImpl.instance.loadGroups(groups.getFirst().getId());
             return groups.getFirst();
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("GroupDTO.create ", e, "");
@@ -114,7 +114,7 @@ public class GroupDTO {
     public static void delete(Integer id) {
         String sql = "DELETE FROM dominion_group WHERE id = ?;";
         DatabaseManager.instance.query(sql, id);
-        Cache.instance.loadGroups(id);
+        CacheImpl.instance.loadGroups(id);
         List<MemberDTO> players = MemberDTO.selectByGroupId(id);
         for (MemberDTO player : players) {
             player.setGroupId(-1);
@@ -196,7 +196,7 @@ public class GroupDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.isEmpty()) return null;
-            Cache.instance.loadGroups((Integer) id.value);
+            CacheImpl.instance.loadGroups((Integer) id.value);
             return groups.getFirst();
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新权限组失败: ", e, "");

@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
@@ -54,7 +54,7 @@ public class MemberDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<MemberDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
-            Cache.instance.loadMembers(getPlayerUUID());
+            CacheImpl.instance.loadMembers(getPlayerUUID());
             return players.getFirst();
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("MemberDTO.doUpdate ", e, "");
@@ -72,7 +72,7 @@ public class MemberDTO {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
         try (ResultSet rs = insertRow.execute()) {
-            Cache.instance.loadMembers(player.getPlayerUUID());
+            CacheImpl.instance.loadMembers(player.getPlayerUUID());
             List<MemberDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
             return players.getFirst();
@@ -97,7 +97,7 @@ public class MemberDTO {
     public static void delete(UUID player, Integer domID) {
         String sql = "DELETE FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
         query(sql, player.toString(), domID);
-        Cache.instance.loadMembers(player);
+        CacheImpl.instance.loadMembers(player);
     }
 
     public static List<MemberDTO> selectAll() {

@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.CacheImpl;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
@@ -129,7 +129,7 @@ public class DominionDTO {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
         try (ResultSet rs = insert.execute()) {
-            Cache.instance.loadDominions();
+            CacheImpl.instance.loadDominions();
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.isEmpty()) return null;
             return dominions.getFirst();
@@ -142,7 +142,7 @@ public class DominionDTO {
     public static void delete(DominionDTO dominion) {
         String sql = "DELETE FROM dominion WHERE id = ?;";
         query(sql, dominion.getId());
-        Cache.instance.loadDominions();
+        CacheImpl.instance.loadDominions();
     }
 
     private DominionDTO(Integer id, UUID owner, String name, UUID world_uid,
@@ -231,7 +231,7 @@ public class DominionDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.isEmpty()) return null;
-            Cache.instance.loadDominions((Integer) id.value);
+            CacheImpl.instance.loadDominions((Integer) id.value);
             return dominions.getFirst();
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("DominionDTO.doUpdate ", e, updateRow.toString());
