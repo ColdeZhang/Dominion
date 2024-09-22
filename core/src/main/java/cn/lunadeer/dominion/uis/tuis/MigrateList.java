@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.uis.tuis;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ResMigration;
@@ -35,7 +35,7 @@ public class MigrateList {
         view.title(Translation.TUI_Migrate_Title);
         view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_MigrateList));
 
-        List<ResMigration.ResidenceNode> res_data = CacheImpl.instance.getResidenceData(player.getUniqueId());
+        List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
 
         if (res_data == null) {
             view.add(Line.create().append(Translation.TUI_Migrate_NoData));

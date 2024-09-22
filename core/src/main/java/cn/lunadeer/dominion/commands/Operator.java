@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
@@ -30,17 +30,17 @@ public class Operator {
         }
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, Translation.Commands_Operator_ReloadingDominionCache);
-            CacheImpl.instance.loadDominions();
+            Cache.instance.loadDominions();
             Notification.info(sender, Translation.Commands_Operator_ReloadedDominionCache);
         });
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, Translation.Commands_Operator_ReloadingPrivilegeCache);
-            CacheImpl.instance.loadMembers();
+            Cache.instance.loadMembers();
             Notification.info(sender, Translation.Commands_Operator_ReloadedPrivilegeCache);
         });
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, Translation.Commands_Operator_ReloadingGroupCache);
-            CacheImpl.instance.loadGroups();
+            Cache.instance.loadGroups();
             Notification.info(sender, Translation.Commands_Operator_ReloadedGroupCache);
         });
     }
@@ -52,7 +52,7 @@ public class Operator {
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, Translation.Commands_Operator_ExportingMCAList);
             Map<String, List<String>> mca_cords = new HashMap<>();
-            List<DominionDTO> doms = CacheImpl.instance.getDominions();
+            List<DominionDTO> doms = Cache.instance.getDominions();
             for (DominionDTO dom : doms) {
                 if (dom.getWorld() == null) {
                     continue;

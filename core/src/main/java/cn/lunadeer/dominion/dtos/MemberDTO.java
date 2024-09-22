@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
@@ -10,7 +11,7 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import java.sql.ResultSet;
 import java.util.*;
 
-public class MemberDTO {
+public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
 
     private static List<MemberDTO> query(String sql, Object... params) {
         List<MemberDTO> players = new ArrayList<>();
@@ -28,7 +29,7 @@ public class MemberDTO {
         try {
             while (rs.next()) {
                 Map<Flag, Boolean> flags = new HashMap<>();
-                for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
+                for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
                 MemberDTO player = new MemberDTO(
@@ -54,7 +55,7 @@ public class MemberDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<MemberDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
-            CacheImpl.instance.loadMembers(getPlayerUUID());
+            Cache.instance.loadMembers(getPlayerUUID());
             return players.getFirst();
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("MemberDTO.doUpdate ", e, "");
@@ -68,11 +69,11 @@ public class MemberDTO {
                 .field(player.playerUUID)
                 .field(player.admin)
                 .field(player.domID);
-        for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
+        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
         try (ResultSet rs = insertRow.execute()) {
-            CacheImpl.instance.loadMembers(player.getPlayerUUID());
+            Cache.instance.loadMembers(player.getPlayerUUID());
             List<MemberDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
             return players.getFirst();
@@ -97,7 +98,7 @@ public class MemberDTO {
     public static void delete(UUID player, Integer domID) {
         String sql = "DELETE FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
         query(sql, player.toString(), domID);
-        CacheImpl.instance.loadMembers(player);
+        Cache.instance.loadMembers(player);
     }
 
     public static List<MemberDTO> selectAll() {
@@ -126,28 +127,34 @@ public class MemberDTO {
     Field domID = new Field("dom_id", FieldType.INT);
     Field groupId = new Field("group_id", FieldType.INT);
 
+    @Override
     public Integer getId() {
         return (Integer) id.value;
     }
 
+    @Override
     public UUID getPlayerUUID() {
         return UUID.fromString((String) playerUUID.value);
     }
 
+    @Override
     public Boolean getAdmin() {
         return (Boolean) admin.value;
     }
 
+    @Override
     public Integer getDomID() {
         return (Integer) domID.value;
     }
 
+    @Override
     public Integer getGroupId() {
         return (Integer) groupId.value;
     }
 
     private final Map<Flag, Boolean> flags = new HashMap<>();
 
+    @Override
     public Boolean getFlagValue(Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
@@ -175,7 +182,7 @@ public class MemberDTO {
     public MemberDTO applyTemplate(PrivilegeTemplateDTO template) {
         this.admin.value = template.getAdmin();
         UpdateRow updateRow = new UpdateRow().field(admin);
-        for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
+        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, template.getFlagValue(f));
             updateRow.field(new Field(f.getFlagName(), template.getFlagValue(f)));
         }
@@ -196,7 +203,7 @@ public class MemberDTO {
         this.playerUUID.value = playerUUID.toString();
         this.admin.value = false;
         this.domID.value = dom.getId();
-        for (Flag f : Flag.getPrivilegeFlagsEnabled()) {
+        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
             this.flags.put(f, dom.getFlagValue(f));
         }
     }

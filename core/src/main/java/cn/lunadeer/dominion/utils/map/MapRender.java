@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils.map;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class MapRender {
         }
 
         if (Dominion.config.getDynmap()) {
-            DynmapConnect.instance.setDominionMarkers(CacheImpl.instance.getDominions());
+            DynmapConnect.instance.setDominionMarkers(Cache.instance.getDominions());
         }
     }
 

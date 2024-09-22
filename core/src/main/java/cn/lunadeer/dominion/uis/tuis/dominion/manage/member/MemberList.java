@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.member;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -60,7 +60,7 @@ public class MemberList {
         for (MemberDTO privilege : privileges) {
             PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
-            GroupDTO group = CacheImpl.instance.getGroup(privilege.getGroupId());
+            GroupDTO group = Cache.instance.getGroup(privilege.getGroupId());
             Line line = Line.create();
 
             if (group != null) {

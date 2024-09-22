@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.uis.tuis;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.managers.Translation;
@@ -30,8 +30,8 @@ public class TitleList {
         view.title(Translation.TUI_TitleList_Title);
         view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_TitleList));
 
-        List<GroupDTO> groups = CacheImpl.instance.getBelongGroupsOf(player.getUniqueId());
-        GroupDTO using = CacheImpl.instance.getPlayerUsingGroupTitle(player.getUniqueId());
+        List<GroupDTO> groups = Cache.instance.getBelongGroupsOf(player.getUniqueId());
+        GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
 
         // 将其拥有的所有领地的权限组称号都加入列表 - 领地所有者可以使用其领地的任意权限组称号
         List<DominionDTO> dominions = DominionDTO.selectByOwner(player.getUniqueId());
@@ -41,7 +41,7 @@ public class TitleList {
         }
 
         for (GroupDTO group : groups) {
-            DominionDTO dominion = CacheImpl.instance.getDominion(group.getDomID());
+            DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
             Line line = Line.create();
             if (using != null && using.getId().equals(group.getId())) {
                 line.append(Button.createRed(Translation.TUI_TitleList_RemoveButton).setExecuteCommand("/dominion use_title -1").build());

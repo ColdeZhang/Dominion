@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -42,7 +42,7 @@ public class ControllerUtils {
             player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CannotGetDominionAuto));
             return null;
         }
-        DominionDTO dominion = CacheImpl.instance.getDominionByLoc(location);
+        DominionDTO dominion = Cache.instance.getDominionByLoc(location);
         if (dominion == null) {
             return null;
         }

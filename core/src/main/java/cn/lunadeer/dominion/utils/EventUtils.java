@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils;
 
-import cn.lunadeer.dominion.CacheImpl;
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
@@ -29,7 +29,7 @@ public class EventUtils {
             if (prev.getGroupId() == -1) {
                 return prev.getAdmin();
             } else {
-                GroupDTO group = CacheImpl.instance.getGroup(prev.getGroupId());
+                GroupDTO group = Cache.instance.getGroup(prev.getGroupId());
                 return group != null && group.getAdmin();
             }
         }
@@ -40,7 +40,7 @@ public class EventUtils {
         if (inv.getLocation() == null) {
             return null;
         } else {
-            return CacheImpl.instance.getDominionByLoc(inv.getLocation());
+            return Cache.instance.getDominionByLoc(inv.getLocation());
         }
     }
 
@@ -51,12 +51,12 @@ public class EventUtils {
         if (dom == null) {
             return true;
         }
-        MemberDTO prev = CacheImpl.instance.getMember(player, dom);
+        MemberDTO prev = Cache.instance.getMember(player, dom);
         if (canByPass(player, dom, prev)) {
             return true;
         }
         if (prev != null) {
-            GroupDTO group = CacheImpl.instance.getGroup(prev.getGroupId());
+            GroupDTO group = Cache.instance.getGroup(prev.getGroupId());
             if (prev.getGroupId() != -1 && group != null) {
                 if (group.getFlagValue(flag)) {
                     return true;
