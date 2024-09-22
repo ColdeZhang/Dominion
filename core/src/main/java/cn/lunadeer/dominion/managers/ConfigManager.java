@@ -406,11 +406,11 @@ public class ConfigManager {
             XLogger.err(Translation.Config_Check_ToolNameError);
             setTool("ARROW");
         }
-        if (getAutoCreateRadius() == 0) {
+        if (getAutoCreateRadius() <= 0 && getAutoCreateRadius() != -1) {
             XLogger.err(Translation.Config_Check_AutoCreateRadiusError);
             setAutoCreateRadius(10);
         }
-        if (getAutoCleanAfterDays() == 0) {
+        if (getAutoCleanAfterDays() <= 0 && getAutoCleanAfterDays() != -1) {
             XLogger.err(Translation.Config_Check_AutoCleanAfterDaysError);
             setAutoCleanAfterDays(180);
         }

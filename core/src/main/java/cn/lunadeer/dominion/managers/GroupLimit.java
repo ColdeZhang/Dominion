@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -309,9 +310,17 @@ public class GroupLimit {
 
     public List<String> getWorldBlackList() {
         List<String> list = new ArrayList<>();
+        if (world_limits.getOrDefault("default", new WorldSetting("default")).amount == 0) {
+            list.addAll(Dominion.instance.getServer().getWorlds().stream().map(World::getName).toList());
+        }
         for (Map.Entry<String, WorldSetting> entry : world_limits.entrySet()) {
-            if (!entry.getValue().allow) {
+            if (entry.getKey().equals("default")) {
+                continue;
+            }
+            if (entry.getValue().amount == 0) {
                 list.add(entry.getKey());
+            } else {
+                list.remove(entry.getKey());
             }
         }
         return list;

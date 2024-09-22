@@ -35,7 +35,6 @@ Limit:
       Amount: 10
       Depth: 3
       Vert: false
-      Allow: false
 
 Teleport:
   Enable: true

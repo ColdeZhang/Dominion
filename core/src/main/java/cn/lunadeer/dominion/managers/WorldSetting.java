@@ -15,7 +15,6 @@ public class WorldSetting {
     public Integer amount;
     public Integer depth;
     public Boolean vert;
-    public Boolean allow = true;
     private final String sourceName;
 
     /**
@@ -33,7 +32,6 @@ public class WorldSetting {
         section.set("some_world_name.Amount", 10);
         section.set("some_world_name.Depth", 3);
         section.set("some_world_name.Vert", false);
-        section.set("some_world_name.Allow", false);
         return section;
     }
 
@@ -53,7 +51,9 @@ public class WorldSetting {
             setting.amount = worldSettings.getInt(worldName + ".Amount", 10);
             setting.depth = worldSettings.getInt(worldName + ".Depth", 3);
             setting.vert = worldSettings.getBoolean(worldName + ".Vert", false);
-            setting.allow = worldSettings.getBoolean(worldName + ".Allow", false);
+            if (worldSettings.contains(worldName + ".Allow") && !worldSettings.getBoolean(worldName + ".Allow")) {
+                setting.amount = 0;
+            }
             world_limits.put(worldName, setting);
         }
         return world_limits;
@@ -69,7 +69,6 @@ public class WorldSetting {
         section.set("Amount", amount);
         section.set("Depth", depth);
         section.set("Vert", vert);
-        section.set("Allow", allow);
         return section;
     }
 
@@ -91,7 +90,7 @@ public class WorldSetting {
             XLogger.err(Translation.Config_Check_GroupSizeZError, sourceName);
             size_z = 128;
         }
-        if (amount <= 0 && amount != -1) {
+        if (amount < 0 && amount != -1) {
             XLogger.err(Translation.Config_Check_GroupAmountError, sourceName);
             amount = 10;
         }
