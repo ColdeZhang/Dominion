@@ -21,3 +21,4 @@
   * [flags.yml](operator/flags.md)
   * [Privileged Player Configuration](operator/privilege.md)
   * [Cross-group teleportation (global-tp in testing)](operator/global-tp.md)
+* [Developer](developer.md)

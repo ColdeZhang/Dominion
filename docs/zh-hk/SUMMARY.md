@@ -21,4 +21,5 @@
   * [flags.yml](operator/flags.md)
   * [特權玩家配置](operator/privilege.md)
   * [跨群組服傳送（global-tp 測試中）](operator/global-tp.md)
+* [开发者文档](developer.md)
     

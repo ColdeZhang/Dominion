@@ -9,7 +9,7 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import java.sql.ResultSet;
 import java.util.*;
 
-public class PrivilegeTemplateDTO implements cn.lunadeer.dominion.api.dtos.PrivilegeTemplateDTO {
+public class PrivilegeTemplateDTO {
 
     private static List<PrivilegeTemplateDTO> query(String sql, Object... params) {
         List<PrivilegeTemplateDTO> templates = new ArrayList<>();
@@ -109,27 +109,22 @@ public class PrivilegeTemplateDTO implements cn.lunadeer.dominion.api.dtos.Privi
 
     private final Map<Flag, Boolean> flags = new HashMap<>();
 
-    @Override
     public Integer getId() {
         return id;
     }
 
-    @Override
     public UUID getCreator() {
         return creator;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public Boolean getAdmin() {
         return admin;
     }
 
-    @Override
     public Boolean getFlagValue(Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);

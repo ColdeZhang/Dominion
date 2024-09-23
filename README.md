@@ -36,6 +36,11 @@ For detail functions and features of Dominion, you can view [Introduction](intro
 > Although this plugin supports Spigot, we strongly recommend that you upgrade your core to Paper or its forked (such as
 > Purpur) for a better performance experience.
 
+## For developer
+
+Dominion provides some simple (for now) APIs for developers to build something amazing depends on Dominion. You can
+take a look at [Developer](docs/en-us/developer.md) for more details.
+
 ## Help us improve
 
 If you encounter any problems during use or have any suggestions, please feel free to open

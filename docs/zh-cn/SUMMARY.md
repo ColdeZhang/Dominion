@@ -22,4 +22,5 @@
   * [特权玩家配置](operator/privilege.md)
   * [Papi一览](operator/papi.md)
   * [跨群组服传送（global-tp 测试中）](operator/global-tp.md)
+* [开发者文档](developer.md)
     

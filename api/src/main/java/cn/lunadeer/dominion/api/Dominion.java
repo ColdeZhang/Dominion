@@ -1,9 +1,19 @@
 package cn.lunadeer.dominion.api;
 
-public interface Dominion {
+import org.bukkit.Bukkit;
 
-    static Cache getInstance() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
-        // Cache.instance is a static field in the Cache class
-        return (Cache) Class.forName("cn.lunadeer.dominion.Cache").getDeclaredField("instance").get(null);
+public class Dominion {
+
+    public static DominionAPI getInstance() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        // 通过反射获取 Cache 类中的 instance 字段
+        var instanceField = Class.forName("cn.lunadeer.dominion.Cache").getDeclaredField("instance");
+        // 设置可访问
+        instanceField.setAccessible(true);
+        // 返回 Cache 的实例
+        return (DominionAPI) instanceField.get(null);
+    }
+
+    public static boolean isDominionEnabled() {
+        return Bukkit.getPluginManager().isPluginEnabled("Dominion");
     }
 }
