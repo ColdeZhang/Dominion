@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.api.DominionAPI;
 import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.Particle;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static cn.lunadeer.dominion.DominionNode.getLocInDominionNode;
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
 
-public class Cache implements cn.lunadeer.dominion.api.Cache {
+public class Cache implements DominionAPI {
 
     public Cache() {
         player_current_dominion_id = new HashMap<>();
@@ -401,7 +402,8 @@ public class Cache implements cn.lunadeer.dominion.api.Cache {
         return residence_data.get(player_uuid);
     }
 
-    public List<DominionDTO> getDominions() {
+    @Override
+    public @NotNull List<cn.lunadeer.dominion.api.dtos.DominionDTO> getAllDominions() {
         return new ArrayList<>(id_dominions.values());
     }
 

@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.minecraftpluginutils.GiteaReleaseCheck;
@@ -52,7 +52,7 @@ public class Operator {
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, Translation.Commands_Operator_ExportingMCAList);
             Map<String, List<String>> mca_cords = new HashMap<>();
-            List<DominionDTO> doms = Cache.instance.getDominions();
+            List<DominionDTO> doms = Cache.instance.getAllDominions();
             for (DominionDTO dom : doms) {
                 if (dom.getWorld() == null) {
                     continue;

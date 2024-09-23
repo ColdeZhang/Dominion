@@ -14,7 +14,7 @@ public class MapRender {
         }
 
         if (Dominion.config.getDynmap()) {
-            DynmapConnect.instance.setDominionMarkers(Cache.instance.getDominions());
+            DynmapConnect.instance.setDominionMarkers(Cache.instance.getAllDominions());
         }
     }
 

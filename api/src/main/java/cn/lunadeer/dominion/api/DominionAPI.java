@@ -8,9 +8,18 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
-public interface Cache {
+public interface DominionAPI {
+
+    /**
+     * 获取所有领地信息
+     *
+     * @return 所有领地信息
+     */
+    @NotNull List<DominionDTO> getAllDominions();
+
     /**
      * 获取玩家当前所在领地
      *

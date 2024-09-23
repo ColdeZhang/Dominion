@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public final class Dominion extends JavaPlugin implements cn.lunadeer.dominion.api.Dominion {
+public final class Dominion extends JavaPlugin {
 
     @Override
     public void onEnable() {
