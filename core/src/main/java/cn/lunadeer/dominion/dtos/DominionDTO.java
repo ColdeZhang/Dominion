@@ -186,6 +186,8 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         this.y2.value = y2;
         this.z2.value = z2;
         this.parentDomId.value = parentDomId;
+        this.joinMessage.value = Dominion.config.getDefaultJoinMessage();
+        this.leaveMessage.value = Dominion.config.getDefaultLeaveMessage();
     }
 
     public DominionDTO(UUID owner, String name, @NotNull World world,
@@ -208,8 +210,8 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     private final Field y2 = new Field("y2", FieldType.INT);
     private final Field z2 = new Field("z2", FieldType.INT);
     private final Field parentDomId = new Field("parent_dom_id", -1);
-    private final Field joinMessage = new Field("join_message", "欢迎！");
-    private final Field leaveMessage = new Field("leave_message", "欢迎下次光临～");
+    private final Field joinMessage = new Field("join_message", "");
+    private final Field leaveMessage = new Field("leave_message", "");
     private final Map<Flag, Boolean> flags = new HashMap<>();
     private final Field tp_location = new Field("tp_location", "default");
     private final Field color = new Field("color", "#00BFFF");

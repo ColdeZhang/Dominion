@@ -864,6 +864,10 @@ public class Translation extends Localization {
     public static i18n Config_Comment_Language;
     @i18nField(defaultValue = "自动创建领地的半径，单位为方块")
     public static i18n Config_Comment_AutoCreateRadius;
+    @i18nField(defaultValue = "默认进入领地提示消息")
+    public static i18n Config_Comment_DefaultJoinMessage;
+    @i18nField(defaultValue = "默认离开领地提示消息")
+    public static i18n Config_Comment_DefaultLeaveMessage;
     @i18nField(defaultValue = "提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）")
     public static i18n Config_Comment_MessageDisplay;
     @i18nField(defaultValue = "玩家没有权限时的提示消息位置")

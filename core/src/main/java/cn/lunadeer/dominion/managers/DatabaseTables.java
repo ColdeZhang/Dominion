@@ -114,8 +114,8 @@ public class DatabaseTables {
         Field server_dom_y2_field = new Field("y2", 2147483647);
         Field server_dom_z2_field = new Field("z2", 2147483647);
         Field server_dom_parent_dom_id_field = new Field("parent_dom_id", -1);
-        Field server_dom_join_message_field = new Field("join_message", "欢迎");
-        Field server_dom_leave_message_field = new Field("leave_message", "再见");
+        Field server_dom_join_message_field = new Field("join_message", "");
+        Field server_dom_leave_message_field = new Field("leave_message", "");
         InsertRow insert_server_dom = new InsertRow().table("dominion").onConflictDoNothing(server_dom_id_field)
                 .field(server_dom_id_field)
                 .field(server_dom_owner_field)

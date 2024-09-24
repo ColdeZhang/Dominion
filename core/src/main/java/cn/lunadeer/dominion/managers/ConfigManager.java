@@ -41,6 +41,8 @@ public class ConfigManager {
         _db_pass = _file.getString("Database.Pass", "postgres");
 
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
+        _default_join_message = _file.getString("DefaultJoinMessage", "&3Welcome to %dominion_current_dominion%!");
+        _default_leave_message = _file.getString("DefaultLeaveMessage", "&3Leaving %dominion_current_dominion%...");
 
         _message_display_no_permission = _file.getString("MessageDisplay.NoPermission", "ACTION_BAR");
         _message_display_join_leave = _file.getString("MessageDisplay.JoinLeave", "ACTION_BAR");
@@ -113,6 +115,10 @@ public class ConfigManager {
 
         _file.set("AutoCreateRadius", _auto_create_radius);
         _file.setComments("AutoCreateRadius", Arrays.asList(Translation.Config_Comment_AutoCreateRadius.trans(), Translation.Config_Comment_NegativeOneDisabled.trans()));
+        _file.set("DefaultJoinMessage", _default_join_message);
+        _file.setComments("DefaultJoinMessage", Collections.singletonList(Translation.Config_Comment_DefaultJoinMessage.trans()));
+        _file.set("DefaultLeaveMessage", _default_leave_message);
+        _file.setComments("DefaultLeaveMessage", Collections.singletonList(Translation.Config_Comment_DefaultLeaveMessage.trans()));
 
         _file.setComments("MessageDisplay", Collections.singletonList(Translation.Config_Comment_MessageDisplay.trans()));
         _file.set("MessageDisplay.NoPermission", _message_display_no_permission);
@@ -257,6 +263,14 @@ public class ConfigManager {
 
     public Integer getAutoCreateRadius() {
         return _auto_create_radius;
+    }
+
+    public String getDefaultJoinMessage() {
+        return _default_join_message;
+    }
+
+    public String getDefaultLeaveMessage() {
+        return _default_leave_message;
     }
 
     public void setAutoCreateRadius(Integer radius) {
@@ -451,6 +465,8 @@ public class ConfigManager {
     private String _language;
 
     private Integer _auto_create_radius;
+    private String _default_join_message;
+    private String _default_leave_message;
 
     private Boolean _limit_op_bypass;
 
