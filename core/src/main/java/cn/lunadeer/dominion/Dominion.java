@@ -40,13 +40,12 @@ public final class Dominion extends JavaPlugin {
         AutoClean.run();
         Cache.instance = new Cache();
 
-        if (config.getGroupTitleEnable()) {
-            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                new PlaceHolderApi(this);
-            } else {
-                XLogger.warn(Translation.Messages_PlaceholderAPINotFound);
-                config.setGroupTitleEnable(false);
-            }
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceHolderApi(this);
+        }
+        if (config.getGroupTitleEnable() && !Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            XLogger.warn(Translation.Messages_PlaceholderAPINotFound);
+            config.setGroupTitleEnable(false);
         }
 
         new EventsRegister(this);
