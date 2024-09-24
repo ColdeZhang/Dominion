@@ -41,8 +41,8 @@ public class ConfigManager {
         _db_pass = _file.getString("Database.Pass", "postgres");
 
         _auto_create_radius = _file.getInt("AutoCreateRadius", 10);
-        _default_join_message = _file.getString("DefaultJoinMessage", "&3Welcome to %dominion_current_dominion%!");
-        _default_leave_message = _file.getString("DefaultLeaveMessage", "&3Leaving %dominion_current_dominion%...");
+        _default_join_message = _file.getString("DefaultJoinMessage", "&3{OWNER}: Welcome to {DOM}!");
+        _default_leave_message = _file.getString("DefaultLeaveMessage", "&3{OWNER}: Leaving {DOM}...");
 
         _message_display_no_permission = _file.getString("MessageDisplay.NoPermission", "ACTION_BAR");
         _message_display_join_leave = _file.getString("MessageDisplay.JoinLeave", "ACTION_BAR");
