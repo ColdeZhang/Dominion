@@ -1,10 +1,10 @@
-# 开发者文档
+# Developer Documentation.
 
-> DominionAPI 自 Dominion-2.9.0-beta 开始支持。
+> DominionAPI has been supported since Dominion-2.9.0-beta.
 
-## 一、接入 DominionAPI
+## 一、Access DominionAPI.
 
-### 1. 引入依赖
+### 1. To include dependencies.
 
 If you are using gradle, you can add the following code to your `build.gradle` file:
 
@@ -53,18 +53,18 @@ or if you are using maven, you can add the following code to your `pom.xml` file
 </dependencies>
 ```
 
-### 2. plugin.yml 配置
+### 2. plugin.yml configuration
 
-在您的插件的 `plugin.yml` 文件中添加如下配置，以确保在 Dominion 准备完成后再加载您的插件：
+Add the following configuration to your plugin's plugin.yml file to ensure that your plugin loads after Dominion is ready:
 
 ```yaml
 # plugin.yml
 depend: [ Dominion ]
 ```
 
-## 二、使用 DominionAPI
+## 二、Using the DominionAPI.
 
-可以通过如下方法直接获取 DominionAPI 实例：
+You can directly obtain an instance of DominionAPI by following these methods:
 
 ```java
 import cn.lunadeer.dominion.api.Dominion;
@@ -73,7 +73,7 @@ import cn.lunadeer.dominion.api.DominionAPI;
 DominionAPI dominionAPI = Dominion.getInstance();
 ```
 
-例如，获取某个位置的领地信息：
+For example, to obtain the territory information of a certain location:
 
 ```java
 
