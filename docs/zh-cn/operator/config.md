@@ -16,6 +16,11 @@ Language: zh-cn
 # -1表示不开启
 AutoCreateRadius: 10
 
+# 默认进入领地提示消息
+DefaultJoinMessage: '&3Welcome to %dominion_current_dominion%!'
+# 默认离开领地提示消息
+DefaultLeaveMessage: '&3Leaving %dominion_current_dominion%...'
+
 # 领地提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）
 MessageDisplay:
   # 玩家没有权限时的提示消息位置
@@ -113,6 +118,10 @@ Timer: false # 性能测试计时器
 ### AutoCreateRadius
 
 配置玩家在使用“自动创建”功能时会自动向XYZ三个方向延伸此距离创建领地。
+
+### DefaultJoinMessage & DefaultLeaveMessage
+
+默认进入领地提示消息和默认离开领地提示消息。
 
 ### MessageDisplay
 
