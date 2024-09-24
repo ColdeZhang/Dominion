@@ -232,10 +232,18 @@ public class Cache implements DominionAPI {
                 return last_dominion;
             }
             if (last_dom_id != -1) {
-                MessageDisplay.show(player, Dominion.config.getMessageDisplayJoinLeave(), last_dominion.getLeaveMessage());
+                MessageDisplay.show(player, Dominion.config.getMessageDisplayJoinLeave(),
+                        last_dominion.getLeaveMessage()
+                                .replace("{DOM}", last_dominion.getName())
+                                .replace("{OWNER}", getPlayerName(last_dominion.getOwner()))
+                );
             }
             if (current_dom_id != -1) {
-                MessageDisplay.show(player, Dominion.config.getMessageDisplayJoinLeave(), current_dominion.getJoinMessage());
+                MessageDisplay.show(player, Dominion.config.getMessageDisplayJoinLeave(),
+                        current_dominion.getJoinMessage()
+                                .replace("{DOM}", current_dominion.getName())
+                                .replace("{OWNER}", getPlayerName(current_dominion.getOwner()))
+                );
             }
 
             lightOrNot(player, current_dominion);   // 发光检查
@@ -373,6 +381,16 @@ public class Cache implements DominionAPI {
         return id_dominions.get(id);
     }
 
+    public String getPlayerName(UUID uuid) {
+        if (!player_name_cache.containsKey(uuid)) {
+            PlayerDTO playerDTO = PlayerDTO.select(uuid);
+            if (playerDTO != null) {
+                player_name_cache.put(uuid, playerDTO.getLastKnownName());
+            }
+        }
+        return player_name_cache.getOrDefault(uuid, "Unknown");
+    }
+
     public int getPlayerDominionCount(UUID player_uuid) {
         int count = 0;
         for (DominionDTO dominion : id_dominions.values()) {
@@ -439,6 +457,7 @@ public class Cache implements DominionAPI {
     private static final long UPDATE_INTERVAL = 1000 * 4;
     private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
     public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
+    private final Map<UUID, String> player_name_cache = new HashMap<>();
 
     private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
 

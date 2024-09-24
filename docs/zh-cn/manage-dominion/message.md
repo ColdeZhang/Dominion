@@ -16,6 +16,11 @@
 /dominion set_leave_msg <提示语> [领地名称]
 ```
 
+## 特殊占位符
+
+- `{OWNER}`：会被自动替换为领地主人的名字；
+- `{DOM}`：会被自动替换为领地名称；
+
 ## 提示
 
 - 提示语支持 PlaceholderAPI 占位符，例如 `%player%`
