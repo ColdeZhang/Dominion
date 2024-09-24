@@ -1,17 +1,17 @@
-# 领地提示消息
+# Territory Hint Messages
 
-## 进入消息
+## Entry Message (Hint displayed upon entering a territory)
 
-可以为领地设置玩家进入时的欢迎语句，提示语将在玩家进入领地时弹出。
-
-```
-/dominion set_enter_msg <提示语> [领地名称]
-```
-
-## 离开消息
-
-可以为领地设置玩家离开时的欢送语句，提示语将在玩家离开领地时弹出。
+You can set a welcome message for a territory that will pop up when a player enters the area.
 
 ```
-/dominion set_leave_msg <提示语> [领地名称]
+/dominion set_enter_msg <Hint Message> [Territory Name]
+```
+
+## Leave Message (The hint displayed when walking out of the territory area)
+
+You can set a farewell message for the territory that will be displayed when a player leaves the area.
+
+```
+/dominion set_leave_msg <Hint Message> [Territory Name]
 ```
