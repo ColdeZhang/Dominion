@@ -9,6 +9,8 @@ Database:
 Language: zh-cn
 
 AutoCreateRadius: 10
+DefaultJoinMessage: '&3Welcome to %dominion_current_dominion%!'
+DefaultLeaveMessage: '&3Leaving %dominion_current_dominion%...'
 
 MessageDisplay:
   NoPermission: ACTION_BAR
