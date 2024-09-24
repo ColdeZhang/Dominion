@@ -17,9 +17,9 @@ Language: zh-cn
 AutoCreateRadius: 10
 
 # 默认进入领地提示消息
-DefaultJoinMessage: '&3Welcome to %dominion_current_dominion%!'
+DefaultJoinMessage: '&3{OWNER}: Welcome to {DOM}!'
 # 默认离开领地提示消息
-DefaultLeaveMessage: '&3Leaving %dominion_current_dominion%...'
+DefaultLeaveMessage: '&3{OWNER}: Leaving {DOM}...'
 
 # 领地提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）
 MessageDisplay:
