@@ -149,31 +149,6 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "配置文件已重新加载")
     public static i18n Commands_Operator_ReloadedConfig;
 
-    @i18nField(defaultValue = "最高Y坐标限制不能小于最低Y坐标限制")
-    public static i18n Commands_SetConfig_MinYShouldBeLessThanMaxY;
-    @i18nField(defaultValue = "最低Y坐标限制不能大于最高Y坐标限制")
-    public static i18n Commands_SetConfig_MaxYShouldBeGreaterThanMinY;
-    @i18nField(defaultValue = "X轴(东西)最大尺寸不能小于4")
-    public static i18n Commands_SetConfig_SizeXShouldBeGreaterThan4;
-    @i18nField(defaultValue = "Z轴(南北)最大尺寸不能小于4")
-    public static i18n Commands_SetConfig_SizeZShouldBeGreaterThan4;
-    @i18nField(defaultValue = "Y轴(垂直)最大尺寸不能小于4")
-    public static i18n Commands_SetConfig_SizeYShouldBeGreaterThan4;
-    @i18nField(defaultValue = "每个玩家领地数量限制不能小于0")
-    public static i18n Commands_SetConfig_AmountShouldBeGreaterThan0;
-    @i18nField(defaultValue = "领地深度限制不能小于0")
-    public static i18n Commands_SetConfig_DepthShouldBeGreaterThan0;
-    @i18nField(defaultValue = "传送延迟不能小于0")
-    public static i18n Commands_SetConfig_TpDelayShouldBeGreaterThan0;
-    @i18nField(defaultValue = "传送冷却时间不能小于0")
-    public static i18n Commands_SetConfig_TpCoolDownShouldBeGreaterThan0;
-    @i18nField(defaultValue = "每方块单价不能小于0")
-    public static i18n Commands_SetConfig_PriceShouldBeGreaterThan0;
-    @i18nField(defaultValue = "领地退款比例不能小于0")
-    public static i18n Commands_SetConfig_RefundShouldBeGreaterThan0;
-    @i18nField(defaultValue = "出生点保护半径不能小于或等于0")
-    public static i18n Commands_SetConfig_SpawnProtectRadiusShouldBeGreaterThan0;
-
     @i18nField(defaultValue = "用法: /dominion template create <模板名称>")
     public static i18n Commands_Template_CreateTemplateUsage;
     @i18nField(defaultValue = "用法: /dominion template delete <模板名称>")
@@ -597,10 +572,6 @@ public class Translation extends Localization {
     public static i18n TUI_Menu_AllDominionButton;
     @i18nField(defaultValue = "查看所有领地")
     public static i18n TUI_Menu_AllDominionDescription;
-    @i18nField(defaultValue = "系统配置")
-    public static i18n TUI_Menu_ConfigButton;
-    @i18nField(defaultValue = "查看/修改系统配置")
-    public static i18n TUI_Menu_ConfigDescription;
     @i18nField(defaultValue = "重载缓存")
     public static i18n TUI_Menu_ReloadCacheButton;
     @i18nField(defaultValue = "手动刷新缓存可解决一些玩家操作无效问题，不建议频繁操作")

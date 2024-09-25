@@ -75,19 +75,6 @@ Commands:
     ExportedMCAList: '%s に MCA ファイルのリストがエクスポートされました'
     ReloadingConfig: 設定ファイルを再読み込みしています...
     ReloadedConfig: 設定ファイルが再読み込みされました
-  SetConfig:
-    MinYShouldBeLessThanMaxY: 最高Y座標制限は最低Y座標制限より小さくすることはできません
-    MaxYShouldBeGreaterThanMinY: 最低Y座標制限は最高Y座標制限より大きくすることはできません
-    SizeXShouldBeGreaterThan4: X軸（東西）の最大サイズは4未満にできません
-    SizeZShouldBeGreaterThan4: Z軸（南北）の最大サイズは4未満にできません
-    SizeYShouldBeGreaterThan4: Y軸（垂直）の最大サイズは4未満にできません
-    AmountShouldBeGreaterThan0: 各プレイヤーの領地数制限は0未満にすることはできません
-    DepthShouldBeGreaterThan0: 領地の深さ制限は0未満にすることはできません
-    TpDelayShouldBeGreaterThan0: テレポート遅延は0未満にすることはできません
-    TpCoolDownShouldBeGreaterThan0: テレポートクールダウンは0未満にすることはできません
-    PriceShouldBeGreaterThan0: 各ブロック単価は0未満にすることはできません
-    RefundShouldBeGreaterThan0: 領地の返金率は0未満にすることはできません
-    SpawnProtectRadiusShouldBeGreaterThan0: スポーンポイント保護半径は0以下にはできません
   Template:
     CreateTemplateUsage: '使い方: /dominion template create <テンプレート名>'
     DeleteTemplateUsage: '使い方: /dominion template delete <テンプレート名>'
@@ -299,8 +286,6 @@ TUI:
     MigrateDescription: あなたの領地をResidenceからDominionに移行します
     AllDominionButton: すべての領地
     AllDominionDescription: すべての領地を表示
-    ConfigButton: システム設定
-    ConfigDescription: システム設定を表示/変更
     ReloadCacheButton: キャッシュをリロード
     ReloadCacheDescription: 手動でキャッシュをリロードすると、一部のプレイヤー操作が無効になる問題を解決できます。ただし頻繁に行うことは推奨されません
     ReloadConfigButton: 設定をリロード

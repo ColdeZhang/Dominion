@@ -75,19 +75,6 @@ Commands:
     ExportedMCAList: MCA文件列表已導出到 %s
     ReloadingConfig: 正在重新加載配置文件...
     ReloadedConfig: 配置文件已重新加載
-  SetConfig:
-    MinYShouldBeLessThanMaxY: 最高Y坐標限製不能小於最低Y坐標限製
-    MaxYShouldBeGreaterThanMinY: 最低Y坐標限製不能大於最高Y坐標限製
-    SizeXShouldBeGreaterThan4: X軸(東西)最大尺寸不能小於4
-    SizeZShouldBeGreaterThan4: Z軸(南北)最大尺寸不能小於4
-    SizeYShouldBeGreaterThan4: Y軸(垂直)最大尺寸不能小於4
-    AmountShouldBeGreaterThan0: 每個玩家領地數量限製不能小於0
-    DepthShouldBeGreaterThan0: 領地深度限製不能小於0
-    TpDelayShouldBeGreaterThan0: 傳送延遲不能小於0
-    TpCoolDownShouldBeGreaterThan0: 傳送冷卻時間不能小於0
-    PriceShouldBeGreaterThan0: 每方塊單價不能小於0
-    RefundShouldBeGreaterThan0: 領地退款比例不能小於0
-    SpawnProtectRadiusShouldBeGreaterThan0: 出生點保護半徑不能小於或等於0
   Template:
     CreateTemplateUsage: '用法: /dominion template create <模板名稱>'
     DeleteTemplateUsage: '用法: /dominion template delete <模板名稱>'
@@ -299,8 +286,6 @@ TUI:
     MigrateDescription: 把你的領地從Residence遷移到Dominion
     AllDominionButton: 所有領地
     AllDominionDescription: 查看所有領地
-    ConfigButton: 系統配置
-    ConfigDescription: 查看/修改系統配置
     ReloadCacheButton: 重載緩存
     ReloadCacheDescription: 手動刷新緩存可解決一些玩家操作無效問題，不建議頻繁操作
     ReloadConfigButton: 重載配置

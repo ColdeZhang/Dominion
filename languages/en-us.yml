@@ -4,105 +4,92 @@
 # Translated by:  YOUR_NAME_HERE
 Commands:
   Dominion:
-    SetFlagUsage: 'Usage: /dominion set <flag_name> <true/false> [dominion_name]'
-    CreateDominionUsage: 'Usage: /dominion create <territory_name>'
-    CreateSelectPointsFirst: Please first use the tool to select the diagonal points of the territory, or use /dominion auto_create <territory_name> to create an automatic territory
-    CreateSubDominionUsage: 'Usage: /dominion create_sub <sub_territory_name> [parent_territory_name]'
-    CreateSubSelectPointsFirst: Please first use the tool to select the diagonal points of the sub-territory, or use /dominion auto_create_sub <sub_territory_name> [parent_territory_name] to create an automatic sub-territory
-    AutoCreateDominionUsage: 'Usage: /dominion auto_create <territory_name>'
-    AutoCreateSubDominionUsage: 'Usage: /dominion auto_create_sub <sub_territory_name> [parent_territory_name]'
-    AutoCreateDominionDisabled: Automatic dominion creation function has been disabled
-    ExpandDominionUsage: 'Usage: /dominion expand [size] [dominion_name]'
-    ContractDominionUsage: 'Usage: /dominion contract [size] [dominion_name]'
-    SizeShouldBeInteger: Size should be an integer
-    SizeShouldBePositive: Size should be greater than 0
-    DeleteDominionUsage: 'Usage: /dominion delete <territory_name>'
-    SetEnterMessageUsage: 'Usage: /dominion set_enter_msg <prompt> [territory_name]'
-    SetLeaveMessageUsage: 'Usage: /dominion set_leave_msg <prompt> [territory_name]'
-    SetTpLocationUsage: 'Usage: /dominion set_tp_location [dominion_name]'
-    RenameDominionUsage: 'Usage: /dominion rename <original_territory_name> <new_territory_name>'
-    GiveDominionUsage: 'Usage: /dominion give <territory_name> <player_name>'
-    TpDominionUsage: 'Usage: /dominion tp <territory_name>'
-    DominionNotExist: Dominion does not exist
-    SetMapColorUsage: 'Usage: /dominion set_map_color <color> [territory_name]'
+    SetFlagUsage: 'Usage: /dominion set <flag_name> <true/false> [dominion name]'
+    CreateDominionUsage: 'Usage: /dominion create <dominion name>'
+    CreateSelectPointsFirst: Please first use the tool to select the points, or use /dominion auto_create <dominion name> to create dominion automatically.
+    CreateSubDominionUsage: 'Usage: /dominion create_sub <sub name> [parent name]'
+    CreateSubSelectPointsFirst: Please first use the tool to select the points, or use /dominion auto_create_sub <sub name> [parent name] to create sub-dominion automatically.
+    AutoCreateDominionUsage: 'Usage: /dominion auto_create <dominion name>'
+    AutoCreateSubDominionUsage: 'Usage: /dominion auto_create_sub <sub name> [parent name]'
+    AutoCreateDominionDisabled: Automatic creation function has been disabled by operator.
+    ExpandDominionUsage: 'Usage: /dominion expand [size] [dominion name]'
+    ContractDominionUsage: 'Usage: /dominion contract [size] [dominion name]'
+    SizeShouldBeInteger: Size should be an integer.
+    SizeShouldBePositive: Size should be greater than 0.
+    DeleteDominionUsage: 'Usage: /dominion delete <dominion name>'
+    SetEnterMessageUsage: 'Usage: /dominion set_enter_msg <msg> [dominion name]'
+    SetLeaveMessageUsage: 'Usage: /dominion set_leave_msg <msg> [dominion name]'
+    SetTpLocationUsage: 'Usage: /dominion set_tp_location [dominion name]'
+    RenameDominionUsage: 'Usage: /dominion rename <old name> <new name>'
+    GiveDominionUsage: 'Usage: /dominion give <dominion name> <player name>'
+    TpDominionUsage: 'Usage: /dominion tp <dominion name>'
+    DominionNotExist: Dominion does not exist.
+    SetMapColorUsage: 'Usage: /dominion set_map_color <hex color> [dominion name]'
   Group:
-    CreateGroupUsage: 'Usage: /dominion group create <territory_name> <permission_group_name>'
-    DeleteGroupUsage: 'Usage: /dominion group delete <territory_name> <permission_group_name>'
-    RenameGroupUsage: 'Usage: /dominion group rename <territory_name> <old_permission_group_name> <new_name>'
-    SetGroupFlagUsage: 'Usage: /dominion group set_flag <territory_name> <permission_group_name> <permission_name> <true|false>'
-    AddGroupMemberUsage: 'Usage: /dominion group add_member <territory_name> <permission_group_name> <player_name>'
-    RemoveGroupMemberUsage: 'Usage: /dominion group remove_member <territory_name> <permission_group_name> <player_name>'
+    CreateGroupUsage: 'Usage: /dominion group create <dominion name> <group name>'
+    DeleteGroupUsage: 'Usage: /dominion group delete <dominion name> <group name>'
+    RenameGroupUsage: 'Usage: /dominion group rename <dominion name> <old name> <new name>'
+    SetGroupFlagUsage: 'Usage: /dominion group set_flag <dominion name> <group name> <flag name> <true|false>'
+    AddGroupMemberUsage: 'Usage: /dominion group add_member <dominion name> <group name> <player name>'
+    RemoveGroupMemberUsage: 'Usage: /dominion group remove_member <dominion name> <group name> <player name>'
     GroupUsage: 'Usage: /dominion group <create|delete|rename|set_flag|add_member|remove_member|select_member|setting|list>'
     NewGroupName: New group name
   Member:
-    DominionAddMemberUsage: 'Usage: /dominion member add <territory_name> <player_name>'
-    DominionSetFlagUsage: 'Usage: /dominion member set_flag <territory_name> <player_name> <permission_name> <true/false>'
-    DominionRemoveMemberUsage: 'Usage: /dominion member remove <territory_name> <player_name>'
-    DominionApplyTemplateUsage: 'Usage: /dominion member apply_template <territory_name> <player_name> <template_name>'
+    DominionAddMemberUsage: 'Usage: /dominion member add <dominion name> <player name>'
+    DominionSetFlagUsage: 'Usage: /dominion member set_flag <dominion name> <player name> <flag name> <true/false>'
+    DominionRemoveMemberUsage: 'Usage: /dominion member remove <dominion name> <player name>'
+    DominionApplyTemplateUsage: 'Usage: /dominion member apply_template <dominion name> <player name> <template name>'
     MemberUsage: 'Usage: /dominion member <add/set_flag/remove/apply_template/list/setting/select_player/select_template>'
-  PageOptional: Page number (optional)
-  ArgumentsNotEnough: Insufficient parameters
-  UnknownArgument: Unknown argument
+  PageOptional: Page (optional)
+  ArgumentsNotEnough: Insufficient parameters.
+  UnknownArgument: Unknown argument.
   SizeInteger: Size (integer)
-  DominionName: Dominion name
-  SubDominionName: Sub-dominion name
-  EnterMessageContent: Enter message content
-  LeaveMessageContent: Leave message content
-  InputColor: Input color (hexadecimal)
-  NewDominionName: New dominion name
+  DominionName: Dominion Name
+  SubDominionName: Sub-dominion Name
+  EnterMessageContent: Enter Message
+  LeaveMessageContent: Leave Message
+  InputColor: Color (HEX)
+  NewDominionName: New Dominion Name
   Residence:
-    MigrationDisabled: Residence migration feature is not enabled
-    MigrateUsage: 'Usage: /dominion migrate <res_dominion_name>'
-    NoMigrationData: You have no data to migrate
-    NoResidenceDominion: Specified Residence dominion not found
-    ResidenceNotOwner: You are not the owner of this dominion, cannot migrate it
-    MigrateFailed: 'Migration failed: %s'
-    MigrateSuccess: Dominion %s has been migrated from Residence to Dominion
+    MigrationDisabled: Migration from residence has been disabled by operator.
+    MigrateUsage: 'Usage: /dominion migrate <res territory name>'
+    NoMigrationData: You have no data to migrate.
+    NoResidenceDominion: Specified res territory not found.
+    ResidenceNotOwner: You are not the owner of this res territory, cannot migrate it.
+    MigrateFailed: 'Migration failed: %s.'
+    MigrateSuccess: Territory %s has been migrated from Residence to Dominion.
   Operator:
-    ReloadingDominionCache: Reloading dominion cache from the database...
-    ReloadedDominionCache: Dominion cache has been reloaded
-    ReloadingPrivilegeCache: Reloading player privilege cache from the database...
-    ReloadedPrivilegeCache: Player privilege cache has been reloaded
+    ReloadingDominionCache: Reloading cache from the database...
+    ReloadedDominionCache: Cache has been reloaded.
+    ReloadingPrivilegeCache: Reloading player permission cache from the database...
+    ReloadedPrivilegeCache: Player permission cache has been reloaded.
     ReloadingGroupCache: Reloading group cache from the database...
-    ReloadedGroupCache: Group cache has been reloaded
-    ExportingMCAList: Exporting the list of MCA files for owned territories...
-    CreateExportFolderFailed: Failed to create export folder
+    ReloadedGroupCache: Group cache has been reloaded.
+    ExportingMCAList: Exporting the list of MCA files containing dominions...
+    CreateExportFolderFailed: Failed to create export folder.
     ExportingMCAListForWorld: Exporting the list of MCA files for %s...
-    DeleteMCAListFailed: Failed to delete the MCA file list for %s
-    CreateMCAListFailed: Failed to create the MCA file list for %s
-    WriteMCAListFailed: Failed to write to %s
-    ExportMCAListFailed: Failed to export the MCA file list for %s
-    ExportedMCAList: MCA file list has been exported to %s
+    DeleteMCAListFailed: Failed to delete the MCA file list for %s.
+    CreateMCAListFailed: Failed to create the MCA file list for %s.
+    WriteMCAListFailed: Failed to write to %s.
+    ExportMCAListFailed: Failed to export the MCA file list for %s.
+    ExportedMCAList: MCA file list has been exported to %s.
     ReloadingConfig: Reloading configuration file...
-    ReloadedConfig: Configuration file has been reloaded
-  SetConfig:
-    MinYShouldBeLessThanMaxY: The maximum Y coordinate limit cannot be less than the minimum Y coordinate limit
-    MaxYShouldBeGreaterThanMinY: The minimum Y coordinate limit cannot be greater than the maximum Y coordinate limit
-    SizeXShouldBeGreaterThan4: The maximum size on the X axis (East-West) cannot be less than 4
-    SizeZShouldBeGreaterThan4: The maximum size on the Z axis (North-South) cannot be less than 4
-    SizeYShouldBeGreaterThan4: The maximum size on the Y axis (Vertical) cannot be less than 4
-    AmountShouldBeGreaterThan0: The limit of the number of dominions per player cannot be less than 0
-    DepthShouldBeGreaterThan0: The depth limit of the dominion cannot be less than 0
-    TpDelayShouldBeGreaterThan0: Teleport delay cannot be less than 0
-    TpCoolDownShouldBeGreaterThan0: Teleport cooldown cannot be less than 0
-    PriceShouldBeGreaterThan0: The price per block cannot be less than 0
-    RefundShouldBeGreaterThan0: The refund ratio for the dominion cannot be less than 0
-    SpawnProtectRadiusShouldBeGreaterThan0: Spawn protection radius cannot be less than or equal to 0
+    ReloadedConfig: Configuration file has been reloaded.
   Template:
-    CreateTemplateUsage: 'Usage: /dominion template create <template_name>'
-    DeleteTemplateUsage: 'Usage: /dominion template delete <template_name>'
-    SetTemplateFlagUsage: 'Usage: /dominion template set_flag <template_name> <permission_name> <true/false>'
+    CreateTemplateUsage: 'Usage: /dominion template create <template name>'
+    DeleteTemplateUsage: 'Usage: /dominion template delete <template name>'
+    SetTemplateFlagUsage: 'Usage: /dominion template set_flag <template name> <flag name> <true/false>'
     TemplateUsage: 'Usage: /dominion template <list|setting|delete|create|set_flag>'
     NewTemplateName: New template name
   Title:
-    UseTitleUsage: 'Usage: /dominion use_title <permission_group_id>'
-    RemoveTitleSuccess: Successfully removed group title
-    GroupNotExist: Group does not exist
-    GroupDominionNotExist: Group %s does not belong to any dominion
-    NotDominionMember: You are not a member of dominion %s and cannot use its title
-    NotGroupMember: You are not a member of group %s and cannot use its title
-    UseTitleSuccess: Successfully used group %s title
-    UseTitleFailed: 'Using title failed: %s'
+    UseTitleUsage: 'Usage: /dominion use_title <group id>'
+    RemoveTitleSuccess: Successfully removed title.
+    GroupNotExist: Group does not exist.
+    GroupDominionNotExist: Group %s does not belong to any dominion.
+    NotDominionMember: You are not a member of dominion %s and cannot use its title.
+    NotGroupMember: You are not a member of group %s and cannot use its title.
+    UseTitleSuccess: Successfully used group title %s.
+    UseTitleFailed: 'Using title failed: %s.'
 Messages:
   OpBypassTpLimit: You are OP, you will bypass territory teleportation limits
   WorldNotExist: The world where the dominion is located does not exist
@@ -256,174 +243,172 @@ Messages:
   AutoCleanEnd: Automatic cleanup completed
   MapInfoDetail: '<div>%s</div><div>Everyone: %s</div>'
 TUI:
-  NotDominionOwnerOrAdminForPage: You are not the owner or admin of territory %s and have no access to this page
+  NotDominionOwnerOrAdminForPage: You are not the owner or admin of %s and have no access to this page
   CommandHelp:
-    Title: Territory plugin command help
-    SubTitle: <> indicates required parameters and [] indicates optional parameters
+    Title: Commands Help List
+    SubTitle: <> is necessary, [] is optional
   Navigation:
-    Menu: Main Menu
-    DominionList: My Territories
-    Manage: Management Interface
-    EnvSetting: Environmental Settings
-    GuestSetting: Guest Permissions
-    MemberList: Member List
-    MemberSetting: Member Permissions
-    GroupList: Permission Group List
-    GroupSetting: Permission Group Management
-    AllDominion: All Territories
-    TemplateList: Template List
-    TemplateSetting: Template Management
-    MigrateList: Res Data List
-    TitleList: Permission Group Title List
-  ManageButton: Manage
-  DeleteButton: Delete
-  SearchButton: Search
-  BackButton: Return
-  SelectButton: Select
-  EditButton: Edit
+    Menu: MAIN
+    DominionList: DOMS
+    Manage: MANAGE
+    EnvSetting: ENV
+    GuestSetting: GUEST
+    MemberList: MEMBERS
+    MemberSetting: MEMBER
+    GroupList: GROUPS
+    GroupSetting: GROUP
+    AllDominion: ALL_DOMS
+    TemplateList: TEMPLATES
+    TemplateSetting: TEMPLATE
+    MigrateList: RES_DATA
+    TitleList: TITLES
+  ManageButton: MANAGE
+  DeleteButton: DELETE
+  SearchButton: SEARCH
+  BackButton: BACK
+  SelectButton: SELECT
+  EditButton: EDIT
   Menu:
-    Title: Dominion Territory System
-    CreateDominionButton: Create Territory
-    CreateDominionDescription: Automatically create a new territory centered on you
-    MyDominionButton: My Territories
-    MyDominionDescription: View my territory list
-    TitleListButton: Title List
-    TitleListDescription: View/use permission group titles
-    TemplateListButton: Template List
-    TemplateListDescription: Member Permission Template List
-    CommandHelpButton: Command Help
-    CommandHelpDescription: View command list
-    DocumentButton: Usage Documentation
-    DocumentDescription: Open usage documentation in the browser
-    MigrateButton: Migrate Data
-    MigrateDescription: Migrate your territory from Residence to Dominion
-    AllDominionButton: All Territories
-    AllDominionDescription: View all territories
-    ConfigButton: System Configuration
-    ConfigDescription: View/modify system configuration
-    ReloadCacheButton: Reload Cache
-    ReloadCacheDescription: Manually refreshing the cache can solve some player operation issues. Frequent operation is not recommended
-    ReloadConfigButton: Reload Configuration
-    ReloadConfigDescription: Reload configuration file
-    OpOnlySection: '--- The following options are visible only to OP ---'
+    Title: Dominion Main Menu
+    CreateDominionButton: CREATE
+    CreateDominionDescription: Create a dominion automatically around you.
+    MyDominionButton: DOMINIONS
+    MyDominionDescription: List all your dominions.
+    TitleListButton: TITLES
+    TitleListDescription: List/Use group titles.
+    TemplateListButton: TEMPLATES
+    TemplateListDescription: Permission template list.
+    CommandHelpButton: HELP
+    CommandHelpDescription: View command list.
+    DocumentButton: DOCS
+    DocumentDescription: Open usage documentation in the browser.
+    MigrateButton: MIGRATE
+    MigrateDescription: Migrate your territories from Residence.
+    AllDominionButton: ALL_DOMS
+    AllDominionDescription: List all dominions of server.
+    ReloadCacheButton: RELOAD_CACHE
+    ReloadCacheDescription: Could solve some weird problem. DONT DO THIS FREQUENTLY!
+    ReloadConfigButton: RELOAD_CONF
+    ReloadConfigDescription: Reload configuration file from disk.
+    OpOnlySection: '--- FOLLOWING VISIBLE OP ONLY ---'
   DominionList:
-    Title: My Territory List
-    AdminSection: '--- The following are the territories where you have admin privileges ---'
+    Title: My Dominion List
+    AdminSection: '--- YOU ARE ADMIN OF FOLLOWING ---'
   DominionManage:
-    Title: Management Interface for Territory %s
-    InfoButton: Detailed Information
-    InfoDescription: View detailed information of the territory
-    EnvSettingButton: Environmental Settings
-    EnvSettingDescription: Set some environmental behaviors within the territory
-    GuestSettingButton: Guest Permissions
-    GuestSettingDescription: Configure guest permissions in this territory
-    MemberListButton: Member Management
-    MemberListDescription: Manage the permissions of members of this territory
-    GroupListButton: Permission Groups
-    GroupListDescription: Manage the permission groups of this territory
-    SetTpLocationButton: Set Teleport Points
-    SetTpLocationDescription: Set your current location as the teleport point for this territory
-    RenameButton: Rename
-    RenameDescription: Rename the territory
-    EditJoinMessageButton: Edit Welcome Message
-    EditJoinMessageDescription: Message displayed when a player enters the territory
-    EditLeaveMessageButton: Edit Leave Message
-    EditLeaveMessageDescription: Message displayed when a player leaves the territory
-    SetMapColorButton: Set Land Color
-    SetMapColorDescription: Set the land color on the satellite map
+    Title: '%s Management'
+    InfoButton: DETAILS
+    InfoDescription: View details of this dominion.
+    EnvSettingButton: ENV_SETTING
+    EnvSettingDescription: Set some environmental behaviors.
+    GuestSettingButton: GUEST_SETTING
+    GuestSettingDescription: Configure guest permissions.
+    MemberListButton: MEMBERS
+    MemberListDescription: Manage the permissions of members.
+    GroupListButton: GROUPS
+    GroupListDescription: Manage the permission groups.
+    SetTpLocationButton: SET_TP_LOC
+    SetTpLocationDescription: Set the teleport point.
+    RenameButton: RENAME
+    RenameDescription: Rename the dominion.
+    EditJoinMessageButton: EDIT_ENTER_MSG
+    EditJoinMessageDescription: Message displayed when enter.
+    EditLeaveMessageButton: EDIT_LEAVE_MSG
+    EditLeaveMessageDescription: Message displayed when leave.
+    SetMapColorButton: COLOR
+    SetMapColorDescription: Color will be shown on web map.
     NotInDominion: You are not in any dominion, please specify the dominion name /dominion manage <dominion name>
   EnvSetting:
-    Title: Environmental Settings for Territory %s
-    Usage: 'Usage: /dominion env_setting <dominion name> [page number]'
+    Title: '%s Environmental Settings'
+    Usage: 'Usage: /dominion env_setting <dominion name> [page]'
   GuestSetting:
-    Title: Guest Permissions for Territory %s
-    Usage: 'Usage: /dominion guest_setting <dominion name> [page number]'
+    Title: '%s Guest Settings'
+    Usage: 'Usage: /dominion guest_setting <dominion name> [page]'
   SizeInfo:
-    Title: Size Information for Territory %s
-    Owner: 'Territory Owner:'
-    Size: 'Territory Size:'
+    Title: '%s Size Information'
+    Owner: 'Owner:'
+    Size: 'Size:'
     Center: 'Center Coordinates:'
     Vertical: 'Vertical Height:'
     VertY: 'Y-axis Coordinates:'
-    Square: 'Horizontal Area:'
-    Volume: 'Territory Volume:'
-    TpLocation: 'Teleport Point Coordinates:'
-    NoneTp: None
+    Square: 'Square:'
+    Volume: 'Volume:'
+    TpLocation: 'Teleport Coordinates:'
+    NoneTp: None Tp Info
     Usage: You are not in any dominion, please specify the dominion name /dominion info <dominion name>
   MemberList:
-    Title: Member List for Territory %s
-    AddButton: Add Member
-    FlagButton: Permissions
-    FlagDescription: Configure Member Permissions
-    RemoveButton: Remove
-    RemoveDescription: Remove this member (turn to guest)
-    NoPermissionSet: You are not the territory owner and cannot edit admin permissions
-    NoPermissionRemove: You are not the territory owner and cannot remove the admin
-    BelongToGroup: This member belongs to permission group %s and cannot edit permissions separately
-    Usage: 'Usage: /dominion member list <dominion name> [page number]'
-    AdminTag: This member is an admin
-    NormalTag: This is a regular member
-    BlacklistTag: This is a blacklist member
-    GroupTag: This member is in a permission group
+    Title: '%s Member List'
+    AddButton: ADD_MEMBER
+    FlagButton: PERMS
+    FlagDescription: Configure member permissions.
+    RemoveButton: REMOVE
+    RemoveDescription: Remove this member (to guest).
+    NoPermissionSet: Only owner can set admin permissions.
+    NoPermissionRemove: Only owner can remove admin permissions.
+    BelongToGroup: This member belongs to group %s and cannot set permissions separately.
+    Usage: 'Usage: /dominion member list <dominion name> [page]'
+    AdminTag: This member is an ADMIN.
+    NormalTag: This is a regular MEMBER.
+    BlacklistTag: This is a BLACKLIST member.
+    GroupTag: This member is in a GROUP.
   MemberSetting:
-    Title: Permission Settings for Player %s in Territory %s
-    ApplyTemplateButton: Apply Template
-    ApplyTemplateDescription: Choose a permission template to apply
-    Usage: 'Usage: /dominion member setting <dominion name> <player name> [page number]'
+    Title: '%s Permission in %s'
+    ApplyTemplateButton: APPLY_TEMPLATE
+    ApplyTemplateDescription: Choose a template to apply.
+    Usage: 'Usage: /dominion member setting <dominion name> <player name> [page]'
   SelectPlayer:
     Title: Select Player to Add as Member
-    Description: You can only select players who have logged in
-    Usage: 'Usage: /dominion member select_player <dominion name> [page number]'
+    Description: You can only select players who have logged before.
+    Usage: 'Usage: /dominion member select_player <dominion name> [page]'
   SelectTemplate:
     Title: Select a Template
-    Description: Apply to member %s in territory %s
-    Usage: 'Usage: /dominion member select_template <dominion name> <player name> [page number]'
+    Description: Apply to %s in %s.
+    Usage: 'Usage: /dominion member select_template <dominion name> <player name> [page]'
   GroupList:
-    Title: Permission Group List for Territory %s
-    CreateButton: Create Permission Group
-    CreateDescription: Create a new permission group
-    DeleteDescription: Delete permission group %s
-    EditDescription: Edit permission group %s
-    AddMemberDescription: Add member to permission group %s
-    RemoveMemberDescription: Remove %s from permission group %s
-    Usage: 'Usage: /dominion group list <dominion name> [page number]'
+    Title: '%s Group List'
+    CreateButton: CREATE_GROUP
+    CreateDescription: Create a new group.
+    DeleteDescription: Delete group %s.
+    EditDescription: Edit group %s.
+    AddMemberDescription: Add member to group %s.
+    RemoveMemberDescription: Remove %s from group %s.
+    Usage: 'Usage: /dominion group list <dominion name> [page]'
   GroupSetting:
-    RenameButton: Rename this permission group
-    Usage: 'Usage: /dominion group setting <dominion name> <permission group name> [page number]'
-    TitleL: 'Permission Group '
+    RenameButton: RENAME_GROUP
+    Usage: 'Usage: /dominion group setting <dominion name> <group name> [page]'
+    TitleL: 'Group '
     TitleR: ' Management'
-    RenameDescription: Rename permission group %s
+    RenameDescription: Rename group %s.
   SelectMember:
     Title: Select Member
-    Description: Select members to add to permission group %s
-    Usage: 'Usage: /dominion group select_member <dominion name> <permission group name> [echo page number] [page number]'
+    Description: Select a member to add to group %s.
+    Usage: 'Usage: /dominion group select_member <dominion name> <group name> [cb page] [page]'
   TemplateList:
-    Title: Member Permission Template List
-    CreateButton: Create Member Permission Template
-    CreateDescription: Create a new member permission template
+    Title: Permission Template List
+    CreateButton: CREATE_TEMPLATE
+    CreateDescription: Create a new permission template.
   TemplateSetting:
-    Title: Manage Permissions for Template %s
+    Title: Template %s Management
   Migrate:
-    Title: Migrate Data from Residence
-    NoData: You do not have any data to migrate
-    Button: Migrate
-    SubDominion: Sub-territories cannot be migrated manually; they will migrate automatically with the parent territory
+    Title: Migration from Residence
+    NoData: You do not have any data to migrate.
+    Button: MIGRATE
+    SubDominion: Sub-territories cannot be migrated manually, they will migrate automatically with the parent territory.
   TitleList:
-    Title: Permission Group Titles I Can Use
-    RemoveButton: Remove
-    ApplyButton: Use
-    FromDominion: 'From Territory:'
+    Title: My Group Titles
+    RemoveButton: UNSET
+    ApplyButton: USE
+    FromDominion: 'From Dominion:'
 CUI:
   Input:
-    CreateDominion: Enter the name of the territory to create
-    CreateGroup: Enter the name of the permission group to create
-    CreateTemplate: Enter the name of the template to create
-    EditEnterMessage: Edit the territory entry message content
-    EditLeaveMessage: Edit the territory exit message content
-    AddMember: Enter player name to add as a member
-    RenameDominion: Rename Territory
-    RenameGroup: Rename Permission Group
-    SetMapColor: Enter the hex color for the satellite map plots
+    CreateDominion: Type New Dominion Name
+    CreateGroup: Type New Group Name
+    CreateTemplate: Type New Template Name
+    EditEnterMessage: Edit Enter Message
+    EditLeaveMessage: Edit Leave Message
+    AddMember: Type Player Name to Add Member
+    RenameDominion: Rename Dominion
+    RenameGroup: Rename Group
+    SetMapColor: Type HEX Color
 Config:
   Check:
     AutoCreateRadiusError: AutoCreateRadius cannot be 0, reset to 10
@@ -701,41 +686,41 @@ Utils:
   DownloadPage: 'Download page: %s'
   CurrentVersion: 'You are currently on the latest version: %s'
   GetUpdateFailed: 'Failed to get updates: %s'
-  NewVersionConsole: 'New version found: %s Check the console for details or click the link below'
-  VaultNotAvailable: Vault not available
-  VaultUnlockedNotAvailable: VaultUnlocked not available
-  NoEconomyPlugin: No available economy plugin
+  NewVersionConsole: 'New version found: %s . Check the console for details or click the link below'
+  VaultNotAvailable: Vault not available.
+  VaultUnlockedNotAvailable: VaultUnlocked not available.
+  NoEconomyPlugin: No available economy plugin.
   TUI:
-    Navigation: Navigation
+    Navigation: NAV
     NoContent: Uh oh, there’s no content here ～
-    PageError: Page error
-    Add: Add
-    Sub: Subtract
-    PreviousPage: Previous page
-    NextPage: Next page
+    PageError: PAGE ERROR
+    Add: ADD
+    Sub: SUB
+    PreviousPage: '<'
+    NextPage: '>'
     PageL: 'Page '
-    PageR: ' pages '
+    PageR: '   '
   CUI:
-    Input: Please enter
-    InputBox: Input box
-    NotAvailable: CUI TextInput functionality is not available on non-Paper servers, please use commands to perform corresponding operations.
-    SuggestCommand: 'Suggested command: %s'
-    LeftRightClick: Left-click to confirm | Right-click to cancel
-    NoSpace: Input cannot contain spaces
+    Input: Please Type Below
+    InputBox: Text here...
+    NotAvailable: CUI TextInput functionality is not available on non-Paper servers, please use commands to perform operations.
+    SuggestCommand: 'Suggestion: %s'
+    LeftRightClick: 'L-Click: Confirm, R-Click: Cancel'
+    NoSpace: No spaces allowed.
   Database:
-    Connecting: Connecting to %s database
+    Connecting: Connecting to %s database...
     UnsupportedType: 'Unsupported database type: '
     ConnectionFailed: 'Database connection failed: '
-    ConnectionSuccess: Database connection successful
-    Reconnecting: Trying to reconnect to the database
-    ReconnectionSuccess: Database reconnection successful
-    ReconnectionFailed: Database reconnection failed
-    ErrorTitle: '=== Critical error ==='
-    ReconnectionUnexpected: Database connection unexpectedly closed, trying to reconnect
-    OperationAbort: Operation aborted
+    ConnectionSuccess: Database connection successful!
+    Reconnecting: Trying to reconnect to the database...
+    ReconnectionSuccess: Database reconnection successful!
+    ReconnectionFailed: Database reconnection failed!
+    ErrorTitle: '=== CRITICAL DATABASE ERROR ==='
+    ReconnectionUnexpected: Database connection unexpectedly closed, trying to reconnect...
+    OperationAbort: Operation aborted!
     OperationFailed: 'Database operation failed: '
-    Closing: Closing database connection
-    Closed: Database connection closed
+    Closing: Closing database connection...
+    Closed: Database connection closed.
     CloseFailed: 'Failed to close database connection: '
-    CheckColumnFailed: Failed to check if column exists
-    CheckTableFailed: Failed to check if table exists
+    CheckColumnFailed: Failed to check if column exists.
+    CheckTableFailed: Failed to check if table exists.
