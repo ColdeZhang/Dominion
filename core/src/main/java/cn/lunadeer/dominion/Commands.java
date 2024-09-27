@@ -118,6 +118,12 @@ public class Commands implements TabExecutor {
             case "export_mca":
                 Operator.exportMca(sender, args);
                 break;
+            case "export_db":
+                Operator.exportDatabase(sender, args);
+                break;
+            case "import_db":
+                Operator.importDatabase(sender, args);
+                break;
 //            case "set_config":
 //                SetConfig.handler(sender, args);
 //                break;
@@ -216,6 +222,8 @@ public class Commands implements TabExecutor {
                     "reload_cache",
                     "reload_config",
                     "export_mca",
+                    "export_db",
+                    "import_db",
                     "sys_config",
                     "all_dominion",
                     "set_map_color",

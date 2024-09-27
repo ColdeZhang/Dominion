@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.commands;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.minecraftpluginutils.GiteaReleaseCheck;
@@ -138,6 +139,42 @@ public class Operator {
             );
             Notification.info(sender, Translation.Commands_Operator_ReloadedConfig);
         });
+    }
+
+    /**
+     * 导出数据库
+     * /dominion export_db [confirm]
+     *
+     * @param sender 发送者
+     * @param args   参数
+     */
+    public static void exportDatabase(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
+        if (args.length != 2 || !args[1].equals("confirm")) {
+            Notification.warn(sender, Translation.Commands_Operator_ExportDBConfirm);
+            return;
+        }
+        DatabaseTables.Export(sender);
+    }
+
+    /**
+     * 导入数据库
+     * /dominion import_db [confirm]
+     *
+     * @param sender 发送者
+     * @param args   参数
+     */
+    public static void importDatabase(CommandSender sender, String[] args) {
+        if (!hasPermission(sender, "dominion.admin")) {
+            return;
+        }
+        if (args.length != 2 || !args[1].equals("confirm")) {
+            Notification.warn(sender, Translation.Commands_Operator_ImportDBConfirm);
+            return;
+        }
+        DatabaseTables.Import(sender);
     }
 
     public static void version(CommandSender sender, String[] args) {
