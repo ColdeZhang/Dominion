@@ -1,14 +1,19 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.commands.Operator;
 import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.minecraftpluginutils.Notification;
+import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.databse.*;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.AddColumn;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.RemoveColumn;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.util.List;
 
@@ -259,5 +264,39 @@ public class DatabaseTables {
             DatabaseManager.instance.query("UPDATE dominion SET world_uid = '00000000-0000-0000-0000-000000000000' WHERE world = 'all';");
             new RemoveColumn("world").table("dominion").IfExists().execute();
         }
+    }
+
+    private static final File export_path = new File(Dominion.instance.getDataFolder(), "ExportedDatabaseTables");
+
+    public static void Export(CommandSender sender) {
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, Translation.Commands_Operator_ExportDBBegin);
+            if (!export_path.exists()) {
+                export_path.mkdirs();
+            }
+            Common.ExportCSV("player_name", new File(export_path, "player_name.csv"));
+            Common.ExportCSV("privilege_template", new File(export_path, "privilege_template.csv"));
+            Common.ExportCSV("dominion", new File(export_path, "dominion.csv"));
+            Common.ExportCSV("dominion_group", new File(export_path, "dominion_group.csv"));
+            Common.ExportCSV("dominion_member", new File(export_path, "dominion_member.csv"));
+            Notification.info(sender, Translation.Commands_Operator_ExportDBSuccess);
+        });
+    }
+
+    public static void Import(CommandSender sender) {
+        Scheduler.runTaskAsync(() -> {
+            if (!export_path.exists()) {
+                Notification.error(sender, Translation.Commands_Operator_ImportDBFail);
+                return;
+            }
+            Notification.info(sender, Translation.Commands_Operator_ImportDBBegin);
+            Common.ImportCSV("player_name", "id", new File(export_path, "player_name.csv"));
+            Common.ImportCSV("privilege_template", "id", new File(export_path, "privilege_template.csv"));
+            Common.ImportCSV("dominion", "id", new File(export_path, "dominion.csv"));
+            Common.ImportCSV("dominion_group", "id", new File(export_path, "dominion_group.csv"));
+            Common.ImportCSV("dominion_member", "id", new File(export_path, "dominion_member.csv"));
+            Notification.info(sender, Translation.Commands_Operator_ImportDBSuccess);
+            Operator.reloadCache(sender, new String[0]);
+        });
     }
 }

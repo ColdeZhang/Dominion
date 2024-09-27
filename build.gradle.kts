@@ -38,7 +38,7 @@ allprojects {
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
         compileOnly("me.clip:placeholderapi:2.11.6")
 
-        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.9-SNAPSHOT")
+        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.10-SNAPSHOT")
         implementation("org.yaml:snakeyaml:2.0")
     }
 

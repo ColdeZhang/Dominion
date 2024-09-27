@@ -148,6 +148,20 @@ public class Translation extends Localization {
     public static i18n Commands_Operator_ReloadingConfig;
     @i18nField(defaultValue = "配置文件已重新加载")
     public static i18n Commands_Operator_ReloadedConfig;
+    @i18nField(defaultValue = "你正在尝试导出数据库表，此行为会踢出所有玩家并关闭服务器，如确认继续请输入 /dominion export_db confirm")
+    public static i18n Commands_Operator_ExportDBConfirm;
+    @i18nField(defaultValue = "正在导出数据库表...")
+    public static i18n Commands_Operator_ExportDBBegin;
+    @i18nField(defaultValue = "数据库表导出完成")
+    public static i18n Commands_Operator_ExportDBSuccess;
+    @i18nField(defaultValue = "你正在尝试导入数据库表，此行为会踢出所有玩家并关闭服务器，如确认继续请输入 /dominion import_db confirm")
+    public static i18n Commands_Operator_ImportDBConfirm;
+    @i18nField(defaultValue = "正在导入数据库表...")
+    public static i18n Commands_Operator_ImportDBBegin;
+    @i18nField(defaultValue = "数据库表导入完成")
+    public static i18n Commands_Operator_ImportDBSuccess;
+    @i18nField(defaultValue = "没有可导入的数据")
+    public static i18n Commands_Operator_ImportDBFail;
 
     @i18nField(defaultValue = "用法: /dominion template create <模板名称>")
     public static i18n Commands_Template_CreateTemplateUsage;
