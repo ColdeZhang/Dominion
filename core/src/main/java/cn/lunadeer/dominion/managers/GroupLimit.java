@@ -34,9 +34,21 @@ public class GroupLimit {
         WorldSetting defaultSetting = new WorldSetting(filePath.getName());
         defaultSetting.min_y = config.getInt("MinY", -64);
         defaultSetting.max_y = config.getInt("MaxY", 320);
-        defaultSetting.size_x = config.getInt("SizeX", 128);
-        defaultSetting.size_y = config.getInt("SizeY", 64);
-        defaultSetting.size_z = config.getInt("SizeZ", 128);
+        if (config.contains("SizeX")) { // todo: should be removed in the future
+            defaultSetting.size_max_x = config.getInt("SizeX", 128);
+            defaultSetting.size_max_y = config.getInt("SizeY", 64);
+            defaultSetting.size_max_z = config.getInt("SizeZ", 128);
+            defaultSetting.size_min_x = 4;
+            defaultSetting.size_min_y = 4;
+            defaultSetting.size_min_z = 4;
+        } else {
+            defaultSetting.size_max_x = config.getInt("Size.MaxX", 128);
+            defaultSetting.size_max_y = config.getInt("Size.MaxY", 64);
+            defaultSetting.size_max_z = config.getInt("Size.MaxZ", 128);
+            defaultSetting.size_min_x = config.getInt("Size.MinX", 4);
+            defaultSetting.size_min_y = config.getInt("Size.MinY", 4);
+            defaultSetting.size_min_z = config.getInt("Size.MinZ", 4);
+        }
         defaultSetting.amount = config.getInt("Amount", 10);
         defaultSetting.depth = config.getInt("Depth", 3);
         defaultSetting.vert = config.getBoolean("Vert", false);
@@ -68,27 +80,51 @@ public class GroupLimit {
         }
     }
 
-    public Integer getLimitSizeX(@Nullable World world) {
+    public Integer getLimitSizeMaxX(@Nullable World world) {
         if (world == null || !world_limits.containsKey(world.getName())) {
-            return world_limits.get("default").size_x;
+            return world_limits.get("default").size_max_x;
         } else {
-            return world_limits.get(world.getName()).size_x;
+            return world_limits.get(world.getName()).size_max_x;
         }
     }
 
-    public Integer getLimitSizeY(@Nullable World world) {
+    public Integer getLimitSizeMaxY(@Nullable World world) {
         if (world == null || !world_limits.containsKey(world.getName())) {
-            return world_limits.get("default").size_y;
+            return world_limits.get("default").size_max_y;
         } else {
-            return world_limits.get(world.getName()).size_y;
+            return world_limits.get(world.getName()).size_max_y;
         }
     }
 
-    public Integer getLimitSizeZ(@Nullable World world) {
+    public Integer getLimitSizeMaxZ(@Nullable World world) {
         if (world == null || !world_limits.containsKey(world.getName())) {
-            return world_limits.get("default").size_z;
+            return world_limits.get("default").size_max_z;
         } else {
-            return world_limits.get(world.getName()).size_z;
+            return world_limits.get(world.getName()).size_max_z;
+        }
+    }
+
+    public Integer getLimitSizeMinX(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").size_min_x;
+        } else {
+            return world_limits.get(world.getName()).size_min_x;
+        }
+    }
+
+    public Integer getLimitSizeMinY(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").size_min_y;
+        } else {
+            return world_limits.get(world.getName()).size_min_y;
+        }
+    }
+
+    public Integer getLimitSizeMinZ(@Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            return world_limits.get("default").size_min_z;
+        } else {
+            return world_limits.get(world.getName()).size_min_z;
         }
     }
 
@@ -145,27 +181,51 @@ public class GroupLimit {
         }
     }
 
-    public void setLimitSizeX(Integer size_x, @Nullable World world) {
+    public void setLimitSizeMaxX(Integer size_x, @Nullable World world) {
         if (world == null || !world_limits.containsKey(world.getName())) {
-            world_limits.get("default").size_x = size_x;
+            world_limits.get("default").size_max_x = size_x;
         } else {
-            world_limits.get(world.getName()).size_x = size_x;
+            world_limits.get(world.getName()).size_max_x = size_x;
         }
     }
 
-    public void setLimitSizeY(Integer size_y, @Nullable World world) {
+    public void setLimitSizeMaxY(Integer size_y, @Nullable World world) {
         if (world == null || !world_limits.containsKey(world.getName())) {
-            world_limits.get("default").size_y = size_y;
+            world_limits.get("default").size_max_y = size_y;
         } else {
-            world_limits.get(world.getName()).size_y = size_y;
+            world_limits.get(world.getName()).size_max_y = size_y;
         }
     }
 
-    public void setLimitSizeZ(Integer size_z, @Nullable World world) {
+    public void setLimitSizeMaxZ(Integer size_z, @Nullable World world) {
         if (world == null || !world_limits.containsKey(world.getName())) {
-            world_limits.get("default").size_z = size_z;
+            world_limits.get("default").size_max_z = size_z;
         } else {
-            world_limits.get(world.getName()).size_z = size_z;
+            world_limits.get(world.getName()).size_max_z = size_z;
+        }
+    }
+
+    public void setLimitSizeMinX(Integer size_x, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").size_min_x = size_x;
+        } else {
+            world_limits.get(world.getName()).size_min_x = size_x;
+        }
+    }
+
+    public void setLimitSizeMinY(Integer size_y, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").size_min_y = size_y;
+        } else {
+            world_limits.get(world.getName()).size_min_y = size_y;
+        }
+    }
+
+    public void setLimitSizeMinZ(Integer size_z, @Nullable World world) {
+        if (world == null || !world_limits.containsKey(world.getName())) {
+            world_limits.get("default").size_min_z = size_z;
+        } else {
+            world_limits.get(world.getName()).size_min_z = size_z;
         }
     }
 
@@ -251,12 +311,18 @@ public class GroupLimit {
         this.config.setInlineComments("MinY", List.of(Translation.Config_Comment_MinY.trans()));
         this.config.set("MaxY", world_limits.get("default").max_y);
         this.config.setInlineComments("MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
-        this.config.set("SizeX", world_limits.get("default").size_x);
-        this.config.setInlineComments("SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        this.config.set("SizeY", world_limits.get("default").size_y);
-        this.config.setInlineComments("SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        this.config.set("SizeZ", world_limits.get("default").size_z);
-        this.config.setInlineComments("SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Size.MaxX", world_limits.get("default").size_max_x);
+        this.config.setInlineComments("Size.MaxX", List.of(Translation.Config_Comment_SizeMaxX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Size.MaxY", world_limits.get("default").size_max_y);
+        this.config.setInlineComments("Size.MaxY", List.of(Translation.Config_Comment_SizeMaxY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Size.MaxZ", world_limits.get("default").size_max_z);
+        this.config.setInlineComments("Size.MaxZ", List.of(Translation.Config_Comment_SizeMaxZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        this.config.set("Size.MinX", world_limits.get("default").size_min_x);
+        this.config.setInlineComments("Size.MinX", List.of(Translation.Config_Comment_SizeMinX.trans()));
+        this.config.set("Size.MinY", world_limits.get("default").size_min_y);
+        this.config.setInlineComments("Size.MinY", List.of(Translation.Config_Comment_SizeMinY.trans()));
+        this.config.set("Size.MinZ", world_limits.get("default").size_min_z);
+        this.config.setInlineComments("Size.MinZ", List.of(Translation.Config_Comment_SizeMinZ.trans()));
         this.config.set("Amount", world_limits.get("default").amount);
         this.config.setInlineComments("Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         this.config.set("Depth", world_limits.get("default").depth);
