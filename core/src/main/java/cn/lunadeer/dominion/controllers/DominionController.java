@@ -727,20 +727,28 @@ public class DominionController {
         int x_length = x2 - x1;
         int y_length = y2 - y1;
         int z_length = z2 - z1;
-        if (x_length < 4 || y_length < 4 || z_length < 4) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeShouldBeGreaterThan4));
+        if (x_length < Dominion.config.getLimitSizeMinX(operator.getPlayer())) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeXShouldBeGreaterThan, Dominion.config.getLimitSizeMinX(operator.getPlayer())));
             return true;
         }
-        if (x_length > Dominion.config.getLimitSizeX(operator.getPlayer()) && Dominion.config.getLimitSizeX(operator.getPlayer()) > 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeXShouldBeLessThan, Dominion.config.getLimitSizeX(operator.getPlayer())));
+        if (y_length < Dominion.config.getLimitSizeMinY(operator.getPlayer())) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeYShouldBeGreaterThan, Dominion.config.getLimitSizeMinY(operator.getPlayer())));
             return true;
         }
-        if (y_length > Dominion.config.getLimitSizeY(operator.getPlayer()) && Dominion.config.getLimitSizeY(operator.getPlayer()) > 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeYShouldBeLessThan, Dominion.config.getLimitSizeY(operator.getPlayer())));
+        if (z_length < Dominion.config.getLimitSizeMinZ(operator.getPlayer())) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeZShouldBeGreaterThan, Dominion.config.getLimitSizeMinZ(operator.getPlayer())));
             return true;
         }
-        if (z_length > Dominion.config.getLimitSizeZ(operator.getPlayer()) && Dominion.config.getLimitSizeZ(operator.getPlayer()) > 0) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeZShouldBeLessThan, Dominion.config.getLimitSizeZ(operator.getPlayer())));
+        if (x_length > Dominion.config.getLimitSizeMaxX(operator.getPlayer()) && Dominion.config.getLimitSizeMaxX(operator.getPlayer()) > 0) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeXShouldBeLessThan, Dominion.config.getLimitSizeMaxX(operator.getPlayer())));
+            return true;
+        }
+        if (y_length > Dominion.config.getLimitSizeMaxY(operator.getPlayer()) && Dominion.config.getLimitSizeMaxY(operator.getPlayer()) > 0) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeYShouldBeLessThan, Dominion.config.getLimitSizeMaxY(operator.getPlayer())));
+            return true;
+        }
+        if (z_length > Dominion.config.getLimitSizeMaxZ(operator.getPlayer()) && Dominion.config.getLimitSizeMaxZ(operator.getPlayer()) > 0) {
+            operator.setResponse(FAIL.addMessage(Translation.Messages_SizeZShouldBeLessThan, Dominion.config.getLimitSizeMaxZ(operator.getPlayer())));
             return true;
         }
         if (y2 > Dominion.config.getLimitMaxY(operator.getPlayer())) {

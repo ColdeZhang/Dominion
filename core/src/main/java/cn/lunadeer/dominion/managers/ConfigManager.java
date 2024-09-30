@@ -69,9 +69,21 @@ public class ConfigManager {
         _group_title_suffix = _file.getString("GroupTitle.Suffix", "&#ffffff]");
 
         GroupLimit defaultGroup = new GroupLimit();
-        defaultGroup.setLimitSizeX(_file.getInt("Limit.SizeX", 128), null);
-        defaultGroup.setLimitSizeY(_file.getInt("Limit.SizeY", 64), null);
-        defaultGroup.setLimitSizeZ(_file.getInt("Limit.SizeZ", 128), null);
+        if (_file.contains("Limit.SizeX")) { // todo: should be removed in the future
+            defaultGroup.setLimitSizeMaxX(_file.getInt("Limit.SizeX", 128), null);
+            defaultGroup.setLimitSizeMaxY(_file.getInt("Limit.SizeY", 64), null);
+            defaultGroup.setLimitSizeMaxZ(_file.getInt("Limit.SizeZ", 128), null);
+            defaultGroup.setLimitSizeMinX(4, null);
+            defaultGroup.setLimitSizeMinY(4, null);
+            defaultGroup.setLimitSizeMinZ(4, null);
+        } else {
+            defaultGroup.setLimitSizeMaxX(_file.getInt("Limit.Size.MaxX", 128), null);
+            defaultGroup.setLimitSizeMaxY(_file.getInt("Limit.Size.MaxY", 64), null);
+            defaultGroup.setLimitSizeMaxZ(_file.getInt("Limit.Size.MaxZ", 128), null);
+            defaultGroup.setLimitSizeMinX(_file.getInt("Limit.Size.MinX", 4), null);
+            defaultGroup.setLimitSizeMinY(_file.getInt("Limit.Size.MinY", 4), null);
+            defaultGroup.setLimitSizeMinZ(_file.getInt("Limit.Size.MinZ", 4), null);
+        }
         defaultGroup.setLimitMinY(_file.getInt("Limit.MinY", -64), null);
         defaultGroup.setLimitMaxY(_file.getInt("Limit.MaxY", 320), null);
         defaultGroup.setLimitAmount(_file.getInt("Limit.Amount", 10), null);
@@ -133,12 +145,18 @@ public class ConfigManager {
         _file.setInlineComments("Limit.MinY", List.of(Translation.Config_Comment_MinY.trans()));
         _file.set("Limit.MaxY", groupLimits.get("default").getLimitMaxY(null));
         _file.setInlineComments("Limit.MaxY", List.of(Translation.Config_Comment_MaxY.trans()));
-        _file.set("Limit.SizeX", groupLimits.get("default").getLimitSizeX(null));
-        _file.setInlineComments("Limit.SizeX", List.of(Translation.Config_Comment_SizeX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.SizeY", groupLimits.get("default").getLimitSizeY(null));
-        _file.setInlineComments("Limit.SizeY", List.of(Translation.Config_Comment_SizeY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
-        _file.set("Limit.SizeZ", groupLimits.get("default").getLimitSizeZ(null));
-        _file.setInlineComments("Limit.SizeZ", List.of(Translation.Config_Comment_SizeZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.set("Limit.Size.MaxX", groupLimits.get("default").getLimitSizeMaxX(null));
+        _file.setInlineComments("Limit.Size.MaxX", List.of(Translation.Config_Comment_SizeMaxX.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.set("Limit.Size.MaxY", groupLimits.get("default").getLimitSizeMaxY(null));
+        _file.setInlineComments("Limit.Size.MaxY", List.of(Translation.Config_Comment_SizeMaxY.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.set("Limit.Size.MaxZ", groupLimits.get("default").getLimitSizeMaxZ(null));
+        _file.setInlineComments("Limit.Size.MaxZ", List.of(Translation.Config_Comment_SizeMaxZ.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
+        _file.set("Limit.Size.MinX", groupLimits.get("default").getLimitSizeMinX(null));
+        _file.setInlineComments("Limit.Size.MinX", List.of(Translation.Config_Comment_SizeMinX.trans()));
+        _file.set("Limit.Size.MinY", groupLimits.get("default").getLimitSizeMinY(null));
+        _file.setInlineComments("Limit.Size.MinY", List.of(Translation.Config_Comment_SizeMinY.trans()));
+        _file.set("Limit.Size.MinZ", groupLimits.get("default").getLimitSizeMinZ(null));
+        _file.setInlineComments("Limit.Size.MinZ", List.of(Translation.Config_Comment_SizeMinZ.trans()));
         _file.set("Limit.Amount", groupLimits.get("default").getLimitAmount(null));
         _file.setInlineComments("Limit.Amount", List.of(Translation.Config_Comment_Amount.trans() + Translation.Config_Comment_NegativeOneUnlimited.trans()));
         _file.set("Limit.Depth", groupLimits.get("default").getLimitDepth(null));
@@ -249,16 +267,28 @@ public class ConfigManager {
         return _db_pass;
     }
 
-    public Integer getLimitSizeX(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitSizeX(player.getWorld());
+    public Integer getLimitSizeMaxX(Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeMaxX(player.getWorld());
     }
 
-    public Integer getLimitSizeY(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitSizeY(player.getWorld());
+    public Integer getLimitSizeMaxY(Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeMaxY(player.getWorld());
     }
 
-    public Integer getLimitSizeZ(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitSizeZ(player.getWorld());
+    public Integer getLimitSizeMaxZ(Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeMaxZ(player.getWorld());
+    }
+
+    public Integer getLimitSizeMinX(Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeMinX(player.getWorld());
+    }
+
+    public Integer getLimitSizeMinY(Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeMinY(player.getWorld());
+    }
+
+    public Integer getLimitSizeMinZ(Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitSizeMinZ(player.getWorld());
     }
 
     public Integer getAutoCreateRadius() {

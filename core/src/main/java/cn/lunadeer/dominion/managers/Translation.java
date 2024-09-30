@@ -316,14 +316,18 @@ public class Translation extends Localization {
     public static i18n Messages_SetMapColorSuccess;
     @i18nField(defaultValue = "尺寸不合法")
     public static i18n Messages_SizeInvalid;
-    @i18nField(defaultValue = "领地的任意一边长度不得小于4")
-    public static i18n Messages_SizeShouldBeGreaterThan4;
     @i18nField(defaultValue = "领地X方向(东西)长度不能超过 %d")
     public static i18n Messages_SizeXShouldBeLessThan;
     @i18nField(defaultValue = "领地Y方向(上下)高度不能超过 %d")
     public static i18n Messages_SizeYShouldBeLessThan;
     @i18nField(defaultValue = "领地Z方向(南北)长度不能超过 %d")
     public static i18n Messages_SizeZShouldBeLessThan;
+    @i18nField(defaultValue = "领地X方向(东西)长度不能少于 %d")
+    public static i18n Messages_SizeXShouldBeGreaterThan;
+    @i18nField(defaultValue = "领地Y方向(上下)高度不能少于 %d")
+    public static i18n Messages_SizeYShouldBeGreaterThan;
+    @i18nField(defaultValue = "领地Z方向(南北)长度不能少于 %d")
+    public static i18n Messages_SizeZShouldBeGreaterThan;
     @i18nField(defaultValue = "领地Y坐标上限不能超过 %d")
     public static i18n Messages_MaxYShouldBeLessThan;
     @i18nField(defaultValue = "领地Y坐标下限不能超过 %d")
@@ -824,12 +828,24 @@ public class Translation extends Localization {
     public static i18n Config_Check_ToolNameError;
     @i18nField(defaultValue = "%s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320")
     public static i18n Config_Check_GroupMinYError;
-    @i18nField(defaultValue = "%s 的 SizeX 设置过小，已重置为 128")
-    public static i18n Config_Check_GroupSizeXError;
-    @i18nField(defaultValue = "%s 的 SizeY 设置过小，已重置为 64")
-    public static i18n Config_Check_GroupSizeYError;
-    @i18nField(defaultValue = "%s 的 SizeZ 设置过小，已重置为 128")
-    public static i18n Config_Check_GroupSizeZError;
+    @i18nField(defaultValue = "%s 的 Size.MaxX 设置过小，已重置为 128")
+    public static i18n Config_Check_GroupSizeMaxXError;
+    @i18nField(defaultValue = "%s 的 Size.MaxY 设置过小，已重置为 64")
+    public static i18n Config_Check_GroupSizeMaxYError;
+    @i18nField(defaultValue = "%s 的 Size.MaxZ 设置过小，已重置为 128")
+    public static i18n Config_Check_GroupSizeMaxZError;
+    @i18nField(defaultValue = "%s 的 Size.MinX 设置过小，已重置为 4")
+    public static i18n Config_Check_GroupSizeMinXError;
+    @i18nField(defaultValue = "%s 的 Size.MinY 设置过小，已重置为 4")
+    public static i18n Config_Check_GroupSizeMinYError;
+    @i18nField(defaultValue = "%s 的 Size.MinZ 设置过小，已重置为 4")
+    public static i18n Config_Check_GroupSizeMinZError;
+    @i18nField(defaultValue = "%s 的 Size.MaxX 不能小于 MinX，已重置为 128 和 4")
+    public static i18n Config_Check_GroupMaxMinXError;
+    @i18nField(defaultValue = "%s 的 Size.MinY 不能小于 MinY，已重置为 64 和 4")
+    public static i18n Config_Check_GroupMaxMinYError;
+    @i18nField(defaultValue = "%s 的 Size.MaxZ 不能小于 MinZ，已重置为 128 和 4")
+    public static i18n Config_Check_GroupMaxMinZError;
     @i18nField(defaultValue = "%s 的 Amount 设置不合法，已重置为 10")
     public static i18n Config_Check_GroupAmountError;
     @i18nField(defaultValue = "%s 的 Depth 设置不合法，已重置为 3")
@@ -872,11 +888,17 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "-1表示不限制")
     public static i18n Config_Comment_NegativeOneUnlimited;
     @i18nField(defaultValue = "X方向最大长度")
-    public static i18n Config_Comment_SizeX;
+    public static i18n Config_Comment_SizeMaxX;
     @i18nField(defaultValue = "Y方向最大长度")
-    public static i18n Config_Comment_SizeY;
+    public static i18n Config_Comment_SizeMaxY;
     @i18nField(defaultValue = "Z方向最大长度")
-    public static i18n Config_Comment_SizeZ;
+    public static i18n Config_Comment_SizeMaxZ;
+    @i18nField(defaultValue = "X方向最小长度")
+    public static i18n Config_Comment_SizeMinX;
+    @i18nField(defaultValue = "Y方向最小长度")
+    public static i18n Config_Comment_SizeMinY;
+    @i18nField(defaultValue = "Z方向最小长度")
+    public static i18n Config_Comment_SizeMinZ;
     @i18nField(defaultValue = "最大领地数量")
     public static i18n Config_Comment_Amount;
     @i18nField(defaultValue = "子领地深度")
