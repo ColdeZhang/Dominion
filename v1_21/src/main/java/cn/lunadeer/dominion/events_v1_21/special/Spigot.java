@@ -12,16 +12,15 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.Listener;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
 
 public class Spigot implements Listener {
 
     static {
-        Map<UUID, Location> entityMap = new HashMap<>();
+        ConcurrentHashMap<UUID, Location> entityMap = new ConcurrentHashMap<>();
         Scheduler.runTaskRepeat(() -> {
             Dominion.instance.getServer().getWorlds().forEach(world -> {
                 world.getEntities().forEach(entity -> {
