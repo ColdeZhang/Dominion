@@ -18,3 +18,6 @@ Dominion 是一个完全开源、免费，专为高版本开发，面向未来�
 1. [安装、必读、常见问题](operator/README.md)
 2. [配置文件参考](operator/config.md)
 
+什么，你是新手服主？推荐通读一下[驿站](https://github.com/postyizhan)大佬的 [笨蛋文档｜一群笨蛋们写的 Minecraft 开服教程](https://yizhan.wiki/NitWikit/Java/intro)。
+希望能对你的开服之路有所帮助！
+
