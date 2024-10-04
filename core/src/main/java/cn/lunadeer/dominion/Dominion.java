@@ -39,6 +39,7 @@ public final class Dominion extends JavaPlugin {
         new Scheduler(this);
         AutoClean.run();
         Cache.instance = new Cache();
+        DominionInterface.instance = new DominionInterface();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PlaceHolderApi(this);
