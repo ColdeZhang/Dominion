@@ -6,7 +6,7 @@
 
 ### 1. 引入依赖
 
-If you are using gradle, you can add the following code to your `build.gradle` file:
+如果您使用 gradle，可以在您的 `build.gradle` 文件中添加如下代码：
 
 ```groovy
 // build.gradle
@@ -15,11 +15,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:1.4-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:2.0-SNAPSHOT")
 }
 ```
 
-or if you are using gradle kotlin dsl:
+或者你使用的是 gradle kotlin dsl：
 
 ```kotlin
 // build.gradle.kts
@@ -28,11 +28,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:1.4-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:2.0-SNAPSHOT")
 }
 ```
 
-or if you are using maven, you can add the following code to your `pom.xml` file:
+再或者您使用 maven，可以在您的 `pom.xml` 文件中添加如下代码：
 
 ```xml
 <!-- pom.xml -->
@@ -47,7 +47,7 @@ or if you are using maven, you can add the following code to your `pom.xml` file
 <dependency>
     <groupId>cn.lunadeer</groupId>
     <artifactId>DominionAPI</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>
 </dependencies>
@@ -93,3 +93,5 @@ public void onEnable() {
     }
 }
 ```
+
+[示例项目地址](https://github.com/ColdeZhang/DominionPluginExample)。

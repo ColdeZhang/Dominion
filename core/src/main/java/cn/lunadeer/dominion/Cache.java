@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static cn.lunadeer.dominion.DominionNode.getLocInDominionNode;
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
 
-public class Cache implements DominionAPI {
+public class Cache {
 
     public Cache() {
         player_current_dominion_id = new HashMap<>();
@@ -206,7 +206,6 @@ public class Cache implements DominionAPI {
         });
     }
 
-    @Override
     public DominionDTO getPlayerCurrentDominion(@NotNull Player player) {
         try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
             Integer last_in_dom_id = player_current_dominion_id.get(player.getUniqueId());
@@ -261,7 +260,6 @@ public class Cache implements DominionAPI {
         }
     }
 
-    @Override
     public DominionDTO getDominionByLoc(@NotNull Location loc) {
         return dominion_trees.getLocInDominionDTO(loc);
     }
@@ -345,18 +343,15 @@ public class Cache implements DominionAPI {
         }
     }
 
-    @Override
     public GroupDTO getGroup(@NotNull Integer id) {
         return id_groups.get(id);
     }
 
-    @Override
     public MemberDTO getMember(@NotNull Player player, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
         if (!player_uuid_to_member.containsKey(player.getUniqueId())) return null;
         return player_uuid_to_member.get(player.getUniqueId()).get(dominion.getId());
     }
 
-    @Override
     public MemberDTO getMember(@NotNull UUID player_uuid, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
         if (!player_uuid_to_member.containsKey(player_uuid)) return null;
         return player_uuid_to_member.get(player_uuid).get(dominion.getId());
@@ -376,7 +371,6 @@ public class Cache implements DominionAPI {
         return groups;
     }
 
-    @Override
     public DominionDTO getDominion(@NotNull Integer id) {
         return id_dominions.get(id);
     }
@@ -420,7 +414,6 @@ public class Cache implements DominionAPI {
         return residence_data.get(player_uuid);
     }
 
-    @Override
     public @NotNull List<cn.lunadeer.dominion.api.dtos.DominionDTO> getAllDominions() {
         return new ArrayList<>(id_dominions.values());
     }
@@ -601,7 +594,6 @@ public class Cache implements DominionAPI {
         }
     }
 
-    @Override
     public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
         if (!Dominion.config.getGroupTitleEnable()) {
             return null;
