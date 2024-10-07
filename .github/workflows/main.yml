@@ -19,7 +19,14 @@ jobs:
           distribution: 'zulu'
           cache: gradle
       - name: "Build with Gradle"
-        run: ./BuildScript.sh all
+        run: |
+          ./gradlew clean
+          ./gradlew shadowJar -PBuildFull=false
+          ./gradlew shadowJar -PBuildFull=true
+      - name: "Stage"
+        run: |
+          mkdir -p staging
+          mv build/libs/*.jar staging/
       - name: "Build & test"
         run: |
           TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
