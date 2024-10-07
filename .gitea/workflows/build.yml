@@ -21,9 +21,8 @@ jobs:
           cache: gradle
       - name: "Build with Gradle"
         run: |
-          ./gradlew buildPlugin
-      - name: "Copy jar to staging"
-        run: mkdir staging && cp build/libs/*.jar staging/
+          chmod +x ./BuildScript.sh
+          ./BuildScript.sh all
       - name: "Build & test"
         run: |
           echo "done!"
@@ -36,7 +35,7 @@ jobs:
       - name: "Release"
         uses: https://ssl.lunadeer.cn:14446/zhangyuheng/release-action@main
         with:
-          note: " - 带 `original-` 前缀的文件无法用于运行，请下载不带此前缀的版本。"
+          note: " - `full` 后缀包含所有依赖直接安装即可使用，`lite` 后缀不包含任何依赖，会在第一次安装后启动时自动下载"
           files: |-
             staging/*.jar
           api_key: '${{secrets.RELEASE_TOKEN}}'

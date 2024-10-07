@@ -6,8 +6,12 @@ plugins {
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
 }
 
+var BuildFull = properties["BuildFull"].toString() == "true"
+var libraries = listOf<String>()
+libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:1.3.10"
+
 group = "cn.lunadeer"
-version = "2.10.2-beta"
+version = "2.11.0-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -29,7 +33,6 @@ allprojects {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://jitpack.io")
         maven("https://repo.mikeprimm.com/")
-        maven("https://ssl.lunadeer.cn:14454/repository/maven-snapshots/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
 
@@ -38,8 +41,15 @@ allprojects {
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
         compileOnly("me.clip:placeholderapi:2.11.6")
 
-        implementation("cn.lunadeer:MinecraftPluginUtils:1.3.10-SNAPSHOT")
-        implementation("org.yaml:snakeyaml:2.0")
+        if (!BuildFull) {
+            libraries.forEach {
+                compileOnly(it)
+            }
+        } else {
+            libraries.forEach {
+                implementation(it)
+            }
+        }
     }
 
     tasks.processResources {
@@ -53,6 +63,15 @@ allprojects {
             filter {
                 it.replace("@version@", rootProject.version.toString())
             }
+            if (!BuildFull) {
+                var libs = "libraries: ["
+                libraries.forEach {
+                    libs += "$it,"
+                }
+                filter {
+                    it.replace("libraries: []", libs.substring(0, libs.length - 1) + "]")
+                }
+            }
         }
     }
 
@@ -60,6 +79,8 @@ allprojects {
         archiveClassifier.set("")
         archiveVersion.set(project.version.toString())
         dependsOn(tasks.withType<ProcessResources>())
+        // add -lite to the end of the file name if BuildLite is true or -full if BuildLite is false
+        archiveFileName.set("${project.name}-${project.version}${if (BuildFull) "-full" else "-lite"}.jar")
     }
 }
 
@@ -74,7 +95,7 @@ tasks.shadowJar {
     archiveVersion.set(project.version.toString())
 }
 
-tasks.register("buildPlugin") { // <<<< RUN THIS TASK TO BUILD PLUGIN
+tasks.register("Clean&Build") { // <<<< RUN THIS TASK TO BUILD PLUGIN
     dependsOn(tasks.clean)
     dependsOn(tasks.shadowJar)
 }
@@ -98,5 +119,5 @@ hangarPublish {
 }
 
 tasks.named("publishPluginPublicationToHangar") {
-    dependsOn(tasks.named("jar"))
+    dependsOn(tasks.named("Clean&Build"))
 }
