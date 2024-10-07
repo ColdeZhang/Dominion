@@ -11,7 +11,7 @@ var libraries = listOf<String>()
 libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:1.3.10"
 
 group = "cn.lunadeer"
-version = "2.13.2-beta"
+version = "2.13.3-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -119,5 +119,5 @@ hangarPublish {
 }
 
 tasks.named("publishPluginPublicationToHangar") {
-    dependsOn(tasks.named("Clean&Build"))
+    dependsOn(tasks.named("jar"))
 }
