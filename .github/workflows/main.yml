@@ -19,9 +19,7 @@ jobs:
           distribution: 'zulu'
           cache: gradle
       - name: "Build with Gradle"
-        run: |
-          chmod +x ./BuildScript.sh
-          ./BuildScript.sh all
+        run: ./BuildScript.sh all
       - name: "Build & test"
         run: |
           TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
