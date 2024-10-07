@@ -25,7 +25,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             groupId = "cn.lunadeer"
             artifactId = "DominionAPI"
-            version = "1.5-SNAPSHOT"
+            version = "2.0-SNAPSHOT"
             from(components["java"])
         }
     }

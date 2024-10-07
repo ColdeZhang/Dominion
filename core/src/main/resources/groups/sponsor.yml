@@ -1,8 +1,12 @@
 MinY: -64
 MaxY: 320
-SizeX: 128
-SizeY: 64
-SizeZ: 128
+Size:
+  MaxX: 128
+  MaxY: 64
+  MaxZ: 128
+  MinX: 4
+  MinY: 4
+  MinZ: 4
 Amount: 10
 Depth: 3
 Vert: false
@@ -13,9 +17,13 @@ WorldSettings:
   some_world_name:
     MinY: -64
     MaxY: 320
-    SizeX: 128
-    SizeY: 64
-    SizeZ: 128
+    Size:
+      MaxX: 128
+      MaxY: 64
+      MaxZ: 128
+      MinX: 4
+      MinY: 4
+      MinZ: 4
     Amount: 10
     Depth: 3
     Vert: false
