@@ -19,10 +19,9 @@ jobs:
           distribution: 'zulu'
           cache: gradle
       - name: "Build with Gradle"
-        run: ./gradlew buildPlugin
-      - name: "Copy jar to staging"
         run: |
-          mkdir staging && cp build/libs/*.jar staging/
+          chmod +x ./BuildScript.sh
+          ./BuildScript.sh all
       - name: "Build & test"
         run: |
           TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
@@ -46,7 +45,7 @@ jobs:
           game_versions: 1.20.1:1.20.6,1.21,1.21.1
           version_number: ${{ env.AUTOMATIC_RELEASES_TAG }}
           files: |
-            staging/*.jar
+            staging/*-lite.jar
           changelog: "See https://github.com/ColdeZhang/Dominion/releases/tag/${{ env.AUTOMATIC_RELEASES_TAG }}"
           version_type: beta
           featured: false
@@ -55,5 +54,4 @@ jobs:
       - name: "Hangar Release"
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
-        run: ./gradlew build publishPluginPublicationToHangar --stacktrace
-        continue-on-error: true
+        run: ./gradlew build publishPluginPublicationToHangar -PBuildFull=false

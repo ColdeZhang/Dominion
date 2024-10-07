@@ -3,6 +3,7 @@ version: @version@
 main: cn.lunadeer.dominion.Dominion
 api-version: '1.20'
 folia-supported: true
+libraries: [ ]
 softdepend:
   - Vault
   - dynmap
