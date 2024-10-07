@@ -11,7 +11,7 @@ var libraries = listOf<String>()
 libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:1.3.10"
 
 group = "cn.lunadeer"
-version = "2.13.3-beta"
+version = "2.13.4-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -69,7 +69,7 @@ allprojects {
                     libs += "$it,"
                 }
                 filter {
-                    it.replace("libraries: []", libs.substring(0, libs.length - 1) + "]")
+                    it.replace("libraries: [ ]", libs.substring(0, libs.length - 1) + "]")
                 }
             }
         }
