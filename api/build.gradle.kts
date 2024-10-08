@@ -20,13 +20,22 @@ tasks.jar {
     archiveClassifier.set("sources")
 }
 
+tasks.register<Jar>("doc") {
+    archiveClassifier.set("javadoc")
+    from(tasks.javadoc)
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             groupId = "cn.lunadeer"
             artifactId = "DominionAPI"
             version = "2.0-SNAPSHOT"
+            // 添加组件
             from(components["java"])
+
+            // 添加Javadoc JAR
+            artifact(tasks["doc"])
         }
     }
     repositories {
