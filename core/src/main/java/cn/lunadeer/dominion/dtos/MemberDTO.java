@@ -56,7 +56,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
             List<MemberDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
             Cache.instance.loadMembers(getPlayerUUID());
-            return players.getFirst();
+            return players.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("MemberDTO.doUpdate ", e, "");
             return null;
@@ -76,7 +76,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
             Cache.instance.loadMembers(player.getPlayerUUID());
             List<MemberDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
-            return players.getFirst();
+            return players.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("MemberDTO.insert ", e, "");
             return null;
@@ -87,7 +87,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         String sql = "SELECT * FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
         List<MemberDTO> p = query(sql, playerUUID.toString(), dom_id);
         if (p.isEmpty()) return null;
-        return p.getFirst();
+        return p.get(0);
     }
 
     public static List<MemberDTO> select(Integer dom_id) {

@@ -89,7 +89,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         String sql = "SELECT * FROM dominion WHERE id = ? AND id > 0;";
         List<DominionDTO> dominions = query(sql, id);
         if (dominions.isEmpty()) return null;
-        return dominions.getFirst();
+        return dominions.get(0);
     }
 
     public static List<DominionDTO> selectByParentId(World world, Integer parentId) {
@@ -113,7 +113,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         String sql = "SELECT * FROM dominion WHERE name = ? AND id > 0;";
         List<DominionDTO> dominions = query(sql, name);
         if (dominions.isEmpty()) return null;
-        return dominions.getFirst();
+        return dominions.get(0);
     }
 
     public static DominionDTO insert(DominionDTO dominion) {
@@ -133,7 +133,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             Cache.instance.loadDominions();
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.isEmpty()) return null;
-            return dominions.getFirst();
+            return dominions.get(0);
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("DominionDTO.insert ", e, insert.toString());
             return null;
@@ -237,7 +237,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             List<DominionDTO> dominions = getDTOFromRS(rs);
             if (dominions.isEmpty()) return null;
             Cache.instance.loadDominions((Integer) id.value);
-            return dominions.getFirst();
+            return dominions.get(0);
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("DominionDTO.doUpdate ", e, updateRow.toString());
             return null;

@@ -107,8 +107,8 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.isEmpty()) return null;
-            Cache.instance.loadGroups(groups.getFirst().getId());
-            return groups.getFirst();
+            Cache.instance.loadGroups(groups.get(0).getId());
+            return groups.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("GroupDTO.create ", e, "");
             return null;
@@ -133,14 +133,14 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         String sql = "SELECT * FROM dominion_group WHERE id = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, id));
         if (groups.isEmpty()) return null;
-        return groups.getFirst();
+        return groups.get(0);
     }
 
     public static GroupDTO select(Integer domID, String name) {
         String sql = "SELECT * FROM dominion_group WHERE dom_id = ? AND name = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, domID, name));
         if (groups.isEmpty()) return null;
-        return groups.getFirst();
+        return groups.get(0);
     }
 
     public static List<GroupDTO> selectAll() {
@@ -205,7 +205,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
             List<GroupDTO> groups = getDTOFromRS(rs);
             if (groups.isEmpty()) return null;
             Cache.instance.loadGroups((Integer) id.value);
-            return groups.getFirst();
+            return groups.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("更新权限组失败: ", e, "");
             return null;

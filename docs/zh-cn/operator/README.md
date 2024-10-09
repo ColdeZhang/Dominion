@@ -4,7 +4,6 @@
 
 - 1.20.1 及以上；
 - Spigot、Paper、Folia...；
-- Java 21 及以上；
 
 > 虽然本插件支持 Spigot 但是我们强烈推荐您升级到 Paper 或其分支核心（如 Purpur）以获得更好的性能体验。
 

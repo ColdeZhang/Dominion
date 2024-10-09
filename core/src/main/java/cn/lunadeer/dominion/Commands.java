@@ -224,6 +224,7 @@ public class Commands implements TabExecutor {
                     "export_mca",
                     "export_db",
                     "import_db",
+                    "version",
                     "sys_config",
                     "all_dominion",
                     "set_map_color",

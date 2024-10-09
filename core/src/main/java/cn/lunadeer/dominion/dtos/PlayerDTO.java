@@ -77,14 +77,14 @@ public class PlayerDTO {
         String sql = "SELECT * FROM player_name WHERE uuid = ?;";
         List<PlayerDTO> players = query(sql, uuid.toString());
         if (players.isEmpty()) return null;
-        return players.getFirst();
+        return players.get(0);
     }
 
     public static PlayerDTO select(String name) {
         String sql = "SELECT * FROM player_name WHERE last_known_name = ?;";
         List<PlayerDTO> players = query(sql, name);
         if (players.isEmpty()) return null;
-        return players.getFirst();
+        return players.get(0);
     }
 
     public static List<PlayerDTO> search(String name) {
@@ -114,7 +114,7 @@ public class PlayerDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<PlayerDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
-            return players.getFirst();
+            return players.get(0);
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("PlayerDTO.insert ", e, insertRow.toString());
             return null;
@@ -136,7 +136,7 @@ public class PlayerDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<PlayerDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
-            return players.getFirst();
+            return players.get(0);
         } catch (SQLException e) {
             DatabaseManager.handleDatabaseError("PlayerDTO.update ", e, updateRow.toString());
             return null;
