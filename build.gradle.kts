@@ -8,13 +8,13 @@ plugins {
 
 var BuildFull = properties["BuildFull"].toString() == "true"
 var libraries = listOf<String>()
-libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:1.3.10"
+libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:2.0.2"
 
 group = "cn.lunadeer"
-version = "2.13.4-beta"
+version = "2.13.5-beta"
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 // utf-8

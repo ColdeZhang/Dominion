@@ -55,7 +55,7 @@ public class PrivilegeTemplateDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<PrivilegeTemplateDTO> templates = getDTOFromRS(rs);
             if (templates.isEmpty()) return null;
-            return templates.getFirst();
+            return templates.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("PrivilegeTemplateDTO.create ", e, null);
             return null;
@@ -70,7 +70,7 @@ public class PrivilegeTemplateDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<PrivilegeTemplateDTO> templates = getDTOFromRS(rs);
             if (templates.isEmpty()) return null;
-            return templates.getFirst();
+            return templates.get(0);
         } catch (Exception e) {
             DatabaseManager.handleDatabaseError("PrivilegeTemplateDTO.doUpdate ", e, null);
             return null;
@@ -81,7 +81,7 @@ public class PrivilegeTemplateDTO {
         String sql = "SELECT * FROM privilege_template WHERE creator = ? AND name = ?;";
         List<PrivilegeTemplateDTO> templates = query(sql, creator.toString(), name);
         if (templates.isEmpty()) return null;
-        return templates.getFirst();
+        return templates.get(0);
     }
 
     public static List<PrivilegeTemplateDTO> selectAll(UUID creator) {

@@ -30,9 +30,6 @@ For detail functions and features of Dominion, you can view [Introduction](intro
 
 - 1.20.1+ (Bukkit、Spigot、Paper、Folia)
 
-> You need to use Java21 to run your server. If you are still using Java17, you can safely replace it with Java21. In
-> theory, version 1.20.1+ can be directly upgraded to Java21.
-
 > Although this plugin supports Spigot, we strongly recommend that you upgrade your core to Paper or its forked (such as
 > Purpur) for a better performance experience.
 
