@@ -220,12 +220,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
     // getters and setters
     @Override
-    public Integer getId() {
+    public @NotNull Integer getId() {
         return (Integer) id.value;
     }
 
     @Override
-    public UUID getOwner() {
+    public @NotNull UUID getOwner() {
         return UUID.fromString((String) owner.value);
     }
 
@@ -250,7 +250,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return (String) name.value;
     }
 
@@ -265,12 +265,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public UUID getWorldUid() {
+    public @NotNull UUID getWorldUid() {
         return UUID.fromString((String) world_uid.value);
     }
 
     @Override
-    public Integer getX1() {
+    public @NotNull Integer getX1() {
         return (Integer) x1.value;
     }
 
@@ -280,7 +280,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Integer getY1() {
+    public @NotNull Integer getY1() {
         return (Integer) y1.value;
     }
 
@@ -290,7 +290,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Integer getZ1() {
+    public @NotNull Integer getZ1() {
         return (Integer) z1.value;
     }
 
@@ -300,7 +300,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Integer getX2() {
+    public @NotNull Integer getX2() {
         return (Integer) x2.value;
     }
 
@@ -310,7 +310,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Integer getY2() {
+    public @NotNull Integer getY2() {
         return (Integer) y2.value;
     }
 
@@ -320,7 +320,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Integer getZ2() {
+    public @NotNull Integer getZ2() {
         return (Integer) z2.value;
     }
 
@@ -330,37 +330,37 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Integer getSquare() {
+    public @NotNull Integer getSquare() {
         return getWidthX() * getWidthZ();
     }
 
     @Override
-    public Integer getVolume() {
+    public @NotNull Integer getVolume() {
         return getSquare() * getHeight();
     }
 
     @Override
-    public Integer getWidthX() {
+    public @NotNull Integer getWidthX() {
         return getX2() - getX1();
     }
 
     @Override
-    public Integer getHeight() {
+    public @NotNull Integer getHeight() {
         return getY2() - getY1();
     }
 
     @Override
-    public Integer getWidthZ() {
+    public @NotNull Integer getWidthZ() {
         return getZ2() - getZ1();
     }
 
     @Override
-    public Integer getParentDomId() {
+    public @NotNull Integer getParentDomId() {
         return (Integer) parentDomId.value;
     }
 
     @Override
-    public String getJoinMessage() {
+    public @NotNull String getJoinMessage() {
         return (String) joinMessage.value;
     }
 
@@ -370,7 +370,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public String getLeaveMessage() {
+    public @NotNull String getLeaveMessage() {
         return (String) leaveMessage.value;
     }
 
@@ -379,10 +379,23 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return doUpdate(new UpdateRow().field(this.leaveMessage));
     }
 
-    @Override
     public Boolean getFlagValue(Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
+    }
+
+    @Override
+    public @NotNull Map<Flag, Boolean> getEnvironmentFlagValue() {
+        return flags.entrySet().stream()
+                .filter(e -> e.getKey().isEnvironmentFlag())
+                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+    }
+
+    @Override
+    public @NotNull Map<Flag, Boolean> getGuestPrivilegeFlagValue() {
+        return flags.entrySet().stream()
+                .filter(e -> !e.getKey().isEnvironmentFlag())
+                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
 
     public DominionDTO setFlagValue(Flag flag, Boolean value) {
@@ -435,12 +448,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public Location getLocation1() {
+    public @NotNull Location getLocation1() {
         return new Location(getWorld(), getX1(), getY1(), getZ1());
     }
 
     @Override
-    public Location getLocation2() {
+    public @NotNull Location getLocation2() {
         return new Location(getWorld(), getX2(), getY2(), getZ2());
     }
 
@@ -465,7 +478,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public String getColor() {
+    public @NotNull String getColor() {
         return (String) color.value;
     }
 

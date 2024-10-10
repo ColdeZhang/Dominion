@@ -39,9 +39,9 @@ public class SelectMember {
         }
         int backPage = getPage(args, 4);
         int page = getPage(args, 5);
-        ListView view = ListView.create(10, "/dominion group select_member " + dominion.getName() + " " + group.getName() + " " + backPage);
+        ListView view = ListView.create(10, "/dominion group select_member " + dominion.getName() + " " + group.getNamePlain() + " " + backPage);
         view.title(Translation.TUI_SelectMember_Title);
-        Line sub = Line.create().append(String.format(Translation.TUI_SelectMember_Description.trans(), group.getName()))
+        Line sub = Line.create().append(String.format(Translation.TUI_SelectMember_Description.trans(), group.getNamePlain()))
                 .append(Button.create(Translation.TUI_BackButton).setExecuteCommand("/dominion group list " + dominion.getName() + " " + backPage).build());
         view.subtitle(sub);
         List<MemberDTO> members = MemberDTO.selectByDomGroupId(dominion.getId(), -1);
@@ -50,7 +50,7 @@ public class SelectMember {
             if (p == null) continue;
             view.add(Line.create()
                     .append(Button.create(p.getLastKnownName())
-                            .setExecuteCommand("/dominion group add_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + backPage)
+                            .setExecuteCommand("/dominion group add_member " + dominion.getName() + " " + group.getNamePlain() + " " + p.getLastKnownName() + " " + backPage)
                             .build()));
         }
         view.showOn(player, page);

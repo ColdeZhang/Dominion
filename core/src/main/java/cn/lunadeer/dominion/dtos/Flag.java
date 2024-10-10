@@ -7,6 +7,7 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.i18n.Localization;
 import com.alibaba.fastjson.JSONObject;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,28 +103,33 @@ public enum Flag implements cn.lunadeer.dominion.api.dtos.Flag {
     }
 
     @Override
-    public String getFlagName() {
+    public @NotNull String getFlagName() {
         return flag_name;
     }
 
     @Override
-    public String getDisplayName() {
+    public @NotNull String getDisplayName() {
         return display_name;
     }
 
     @Override
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return description;
     }
 
     @Override
-    public Boolean getDefaultValue() {
+    public @NotNull Boolean getDefaultValue() {
         return default_value;
     }
 
     @Override
-    public Boolean getEnable() {
+    public @NotNull Boolean getEnable() {
         return enable;
+    }
+
+    @Override
+    public @NotNull Boolean isEnvironmentFlag() {
+        return dominion_only;
     }
 
     public void setDisplayName(String displayName) {
@@ -154,7 +160,24 @@ public enum Flag implements cn.lunadeer.dominion.api.dtos.Flag {
         return Arrays.asList(Flag.values());
     }
 
-    public static List<Flag> getDominionOnlyFlagsEnabled() {
+    public static List<Flag> getDominionFlagsEnabled() {
+        List<Flag> flags = new ArrayList<>();
+        for (Flag flag : Flag.values()) {
+            if (!flag.enable) {
+                continue;
+            }
+            flags.add(flag);
+        }
+        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
+        flags.sort((o1, o2) -> comparator.compare(o1.getDisplayName(), o2.getDisplayName()));
+        return flags;
+    }
+
+    public static boolean isDominionOnlyFlag(String flagName) {
+        return getFlag(flagName).dominion_only;
+    }
+
+    public static List<Flag> getEnvironmentFlagsEnabled() {
         List<Flag> flags = new ArrayList<>();
         for (Flag flag : Flag.values()) {
             if (!flag.dominion_only) {
@@ -170,28 +193,6 @@ public enum Flag implements cn.lunadeer.dominion.api.dtos.Flag {
         return flags;
     }
 
-    public static boolean isDominionOnlyFlag(String flagName) {
-        return getFlag(flagName).dominion_only;
-    }
-
-    public static List<Flag> getDominionFlagsEnabled() {
-        List<Flag> flags = new ArrayList<>();
-        for (Flag flag : Flag.values()) {
-            if (!flag.enable) {
-                continue;
-            }
-            flags.add(flag);
-        }
-        Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
-        flags.sort((o1, o2) -> comparator.compare(o1.getDisplayName(), o2.getDisplayName()));
-        return flags;
-    }
-
-    public static List<Flag> getAllDominionFlags() {
-        return new ArrayList<>(Arrays.asList(Flag.values()));
-    }
-
-
     public static List<Flag> getPrivilegeFlagsEnabled() {
         List<Flag> flags = new ArrayList<>();
         for (Flag flag : Flag.values()) {
@@ -206,6 +207,10 @@ public enum Flag implements cn.lunadeer.dominion.api.dtos.Flag {
         Comparator<Object> comparator = Collator.getInstance(java.util.Locale.CHINA);
         flags.sort((o1, o2) -> comparator.compare(o1.getDisplayName(), o2.getDisplayName()));
         return flags;
+    }
+
+    public static List<Flag> getAllDominionFlags() {
+        return new ArrayList<>(Arrays.asList(Flag.values()));
     }
 
     public static List<Flag> getAllPrivilegeFlags() {

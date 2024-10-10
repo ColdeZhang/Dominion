@@ -36,7 +36,7 @@ public class EnvSetting {
                         .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
                         .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append(Translation.TUI_Navigation_EnvSetting));
-        for (Flag flag : Flag.getDominionOnlyFlagsEnabled()) {
+        for (Flag flag : Flag.getEnvironmentFlagsEnabled()) {
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }
         view.showOn(player, page);

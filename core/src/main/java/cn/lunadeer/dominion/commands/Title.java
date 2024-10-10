@@ -43,7 +43,7 @@ public class Title {
                 }
                 DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
                 if (dominion == null) {
-                    Notification.error(sender, Translation.Commands_Title_GroupDominionNotExist, group.getName());
+                    Notification.error(sender, Translation.Commands_Title_GroupDominionNotExist, group.getNamePlain());
                     return;
                 }
                 if (!dominion.getOwner().equals(bukkit_player.getUniqueId())) {
@@ -53,12 +53,12 @@ public class Title {
                         return;
                     }
                     if (!Objects.equals(member.getGroupId(), group.getId())) {
-                        Notification.error(sender, Translation.Commands_Title_NotGroupMember, group.getName());
+                        Notification.error(sender, Translation.Commands_Title_NotGroupMember, group.getNamePlain());
                         return;
                     }
                 }
                 player.setUsingGroupTitleID(group.getId());
-                Notification.info(sender, Translation.Commands_Title_UseTitleSuccess, group.getName());
+                Notification.info(sender, Translation.Commands_Title_UseTitleSuccess, group.getNamePlain());
             }
             int page = getPage(args, 2);
             TitleList.show(sender, page);

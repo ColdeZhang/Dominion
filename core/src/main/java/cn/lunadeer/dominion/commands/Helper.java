@@ -44,7 +44,7 @@ public class Helper {
         if (dominion == null) return groups_name;
         List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
         for (GroupDTO group : groups) {
-            groups_name.add(group.getName());
+            groups_name.add(group.getNamePlain());
         }
         return groups_name;
     }

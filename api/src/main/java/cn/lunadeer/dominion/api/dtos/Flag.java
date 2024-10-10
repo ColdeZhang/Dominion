@@ -1,12 +1,14 @@
 package cn.lunadeer.dominion.api.dtos;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface Flag {
     /**
      * 权限名称（英文）
      *
      * @return 权限名称
      */
-    String getFlagName();
+    @NotNull String getFlagName();
 
     /**
      * 权限显示名称（中文）
@@ -14,7 +16,7 @@ public interface Flag {
      *
      * @return 权限显示名称
      */
-    String getDisplayName();
+    @NotNull String getDisplayName();
 
     /**
      * 权限描述
@@ -22,19 +24,26 @@ public interface Flag {
      *
      * @return 权限描述
      */
-    String getDescription();
+    @NotNull String getDescription();
 
     /**
      * 获取权限默认值
      *
      * @return 权限默认值
      */
-    Boolean getDefaultValue();
+    @NotNull Boolean getDefaultValue();
 
     /**
      * 获取权限是否启用
      *
      * @return 权限是否启用
      */
-    Boolean getEnable();
+    @NotNull Boolean getEnable();
+
+    /**
+     * 获取权限是否为环境设置
+     *
+     * @return 权限是否为环境设置
+     */
+    @NotNull Boolean isEnvironmentFlag();
 }

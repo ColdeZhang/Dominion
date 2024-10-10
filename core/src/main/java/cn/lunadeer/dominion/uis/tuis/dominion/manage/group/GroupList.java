@@ -63,14 +63,14 @@ public class GroupList {
         for (GroupDTO group : groups) {
             Line line = new Line();
             Button del = Button.createRed(Translation.TUI_DeleteButton)
-                    .setHoverText(String.format(Translation.TUI_GroupList_DeleteDescription.trans(), group.getName()))
-                    .setExecuteCommand("/dominion group delete " + dominion.getName() + " " + group.getName());
+                    .setHoverText(String.format(Translation.TUI_GroupList_DeleteDescription.trans(), group.getNamePlain()))
+                    .setExecuteCommand("/dominion group delete " + dominion.getName() + " " + group.getNamePlain());
             Button edit = Button.create(Translation.TUI_EditButton)
-                    .setHoverText(String.format(Translation.TUI_GroupList_EditDescription.trans(), group.getName()))
-                    .setExecuteCommand("/dominion group setting " + dominion.getName() + " " + group.getName());
+                    .setHoverText(String.format(Translation.TUI_GroupList_EditDescription.trans(), group.getNamePlain()))
+                    .setExecuteCommand("/dominion group setting " + dominion.getName() + " " + group.getNamePlain());
             Button add = Button.createGreen("+")
-                    .setHoverText(String.format(Translation.TUI_GroupList_AddMemberDescription.trans(), group.getName()))
-                    .setExecuteCommand("/dominion group select_member " + dominion.getName() + " " + group.getName() + " " + page);
+                    .setHoverText(String.format(Translation.TUI_GroupList_AddMemberDescription.trans(), group.getNamePlain()))
+                    .setExecuteCommand("/dominion group select_member " + dominion.getName() + " " + group.getNamePlain() + " " + page);
             line.append(del.build()).append(edit.build()).append(group.getNameColoredComponent()).append(add.build());
             view.add(line);
             List<MemberDTO> players = MemberDTO.selectByGroupId(group.getId());
@@ -80,9 +80,9 @@ public class GroupList {
                 if (p == null) continue;
                 Button remove = Button.createRed("-")
                         .setHoverText(
-                                String.format(Translation.TUI_GroupList_RemoveMemberDescription.trans(), p.getLastKnownName(), group.getName())
+                                String.format(Translation.TUI_GroupList_RemoveMemberDescription.trans(), p.getLastKnownName(), group.getNamePlain())
                         )
-                        .setExecuteCommand("/dominion group remove_member " + dominion.getName() + " " + group.getName() + " " + p.getLastKnownName() + " " + page);
+                        .setExecuteCommand("/dominion group remove_member " + dominion.getName() + " " + group.getNamePlain() + " " + p.getLastKnownName() + " " + page);
                 Line playerLine = new Line().setDivider("");
                 playerLine.append(Component.text("        "));
                 playerLine.append(remove.build()).append(" |  " + p.getLastKnownName());
