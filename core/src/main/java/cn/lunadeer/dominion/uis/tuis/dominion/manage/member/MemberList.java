@@ -99,7 +99,7 @@ public class MemberList {
                 }
             }
             if (group != null) {
-                prev.setDisabled(String.format(Translation.TUI_MemberList_BelongToGroup.trans(), group.getName()));
+                prev.setDisabled(String.format(Translation.TUI_MemberList_BelongToGroup.trans(), group.getNamePlain()));
             }
             line.append(remove.build());
             line.append(prev.build());

@@ -7,6 +7,7 @@ import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.util.*;
@@ -155,9 +156,14 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
     private final Map<Flag, Boolean> flags = new HashMap<>();
 
     @Override
-    public Boolean getFlagValue(Flag flag) {
+    public @NotNull Boolean getFlagValue(Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
+    }
+
+    @Override
+    public @NotNull Map<Flag, Boolean> getFlagsValue() {
+        return flags;
     }
 
     public MemberDTO setFlagValue(Flag flag, Boolean value) {
@@ -203,9 +209,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         this.playerUUID.value = playerUUID.toString();
         this.admin.value = false;
         this.domID.value = dom.getId();
-        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
-            this.flags.put(f, dom.getFlagValue(f));
-        }
+        this.flags.putAll(dom.getGuestPrivilegeFlagValue());
     }
 
 }

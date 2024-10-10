@@ -10,6 +10,7 @@ import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -21,62 +22,72 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
 
     Field id = new Field("id", FieldType.INT);
     Field domID = new Field("dom_id", FieldType.INT);
-    Field name = new Field("name", FieldType.STRING);
+    Field name_raw = new Field("name", FieldType.STRING);
     Field admin = new Field("admin", FieldType.BOOLEAN);
-    Field name_colored = new Field("name_colored", FieldType.STRING);
+    Field name_color = new Field("name_colored", FieldType.STRING);
 
     private final Map<Flag, Boolean> flags = new HashMap<>();
 
     @Override
-    public Integer getId() {
+    public @NotNull Integer getId() {
         return (Integer) id.value;
     }
 
     @Override
-    public Integer getDomID() {
+    public @NotNull Integer getDomID() {
         return (Integer) domID.value;
     }
 
     @Override
-    public String getName() {
-        return (String) name.value;
+    public @NotNull String getNameRaw() {
+        return (String) name_color.value;
     }
 
     @Override
-    public Component getNameColoredComponent() {
+    public @NotNull String getNamePlain() {
+        return (String) name_raw.value;
+    }
+
+    @Override
+    public @NotNull Component getNameColoredComponent() {
         String with_pre_suf = "&#ffffff" +
                 Dominion.config.getGroupTitlePrefix() +
-                (String) name_colored.value +
+                (String) name_color.value +
                 "&#ffffff" +
                 Dominion.config.getGroupTitleSuffix();
         return ColorParser.getComponentType(with_pre_suf);
     }
 
     @Override
-    public String getNameColoredBukkit() {
+    public @NotNull String getNameColoredBukkit() {
         String with_pre_suf = "&#ffffff" +
                 Dominion.config.getGroupTitlePrefix() +
-                (String) name_colored.value +
+                (String) name_color.value +
                 "&#ffffff" +
                 Dominion.config.getGroupTitleSuffix();
         return ColorParser.getBukkitType(with_pre_suf);
     }
 
     @Override
-    public Boolean getAdmin() {
+    public @NotNull Boolean getAdmin() {
         return (Boolean) admin.value;
     }
 
     @Override
-    public Boolean getFlagValue(Flag flag) {
+    public @NotNull Boolean getFlagValue(@NotNull Flag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
     }
 
+    @Override
+    public @NotNull Map<Flag, Boolean> getFlagsValue() {
+        return flags;
+    }
+
     public GroupDTO setName(String name) {
-        this.name_colored.value = name;
-        this.name.value = ColorParser.getPlainText(name);
-        UpdateRow updateRow = new UpdateRow().field(this.name).field(this.name_colored);
+        this.name_color.value = name;
+        this.name_raw.value = ColorParser.getPlainText(name);
+        UpdateRow updateRow = new UpdateRow().field(this.name_raw).field(this.name_color);
         return doUpdate(updateRow);
     }
 
@@ -98,9 +109,9 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null));
         insertRow.table("dominion_group")
                 .field(group.domID)
-                .field(group.name)
+                .field(group.name_raw)
                 .field(group.admin)
-                .field(group.name_colored);
+                .field(group.name_color);
         for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
             insertRow.field(new Field(f.getFlagName(), dominionDTO.getFlagValue(f)));
         }
@@ -155,8 +166,8 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
 
     private GroupDTO(String name, Integer domID) {
         this.domID.value = domID;
-        this.name.value = ColorParser.getPlainText(name);
-        this.name_colored.value = name;
+        this.name_raw.value = ColorParser.getPlainText(name);
+        this.name_color.value = name;
         this.admin.value = false;
         for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
             flags.put(f, f.getDefaultValue());
@@ -166,10 +177,10 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     private GroupDTO(Integer id, Integer domID, String name, Boolean admin, Map<Flag, Boolean> flags, String nameColored) {
         this.id.value = id;
         this.domID.value = domID;
-        this.name.value = name;
+        this.name_raw.value = name;
         this.admin.value = admin;
         this.flags.putAll(flags);
-        this.name_colored.value = nameColored;
+        this.name_color.value = nameColored;
     }
 
     private static List<GroupDTO> getDTOFromRS(ResultSet rs) {

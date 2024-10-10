@@ -71,7 +71,7 @@ public class MemberController {
         }
         GroupDTO group = GroupDTO.select(privilege.getGroupId());
         if (group != null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerBelongToGroup, player_name, group.getName()));
+            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerBelongToGroup, player_name, group.getNamePlain()));
             return;
         }
         if ((flag.equals("admin") || isAdmin(privilege)) && notOwner(operator, dominion)) {

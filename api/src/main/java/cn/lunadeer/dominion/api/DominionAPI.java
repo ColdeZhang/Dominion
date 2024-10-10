@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.api;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import org.bukkit.Location;
@@ -77,4 +78,26 @@ public interface DominionAPI {
      * @return 权限组对象    如果玩家没有使用任何权限组，则返回null
      */
     @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid);
+
+    /**
+     * 获取 flags.yml 中启用的所有环境权限对象（environment部分）
+     *
+     * @return 环境权限列表
+     */
+    @NotNull List<Flag> getEnvironmentFlagsEnabled();
+
+    /**
+     * 获取 flags.yml 中启用的所有玩家权限对象（privilege部分）
+     *
+     * @return 玩家权限列表
+     */
+    @NotNull List<Flag> getPrivilegeFlagsEnabled();
+
+    /**
+     * 通过权限名称获取权限对象，即使权限没有启用此方法也会返回权限对象
+     *
+     * @param flagName 权限名称 （非 displayName）
+     * @return 权限对象   如果权限不存在，则返回null
+     */
+    @Nullable Flag getFlagByName(@NotNull String flagName);
 }

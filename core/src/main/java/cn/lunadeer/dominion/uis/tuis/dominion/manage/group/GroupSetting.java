@@ -45,7 +45,7 @@ public class GroupSetting {
             return;
         }
 
-        ListView view = ListView.create(10, "/dominion group setting " + dominion.getName() + " " + group.getName());
+        ListView view = ListView.create(10, "/dominion group setting " + dominion.getName() + " " + group.getNamePlain());
         view.title(Component.text(Translation.TUI_GroupSetting_TitleL.trans())
                 .append(group.getNameColoredComponent())
                 .append(Component.text(Translation.TUI_GroupSetting_TitleR.trans())));
@@ -58,31 +58,31 @@ public class GroupSetting {
                         .append(Translation.TUI_Navigation_GroupSetting)
         );
         Button rename_btn = Button.create(Translation.TUI_GroupSetting_RenameButton)
-                .setHoverText(String.format(Translation.TUI_GroupSetting_RenameDescription.trans(), group.getName()))
-                .setExecuteCommand("/dominion cui_rename_group " + dominion.getName() + " " + group.getName());
+                .setHoverText(String.format(Translation.TUI_GroupSetting_RenameDescription.trans(), group.getNamePlain()))
+                .setExecuteCommand("/dominion cui_rename_group " + dominion.getName() + " " + group.getNamePlain());
         view.add(Line.create().append(rename_btn.build()));
 
         if (group.getAdmin()) {
             view.add(Line.create()
                     .append(Button.createGreen("☑")
-                            .setExecuteCommand(parseCommand(dominion.getName(), group.getName(), "admin", false, page))
+                            .setExecuteCommand(parseCommand(dominion.getName(), group.getNamePlain(), "admin", false, page))
                             .build())
                     .append(
                             Component.text(Translation.Flags_admin_DisplayName.trans())
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
-            view.add(createOption(Flag.GLOW, group.getFlagValue(Flag.GLOW), dominion.getName(), group.getName(), page));
+            view.add(createOption(Flag.GLOW, group.getFlagValue(Flag.GLOW), dominion.getName(), group.getNamePlain(), page));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐")
-                            .setExecuteCommand(parseCommand(dominion.getName(), group.getName(), "admin", true, page))
+                            .setExecuteCommand(parseCommand(dominion.getName(), group.getNamePlain(), "admin", true, page))
                             .build())
                     .append(
                             Component.text(Translation.Flags_admin_DisplayName.trans())
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
             for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
-                view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getName(), page));
+                view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getNamePlain(), page));
             }
         }
         view.showOn(player, page);
