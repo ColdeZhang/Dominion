@@ -162,6 +162,8 @@ public class Translation extends Localization {
     public static i18n Commands_Operator_ImportDBSuccess;
     @i18nField(defaultValue = "没有可导入的数据")
     public static i18n Commands_Operator_ImportDBFail;
+    @i18nField(defaultValue = "导入失败，数据不完整，请重新导出文件")
+    public static i18n Commands_Operator_ImportDBIncompleteFail;
 
     @i18nField(defaultValue = "用法: /dominion template create <模板名称>")
     public static i18n Commands_Template_CreateTemplateUsage;
