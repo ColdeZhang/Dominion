@@ -94,4 +94,4 @@ public void onEnable() {
 }
 ```
 
-[示例项目地址](https://github.com/ColdeZhang/DominionPluginExample)。
+[示例项目地址](https://github.com/ColdeZhang/DominionAddonExample)。
