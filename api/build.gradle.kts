@@ -27,9 +27,15 @@ publishing {
         create<MavenPublication>("mavenJava") {
             groupId = "cn.lunadeer"
             artifactId = "DominionAPI"
-            version = "2.0-SNAPSHOT"
-            // 添加组件
-            from(components["java"])
+            version = "2.1-SNAPSHOT"
+            // Add only the necessary artifacts manually to avoid conflicts
+            artifact(tasks.jar.get())  // The main JAR file without classifier
+            artifact(tasks.named<Jar>("sourcesJar").get()) {
+                classifier = "sources"
+            }
+            artifact(tasks.named<Jar>("javadocJar").get()) {
+                classifier = "javadoc"
+            }
         }
     }
     repositories {

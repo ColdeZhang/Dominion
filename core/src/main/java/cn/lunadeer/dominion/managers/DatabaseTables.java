@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.commands.Operator;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.*;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.AddColumn;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
@@ -12,10 +13,15 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.RemoveColumn;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseTables {
     public static void migrate() {
@@ -279,7 +285,19 @@ public class DatabaseTables {
             Common.ExportCSV("dominion", new File(export_path, "dominion.csv"));
             Common.ExportCSV("dominion_group", new File(export_path, "dominion_group.csv"));
             Common.ExportCSV("dominion_member", new File(export_path, "dominion_member.csv"));
+            Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
+            YamlConfiguration world_uid = new YamlConfiguration();
+            for (Map.Entry<String, String> entry : world_uid_map.entrySet()) {
+                world_uid.set(entry.getKey(), entry.getValue());
+            }
+            try {
+                world_uid.save(new File(export_path, "world_uid_mapping.yml"));
+            } catch (Exception e) {
+                XLogger.err("Save world_uid_mapping.yml failed: %s", e.getMessage());
+                return;
+            }
             Notification.info(sender, Translation.Commands_Operator_ExportDBSuccess);
+            Notification.info(sender, "Path: %s", export_path.getAbsolutePath());
         });
     }
 
@@ -290,11 +308,40 @@ public class DatabaseTables {
                 return;
             }
             Notification.info(sender, Translation.Commands_Operator_ImportDBBegin);
-            Common.ImportCSV("player_name", "id", new File(export_path, "player_name.csv"));
-            Common.ImportCSV("privilege_template", "id", new File(export_path, "privilege_template.csv"));
-            Common.ImportCSV("dominion", "id", new File(export_path, "dominion.csv"));
-            Common.ImportCSV("dominion_group", "id", new File(export_path, "dominion_group.csv"));
-            Common.ImportCSV("dominion_member", "id", new File(export_path, "dominion_member.csv"));
+            Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
+            File player_name_csv = new File(export_path, "player_name.csv");
+            File privilege_template_csv = new File(export_path, "privilege_template.csv");
+            File dominion_csv = new File(export_path, "dominion.csv");
+            File world_uid_mapping = new File(export_path, "world_uid_mapping.yml");
+            File dominion_group_csv = new File(export_path, "dominion_group.csv");
+            File dominion_member_csv = new File(export_path, "dominion_member.csv");
+            if (!player_name_csv.exists() || !privilege_template_csv.exists() || !dominion_csv.exists() || !world_uid_mapping.exists() || !dominion_group_csv.exists() || !dominion_member_csv.exists()) {
+                Notification.error(sender, Translation.Commands_Operator_ImportDBIncompleteFail);
+                return;
+            }
+            try {
+                String dominion_file_str = Files.readString(dominion_csv.toPath());
+                YamlConfiguration world_uid = YamlConfiguration.loadConfiguration(world_uid_mapping);
+                for (String key : world_uid.getKeys(false)) {
+                    if (world_uid_map.containsKey(key)) {
+                        String old_uid = world_uid.getString(key);
+                        String new_uid = world_uid_map.get(key);
+                        if (old_uid == null || new_uid == null) {
+                            continue;
+                        }
+                        dominion_file_str = dominion_file_str.replace(old_uid, world_uid_map.get(key));
+                    }
+                }
+                Files.writeString(dominion_csv.toPath(), dominion_file_str);
+            } catch (IOException e) {
+                XLogger.err("Import world_uid_mapping.yml failed: %s", e.getMessage());
+                return;
+            }
+            Common.ImportCSV("player_name", "id", player_name_csv);
+            Common.ImportCSV("privilege_template", "id", privilege_template_csv);
+            Common.ImportCSV("dominion", "id", dominion_csv);
+            Common.ImportCSV("dominion_group", "id", dominion_group_csv);
+            Common.ImportCSV("dominion_member", "id", dominion_member_csv);
             Notification.info(sender, Translation.Commands_Operator_ImportDBSuccess);
             Operator.reloadCache(sender, new String[0]);
         });
