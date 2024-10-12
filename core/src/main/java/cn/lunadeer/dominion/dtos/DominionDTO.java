@@ -11,6 +11,7 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -244,8 +245,15 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         }
     }
 
+    @Override
     public DominionDTO setOwner(UUID owner) {
         this.owner.value = owner.toString();
+        return doUpdate(new UpdateRow().field(this.owner));
+    }
+
+    @Override
+    public DominionDTO setOwner(Player owner) {
+        this.owner.value = owner.getUniqueId().toString();
         return doUpdate(new UpdateRow().field(this.owner));
     }
 
@@ -254,6 +262,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return (String) name.value;
     }
 
+    @Override
     public DominionDTO setName(String name) {
         this.name.value = name;
         return doUpdate(new UpdateRow().field(this.name));
@@ -364,6 +373,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return (String) joinMessage.value;
     }
 
+    @Override
     public DominionDTO setJoinMessage(String joinMessage) {
         this.joinMessage.value = joinMessage;
         return doUpdate(new UpdateRow().field(this.joinMessage));
@@ -374,6 +384,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return (String) leaveMessage.value;
     }
 
+    @Override
     public DominionDTO setLeaveMessage(String leaveMessage) {
         this.leaveMessage.value = leaveMessage;
         return doUpdate(new UpdateRow().field(this.leaveMessage));
@@ -398,12 +409,14 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
                 .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
     }
 
+    @Override
     public DominionDTO setFlagValue(Flag flag, Boolean value) {
         flags.put(flag, value);
         Field flagField = new Field(flag.getFlagName(), value);
         return doUpdate(new UpdateRow().field(flagField));
     }
 
+    @Override
     public DominionDTO setXYZ(Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
         this.x1.value = x1;
         this.y1.value = y1;
@@ -411,9 +424,25 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         this.x2.value = x2;
         this.y2.value = y2;
         this.z2.value = z2;
+        if (x1 > x2) {
+            int tmp = x1;
+            this.x1.value = x2;
+            this.x2.value = tmp;
+        }
+        if (y1 > y2) {
+            int tmp = y1;
+            this.y1.value = y2;
+            this.y2.value = tmp;
+        }
+        if (z1 > z2) {
+            int tmp = z1;
+            this.z1.value = z2;
+            this.z2.value = tmp;
+        }
         return doUpdate(new UpdateRow().field(this.x1).field(this.y1).field(this.z1).field(this.x2).field(this.y2).field(this.z2));
     }
 
+    @Override
     public DominionDTO setXYZ(int[] cords) {
         if (cords.length == 6) {
             return setXYZ(cords[0], cords[1], cords[2], cords[3], cords[4], cords[5]);
