@@ -34,7 +34,7 @@ public class CreateDominion {
             Map<Integer, Location> points = autoPoints(sender);
             operator.getResponse().thenAccept(result -> {
                 if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)) {
-                    DominionManage.show(sender, new String[]{input});
+                    DominionManage.show(sender, new String[]{"manage", input});
                 }
             });
             DominionController.create(operator, input, points.get(0), points.get(1));
