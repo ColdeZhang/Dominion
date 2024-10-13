@@ -1,5 +1,12 @@
 # Dominion 文档
 
+[![GitHub Repository](https://img.shields.io/badge/仓库地址-GitHub-blue?logo=github)](https://github.com/ColdeZhang/Dominion)
+[![bStats](https://img.shields.io/badge/bStats-数据统计-eacd76?logo=google-analytics)](https://bstats.org/plugin/bukkit/Dominion/21445)
+
+[![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E6%9C%80%E6%96%B0%E6%9E%84%E5%BB%BA%E4%B8%8B%E8%BD%BD&logo=github&color=0aa344)](https://github.com/ColdeZhang/Dominion/releases/latest)
+
+[![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E5%A4%87%E7%94%A8%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80&logo=gitea&color=0aa344)](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
+
 ## 前言
 
 首先十分感谢您选择并使用本插件。
