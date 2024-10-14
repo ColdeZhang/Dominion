@@ -1,7 +1,9 @@
 package cn.lunadeer.dominion.events_v1_20_1;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.VaultConnect.VaultConnect;
@@ -41,7 +43,7 @@ public class SelectPointEvents implements Listener {
 
         if (action == Action.LEFT_CLICK_BLOCK) {
             event.setCancelled(true);
-            Notification.info(player, "已选择第一个点: %d %d %d", block.getX(), block.getY(), block.getZ());
+            Notification.info(player, Translation.Tool_SelectFirstPoint, block.getX(), block.getY(), block.getZ());
             Location loc = block.getLocation();
             if (Dominion.config.getLimitVert(player)) {
                 loc.setY(Dominion.config.getLimitMinY(player));
@@ -49,7 +51,7 @@ public class SelectPointEvents implements Listener {
             points.put(0, loc);
         } else if (action == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
-            Notification.info(player, "已选择第二个点: %d %d %d", block.getX(), block.getY(), block.getZ());
+            Notification.info(player, Translation.Tool_SelectSecondPoint, block.getX(), block.getY(), block.getZ());
             Location loc = block.getLocation();
             if (Dominion.config.getLimitVert(player)) {
                 loc.setY(Dominion.config.getLimitMaxY(player) - 1);
@@ -66,10 +68,10 @@ public class SelectPointEvents implements Listener {
                 return;
             }
             if (!points.get(0).getWorld().equals(points.get(1).getWorld())) {
-                Notification.warn(player, "两个点不在同一个世界");
+                Notification.warn(player, Translation.Tool_NotSameWorld);
                 return;
             }
-            Notification.info(player, "已选择两个点，可以使用 /dominion create <领地名称> 创建领地");
+            Notification.info(player, Translation.Tool_SelectTwoPoints);
             Location loc1 = points.get(0);
             Location loc2 = points.get(1);
             int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
@@ -82,7 +84,7 @@ public class SelectPointEvents implements Listener {
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
                 if (!VaultConnect.instance.economyAvailable()) {
-                    Notification.error(player, "计算价格失败，没有可用的经济插件系统，请联系服主。");
+                    Notification.error(player, Translation.Messages_NoEconomyPlugin);
                     return;
                 }
                 int count;
@@ -92,13 +94,38 @@ public class SelectPointEvents implements Listener {
                     count = dominion.getVolume();
                 }
                 float price = count * Dominion.config.getEconomyPrice(player);
-                Notification.info(player, "预计领地创建价格为 %.2f %s", price, VaultConnect.instance.currencyNamePlural());
+                Notification.info(player, Translation.Tool_CreateDominionPrice, price, VaultConnect.instance.currencyNamePlural());
             }
             Particle.showBorder(player, dominion);
-            Notification.info(player, "尺寸： %d x %d x %d", dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());
-            Notification.info(player, "面积： %d", dominion.getSquare());
-            Notification.info(player, "高度： %d", dominion.getHeight());
-            Notification.info(player, "体积： %d", dominion.getVolume());
+            Notification.info(player, Translation.Tool_DominionSize, dominion.getWidthX(), dominion.getHeight(), dominion.getWidthZ());
+            Notification.info(player, Translation.Tool_DominionSquare, dominion.getSquare());
+            Notification.info(player, Translation.Tool_DominionHeight, dominion.getHeight());
+            Notification.info(player, Translation.Tool_DominionVolume, dominion.getVolume());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void selectBlockToShowInfo(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        if (item.getType() != Dominion.config.getInfoTool()) {
+            return;
+        }
+        if (event.getAction() != Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
+        event.setCancelled(true);
+        Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
+        DominionDTO dominion = Cache.instance.getDominionByLoc(block.getLocation());
+        if (dominion == null) {
+            Notification.info(player, Translation.Tool_LocationNotInDominion, block.getX(), block.getY(), block.getZ());
+        } else {
+            Notification.info(player, Translation.Tool_LocationInDominion, block.getX(), block.getY(), block.getZ(), dominion.getName());
+            Notification.info(player, Translation.Tool_DominionOwner, Cache.instance.getPlayerName(dominion.getOwner()));
         }
     }
 }

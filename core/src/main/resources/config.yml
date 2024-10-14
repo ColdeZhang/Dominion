@@ -55,6 +55,8 @@ AutoCleanAfterDays: 180
 
 Tool: ARROW
 
+InfoTool: STRING
+
 Economy:
   Enable: false
   Price: 10.0
