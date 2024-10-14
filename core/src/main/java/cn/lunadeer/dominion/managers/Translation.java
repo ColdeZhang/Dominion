@@ -826,8 +826,10 @@ public class Translation extends Localization {
     public static i18n Config_Check_MessageDisplayError;
     @i18nField(defaultValue = "AutoCleanAfterDays 不能等于 0，已重置为 180")
     public static i18n Config_Check_AutoCleanAfterDaysError;
-    @i18nField(defaultValue = "工具名称设置错误，已重置为 ARROW")
+    @i18nField(defaultValue = "Tool 名称设置错误，已重置为 ARROW")
     public static i18n Config_Check_ToolNameError;
+    @i18nField(defaultValue = "InfoTool 名称设置错误，已重置为 STRING")
+    public static i18n Config_Check_InfoToolNameError;
     @i18nField(defaultValue = "%s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320")
     public static i18n Config_Check_GroupMinYError;
     @i18nField(defaultValue = "%s 的 Size.MaxX 设置过小，已重置为 128")
@@ -921,6 +923,8 @@ public class Translation extends Localization {
     public static i18n Config_Comment_AutoCleanAfterDays;
     @i18nField(defaultValue = "圈地工具名称")
     public static i18n Config_Comment_ToolName;
+    @i18nField(defaultValue = "查询领地信息工具名称")
+    public static i18n Config_Comment_InfoToolName;
     @i18nField(defaultValue = "经济设置")
     public static i18n Config_Comment_Economy;
     @i18nField(defaultValue = "需要安装 Vault 前置及插件")
@@ -964,6 +968,31 @@ public class Translation extends Localization {
     public static i18n Flags_admin_DisplayName;
     @i18nField(defaultValue = "管理领地内的其他成员权限")
     public static i18n Flags_admin_Description;
+
+    @i18nField(defaultValue = "已选择第一个点: %d %d %d")
+    public static i18n Tool_SelectFirstPoint;
+    @i18nField(defaultValue = "已选择第二个点: %d %d %d")
+    public static i18n Tool_SelectSecondPoint;
+    @i18nField(defaultValue = "两个点不在同一个世界")
+    public static i18n Tool_NotSameWorld;
+    @i18nField(defaultValue = "已选择两个点，可以使用 /dominion create <领地名称> 创建领地")
+    public static i18n Tool_SelectTwoPoints;
+    @i18nField(defaultValue = "预计领地创建价格为 %.2f %s")
+    public static i18n Tool_CreateDominionPrice;
+    @i18nField(defaultValue = "尺寸： %d x %d x %d")
+    public static i18n Tool_DominionSize;
+    @i18nField(defaultValue = "面积： %d")
+    public static i18n Tool_DominionSquare;
+    @i18nField(defaultValue = "体积： %d")
+    public static i18n Tool_DominionVolume;
+    @i18nField(defaultValue = "高度： %d")
+    public static i18n Tool_DominionHeight;
+    @i18nField(defaultValue = "这个方块(%d, %d, %d)不在任何领地内")
+    public static i18n Tool_LocationNotInDominion;
+    @i18nField(defaultValue = "这个方块(%d, %d, %d)在领地 %s 内")
+    public static i18n Tool_LocationInDominion;
+    @i18nField(defaultValue = "领地主人: %s")
+    public static i18n Tool_DominionOwner;
 
 
     public Translation(JavaPlugin plugin) {

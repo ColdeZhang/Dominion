@@ -57,6 +57,7 @@ public class ConfigManager {
         _tp_delay = _file.getInt("Teleport.Delay", 0);
         _tp_cool_down = _file.getInt("Teleport.CoolDown", 0);
         _tool = _file.getString("Tool", "ARROW");
+        _info_tool = _file.getString("InfoTool", "STRING");
 
         _economy_enable = _file.getBoolean("Economy.Enable", false);
         if (getEconomyEnable()) {
@@ -179,6 +180,8 @@ public class ConfigManager {
 
         _file.set("Tool", _tool);
         _file.setComments("Tool", List.of(Translation.Config_Comment_ToolName.trans()));
+        _file.set("InfoTool", _info_tool);
+        _file.setComments("InfoTool", List.of(Translation.Config_Comment_InfoToolName.trans()));
 
         _file.setComments("Economy", Arrays.asList(Translation.Config_Comment_Economy.trans(), Translation.Config_Comment_VaultRequired.trans()));
         _file.set("Economy.Enable", _economy_enable);
@@ -396,6 +399,15 @@ public class ConfigManager {
         _file.set("Tool", tool);
     }
 
+    public Material getInfoTool() {
+        return Material.getMaterial(_info_tool);
+    }
+
+    public void setInfoTool(String info_tool) {
+        _info_tool = info_tool;
+        _file.set("InfoTool", info_tool);
+    }
+
     public Boolean getEconomyEnable() {
         return _economy_enable;
     }
@@ -449,6 +461,10 @@ public class ConfigManager {
         if (Material.getMaterial(_tool) == null) {
             XLogger.err(Translation.Config_Check_ToolNameError);
             setTool("ARROW");
+        }
+        if (Material.getMaterial(_info_tool) == null) {
+            XLogger.err(Translation.Config_Check_InfoToolNameError);
+            setInfoTool("STRING");
         }
         if (getAutoCreateRadius() <= 0 && getAutoCreateRadius() != -1) {
             XLogger.err(Translation.Config_Check_AutoCreateRadiusError);
@@ -509,7 +525,9 @@ public class ConfigManager {
     private Boolean _tp_enable;
     private Integer _tp_delay;
     private Integer _tp_cool_down;
+
     private String _tool;
+    private String _info_tool;
 
     private Boolean _economy_enable;
 

@@ -67,6 +67,9 @@ AutoCleanAfterDays: 180
 # 圈地工具名称
 Tool: ARROW
 
+# 查询领地信息工具名称
+InfoTool: STRING
+
 # 经济设置
 # 需要安装 Vault 前置及插件
 Economy:
@@ -166,6 +169,10 @@ Timer: false # 性能测试计时器
 ### Tool
 
 配置手动圈地时的选取工具。如果配置错误会被设置为默认值“ARROW”箭矢。
+
+### InfoTool
+
+配置查询领地信息工具。如果配置错误会被设置为默认值“STRING”字符串。使用左键配合该物品点击领地内方块时会显示领地信息。
 
 ### Economy
 
