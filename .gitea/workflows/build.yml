@@ -13,6 +13,12 @@ jobs:
         uses: https://ssl.lunadeer.cn:14446/actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: "Set up JDK 17"
+        uses: https://ssl.lunadeer.cn:14446/actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: gradle
       - name: "Set up JDK 21"
         uses: https://ssl.lunadeer.cn:14446/actions/setup-java@v3
         with:
