@@ -8,6 +8,7 @@ softdepend:
   - Vault
   - dynmap
   - PlaceholderAPI
+  - BlueMap
 commands:
   Dominion:
     description: 领地插件命令
