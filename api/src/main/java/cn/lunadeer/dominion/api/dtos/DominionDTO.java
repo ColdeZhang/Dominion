@@ -226,7 +226,7 @@ public interface DominionDTO {
      * @param value 权限值
      * @return 领地对象
      */
-    @Nullable DominionDTO setFlagValue(Flag flag, Boolean value);
+    @Nullable DominionDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value);
 
     /**
      * 获取领地传送点坐标

@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.api.dtos;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -19,6 +20,14 @@ public interface MemberDTO {
      * @return 成员 UUID
      */
     UUID getPlayerUUID();
+
+    /**
+     * 设置成员是否为管理员，设置成功后返回权限组对象，设置失败返回null
+     *
+     * @param admin 是否为管理员
+     * @return 成员对象
+     */
+    @Nullable MemberDTO setAdmin(@NotNull Boolean admin);
 
     /**
      * 成员是否为管理员
@@ -55,4 +64,13 @@ public interface MemberDTO {
      * @return 权限配置值
      */
     @NotNull Map<Flag, Boolean> getFlagsValue();
+
+    /**
+     * 设置成员某个权限配置，设置成功后返回成员对象，设置失败返回null
+     *
+     * @param flag  权限
+     * @param value 权限配置值
+     * @return 成员对象
+     */
+    @Nullable MemberDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value);
 }

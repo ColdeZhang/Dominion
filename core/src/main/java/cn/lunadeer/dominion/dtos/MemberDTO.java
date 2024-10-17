@@ -8,6 +8,7 @@ import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.util.*;
@@ -166,14 +167,19 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return flags;
     }
 
-    public MemberDTO setFlagValue(Flag flag, Boolean value) {
+    @Override
+    public MemberDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value) {
+        if (flag.isEnvironmentFlag()) {
+            return null;
+        }
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
         return doUpdate(updateRow);
     }
 
-    public MemberDTO setAdmin(Boolean admin) {
+    @Override
+    public @Nullable MemberDTO setAdmin(@NotNull Boolean admin) {
         this.admin.value = admin;
         UpdateRow updateRow = new UpdateRow().field(this.admin);
         return doUpdate(updateRow);

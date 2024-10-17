@@ -11,6 +11,7 @@ import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -84,20 +85,26 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         return flags;
     }
 
-    public GroupDTO setName(String name) {
+    @Override
+    public @Nullable GroupDTO setName(@NotNull String name) {
         this.name_color.value = name;
         this.name_raw.value = ColorParser.getPlainText(name);
         UpdateRow updateRow = new UpdateRow().field(this.name_raw).field(this.name_color);
         return doUpdate(updateRow);
     }
 
-    public GroupDTO setAdmin(Boolean admin) {
+    @Override
+    public @Nullable GroupDTO setAdmin(@NotNull Boolean admin) {
         this.admin.value = admin;
         UpdateRow updateRow = new UpdateRow().field(this.admin);
         return doUpdate(updateRow);
     }
 
-    public GroupDTO setFlagValue(Flag flag, Boolean value) {
+    @Override
+    public GroupDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value) {
+        if (flag.isEnvironmentFlag()) {
+            return null;
+        }
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
