@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.api.dtos;
 
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -19,6 +20,14 @@ public interface GroupDTO {
      * @return 权限组所属领地 ID
      */
     @NotNull Integer getDomID();
+
+    /**
+     * 设置权限组名称，可以包含颜色代码，设置成功后返回权限组对象，设置失败返回null
+     *
+     * @param name 权限组名称
+     * @return 权限组对象
+     */
+    @Nullable GroupDTO setName(@NotNull String name);
 
     /**
      * 获取权限组名称（普通字符，不含颜色代码）
@@ -50,6 +59,14 @@ public interface GroupDTO {
     @NotNull String getNameColoredBukkit();
 
     /**
+     * 设置权限组是否为管理员组，设置成功后返回权限组对象，设置失败返回null
+     *
+     * @param admin 是否为管理员组
+     * @return 权限组对象
+     */
+    @Nullable GroupDTO setAdmin(@NotNull Boolean admin);
+
+    /**
      * 获取权限组是否为管理员组
      *
      * @return 是否为管理员组
@@ -70,4 +87,13 @@ public interface GroupDTO {
      * @return 权限配置
      */
     @NotNull Map<Flag, Boolean> getFlagsValue();
+
+    /**
+     * 设置权限组某个权限配置，设置成功后返回权限组对象，设置失败返回null
+     *
+     * @param flag  权限
+     * @param value 权限值
+     * @return 权限组对象
+     */
+    @Nullable GroupDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value);
 }

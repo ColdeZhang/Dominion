@@ -410,7 +410,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public DominionDTO setFlagValue(Flag flag, Boolean value) {
+    public DominionDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value) {
         flags.put(flag, value);
         Field flagField = new Field(flag.getFlagName(), value);
         return doUpdate(new UpdateRow().field(flagField));
