@@ -95,3 +95,5 @@ public void onEnable() {
 ```
 
 [示例项目地址](https://github.com/ColdeZhang/DominionAddonExample)。
+
+[Javadoc地址](https://coldezhang.github.io/DominionAPI/)。
