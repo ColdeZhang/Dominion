@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.managers;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.utils.MessageDisplay;
-import cn.lunadeer.minecraftpluginutils.VaultConnect.VaultConnect;
+import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
