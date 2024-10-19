@@ -18,6 +18,10 @@ public class DominionInterface implements DominionAPI {
 
     public static DominionInterface instance;
 
+    public DominionInterface() {
+        instance = this;
+    }
+
     @Override
     public DominionDTO getPlayerCurrentDominion(@NotNull Player player) {
         return Cache.instance.getPlayerCurrentDominion(player);

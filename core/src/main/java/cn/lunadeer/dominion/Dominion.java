@@ -37,9 +37,8 @@ public final class Dominion extends JavaPlugin {
                 config.getDbPass());
         DatabaseTables.migrate();
         new Scheduler(this);
-        AutoClean.run();
-        Cache.instance = new Cache();
-        DominionInterface.instance = new DominionInterface();
+        new Cache();
+        new DominionInterface();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PlaceHolderApi(this);
@@ -81,6 +80,7 @@ public final class Dominion extends JavaPlugin {
 
         if (config.getDynmap()) new DynmapConnect();  // 注册 Dynmap API
         Scheduler.runTaskLaterAsync(MapRender::render, 40 * 20);
+        AutoClean.run();
     }
 
     @Override
