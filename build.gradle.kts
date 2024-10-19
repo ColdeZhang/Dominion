@@ -11,7 +11,7 @@ var libraries = listOf<String>()
 libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:2.0.7"
 
 group = "cn.lunadeer"
-version = "2.14.2-beta"
+version = "2.14.3-beta"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -34,6 +34,7 @@ allprojects {
         maven("https://jitpack.io")
         maven("https://repo.mikeprimm.com/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://repo.codemc.org/repository/maven-public")
     }
 
     dependencies {
