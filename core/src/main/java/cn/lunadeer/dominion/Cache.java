@@ -233,13 +233,15 @@ public class Cache implements Listener {
             }
             // 否则获取玩家当前所在领地，然后对比上次记录的领地
             DominionDTO current_dominion = dominion_trees.getLocInDominionDTO(player.getLocation());
-            new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).callEvent();
-
             int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
             int current_dom_id = current_dominion == null ? -1 : current_dominion.getId();
             if (last_dom_id == current_dom_id) {
                 return last_dominion;
             }
+
+            // 如果玩家上次所在领地和当前所在领地不同，则触发玩家跨领地边界事件
+            new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).callEvent();
+
             // 如果上次记录的领地不为空，则触发玩家离开领地事件
             if (last_dom_id != -1) {
                 new PlayerMoveOutDominionEvent(player, last_dominion).callEvent();
