@@ -1,23 +1,24 @@
-# 创建领地
+# Create A Dominion
 
-## 名称规则
+## Naming Rules
 
-- 领地名称不可与其他领地重复；
-- 领地名称不可包含空格；
-- 领地名称不可包含特殊字符；
+- Should not duplicate with other dominions;
+- Should not contain spaces;
+- Should not contain special characters;
 
-## 手动创建
+## Manual Creation
 
-需要使用圈地工具（默认为箭矢），依次使用左键点选领地长方体区域的第一个点、右键点击长方体区域的第二个点。然后使用：
-`/dominion create <领地名称>`创建领地，领地名称不可与其他领地重复。
+Using tool (default is arrow), left-click the first point of the rectangular area of the dominion, and right-click the
+second point of the rectangular area. Then use:
+`/dominion create <dominion_name>` to create a dominion, the dominion name cannot be the same as other dominions.
 
-## 自动创建
+## Automatic Creation
 
-不需要选择对角线点，会以玩家为中心自动创建一定区域的领地。
+Don't need to select the diagonal points, the dominion will be created automatically with the player as the center.
 
-1. 使用 `/dominion` 打开主菜单，点击`【创建领地】`;
-2. 在弹出的 UI 中输入你要创建的领地名称;
-3. 输入完成后左键点击下方中间的绿色混凝土，即可自动创建一块领地;
+1. Open the main menu with `/dominion`, click `【CREATE】`;
+2. Enter the name of the dominion you want to create in the pop-up UI;
+3. After entering, left-click the green concrete in the middle below to automatically create a dominion;
 
-> 自动创建半径是由服务器管理员在配置文件中设置的；
+> The radius of automatic creation is set by the server administrator in the configuration file;
 

@@ -1,20 +1,23 @@
-# 将领地从 Residence 迁移到 Dominion
+# Migration from Residence
 
-## 注意事项
+## Notice
 
-1. 迁移采取的“玩家自助”方案，即由玩家自行决定要迁移自己的哪些领地；
-2. 目前支持迁移：领地、tp点、欢迎/离开提示消息、子领地；
-3. 由于对权限的存储、索引方式不同，目前**不支持**对权限进行迁移；
-4. 迁移领地**不会产生二次消费**；
+1. Instead of automatically migrating all data, the player can choose which residence of his own to migrate;
+2. Currently supported data migration: residence, tp points, welcome/leave messages, sub-residence;
+3. Due to the different storage and indexing methods of permissions, **permission migration is currently NOT SUPPORTED
+   **;
+4. Migrating residence **will NOT incur secondary consumption**;
 
-## 服主要做的事
+## For Server Owner
 
-1. 删除 Residence 插件，保留其数据文件 `plugins/Residence`;
-2. 在 Dominion 配置中将 `ResidenceMigration` 打开（设置为true）；
+1. Delete the Residence plugin and keep its data file `plugins/Residence`;
+2. Open `ResidenceMigration` in the Dominion configuration (set to true);
+3. Restart the server to take effect;
 
-## 玩家要做的事
+## For Player
 
-1. 上线，打开 Dominion 菜单 `/dom`，点击`【迁移数据】`：
-2. 选择要迁移的 Residence 领地，点击前面的`【迁移】`；
-3. 完成后即可前往领地列表进一步配置领地的权限等信息：
+1. Log in and open the Dominion menu `/dom`, click `【MIGRATE】`:
+2. Select the residence you want to migrate, click `【MIGRATE】` after it;
+3. After completion, you can go to the dominion list to further configure the permissions and other information of the
+   dominion:
 

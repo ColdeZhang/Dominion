@@ -1,14 +1,17 @@
-# 领地管理
+# Dominion Management
 
-领地的管理可以通过领地菜单完成，通常来说您不需要任何指令就可以完成领地的管理。
+The management of the dominion can be completed through the dominion menu.
+In general, you do not need any commands to complete the management of the dominion.
 
-## 主菜单界面 `/dominion`
+## Opening Menu with `/dominion`
 
-使用 `/dominion` 可以打开领地系统的可视化操作菜单界面（TUI）。单击`【我的领地】`可以查看自己创建的所有领地。
+Using `/dominion` can open the visual operation menu interface (TUI) of the dominion system.
+Click `【DOMINIONS】` to view all the dominions you have created.
 
-## 领地管理界面 `/dominion manage [领地名称]`
+## Dominion Management Interface `/dominion manage [dominion_name]`
 
-单击对应领地的【管理】即可进入对应领地的管理界面，通过管理界面可以管理此领地的权限等信息。 也可以直接输入
-`/dominion manage [领地名称]` 来快速打开当前所在领地的管理界面。
-
-> 领地名称是可选的，不填写则自动打开你当前所在的领地管理界面。
+Click `【MANAGE】` of the corresponding dominion to enter the management interface of the corresponding dominion.
+Through the management interface, you can manage the permissions and other information of this dominion. You can also
+directly enter `/dominion manage [dominion_name]` to quickly open the management interface of the dominion you are
+standing
+in.

@@ -1,5 +1,8 @@
 # 开发者文档
 
+[![Javadoc](https://img.shields.io/badge/Javadoc-Link-70f3ff?logo=readthedocs)](https://coldezhang.github.io/DominionAPI/)
+[![示例插件](https://img.shields.io/badge/示例插件-GitHub-blue?logo=github)](https://github.com/ColdeZhang/DominionAddonExample)
+
 > DominionAPI 自 Dominion-2.9.0-beta 开始支持。
 
 ## 一、接入 DominionAPI
@@ -15,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:2.1-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:2.3-SNAPSHOT")
 }
 ```
 
@@ -28,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:2.1-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:2.3-SNAPSHOT")
 }
 ```
 
@@ -47,7 +50,7 @@ dependencies {
 <dependency>
     <groupId>cn.lunadeer</groupId>
     <artifactId>DominionAPI</artifactId>
-    <version>2.1-SNAPSHOT</version>
+    <version>2.3-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>
 </dependencies>
@@ -94,6 +97,3 @@ public void onEnable() {
 }
 ```
 
-[示例项目地址](https://github.com/ColdeZhang/DominionAddonExample)。
-
-[Javadoc地址](https://coldezhang.github.io/DominionAPI/)。
