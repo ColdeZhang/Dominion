@@ -548,6 +548,9 @@ public class ConfigManager {
         if (player == null) {
             return "default";
         }
+        if (player.isOp()) {
+            return "default";
+        }
         for (String group : groupLimits.keySet()) {
             if (group.equals("default")) {
                 continue;
