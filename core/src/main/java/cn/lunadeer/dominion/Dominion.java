@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.managers.Translation;
+import cn.lunadeer.dominion.utils.Residence.ResCommands;
 import cn.lunadeer.dominion.utils.map.DynmapConnect;
 import cn.lunadeer.dominion.utils.map.MapRender;
 import cn.lunadeer.minecraftpluginutils.*;
@@ -50,6 +51,7 @@ public final class Dominion extends JavaPlugin {
 
         new EventsRegister(this);
         Objects.requireNonNull(Bukkit.getPluginCommand("dominion")).setExecutor(new Commands());
+        Objects.requireNonNull(Bukkit.getPluginCommand("residence")).setExecutor(new ResCommands());
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> config.getDbType()));

@@ -10,10 +10,14 @@ softdepend:
   - PlaceholderAPI
   - BlueMap
 commands:
-  Dominion:
+  dominion:
     description: 领地插件命令
     usage: /dominion <cmd>
     aliases: [ dominion, dom ]
+  residence:
+    description: 领地插件命令
+    usage: /dominion <cmd>
+    aliases: [ residence, res ]
 permissions:
   dominion.admin:
     description: 领地插件管理员权限
