@@ -49,6 +49,12 @@ For detailed contribution guidelines (such as **translation** etc.), please see 
 > **So, there must be some mistakes in the translation. If you find any mistakes (or inappropriate translations), please**
 > **feel free to modify it and submit a pull request. See [Translating](CONTRIBUTING.md#translating) for more details.**
 
+### Contributors
+
+<a href="https://github.com/ColdeZhang/Dominion/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ColdeZhang/Dominion" />
+</a>
+
 ## bStats Statics
 
 <div align="center">

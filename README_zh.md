@@ -39,6 +39,12 @@ Dominion 是一个完全开源、免费，专为高版本开发，面向未来�
 
 交流QQ群：309428300
 
+### 贡献者
+
+<a href="https://github.com/ColdeZhang/Dominion/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ColdeZhang/Dominion" />
+</a>
+
 ## 开发者指南
 
 Dominion 提供了一些简单（只是暂时，后续会逐步增强api）的 API 供开发者基于 Dominion
