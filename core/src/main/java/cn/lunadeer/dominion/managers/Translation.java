@@ -60,7 +60,7 @@ public class Translation extends Localization {
     public static i18n Commands_Group_DeleteGroupUsage;
     @i18nField(defaultValue = "用法: /dominion group rename <领地名称> <权限组旧名称> <新名称>")
     public static i18n Commands_Group_RenameGroupUsage;
-    @i18nField(defaultValue = "用法: /dominion group set_flag <领地名称> <权限组名称> <权限名称> <true|false>")
+    @i18nField(defaultValue = "用法: /dominion group set_flag <领地名称> <权限组名称> <权限名称> <true/false>")
     public static i18n Commands_Group_SetGroupFlagUsage;
     @i18nField(defaultValue = "用法: /dominion group add_member <领地名称> <权限组名称> <玩家名称>")
     public static i18n Commands_Group_AddGroupMemberUsage;
@@ -685,7 +685,7 @@ public class Translation extends Localization {
     public static i18n TUI_SizeInfo_TpLocation;
     @i18nField(defaultValue = "无")
     public static i18n TUI_SizeInfo_NoneTp;
-    @i18nField(defaultValue = "你不在任何领地内，请指定领地名称 /dominion info <领地名称>")
+    @i18nField(defaultValue = "你不在任何领地内，请指定领地名称 /dominion info [领地名称]")
     public static i18n TUI_SizeInfo_Usage;
 
     @i18nField(defaultValue = "领地 %s 成员列表")
