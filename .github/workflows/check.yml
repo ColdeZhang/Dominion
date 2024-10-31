@@ -15,7 +15,7 @@ jobs:
           distribution: 'zulu'
           cache: gradle
       - name: "Build with Gradle"
-        run: ./gradlew buildPlugin
+        run: ./gradlew shadowJar
       - name: "Done!"
         run: |
           echo "done!"
