@@ -51,6 +51,8 @@ public class Translation extends Localization {
     public static i18n Commands_Dominion_DominionNotExist;
     @i18nField(defaultValue = "用法: /dominion set_map_color <颜色> [领地名称]")
     public static i18n Commands_Dominion_SetMapColorUsage;
+    @i18nField(defaultValue = "本插件使用 Dominion 而非 Residence 作为领地，详细请查询 /dominion help")
+    public static i18n Commands_Residence_Command;
 
     @i18nField(defaultValue = "用法: /dominion group create <领地名称> <权限组名称>")
     public static i18n Commands_Group_CreateGroupUsage;
