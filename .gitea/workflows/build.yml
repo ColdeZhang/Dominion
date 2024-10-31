@@ -13,6 +13,8 @@ jobs:
         uses: https://ssl.lunadeer.cn:14446/actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: "Update Submodules"
+        run: git submodule update --init --recursive
       - name: "Set up JDK 17"
         uses: https://ssl.lunadeer.cn:14446/actions/setup-java@v3
         with:
