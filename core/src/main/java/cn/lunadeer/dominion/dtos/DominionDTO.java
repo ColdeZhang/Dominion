@@ -141,9 +141,9 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         }
     }
 
-    public static void delete(DominionDTO dominion) {
+    public static void deleteById(Integer dominion) {
         String sql = "DELETE FROM dominion WHERE id = ?;";
-        query(sql, dominion.getId());
+        query(sql, dominion);
         Cache.instance.loadDominions();
     }
 

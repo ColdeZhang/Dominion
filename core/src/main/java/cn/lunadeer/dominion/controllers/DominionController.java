@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.controllers;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
@@ -37,47 +36,6 @@ public class DominionController {
         return DominionDTO.selectAll();
     }
 
-    /**
-     * 删除领地 会同时删除其所有子领地
-     *
-     * @param operator      操作者
-     * @param dominion_name 领地名称
-     * @param force         是否强制删除
-     */
-    public static void delete(AbstractOperator operator, String dominion_name, boolean force) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DeleteDominionFailed);
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_DeleteDominionSuccess, dominion_name);
-        DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
-        if (dominion == null) {
-            return;
-        }
-        List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
-        if (!force) {
-            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, Translation.Messages_DeleteDominionConfirm, dominion_name);
-            showSubNamesWarning(sub_dominions, WARNING);
-            if (operator instanceof BukkitPlayerOperator) {
-                Notification.warn(operator.getPlayer(), Translation.Messages_DeleteDominionForceConfirm, dominion_name);
-            }
-            operator.setResponse(WARNING);
-            return;
-        }
-        DominionDTO.delete(dominion);
-        // 退还经济
-        int count;
-        if (Dominion.config.getEconomyOnlyXZ(operator.getPlayer())) {
-            count = dominion.getSquare();
-            for (DominionDTO sub_dominion : sub_dominions) {
-                count += sub_dominion.getSquare();
-            }
-        } else {
-            count = dominion.getVolume();
-            for (DominionDTO sub_dominion : sub_dominions) {
-                count += sub_dominion.getVolume();
-            }
-        }
-        if (handleEconomyFailed(operator, count, false, FAIL, SUCCESS)) return;
-        operator.setResponse(SUCCESS);
-    }
 
     /**
      * 设置领地的进入消息
@@ -356,14 +314,13 @@ public class DominionController {
 
 
     private static DominionDTO getExistDomAndIsOwner(AbstractOperator operator, String dominion_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, "");
         DominionDTO dominion = DominionDTO.select(dominion_name);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNotExist, dominion_name));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionNotExist, dominion_name);
             return null;
         }
         if (notOwner(operator, dominion)) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_NotDominionOwner, dominion_name));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion_name);
             return null;
         }
         return dominion;
@@ -441,22 +398,5 @@ public class DominionController {
         return result;
     }
 
-
-    /**
-     * 以警告形式打印所有子领地名称
-     *
-     * @param sub_dominions 子领地列表
-     * @param WARNING       警告消息
-     */
-    public static void showSubNamesWarning(List<DominionDTO> sub_dominions, AbstractOperator.Result WARNING) {
-        String sub_names = "";
-        for (DominionDTO sub_dominion : sub_dominions) {
-            sub_names = sub_dominion.getName() + ", ";
-        }
-        if (!sub_dominions.isEmpty()) {
-            sub_names = sub_names.substring(0, sub_names.length() - 2);
-            WARNING.addMessage(Translation.Messages_SubDominionList, sub_names);
-        }
-    }
 
 }
