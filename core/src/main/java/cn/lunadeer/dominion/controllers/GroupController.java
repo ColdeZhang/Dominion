@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.managers.Translation;
 

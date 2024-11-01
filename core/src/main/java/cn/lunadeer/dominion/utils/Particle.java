@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils;
 
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.minecraftpluginutils.ParticleRender;
 import org.bukkit.entity.Player;
 

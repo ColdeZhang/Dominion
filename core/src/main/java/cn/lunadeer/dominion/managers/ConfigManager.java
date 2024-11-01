@@ -336,27 +336,27 @@ public class ConfigManager {
         _file.set("AutoCleanAfterDays", auto_clean_after_days);
     }
 
-    public Integer getLimitMinY(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitMinY(player.getWorld());
+    public Integer getLimitMinY(@Nullable Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitMinY(player == null ? null : player.getWorld());
     }
 
-    public Integer getLimitMaxY(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitMaxY(player.getWorld());
+    public Integer getLimitMaxY(@Nullable Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitMaxY(player == null ? null : player.getWorld());
     }
 
-    public Integer getLimitAmount(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitAmount(player.getWorld());
+    public Integer getLimitAmount(@Nullable Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitAmount(player == null ? null : player.getWorld());
     }
 
-    public Integer getLimitDepth(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitDepth(player.getWorld());
+    public Integer getLimitDepth(@Nullable Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitDepth(player == null ? null : player.getWorld());
     }
 
-    public Boolean getLimitVert(Player player) {
-        return groupLimits.get(getPlayerGroup(player)).getLimitVert(player.getWorld());
+    public Boolean getLimitVert(@Nullable Player player) {
+        return groupLimits.get(getPlayerGroup(player)).getLimitVert(player == null ? null : player.getWorld());
     }
 
-    public List<String> getWorldBlackList(Player player) {
+    public List<String> getWorldBlackList(@Nullable Player player) {
         return groupLimits.get(getPlayerGroup(player)).getWorldBlackList();
     }
 

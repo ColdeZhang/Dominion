@@ -3,6 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.events.DominionSizeChangeEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.cuis.*;
 import cn.lunadeer.dominion.uis.tuis.AllDominion;
@@ -80,10 +81,10 @@ public class Commands implements TabExecutor {
                 DominionOperate.autoCreateSubDominion(sender, args);
                 break;
             case "expand":
-                DominionOperate.expandDominion(sender, args);
+                DominionOperate.sizeChangeDominion(sender, args, DominionSizeChangeEvent.SizeChangeType.EXPAND);
                 break;
             case "contract":
-                DominionOperate.contractDominion(sender, args);
+                DominionOperate.sizeChangeDominion(sender, args, DominionSizeChangeEvent.SizeChangeType.CONTRACT);
                 break;
             case "delete":
                 DominionOperate.deleteDominion(sender, args);
@@ -265,7 +266,9 @@ public class Commands implements TabExecutor {
                     return dominionFlags();
                 case "expand":
                 case "contract":
-                    return Collections.singletonList(Translation.Commands_SizeInteger.trans());
+                    List<String> l = Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN");
+                    l.addAll(playerDominions(sender).stream().map(s -> "name=" + s).toList());
+                    return l;
                 case "create_sub":
                 case "auto_create_sub":
                     return Collections.singletonList(Translation.Commands_SubDominionName.trans());
@@ -283,6 +286,9 @@ public class Commands implements TabExecutor {
                     return boolOptions();
                 case "expand":
                 case "contract":
+                    List<String> l = Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN");
+                    l.addAll(playerDominions(sender).stream().map(s -> "name=" + s).toList());
+                    return l;
                 case "auto_create_sub":
                 case "create_sub":
                 case "set_enter_msg":
@@ -299,6 +305,11 @@ public class Commands implements TabExecutor {
             switch (args[0]) {
                 case "set":
                     return playerDominions(sender);
+                case "expand":
+                case "contract":
+                    List<String> l = Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN");
+                    l.addAll(playerDominions(sender).stream().map(s -> "name=" + s).toList());
+                    return l;
             }
         }
         return null;
