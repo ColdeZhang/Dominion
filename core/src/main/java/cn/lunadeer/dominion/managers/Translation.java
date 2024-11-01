@@ -242,7 +242,7 @@ public class Translation extends Localization {
     public static i18n Messages_ParentDominionNotExist;
     @i18nField(defaultValue = "根领地丢失！")
     public static i18n Messages_RootDominionLost;
-    @i18nField(defaultValue = "你不是父领地 %s 的拥有者，无法创建子领地")
+    @i18nField(defaultValue = "你不是父领地 %s 的拥有者")
     public static i18n Messages_NotParentDominionOwner;
     @i18nField(defaultValue = "父领地与子领地不在同一世界")
     public static i18n Messages_ParentDominionNotInSameWorld;

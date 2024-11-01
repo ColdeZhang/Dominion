@@ -1,20 +1,20 @@
 package cn.lunadeer.dominion.controllers;
 
+import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.minecraftpluginutils.Notification;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
-public class BukkitPlayerOperator implements AbstractOperator {
+public class BukkitPlayerOperator extends AbstractOperator {
 
     private final CommandSender player;
-    private final CompletableFuture<Result> response = new CompletableFuture<>();
+
 
     public BukkitPlayerOperator(CommandSender player) {
         this.player = player;
@@ -40,11 +40,6 @@ public class BukkitPlayerOperator implements AbstractOperator {
         } else {
             return ((Player) player).isOp() || player.hasPermission("dominion.admin");
         }
-    }
-
-    @Override
-    public void setResponse(Result result) {
-        response.complete(result);
     }
 
     @Override
@@ -89,28 +84,32 @@ public class BukkitPlayerOperator implements AbstractOperator {
         }
     }
 
-    @Override
-    public CompletableFuture<Result> getResponse() {
-        return response;
+    public static BukkitPlayerOperator create(CommandSender player) {
+        return new BukkitPlayerOperator(player);
     }
 
-    public static BukkitPlayerOperator create(CommandSender player) {
-        BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
-        operator.getResponse().thenAccept(result -> {
-            if (Objects.equals(result.getStatus(), BukkitPlayerOperator.Result.SUCCESS)) {
-                for (String msg : result.getMessages()) {
-                    Notification.info(player, msg);
-                }
-            } else if (Objects.equals(result.getStatus(), BukkitPlayerOperator.Result.WARNING)) {
-                for (String msg : result.getMessages()) {
-                    Notification.warn(player, msg);
-                }
+    @Override
+    public void completeResult() {
+        for (String message : getResults().get(ResultType.SUCCESS)) {
+            if (getPlayer() != null) {
+                Notification.info(getPlayer(), message);
             } else {
-                for (String msg : result.getMessages()) {
-                    Notification.error(player, msg);
-                }
+                XLogger.info(message);
             }
-        });
-        return operator;
+        }
+        for (String message : getResults().get(ResultType.WARNING)) {
+            if (getPlayer() != null) {
+                Notification.warn(getPlayer(), message);
+            } else {
+                XLogger.warn(message);
+            }
+        }
+        for (String message : getResults().get(ResultType.FAILURE)) {
+            if (getPlayer() != null) {
+                Notification.error(getPlayer(), message);
+            } else {
+                XLogger.err(message);
+            }
+        }
     }
 }

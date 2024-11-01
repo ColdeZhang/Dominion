@@ -197,7 +197,13 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     public static DominionDTO create(UUID owner, String name, @NotNull World world,
-                                     Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
+                                     Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, cn.lunadeer.dominion.api.dtos.DominionDTO parent) {
+        x1 = Math.min(x1, x2);
+        y1 = Math.min(y1, y2);
+        z1 = Math.min(z1, z2);
+        x2 = Math.max(x1, x2) + 1;
+        y2 = Math.max(y1, y2) + 1;
+        z2 = Math.max(z1, z2) + 1;
         return new DominionDTO(null, owner, name, world.getUID(), x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
     }
 
@@ -471,6 +477,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         }
     }
 
+    @Override
     public DominionDTO setTpLocation(Location loc) {
         this.tp_location.value = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
         return doUpdate(new UpdateRow().field(tp_location));

@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.uis.cuis;
 
-import cn.lunadeer.dominion.controllers.AbstractOperator;
+import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.managers.Translation;

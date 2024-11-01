@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.controllers.AbstractOperator;
+import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
