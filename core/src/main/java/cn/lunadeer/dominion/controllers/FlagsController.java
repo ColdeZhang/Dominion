@@ -21,7 +21,7 @@ public class FlagsController {
         DominionDTO dominion = ControllerUtils.getPlayerCurrentDominion(operator);
         if (dominion == null) return;
         setFlag(operator, flag, value, dominion.getName());
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetDominionFlagSuccess, flag, value));
+        operator.addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetDominionFlagSuccess, flag, value);
     }
 
     /**
@@ -35,16 +35,16 @@ public class FlagsController {
     public static void setFlag(AbstractOperator operator, String flag, boolean value, String dominionName) {
         DominionDTO dominion = DominionDTO.select(dominionName);
         if (dominion == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DominionNotExist, dominionName));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionNotExist, dominionName);
             return;
         }
         if (noAuthToChangeFlags(operator, dominion)) return;
         Flag f = Flag.getFlag(flag);
         if (f == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_UnknownFlag, flag));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_UnknownFlag, flag);
             return;
         }
         dominion.setFlagValue(f, value);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetDominionFlagSuccess, flag, value));
+        operator.addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetDominionFlagSuccess, flag, value);
     }
 }
