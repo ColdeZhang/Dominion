@@ -7,11 +7,8 @@ import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -117,15 +114,16 @@ public class DominionController {
      * @param dominion_name 领地名称
      */
     public static void setTpLocation(AbstractOperator operator, int x, int y, int z, String dominion_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetTpLocationFailed);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dominion_name);
         if (dominion == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DominionNotExist, dominion_name));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetTpLocationFailed, dominion_name)
+                    .addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionNotExist, dominion_name);
             return;
         }
         World world = dominion.getWorld();
         if (world == null) {
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DominionWorldNotExist));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetTpLocationFailed, dominion_name)
+                    .addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionWorldNotExist);
             return;
         }
         Location loc = new Location(world, x, y, z);
@@ -133,11 +131,12 @@ public class DominionController {
         if (isInDominion(dominion, loc)) {
             loc.setY(loc.getY() + 1.5);
             dominion.setTpLocation(loc);
-            operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS,
+            operator.addResult(AbstractOperator.ResultType.SUCCESS,
                     Translation.Messages_SetTpLocationSuccess, dominion_name
-                    , loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                    , loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         } else {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_TpLocationNotInDominion, dominion_name));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetTpLocationFailed, dominion_name)
+                    .addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TpLocationNotInDominion, dominion_name);
         }
     }
 
@@ -256,52 +255,6 @@ public class DominionController {
         setMapColor(operator, color, dominion.getName());
     }
 
-
-    private static boolean isIntersect(DominionDTO a, int[] cord) {
-        return isIntersect(a, cord[0], cord[1], cord[2], cord[3], cord[4], cord[5]);
-    }
-
-    private static boolean isIntersect(int[] cord, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
-        return cord[0] < x2 && cord[3] > x1 &&
-                cord[1] < y2 && cord[4] > y1 &&
-                cord[2] < z2 && cord[5] > z1;
-    }
-
-    /**
-     * 判断 sub 是否完全被 parent 包裹
-     */
-    private static boolean isContained(DominionDTO sub, DominionDTO parent) {
-        if (parent.getId() == -1) {
-            return true;
-        }
-        return isContained(sub.getX1(), sub.getY1(), sub.getZ1(), sub.getX2(), sub.getY2(), sub.getZ2(), parent.getX1(), parent.getY1(), parent.getZ1(), parent.getX2(), parent.getY2(), parent.getZ2());
-    }
-
-    private static boolean isContained(int[] cords, DominionDTO parent) {
-        return isContained(cords[0], cords[1], cords[2], cords[3], cords[4], cords[5], parent);
-    }
-
-    private static boolean isContained(DominionDTO sub, int[] cords) {
-        return isContained(sub, cords[0], cords[1], cords[2], cords[3], cords[4], cords[5]);
-    }
-
-    private static boolean isContained(Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, DominionDTO parent) {
-        if (parent.getId() == -1) {
-            return true;
-        }
-        return isContained(x1, y1, z1, x2, y2, z2, parent.getX1(), parent.getY1(), parent.getZ1(), parent.getX2(), parent.getY2(), parent.getZ2());
-    }
-
-    private static boolean isContained(DominionDTO sub, Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2) {
-        return isContained(sub.getX1(), sub.getY1(), sub.getZ1(), sub.getX2(), sub.getY2(), sub.getZ2(), x1, y1, z1, x2, y2, z2);
-    }
-
-    private static boolean isContained(int sub_x1, int sub_y1, int sub_z1, int sub_x2, int sub_y2, int sub_z2, int parent_x1, int parent_y1, int parent_z1, int parent_x2, int parent_y2, int parent_z2) {
-        return sub_x1 >= parent_x1 && sub_x2 <= parent_x2 &&
-                sub_y1 >= parent_y1 && sub_y2 <= parent_y2 &&
-                sub_z1 >= parent_z1 && sub_z2 <= parent_z2;
-    }
-
     private static List<DominionDTO> getSubDominionsRecursive(DominionDTO dominion) {
         List<DominionDTO> sub_dominions = DominionDTO.selectByParentId(dominion.getWorldUid(), dominion.getId());
         List<DominionDTO> sub_sub_dominions = new ArrayList<>();
@@ -325,78 +278,4 @@ public class DominionController {
         }
         return dominion;
     }
-
-
-    private static @Nullable DominionDTO expandContractPreCheck(AbstractOperator operator, @Nullable DominionDTO dominion, AbstractOperator.Result FAIL) {
-        if (dominion == null) {
-            return null;
-        }
-        if (operator.getLocation() == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_CannotGetLocation));
-            return null;
-        }
-        if (!operator.getLocation().getWorld().getUID().equals(dominion.getWorldUid())) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_CrossWorldOperationDisallowed));
-            return null;
-        }
-        if (!isInDominion(dominion, operator.getLocation())) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_NotInDominion, dominion.getName()));
-            return null;
-        }
-        return dominion;
-    }
-
-    private static int[] expandContractSizeChange(AbstractOperator operator, @NotNull DominionDTO dominion, boolean expand, int size, AbstractOperator.Result FAIL) {
-        BlockFace face = operator.getDirection();
-        if (face == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_CannotGetDirection));
-            return null;
-        }
-        int[] result = new int[6];
-        result[0] = dominion.getX1();
-        result[1] = dominion.getY1();
-        result[2] = dominion.getZ1();
-        result[3] = dominion.getX2();
-        result[4] = dominion.getY2();
-        result[5] = dominion.getZ2();
-        if (!expand) {
-            size = size * -1;
-        }
-        switch (face) {
-            case NORTH:
-                result[2] -= size;
-                break;
-            case SOUTH:
-                result[5] += size;
-                break;
-            case WEST:
-                result[0] -= size;
-                break;
-            case EAST:
-                result[3] += size;
-                break;
-            case UP:
-                result[4] += size;
-                break;
-            case DOWN:
-                result[1] -= size;
-                break;
-            default:
-                operator.setResponse(FAIL.addMessage(Translation.Messages_InvalidDirection, face));
-                return null;
-        }
-        if (!expand) {
-            // 校验第二组坐标是否小于第一组坐标
-            if (result[0] > result[3] || result[1] > result[4] || result[2] > result[5]) {
-                operator.setResponse(FAIL.addMessage(Translation.Messages_ContractSizeInvalid));
-                return null;
-            }
-        }
-        if (sizeNotValid(operator, result)) {
-            return null;
-        }
-        return result;
-    }
-
-
 }
