@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.events.DominionCreateEvent;
 import cn.lunadeer.dominion.events.DominionDeleteEvent;
+import cn.lunadeer.dominion.events.DominionRenameEvent;
 import cn.lunadeer.dominion.events.DominionSizeChangeEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;
@@ -29,22 +30,29 @@ public class DominionEventHandler implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    // ========== DominionCreateEvent START
+    @EventHandler(priority = EventPriority.LOW)
     public void onDominionCreateEventPreCheck(DominionCreateEvent event) {
+        event.setDominion(cn.lunadeer.dominion.dtos.DominionDTO.create(event.getOwner(), event.getName(), event.getLoc1().getWorld(),
+                event.getLoc1().getBlockX(), event.getLoc1().getBlockY(), event.getLoc1().getBlockZ(),
+                event.getLoc2().getBlockX(), event.getLoc2().getBlockY(), event.getLoc2().getBlockZ(),
+                event.getParent()));
         DominionDTO dominion = event.getDominion();
+        if (dominion == null) {
+            event.setCancelled(true);
+            return;
+        }
         // name check
         if (nameNotValid(event.getOperator(), dominion.getName())) {
             event.setCancelled(true);
         }
         // world check
         if (worldNotValid(event.getOperator(), Objects.requireNonNull(dominion.getWorld()).getName())) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionDisabledWorld, dominion.getWorld().getName());
-            event.setCancelled(true);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionDisabledWorld, dominion.getWorld().getName());
         }
         // amount check
         if (amountNotValid(event.getOperator())) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionAmountLimit, Dominion.config.getLimitAmount(event.getOperator().getPlayer()));
-            event.setCancelled(true);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionAmountLimit, Dominion.config.getLimitAmount(event.getOperator().getPlayer()));
         }
         // size check
         if (sizeNotValid(event.getOperator(),
@@ -62,38 +70,45 @@ public class DominionEventHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDominionCreateEventPostProcess(DominionCreateEvent event) {
+        DominionDTO dominion = event.getDominion();
+        if (dominion == null) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionFailed);
+            return;
+        }
         if (!event.isCancelled() && !event.isSkipEconomy()) {
             if (handleEconomyFailed(event.getOperator(),
-                    Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? event.getDominion().getSquare() : event.getDominion().getVolume(),
+                    Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? dominion.getSquare() : dominion.getVolume(),
                     true)) {
                 event.setCancelled(true);
             }
         }
         if (!event.isCancelled()) {
-            DominionDTO inserted = cn.lunadeer.dominion.dtos.DominionDTO.insert((cn.lunadeer.dominion.dtos.DominionDTO) event.getDominion());
+            DominionDTO inserted = cn.lunadeer.dominion.dtos.DominionDTO.insert((cn.lunadeer.dominion.dtos.DominionDTO) dominion);
+            event.setDominion(inserted);
             if (inserted != null) {
-                event.setDominion(inserted);
-                event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_CreateDominionSuccess, event.getDominion().getName());
                 if (event.getOperator().getPlayer() != null) {
-                    Particle.showBorder(event.getOperator().getPlayer(), event.getDominion());
+                    Particle.showBorder(event.getOperator().getPlayer(), inserted);
                 }
             } else {
-                event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionFailed);
-                event.setCancelled(true);
+                event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
             }
-        } else {
+        }
+        if (event.isCancelled()) {
             event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionFailed);
-            event.setCancelled(true);
+        } else {
+            event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_CreateDominionSuccess, dominion.getName());
         }
         event.getOperator().completeResult();
     }
+    // ========== DominionCreateEvent END
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    // ========== DominionSizeChangeEvent START
+    @EventHandler(priority = EventPriority.LOW)
     public void onDominionSizeChangeEventPreCheck(DominionSizeChangeEvent event) {
-        DominionDTO dominion = event.getBefore();
-        DominionDTO tempDominion = expandContractSizeChange(event.getOperator(), dominion, event.getType(), event.getSize(), event.getFace());
+        DominionDTO dominion = event.getDominion();
+        DominionDTO tempDominion = constractSizeChangeDominionDTO(event.getOperator(), dominion, event.getType(), event.getSize(), event.getFace());
         if (tempDominion == null) {
             event.setCancelled(true);
             return;
@@ -113,60 +128,64 @@ public class DominionEventHandler implements Listener {
             for (cn.lunadeer.dominion.dtos.DominionDTO sub_dominion : sub_dominions) {
                 if (!isContained(sub_dominion.getX1(), sub_dominion.getY1(), sub_dominion.getZ1(), sub_dominion.getX2(), sub_dominion.getY2(), sub_dominion.getZ2(),
                         tempDominion.getX1(), tempDominion.getY1(), tempDominion.getZ1(), tempDominion.getX2(), tempDominion.getY2(), tempDominion.getZ2())) {
-                    event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_ContractDominionConflict, sub_dominion.getName());
-                    event.setCancelled(true);
+                    event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_ContractDominionConflict, sub_dominion.getName());
                 }
             }
         }
-        event.setAfter(tempDominion);
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSizeChangeEventPostProcess(DominionSizeChangeEvent event) {
+        if (!event.isCancelled()){
+            DominionDTO tempDominion = constractSizeChangeDominionDTO(event.getOperator(), event.getDominion(), event.getType(), event.getSize(), event.getFace());
+            if (tempDominion == null) {
+                event.setCancelled(true);
+                return;
+            }
+            event.setDominion(tempDominion);
+        }
         if (!event.isCancelled() && !event.isSkipEconomy()) {
             if (handleEconomyFailed(event.getOperator(),
-                    Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? event.getAfter().getSquare() : event.getAfter().getVolume(),
+                    Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? event.getDominion().getSquare() : event.getDominion().getVolume(),
                     event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND)) {
                 event.setCancelled(true);
             }
         }
         if (!event.isCancelled()) {
-            DominionDTO after = event.getBefore().setXYZ(event.getAfter().getX1(), event.getAfter().getY1(), event.getAfter().getZ1(),
-                    event.getAfter().getX2(), event.getAfter().getY2(), event.getAfter().getZ2());
+            DominionDTO after = event.getDominion().setXYZ(event.getDominion().getX1(), event.getDominion().getY1(), event.getDominion().getZ1(),
+                    event.getDominion().getX2(), event.getDominion().getY2(), event.getDominion().getZ2());
             if (after != null) {
-                if (event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND) {
-                    event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ExpandDominionSuccess, event.getBefore().getName(), event.getSize());
-                } else {
-                    event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ContractDominionSuccess, event.getBefore().getName(), event.getSize());
-                }
+                event.setDominion(after);
                 if (event.getOperator().getPlayer() != null) {
                     Particle.showBorder(event.getOperator().getPlayer(), after);
                 }
             } else {
-                if (event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND) {
-                    event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_ExpandDominionFailed);
-                } else {
-                    event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_ContractDominionFailed);
-                }
-                event.setCancelled(true);
+                event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
             }
-        } else {
+        }
+        if (event.isCancelled()) {
             if (event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND) {
                 event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_ExpandDominionFailed);
             } else {
                 event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_ContractDominionFailed);
             }
-            event.setCancelled(true);
+        } else {
+            if (event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND) {
+                event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ExpandDominionSuccess, event.getDominion().getName(), event.getSize());
+            } else {
+                event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ContractDominionSuccess, event.getDominion().getName(), event.getSize());
+            }
         }
         event.getOperator().completeResult();
     }
+    // ========== DominionSizeChangeEvent END
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    // ========== DominionDeleteEvent START
+    @EventHandler(priority = EventPriority.LOW)
     public void onDominionDeleteEventPreProcess(DominionDeleteEvent event) {
         DominionDTO dominion = event.getDominion();
         if (notOwner(event.getOperator(), dominion)) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
-            event.setCancelled(true);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
         }
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!event.isForce()) {
@@ -178,11 +197,11 @@ public class DominionEventHandler implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDominionDeleteEventPostProcess(DominionDeleteEvent event) {
         if (!event.isCancelled()) {
             List<DominionDTO> sub_dominions = getSubDominionsRecursive(event.getDominion());
-            cn.lunadeer.dominion.dtos.DominionDTO.deleteById(event.getDominion().getId());
+            cn.lunadeer.dominion.dtos.DominionDTO.deleteById(event.getDominion().getId()); // do db delete
             int count;
             if (Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer())) {
                 count = event.getDominion().getSquare();
@@ -195,21 +214,55 @@ public class DominionEventHandler implements Listener {
                     count += sub_dominion.getVolume();
                 }
             }
-            if (!event.isSkipEconomy()) {
-                if (handleEconomyFailed(event.getOperator(), count, false)) {
-                    event.setCancelled(true);
-                }
+            if (!event.isSkipEconomy() && handleEconomyFailed(event.getOperator(), count, false)) {
+                event.setCancelled(true);
             }
-        }
-
-        if (!event.isCancelled()) {
-            event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_DeleteDominionSuccess, event.getDominion().getName());
-        } else {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DeleteDominionFailed);
-            event.setCancelled(true);
+            if (!event.isCancelled()) {
+                event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_DeleteDominionSuccess, event.getDominion().getName());
+            } else {
+                event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DeleteDominionFailed);
+            }
         }
         event.getOperator().completeResult();
     }
+    // ========== DominionDeleteEvent END
+
+    // ========== DominionRenameEvent START
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDominionRenameEventPreProcess(DominionRenameEvent event) {
+        DominionDTO dominion = event.getDominion();
+        if (notOwner(event.getOperator(), dominion)) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+        }
+        if (nameNotValid(event.getOperator(), event.getNewName())) {
+            event.setCancelled(true);
+        }
+        if (Objects.equals(dominion.getName(), event.getNewName())) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_RenameDominionSameName);
+        }
+        if (cn.lunadeer.dominion.dtos.DominionDTO.select(event.getNewName()) != null) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionNameExist, event.getNewName());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDominionRenameEventPostProcess(DominionRenameEvent event) {
+        if (!event.isCancelled()) {
+            DominionDTO renamed = event.getDominion().setName(event.getNewName());
+            if (renamed != null) {
+                event.setDominion(renamed);
+            } else {
+                event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
+            }
+        }
+        if (event.isCancelled()) {
+            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_RenameDominionFailed);
+        } else {
+            event.getOperator().addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_RenameDominionSuccess, event.getDominion().getName(), event.getNewName());
+        }
+        event.getOperator().completeResult();
+    }
+    // ========== DominionRenameEvent END
 
     // ============================================================
     // ============================================================
@@ -413,7 +466,15 @@ public class DominionEventHandler implements Listener {
         return false;
     }
 
+    /**
+     * 检查是否与同级的领地相交 检查是否和出生点保护冲突
+     *
+     * @param operator 操作者
+     * @param dominion 领地
+     * @return 是否相交
+     */
     private static boolean intersectWithOther(AbstractOperator operator, DominionDTO dominion) {
+        // sub dominion intersect check
         List<cn.lunadeer.dominion.dtos.DominionDTO> sub_dominions = cn.lunadeer.dominion.dtos.DominionDTO.selectByParentId(dominion.getWorldUid(), dominion.getParentDomId());
         for (cn.lunadeer.dominion.dtos.DominionDTO sub_dominion : sub_dominions) {
             if (sub_dominion.getName().equals(dominion.getName())) {
@@ -435,7 +496,8 @@ public class DominionEventHandler implements Listener {
         }
         World world = dominion.getWorld();
         if (world == null) {
-            return false;
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionWorldLost);
+            return true;
         }
         Location spawn = world.getSpawnLocation();
         if (isIntersect(dominion.getX1(), dominion.getY1(), dominion.getZ1(), dominion.getX2(), dominion.getY2(), dominion.getZ2(),
@@ -506,7 +568,17 @@ public class DominionEventHandler implements Listener {
         return false;
     }
 
-    private static DominionDTO expandContractSizeChange(AbstractOperator operator, @NotNull DominionDTO dominion, DominionSizeChangeEvent.SizeChangeType type, int size, BlockFace face) {
+    /**
+     * 构造 size change 事件的领地 DTO 同时校验是否合法
+     *
+     * @param operator 操作者
+     * @param dominion 领地
+     * @param type     类型
+     * @param size     大小
+     * @param face     方向
+     * @return 领地 DTO
+     */
+    private static DominionDTO constractSizeChangeDominionDTO(AbstractOperator operator, @NotNull DominionDTO dominion, DominionSizeChangeEvent.SizeChangeType type, int size, BlockFace face) {
         int[] result = new int[6];
         result[0] = dominion.getX1();
         result[1] = dominion.getY1();
@@ -554,7 +626,7 @@ public class DominionEventHandler implements Listener {
                 result[0], result[1], result[2],
                 result[3], result[4], result[5],
                 cn.lunadeer.dominion.dtos.DominionDTO.select(dominion.getParentDomId())
-        );
+        ).setId(dominion.getId());
     }
 
     private static List<DominionDTO> getSubDominionsRecursive(DominionDTO dominion) {
