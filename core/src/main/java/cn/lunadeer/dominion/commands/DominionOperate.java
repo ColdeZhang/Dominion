@@ -10,6 +10,7 @@ import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.events.DominionCreateEvent;
 import cn.lunadeer.dominion.events.DominionDeleteEvent;
+import cn.lunadeer.dominion.events.DominionRenameEvent;
 import cn.lunadeer.dominion.events.DominionSizeChangeEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ArgumentParser;
@@ -64,11 +65,7 @@ public class DominionOperate {
         }
         String name = args[1];
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
-        DominionDTO dominion = DominionDTO.create(player.getUniqueId(), name, points.get(0).getWorld(),
-                points.get(0).getBlockX(), points.get(0).getBlockY(), points.get(0).getBlockZ(),
-                points.get(1).getBlockX(), points.get(1).getBlockY(), points.get(1).getBlockZ(),
-                null);
-        new DominionCreateEvent(operator, dominion).callEvent();
+        new DominionCreateEvent(operator, name, player.getUniqueId(), points.get(0), points.get(1), null).callEvent();
     }
 
     /**
@@ -108,11 +105,7 @@ public class DominionOperate {
                 return;
             }
         }
-        DominionDTO dominion = DominionDTO.create(player.getUniqueId(), args[1], points.get(0).getWorld(),
-                points.get(0).getBlockX(), points.get(0).getBlockY(), points.get(0).getBlockZ(),
-                points.get(1).getBlockX(), points.get(1).getBlockY(), points.get(1).getBlockZ(),
-                parent);
-        new DominionCreateEvent(operator, dominion).callEvent();
+        new DominionCreateEvent(operator, args[1], player.getUniqueId(), points.get(0), points.get(1), parent).callEvent();
     }
 
 
@@ -214,7 +207,7 @@ public class DominionOperate {
         if (parser.hasKey("name")) {
             dominion = DominionDTO.select(parser.getVal("name"));
             if (dominion == null) {
-                Notification.error(sender, Translation.Messages_DominionNotExist);
+                Notification.error(sender, Translation.Messages_DominionNotExist, parser.getVal("name"));
                 return;
             }
         } else {
@@ -347,7 +340,12 @@ public class DominionOperate {
             Notification.error(sender, Translation.Commands_Dominion_RenameDominionUsage);
             return;
         }
-        DominionController.rename(operator, args[1], args[2]);
+        DominionDTO dominion = DominionDTO.select(args[1]);
+        if (dominion == null) {
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
+            return;
+        }
+        new DominionRenameEvent(operator, dominion, args[2]).callEvent();
     }
 
     /**

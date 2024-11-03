@@ -67,11 +67,7 @@ public class Migration {
 
     private static void create(Player player, ResMigration.ResidenceNode node, DominionDTO parent) {
         BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
-        DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.create(player.getUniqueId(), node.name, node.loc1.getWorld(),
-                node.loc1.getBlockX(), node.loc1.getBlockY(), node.loc1.getBlockZ(),
-                node.loc2.getBlockX(), node.loc2.getBlockY(), node.loc2.getBlockZ(),
-                parent);
-        DominionCreateEvent event = new DominionCreateEvent(operator, dominion);
+        DominionCreateEvent event = new DominionCreateEvent(operator, node.name, player.getUniqueId(), node.loc1, node.loc2, parent);
         event.setSkipEconomy(true);
         event.callEvent();
         if (!event.isCancelled()) {

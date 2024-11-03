@@ -231,6 +231,17 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return (Integer) id.value;
     }
 
+    /**
+     * 设置领地ID，该方法不会更新数据库，仅用于构造对象
+     *
+     * @param id 领地ID
+     * @return 领地
+     */
+    public @NotNull DominionDTO setId(Integer id) {
+        this.id.value = id;
+        return this;
+    }
+
     @Override
     public @NotNull UUID getOwner() {
         return UUID.fromString((String) owner.value);

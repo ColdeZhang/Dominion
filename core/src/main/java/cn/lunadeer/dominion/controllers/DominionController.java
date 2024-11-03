@@ -141,39 +141,6 @@ public class DominionController {
     }
 
     /**
-     * 重命名领地
-     *
-     * @param operator 操作者
-     * @param old_name 旧名称
-     * @param new_name 新名称
-     */
-    public static void rename(AbstractOperator operator, String old_name, String new_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_RenameDominionFailed);
-        if (new_name.isEmpty()) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameShouldNotEmpty));
-            return;
-        }
-        if (new_name.contains(" ") || new_name.contains(".")) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameInvalid));
-            return;
-        }
-        if (Objects.equals(old_name, new_name)) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_RenameDominionSameName));
-            return;
-        }
-        DominionDTO dominion = getExistDomAndIsOwner(operator, old_name);
-        if (dominion == null) {
-            return;
-        }
-        if (DominionDTO.select(new_name) != null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionNameExist, new_name));
-            return;
-        }
-        dominion.setName(new_name);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_RenameDominionSuccess, old_name, new_name));
-    }
-
-    /**
      * 转让领地
      *
      * @param operator    操作者
@@ -225,18 +192,17 @@ public class DominionController {
      * @param dom_name 领地名称
      */
     public static void setMapColor(AbstractOperator operator, String color, String dom_name) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetMapColorFailed);
         DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
         if (dominion == null) {
             return;
         }
         color = color.toUpperCase();    // 转换为大写
         if (!color.matches("^#[0-9a-fA-F]{6}$")) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_MapColorInvalid));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_MapColorInvalid);
             return;
         }
         dominion.setColor(color);
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetMapColorSuccess, dom_name, color));
+        operator.addResult(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetMapColorSuccess, dom_name, color);
     }
 
     /**
@@ -246,10 +212,9 @@ public class DominionController {
      * @param color    16进制颜色 例如 #ff0000
      */
     public static void setMapColor(AbstractOperator operator, String color) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetMapColorFailed);
         DominionDTO dominion = getPlayerCurrentDominion(operator);
         if (dominion == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_CannotGetDominionAuto));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_CannotGetDominionAuto);
             return;
         }
         setMapColor(operator, color, dominion.getName());
