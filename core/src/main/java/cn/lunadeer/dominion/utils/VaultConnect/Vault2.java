@@ -38,16 +38,16 @@ public class Vault2 implements VaultInterface {
 
     @Override
     public void withdrawPlayer(Player player, double amount) {
-        econ.withdraw("MPU", player.getUniqueId(), BigDecimal.valueOf(amount));
+        econ.withdraw(PluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 
     @Override
     public void depositPlayer(Player player, double amount) {
-        econ.deposit("MPU", player.getUniqueId(), BigDecimal.valueOf(amount));
+        econ.deposit(PluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 
     @Override
     public double getBalance(Player player) {
-        return econ.getBalance("MPU", player.getUniqueId()).doubleValue();
+        return econ.getBalance(PluginName, player.getUniqueId()).doubleValue();
     }
 }
