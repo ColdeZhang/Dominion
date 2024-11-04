@@ -71,6 +71,7 @@ public class Migration {
         event.setSkipEconomy(true);
         event.callEvent();
         if (!event.isCancelled()) {
+            Notification.info(player, Translation.Commands_Residence_MigrateSuccess, node.name);
             DominionDTO dominionCreated = event.getDominion();
             Objects.requireNonNull(Objects.requireNonNull(dominionCreated.setTpLocation(node.tpLoc))
                             .setJoinMessage(node.joinMessage))

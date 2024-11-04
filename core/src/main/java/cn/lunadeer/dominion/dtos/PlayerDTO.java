@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerDTO {
+public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
 
     public static PlayerDTO get(Player player) {
         PlayerDTO re = select(player.getUniqueId());
@@ -155,16 +155,25 @@ public class PlayerDTO {
         this(null, uuid, lastKnownName, lastJoinAt, -1);
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public UUID getUuid() {
         return uuid;
     }
 
+    @Override
     public String getLastKnownName() {
         return lastKnownName;
+    }
+
+    @Override
+    public cn.lunadeer.dominion.api.dtos.PlayerDTO updateLastKnownName(String name) {
+        this.setLastKnownName(name);
+        return update(this);
     }
 
     public Long getLastJoinAt() {
