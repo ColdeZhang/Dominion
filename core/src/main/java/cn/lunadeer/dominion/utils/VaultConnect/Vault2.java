@@ -12,12 +12,14 @@ import java.math.BigDecimal;
 public class Vault2 implements VaultInterface {
 
     private Economy econ = null;
-
+    private String PluginName = null;
+    
     @Override
     public boolean init(JavaPlugin plugin) {
         RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp != null) {
             econ = rsp.getProvider();
+            PluginName = plugin.getName();
             return true;
         }
         XLogger.err(Localization.Utils_VaultUnlockedNotAvailable);
@@ -26,12 +28,12 @@ public class Vault2 implements VaultInterface {
 
     @Override
     public String currencyNamePlural() {
-        return econ.defaultCurrencyNamePlural();
+        return econ.defaultCurrencyNamePlural(PluginName);
     }
 
     @Override
     public String currencyNameSingular() {
-        return econ.defaultCurrencyNameSingular();
+        return econ.defaultCurrencyNameSingular(PluginName);
     }
 
     @Override
