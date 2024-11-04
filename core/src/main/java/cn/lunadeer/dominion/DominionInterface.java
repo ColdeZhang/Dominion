@@ -1,6 +1,9 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.DominionAPI;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
@@ -75,6 +78,21 @@ public class DominionInterface implements DominionAPI {
     @Override
     public cn.lunadeer.dominion.api.dtos.@Nullable Flag getFlagByName(@NotNull String flagName) {
         return Flag.getFlag(flagName);
+    }
+
+    @Override
+    public @NotNull AbstractOperator getPlayerOperator(@NotNull Player player) {
+        return BukkitPlayerOperator.create(player);
+    }
+
+    @Override
+    public @NotNull AbstractOperator getPluginOperator() {
+        return null;// todo
+    }
+
+    @Override
+    public @Nullable PlayerDTO getPlayerDTO(UUID uuid) {
+        return cn.lunadeer.dominion.dtos.PlayerDTO.select(uuid);
     }
 
 }

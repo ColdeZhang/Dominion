@@ -2,16 +2,13 @@ package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static cn.lunadeer.dominion.DominionNode.isInDominion;
 import static cn.lunadeer.dominion.utils.ControllerUtils.getPlayerCurrentDominion;
@@ -138,50 +135,6 @@ public class DominionController {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetTpLocationFailed, dominion_name)
                     .addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TpLocationNotInDominion, dominion_name);
         }
-    }
-
-    /**
-     * 转让领地
-     *
-     * @param operator    操作者
-     * @param dom_name    领地名称
-     * @param player_name 玩家名称
-     * @param force       是否强制转让
-     */
-    public static void give(AbstractOperator operator, String dom_name, String player_name, boolean force) {
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_GiveDominionFailed);
-        DominionDTO dominion = getExistDomAndIsOwner(operator, dom_name);
-        if (dominion == null) {
-            return;
-        }
-        PlayerDTO player = PlayerController.getPlayerDTO(player_name);
-        if (player == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_PlayerNotExist, player_name));
-            return;
-        }
-        if (Objects.equals(dominion.getOwner(), player.getUuid())) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_DominionAlreadyBelong, dom_name, player_name));
-            return;
-        }
-        if (dominion.getParentDomId() != -1) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_SubDominionCannotGive, player_name, dom_name));
-            return;
-        }
-        List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
-        if (!force) {
-            AbstractOperator.Result WARNING = new AbstractOperator.Result(AbstractOperator.Result.WARNING, Translation.Messages_GiveDominionConfirm, dom_name, player_name);
-            showSubNamesWarning(sub_dominions, WARNING);
-            if (operator instanceof BukkitPlayerOperator) {
-                Notification.warn(operator.getPlayer(), Translation.Messages_GiveDominionForceConfirm, dom_name, player_name);
-            }
-            operator.setResponse(WARNING);
-            return;
-        }
-        dominion.setOwner(player.getUuid());
-        for (DominionDTO sub_dominion : sub_dominions) {
-            sub_dominion.setOwner(player.getUuid());
-        }
-        operator.setResponse(new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_GiveDominionSuccess, dom_name, player_name));
     }
 
     /**

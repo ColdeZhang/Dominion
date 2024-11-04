@@ -4,14 +4,8 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
-import cn.lunadeer.dominion.events.DominionCreateEvent;
-import cn.lunadeer.dominion.events.DominionDeleteEvent;
-import cn.lunadeer.dominion.events.DominionRenameEvent;
-import cn.lunadeer.dominion.events.DominionSizeChangeEvent;
+import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.events.*;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ArgumentParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -247,7 +241,9 @@ public class DominionOperate {
             Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
-        new DominionDeleteEvent(operator, dominion, force).callEvent();
+        DominionDeleteEvent event = new DominionDeleteEvent(operator, dominion);
+        event.setForce(force);
+        event.callEvent();
     }
 
     /**
@@ -360,21 +356,30 @@ public class DominionOperate {
             return;
         }
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-        if (args.length == 3) {
-            String dom_name = args[1];
-            String player_name = args[2];
-            DominionController.give(operator, dom_name, player_name, false);
+        if (args.length < 3) {
+            Notification.error(sender, Translation.Commands_Dominion_GiveDominionUsage);
             return;
         }
+        boolean force = false;
         if (args.length == 4) {
-            String dom_name = args[1];
-            String player_name = args[2];
             if (args[3].equals("force")) {
-                DominionController.give(operator, dom_name, player_name, true);
-                return;
+                force = true;
             }
         }
-        Notification.error(sender, Translation.Commands_Dominion_GiveDominionUsage);
+        DominionDTO dominion = DominionDTO.select(args[1]);
+        if (dominion == null) {
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
+            return;
+        }
+        PlayerDTO playerDTO = PlayerDTO.select(args[2]);
+        PlayerDTO playerDTO_old = PlayerDTO.select(dominion.getOwner());
+        if (playerDTO == null || playerDTO_old == null) {
+            Notification.error(sender, Translation.Messages_PlayerNotExist, args[2]);
+            return;
+        }
+        DominionTransferEvent event = new DominionTransferEvent(operator, dominion, playerDTO_old, playerDTO);
+        event.setForce(force);
+        event.callEvent();
     }
 
     /**
