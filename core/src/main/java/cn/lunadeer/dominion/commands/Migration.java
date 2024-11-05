@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.events.DominionCreateEvent;
+import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.MigrateList;
 import cn.lunadeer.dominion.utils.ResMigration;

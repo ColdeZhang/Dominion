@@ -88,27 +88,69 @@ public class BukkitPlayerOperator extends AbstractOperator {
         return new BukkitPlayerOperator(player);
     }
 
+    private void show(ResultType type) {
+        if (getHeader().containsKey(type)) {
+            if (getPlayer() != null) {
+                switch (type) {
+                    case FAILURE:
+                        Notification.error(getPlayer(), getHeader().get(type));
+                        break;
+                    case WARNING:
+                        Notification.warn(getPlayer(), getHeader().get(type));
+                        break;
+                    default:
+                        Notification.info(getPlayer(), getHeader().get(type));
+                }
+            } else {
+                switch (type) {
+                    case FAILURE:
+                        XLogger.err(getHeader().get(type));
+                        break;
+                    case WARNING:
+                        XLogger.warn(getHeader().get(type));
+                        break;
+                    default:
+                        XLogger.info(getHeader().get(type));
+                }
+            }
+        }
+        for (String message : getResults().get(type)) {
+            if (getPlayer() != null) {
+                switch (type) {
+                    case FAILURE:
+                        Notification.error(getPlayer(), message);
+                        break;
+                    case WARNING:
+                        Notification.warn(getPlayer(), message);
+                        break;
+                    default:
+                        Notification.info(getPlayer(), message);
+                }
+            } else {
+                switch (type) {
+                    case FAILURE:
+                        XLogger.err(message);
+                        break;
+                    case WARNING:
+                        XLogger.warn(message);
+                        break;
+                    default:
+                        XLogger.info(message);
+                }
+            }
+        }
+    }
+
     @Override
     public void completeResult() {
-        for (String message : getResults().get(ResultType.SUCCESS)) {
-            if (getPlayer() != null) {
-                Notification.info(getPlayer(), message);
-            } else {
-                XLogger.info(message);
-            }
+        if (!getResults().get(ResultType.WARNING).isEmpty()) {
+            show(ResultType.WARNING);
         }
-        for (String message : getResults().get(ResultType.WARNING)) {
-            if (getPlayer() != null) {
-                Notification.warn(getPlayer(), message);
-            } else {
-                XLogger.warn(message);
-            }
-        }
-        for (String message : getResults().get(ResultType.FAILURE)) {
-            if (getPlayer() != null) {
-                Notification.error(getPlayer(), message);
-            } else {
-                XLogger.err(message);
+        if (!getResults().get(ResultType.FAILURE).isEmpty()) {
+            show(ResultType.FAILURE);
+        } else {
+            if (!getResults().get(ResultType.SUCCESS).isEmpty()) {
+                show(ResultType.SUCCESS);
             }
         }
     }

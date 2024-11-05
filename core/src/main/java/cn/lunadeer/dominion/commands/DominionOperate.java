@@ -5,7 +5,11 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.dtos.*;
-import cn.lunadeer.dominion.events.*;
+import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
+import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
+import cn.lunadeer.dominion.events.dominion.modify.DominionRenameEvent;
+import cn.lunadeer.dominion.events.dominion.modify.DominionSizeChangeEvent;
+import cn.lunadeer.dominion.events.dominion.modify.DominionTransferEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ArgumentParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -372,12 +376,11 @@ public class DominionOperate {
             return;
         }
         PlayerDTO playerDTO = PlayerDTO.select(args[2]);
-        PlayerDTO playerDTO_old = PlayerDTO.select(dominion.getOwner());
-        if (playerDTO == null || playerDTO_old == null) {
+        if (playerDTO == null) {
             Notification.error(sender, Translation.Messages_PlayerNotExist, args[2]);
             return;
         }
-        DominionTransferEvent event = new DominionTransferEvent(operator, dominion, playerDTO_old, playerDTO);
+        DominionTransferEvent event = new DominionTransferEvent(operator, dominion, playerDTO);
         event.setForce(force);
         event.callEvent();
     }

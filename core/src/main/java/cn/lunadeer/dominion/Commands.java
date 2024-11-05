@@ -3,7 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.events.DominionSizeChangeEvent;
+import cn.lunadeer.dominion.events.dominion.modify.DominionSizeChangeEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.cuis.*;
 import cn.lunadeer.dominion.uis.tuis.AllDominion;
