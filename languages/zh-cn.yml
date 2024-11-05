@@ -22,11 +22,20 @@ Commands:
     TpDominionUsage: '用法: /dominion tp <领地名称>'
     DominionNotExist: 领地不存在
     SetMapColorUsage: '用法: /dominion set_map_color <颜色> [领地名称]'
+  Residence:
+    Command: 本插件使用 Dominion 而非 Residence 作为领地，详细请查询 /dominion help
+    MigrationDisabled: Residence 迁移功能没有开启
+    MigrateUsage: '用法: /dominion migrate <res领地名称>'
+    NoMigrationData: 你没有可迁移的数据
+    NoResidenceDominion: 未找到指定的 Residence 领地
+    ResidenceNotOwner: 你不是该领地的所有者，无法迁移此领地
+    MigrateFailed: '迁移失败: %s'
+    MigrateSuccess: 领地 %s 已从 Residence 迁移至 Dominion
   Group:
     CreateGroupUsage: '用法: /dominion group create <领地名称> <权限组名称>'
     DeleteGroupUsage: '用法: /dominion group delete <领地名称> <权限组名称>'
     RenameGroupUsage: '用法: /dominion group rename <领地名称> <权限组旧名称> <新名称>'
-    SetGroupFlagUsage: '用法: /dominion group set_flag <领地名称> <权限组名称> <权限名称> <true|false>'
+    SetGroupFlagUsage: '用法: /dominion group set_flag <领地名称> <权限组名称> <权限名称> <true/false>'
     AddGroupMemberUsage: '用法: /dominion group add_member <领地名称> <权限组名称> <玩家名称>'
     RemoveGroupMemberUsage: '用法: /dominion group remove_member <领地名称> <权限组名称> <玩家名称>'
     GroupUsage: '用法: /dominion group <create|delete|rename|set_flag|add_member|remove_member|select_member|setting|list>'
@@ -48,14 +57,6 @@ Commands:
   LeaveMessageContent: 离开提示语内容
   InputColor: 输入颜色(16进制)
   NewDominionName: 新领地名称
-  Residence:
-    MigrationDisabled: Residence 迁移功能没有开启
-    MigrateUsage: '用法: /dominion migrate <res领地名称>'
-    NoMigrationData: 你没有可迁移的数据
-    NoResidenceDominion: 未找到指定的 Residence 领地
-    ResidenceNotOwner: 你不是该领地的所有者，无法迁移此领地
-    MigrateFailed: '迁移失败: %s'
-    MigrateSuccess: 领地 %s 已从 Residence 迁移至 Dominion
   Operator:
     ReloadingDominionCache: 正在从数据库重新加载领地缓存...
     ReloadedDominionCache: 领地缓存已重新加载
@@ -73,6 +74,14 @@ Commands:
     ExportedMCAList: MCA文件列表已导出到 %s
     ReloadingConfig: 正在重新加载配置文件...
     ReloadedConfig: 配置文件已重新加载
+    ExportDBConfirm: 你正在尝试导出数据库表，此行为会踢出所有玩家并关闭服务器，如确认继续请输入 /dominion export_db confirm
+    ExportDBBegin: 正在导出数据库表...
+    ExportDBSuccess: 数据库表导出完成
+    ImportDBConfirm: 你正在尝试导入数据库表，此行为会踢出所有玩家并关闭服务器，如确认继续请输入 /dominion import_db confirm
+    ImportDBBegin: 正在导入数据库表...
+    ImportDBSuccess: 数据库表导入完成
+    ImportDBFail: 没有可导入的数据
+    ImportDBIncompleteFail: 导入失败，数据不完整，请重新导出文件
   Template:
     CreateTemplateUsage: '用法: /dominion template create <模板名称>'
     DeleteTemplateUsage: '用法: /dominion template delete <模板名称>'
@@ -151,10 +160,12 @@ Messages:
   MapColorInvalid: 颜色格式不正确
   SetMapColorSuccess: 成功设置领地 %s 的卫星地图颜色为 %s
   SizeInvalid: 尺寸不合法
-  SizeShouldBeGreaterThan4: 领地的任意一边长度不得小于4
   SizeXShouldBeLessThan: 领地X方向(东西)长度不能超过 %d
   SizeYShouldBeLessThan: 领地Y方向(上下)高度不能超过 %d
   SizeZShouldBeLessThan: 领地Z方向(南北)长度不能超过 %d
+  SizeXShouldBeGreaterThan: 领地X方向(东西)长度不能少于 %d
+  SizeYShouldBeGreaterThan: 领地Y方向(上下)高度不能少于 %d
+  SizeZShouldBeGreaterThan: 领地Z方向(南北)长度不能少于 %d
   MaxYShouldBeLessThan: 领地Y坐标上限不能超过 %d
   MinYShouldBeLessThan: 领地Y坐标下限不能超过 %d
   DepthInvalid: 子领地深度不合法
@@ -243,8 +254,18 @@ Messages:
 TUI:
   NotDominionOwnerOrAdminForPage: 你不是领地 %s 的拥有者或管理员，无权访问此页面
   CommandHelp:
-    Title: 领地插件命令帮助
+    Title: Dominion 命令帮助
     SubTitle: <>表示必填参数 []表示可选参数
+    DominionManageDescription: 领地管理相关指令帮助
+    MemberManageDescription: 成员管理相关指令帮助
+    GroupManageDescription: 权限组管理相关指令帮助
+    MiscDescription: 杂项相关指令帮助
+    OpCommandDescription: 管理员指令帮助
+    DominionManageButton: 领地管理
+    MemberManageButton: 成员管理
+    GroupManageButton: 权限组管理
+    MiscButton: 杂项
+    OpCommandButton: 管理员指令
   Navigation:
     Menu: 主菜单
     DominionList: 我的领地
@@ -260,6 +281,7 @@ TUI:
     TemplateSetting: 模板管理
     MigrateList: Res数据列表
     TitleList: 权限组称号列表
+    CommandHelpList: 帮助列表总览
   ManageButton: 管理
   DeleteButton: 删除
   SearchButton: 搜索
@@ -332,7 +354,7 @@ TUI:
     Volume: 领地体积：
     TpLocation: 传送点坐标：
     NoneTp: 无
-    Usage: 你不在任何领地内，请指定领地名称 /dominion info <领地名称>
+    Usage: 你不在任何领地内，请指定领地名称 /dominion info [领地名称]
   MemberList:
     Title: 领地 %s 成员列表
     AddButton: 添加成员
@@ -412,11 +434,18 @@ Config:
     AutoCreateRadiusError: AutoCreateRadius 不能等于 0，已重置为 10
     MessageDisplayError: MessageDisplay 不能设置为 %s，已重置为 ACTION_BAR
     AutoCleanAfterDaysError: AutoCleanAfterDays 不能等于 0，已重置为 180
-    ToolNameError: 工具名称设置错误，已重置为 ARROW
+    ToolNameError: Tool 名称设置错误，已重置为 ARROW
+    InfoToolNameError: InfoTool 名称设置错误，已重置为 STRING
     GroupMinYError: '%s 的 MinY 不能大于等于 MaxY，已重置为 -64 和 320'
-    GroupSizeXError: '%s 的 SizeX 设置过小，已重置为 128'
-    GroupSizeYError: '%s 的 SizeY 设置过小，已重置为 64'
-    GroupSizeZError: '%s 的 SizeZ 设置过小，已重置为 128'
+    GroupSizeMaxXError: '%s 的 Size.MaxX 设置过小，已重置为 128'
+    GroupSizeMaxYError: '%s 的 Size.MaxY 设置过小，已重置为 64'
+    GroupSizeMaxZError: '%s 的 Size.MaxZ 设置过小，已重置为 128'
+    GroupSizeMinXError: '%s 的 Size.MinX 设置过小，已重置为 4'
+    GroupSizeMinYError: '%s 的 Size.MinY 设置过小，已重置为 4'
+    GroupSizeMinZError: '%s 的 Size.MinZ 设置过小，已重置为 4'
+    GroupMaxMinXError: '%s 的 Size.MaxX 不能小于 MinX，已重置为 128 和 4'
+    GroupMaxMinYError: '%s 的 Size.MinY 不能小于 MinY，已重置为 64 和 4'
+    GroupMaxMinZError: '%s 的 Size.MaxZ 不能小于 MinZ，已重置为 128 和 4'
     GroupAmountError: '%s 的 Amount 设置不合法，已重置为 10'
     GroupDepthError: '%s 的 Depth 设置不合法，已重置为 3'
     GroupPriceError: '%s 的 Price 设置不合法，已重置为 10.0'
@@ -427,6 +456,8 @@ Config:
   Comment:
     Language: 语言设置，参考 languages 文件夹下的文件名
     AutoCreateRadius: 自动创建领地的半径，单位为方块
+    DefaultJoinMessage: 默认进入领地提示消息
+    DefaultLeaveMessage: 默认离开领地提示消息
     MessageDisplay: 提示消息显示位置（BOSS_BAR, ACTION_BAR, TITLE, SUBTITLE, CHAT）
     MessageDisplayNoPermission: 玩家没有权限时的提示消息位置
     MessageDisplayJoinLeave: 进入/离开领地时的提示消息位置
@@ -436,9 +467,12 @@ Config:
     MinY: 最小Y坐标
     MaxY: 最大Y坐标
     NegativeOneUnlimited: -1表示不限制
-    SizeX: X方向最大长度
-    SizeY: Y方向最大长度
-    SizeZ: Z方向最大长度
+    SizeMaxX: X方向最大长度
+    SizeMaxY: Y方向最大长度
+    SizeMaxZ: Z方向最大长度
+    SizeMinX: X方向最小长度
+    SizeMinY: Y方向最小长度
+    SizeMinZ: Z方向最小长度
     Amount: 最大领地数量
     Depth: 子领地深度
     ZeroDisabled: 0表示不开启
@@ -449,6 +483,7 @@ Config:
     TpCoolDown: 传送冷却 秒
     AutoCleanAfterDays: 自动清理长时间未上线玩家的领地（天）
     ToolName: 圈地工具名称
+    InfoToolName: 查询领地信息工具名称
     Economy: 经济设置
     VaultRequired: 需要安装 Vault 前置及插件
     Price: 圈地价格 单位每方块
@@ -670,6 +705,19 @@ Flags:
   wither_spawn:
     DisplayName: 凋零生成
     Description: 凋零生成以及凋零生成时产生的爆炸
+Tool:
+  SelectFirstPoint: '已选择第一个点: %d %d %d'
+  SelectSecondPoint: '已选择第二个点: %d %d %d'
+  NotSameWorld: 两个点不在同一个世界
+  SelectTwoPoints: 已选择两个点，可以使用 /dominion create <领地名称> 创建领地
+  CreateDominionPrice: 预计领地创建价格为 %.2f %s
+  DominionSize: 尺寸： %d x %d x %d
+  DominionSquare: 面积： %d
+  DominionVolume: 体积： %d
+  DominionHeight: 高度： %d
+  LocationNotInDominion: 这个方块(%d, %d, %d)不在任何领地内
+  LocationInDominion: 这个方块(%d, %d, %d)在领地 %s 内
+  DominionOwner: '领地主人: %s'
 Localization:
   LoadLanguageSuccess: 成功加载语言文件 zh-cn
   LoadLanguageFailed: 加载语言文件失败：%s
@@ -720,3 +768,5 @@ Utils:
     CloseFailed: '关闭数据库连接失败: '
     CheckColumnFailed: 查询列是否存在失败
     CheckTableFailed: 查询表是否存在失败
+    ExportTableFailed: '导出表 %s 到文件 %s 失败: %s'
+    ImportTableFailed: '从文件 %s 导入到表 %s 失败: %s'
