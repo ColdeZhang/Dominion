@@ -12,12 +12,14 @@ import java.math.BigDecimal;
 public class Vault2 implements VaultInterface {
 
     private Economy econ = null;
-
+    private String PluginName = null;
+    
     @Override
     public boolean init(JavaPlugin plugin) {
         RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp != null) {
             econ = rsp.getProvider();
+            PluginName = plugin.getName();
             return true;
         }
         XLogger.err(Localization.Utils_VaultUnlockedNotAvailable);
@@ -26,26 +28,26 @@ public class Vault2 implements VaultInterface {
 
     @Override
     public String currencyNamePlural() {
-        return econ.defaultCurrencyNamePlural();
+        return econ.defaultCurrencyNamePlural(PluginName);
     }
 
     @Override
     public String currencyNameSingular() {
-        return econ.defaultCurrencyNameSingular();
+        return econ.defaultCurrencyNameSingular(PluginName);
     }
 
     @Override
     public void withdrawPlayer(Player player, double amount) {
-        econ.withdraw("MPU", player.getUniqueId(), BigDecimal.valueOf(amount));
+        econ.withdraw(PluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 
     @Override
     public void depositPlayer(Player player, double amount) {
-        econ.deposit("MPU", player.getUniqueId(), BigDecimal.valueOf(amount));
+        econ.deposit(PluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 
     @Override
     public double getBalance(Player player) {
-        return econ.getBalance("MPU", player.getUniqueId()).doubleValue();
+        return econ.getBalance(PluginName, player.getUniqueId()).doubleValue();
     }
 }
