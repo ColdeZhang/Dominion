@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.dtos;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -196,8 +197,8 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         this(null, owner, name, world.getUID(), x1, y1, z1, x2, y2, z2, -1);
     }
 
-    public static DominionDTO create(UUID owner, String name, @NotNull World world,
-                                     Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, cn.lunadeer.dominion.api.dtos.DominionDTO parent) {
+    public static @NotNull DominionDTO create(UUID owner, String name, @NotNull World world,
+                                              Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, cn.lunadeer.dominion.api.dtos.DominionDTO parent) {
         x1 = Math.min(x1, x2);
         y1 = Math.min(y1, y2);
         z1 = Math.min(z1, z2);
@@ -245,6 +246,11 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     @Override
     public @NotNull UUID getOwner() {
         return UUID.fromString((String) owner.value);
+    }
+
+    @Override
+    public @NotNull PlayerDTO getOwnerDTO() {
+        return Objects.requireNonNull(cn.lunadeer.dominion.dtos.PlayerDTO.select(getOwner()));
     }
 
     private DominionDTO doUpdate(UpdateRow updateRow) {
