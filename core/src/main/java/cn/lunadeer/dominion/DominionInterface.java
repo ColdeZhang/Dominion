@@ -2,12 +2,8 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.DominionAPI;
-import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.api.dtos.*;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +52,11 @@ public class DominionInterface implements DominionAPI {
     }
 
     @Override
+    public DominionDTO getDominion(@NotNull String name) {
+        return cn.lunadeer.dominion.dtos.DominionDTO.select(name);
+    }
+
+    @Override
     public @NotNull List<cn.lunadeer.dominion.api.dtos.DominionDTO> getAllDominions() {
         return Cache.instance.getAllDominions();
     }
@@ -66,18 +67,18 @@ public class DominionInterface implements DominionAPI {
     }
 
     @Override
-    public @NotNull List<cn.lunadeer.dominion.api.dtos.Flag> getEnvironmentFlagsEnabled() {
-        return new ArrayList<>(Flag.getEnvironmentFlagsEnabled());
+    public @NotNull List<Flag> getEnvironmentFlagsEnabled() {
+        return new ArrayList<>(cn.lunadeer.dominion.dtos.Flag.getEnvironmentFlagsEnabled());
     }
 
     @Override
-    public @NotNull List<cn.lunadeer.dominion.api.dtos.Flag> getPrivilegeFlagsEnabled() {
-        return new ArrayList<>(Flag.getPrivilegeFlagsEnabled());
+    public @NotNull List<Flag> getPrivilegeFlagsEnabled() {
+        return new ArrayList<>(cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled());
     }
 
     @Override
-    public cn.lunadeer.dominion.api.dtos.@Nullable Flag getFlagByName(@NotNull String flagName) {
-        return Flag.getFlag(flagName);
+    public @Nullable Flag getFlagByName(@NotNull String flagName) {
+        return cn.lunadeer.dominion.dtos.Flag.getFlag(flagName);
     }
 
     @Override
@@ -93,6 +94,11 @@ public class DominionInterface implements DominionAPI {
     @Override
     public @Nullable PlayerDTO getPlayerDTO(UUID uuid) {
         return cn.lunadeer.dominion.dtos.PlayerDTO.select(uuid);
+    }
+
+    @Override
+    public @Nullable PlayerDTO getPlayerDTO(String name) {
+        return cn.lunadeer.dominion.dtos.PlayerDTO.select(name);
     }
 
 }

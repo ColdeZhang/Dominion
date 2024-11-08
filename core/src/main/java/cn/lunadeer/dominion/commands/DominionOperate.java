@@ -2,14 +2,16 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.DominionInterface;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
-import cn.lunadeer.dominion.events.dominion.modify.DominionRenameEvent;
-import cn.lunadeer.dominion.events.dominion.modify.DominionSizeChangeEvent;
-import cn.lunadeer.dominion.events.dominion.modify.DominionTransferEvent;
+import cn.lunadeer.dominion.events.dominion.modify.*;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ArgumentParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -97,7 +99,7 @@ public class DominionOperate {
                 return;
             }
         } else {
-            parent = DominionDTO.select(args[2]);
+            parent = DominionInterface.instance.getDominion(args[2]);
             if (parent == null) {
                 Notification.error(sender, Translation.Messages_ParentDominionNotExist, args[2]);
                 return;
@@ -203,7 +205,7 @@ public class DominionOperate {
         // get dominion
         DominionDTO dominion;
         if (parser.hasKey("name")) {
-            dominion = DominionDTO.select(parser.getVal("name"));
+            dominion = DominionInterface.instance.getDominion(parser.getVal("name", ""));
             if (dominion == null) {
                 Notification.error(sender, Translation.Messages_DominionNotExist, parser.getVal("name"));
                 return;
@@ -240,7 +242,7 @@ public class DominionOperate {
                 force = true;
             }
         }
-        DominionDTO dominion = DominionDTO.select(args[1]);
+        DominionDTO dominion = DominionInterface.instance.getDominion(args[1]);
         if (dominion == null) {
             Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
@@ -253,47 +255,39 @@ public class DominionOperate {
     /**
      * 设置领地进入提示
      * /dominion set_enter_msg <提示语> [领地名称]
-     *
-     * @param sender 命令发送者
-     * @param args   命令参数
-     */
-    public static void setEnterMessage(CommandSender sender, String[] args) {
-        if (!hasPermission(sender, "dominion.default")) {
-            return;
-        }
-        BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-        if (args.length == 2) {
-            DominionController.setJoinMessage(operator, args[1]);
-            return;
-        }
-        if (args.length == 3) {
-            DominionController.setJoinMessage(operator, args[1], args[2]);
-            return;
-        }
-        Notification.error(sender, Translation.Commands_Dominion_SetEnterMessageUsage);
-    }
-
-    /**
-     * 设置领地离开提示
      * /dominion set_leave_msg <提示语> [领地名称]
      *
      * @param sender 命令发送者
      * @param args   命令参数
      */
-    public static void setLeaveMessage(CommandSender sender, String[] args) {
+    public static void setEnterLeaveMessage(CommandSender sender, String[] args, DominionSetMessageEvent.MessageChangeType type) {
         if (!hasPermission(sender, "dominion.default")) {
             return;
         }
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
+        if (args.length < 2) {
+            if (type == DominionSetMessageEvent.MessageChangeType.ENTER) {
+                Notification.error(sender, Translation.Commands_Dominion_SetEnterMessageUsage);
+            } else {
+                Notification.error(sender, Translation.Commands_Dominion_SetLeaveMessageUsage);
+            }
+            return;
+        }
+        DominionDTO dominion;
         if (args.length == 2) {
-            DominionController.setLeaveMessage(operator, args[1]);
+            dominion = getPlayerCurrentDominion(operator);
+        } else {
+            dominion = DominionInterface.instance.getDominion(args[2]);
+        }
+        if (dominion == null) {
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
             return;
         }
-        if (args.length == 3) {
-            DominionController.setLeaveMessage(operator, args[1], args[2]);
-            return;
+        if (type == DominionSetMessageEvent.MessageChangeType.ENTER) {
+            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.ENTER, args[1]).callEvent();
+        } else {
+            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.LEAVE, args[1]).callEvent();
         }
-        Notification.error(sender, Translation.Commands_Dominion_SetLeaveMessageUsage);
     }
 
     /**
@@ -310,18 +304,22 @@ public class DominionOperate {
         Player player = playerOnly(sender);
         if (player == null) return;
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
+        if (args.length < 1) {
+            Notification.error(sender, Translation.Commands_Dominion_SetTpLocationUsage);
+            return;
+        }
+        DominionDTO dominion;
         if (args.length == 1) {
-            DominionController.setTpLocation(operator,
-                    player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+            dominion = getPlayerCurrentDominion(operator);
+        } else {
+            dominion = DominionInterface.instance.getDominion(args[1]);
+        }
+        if (dominion == null) {
+            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
-        if (args.length == 2) {
-            DominionController.setTpLocation(operator,
-                    player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ(),
-                    args[1]);
-            return;
-        }
-        Notification.error(sender, Translation.Commands_Dominion_SetTpLocationUsage);
+        Location location = player.getLocation();
+        new DominionSetTpLocationEvent(operator, dominion, location).callEvent();
     }
 
     /**
@@ -340,7 +338,7 @@ public class DominionOperate {
             Notification.error(sender, Translation.Commands_Dominion_RenameDominionUsage);
             return;
         }
-        DominionDTO dominion = DominionDTO.select(args[1]);
+        DominionDTO dominion = DominionInterface.instance.getDominion(args[1]);
         if (dominion == null) {
             Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
@@ -370,12 +368,12 @@ public class DominionOperate {
                 force = true;
             }
         }
-        DominionDTO dominion = DominionDTO.select(args[1]);
+        DominionDTO dominion = DominionInterface.instance.getDominion(args[1]);
         if (dominion == null) {
             Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
-        PlayerDTO playerDTO = PlayerDTO.select(args[2]);
+        PlayerDTO playerDTO = DominionInterface.instance.getPlayerDTO(args[2]);
         if (playerDTO == null) {
             Notification.error(sender, Translation.Messages_PlayerNotExist, args[2]);
             return;
@@ -402,7 +400,7 @@ public class DominionOperate {
             Notification.error(sender, Translation.Commands_Dominion_TpDominionUsage);
             return;
         }
-        DominionDTO dominionDTO = DominionDTO.select(args[1]);
+        DominionDTO dominionDTO = DominionInterface.instance.getDominion(args[1]);
         if (dominionDTO == null) {
             Notification.error(sender, Translation.Commands_Dominion_DominionNotExist);
             return;
@@ -430,22 +428,22 @@ public class DominionOperate {
             return;
         }
 
-        MemberDTO privilegeDTO = MemberDTO.select(player.getUniqueId(), dominionDTO.getId());
+        MemberDTO privilegeDTO = DominionInterface.instance.getMember(player.getUniqueId(), dominionDTO);
         if (!canByPass(player, dominionDTO, privilegeDTO)) {
             if (privilegeDTO == null) {
-                if (!dominionDTO.getFlagValue(Flag.TELEPORT)) {
+                if (!dominionDTO.getGuestPrivilegeFlagValue().get(cn.lunadeer.dominion.dtos.Flag.TELEPORT)) {
                     Notification.error(sender, Translation.Messages_DominionNoTp);
                     return;
                 }
             } else {
                 GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
                 if (privilegeDTO.getGroupId() != -1 && groupDTO != null) {
-                    if (!groupDTO.getFlagValue(Flag.TELEPORT)) {
+                    if (!groupDTO.getFlagValue(cn.lunadeer.dominion.dtos.Flag.TELEPORT)) {
                         Notification.error(sender, Translation.Messages_GroupNoTp);
                         return;
                     }
                 } else {
-                    if (!privilegeDTO.getFlagValue(Flag.TELEPORT)) {
+                    if (!privilegeDTO.getFlagValue(cn.lunadeer.dominion.dtos.Flag.TELEPORT)) {
                         Notification.error(sender, Translation.Messages_PrivilegeNoTp);
                         return;
                     }

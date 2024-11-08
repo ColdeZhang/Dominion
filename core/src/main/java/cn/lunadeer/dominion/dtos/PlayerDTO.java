@@ -196,6 +196,7 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
         this.lastJoinAt = lastJoinAt;
     }
 
+    @Override
     public Integer getUsingGroupTitleID() {
         return using_group_title_id;
     }

@@ -3,6 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.controllers.PlayerController;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.events.dominion.modify.DominionSetMessageEvent;
 import cn.lunadeer.dominion.events.dominion.modify.DominionSizeChangeEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.cuis.*;
@@ -93,10 +94,10 @@ public class Commands implements TabExecutor {
                 DominionFlag.setDominionFlag(sender, args);
                 break;
             case "set_enter_msg":
-                DominionOperate.setEnterMessage(sender, args);
+                DominionOperate.setEnterLeaveMessage(sender, args, DominionSetMessageEvent.MessageChangeType.ENTER);
                 break;
             case "set_leave_msg":
-                DominionOperate.setLeaveMessage(sender, args);
+                DominionOperate.setEnterLeaveMessage(sender, args, DominionSetMessageEvent.MessageChangeType.LEAVE);
                 break;
             case "set_tp_location":
                 DominionOperate.setTpLocation(sender, args);
