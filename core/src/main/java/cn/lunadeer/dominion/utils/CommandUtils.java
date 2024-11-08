@@ -10,12 +10,22 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 指令工具类
+ */
 public class CommandUtils {
+    /**
+     * 验证指令发送者是否为Player
+     * @param sender 指令发送者
+     * @return Player对象或者null
+     */
     public static Player playerOnly(CommandSender sender) {
         if (!(sender instanceof Player)) {
+            //如果发送者不是Player返回null
             Notification.error(sender, Translation.Messages_CommandPlayerOnly);
             return null;
         }
+        //将sender对象强转为Player对象返回
         return (Player) sender;
     }
 

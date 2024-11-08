@@ -30,26 +30,43 @@ import static cn.lunadeer.dominion.commands.Helper.*;
 
 public class Commands implements TabExecutor {
 
+    public static List<String> boolOptions() {
+        return Arrays.asList("true", "false");
+    }
+
+    public static List<String> playerNames() {
+        List<PlayerDTO> players = PlayerController.allPlayers();
+        List<String> names = new ArrayList<>();
+        for (PlayerDTO player : players) {
+            names.add(player.getLastKnownName());
+        }
+        return names;
+    }
+
     /**
-     * Executes the given command, returning its success.
+     * 执行给定的命令，返回是否执行成功。
      * <br>
-     * If false is returned, then the "usage" plugin.yml entry for this command
-     * (if defined) will be sent to the player.
+     * 如果返回 false，则此命令在plugin.yml中的 “usage”(用法)
+     * （如果已定义） 将发送给玩家。
      *
-     * @param sender  Source of the command
-     * @param command Command which was executed
-     * @param label   Alias of the command which was used
-     * @param args    Passed command arguments
-     * @return true if a valid command, otherwise false
+     * @param sender  命令的来源
+     * @param command 执行的命令
+     * @param label   使用的命令的别名
+     * @param args    传递的命令参数
+     * @return 如果命令执行成功则为 true，否则为 false
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        //当args长度为0时执行，即使用命令“/dom”或者“/dominion”时
         if (args.length == 0) {
+            //显示主菜单
             Menu.show(sender, args);
             return true;
         }
+        //当args不为0时，取出0索引的值用来确定使用了什么子命令，如“/dom menu”则args[0]为“menu”
         switch (args[0]) {
             case "menu":
+                //显示主菜单
                 Menu.show(sender, args);
                 break;
             case "list":
@@ -196,17 +213,17 @@ public class Commands implements TabExecutor {
     }
 
     /**
-     * Requests a list of possible completions for a command argument.
+     * 请求 command 参数的可能列表，使用Tab补全。
      *
-     * @param sender  Source of the command.  For players tab-completing a
-     *                command inside a command block, this will be the player, not
-     *                the command block.
-     * @param command Command which was executed
-     * @param label   Alias of the command which was used
-     * @param args    The arguments passed to the command, including final
-     *                partial argument to be completed
-     * @return A List of possible completions for the final argument, or null
-     * to default to the command executor
+     * @param sender  命令的来源。 对于玩家 Tab 键补全
+     *                命令，这将是玩家，而不是
+     *                命令方块。
+     * @param command 执行的命令
+     * @param label   使用的命令的别名
+     * @param args    传递给命令的参数，包括 final
+     *                部分参数待完成
+     * @return 最后一个参数的可能完成列表，或 null
+     *         默认为命令 executor
      */
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -302,18 +319,5 @@ public class Commands implements TabExecutor {
             }
         }
         return null;
-    }
-
-    public static List<String> boolOptions() {
-        return Arrays.asList("true", "false");
-    }
-
-    public static List<String> playerNames() {
-        List<PlayerDTO> players = PlayerController.allPlayers();
-        List<String> names = new ArrayList<>();
-        for (PlayerDTO player : players) {
-            names.add(player.getLastKnownName());
-        }
-        return names;
     }
 }
