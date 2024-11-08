@@ -225,7 +225,7 @@ public enum Flag implements cn.lunadeer.dominion.api.dtos.Flag {
     }
 
     public static Flag getFlag(String flagName) {
-        return Arrays.stream(Flag.values()).filter(flag -> flag.getFlagName().equals(flagName)).findFirst().orElse(null);
+        return Arrays.stream(Flag.values()).filter(flag -> flag.getFlagName().equals(flagName.toLowerCase())).findFirst().orElse(null);
     }
 
     /**

@@ -6,9 +6,7 @@ import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
-import cn.lunadeer.dominion.events.dominion.modify.DominionRenameEvent;
-import cn.lunadeer.dominion.events.dominion.modify.DominionSizeChangeEvent;
-import cn.lunadeer.dominion.events.dominion.modify.DominionTransferEvent;
+import cn.lunadeer.dominion.events.dominion.modify.*;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
@@ -24,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static cn.lunadeer.dominion.DominionNode.isInDominion;
 
 public class DominionEventHandler implements Listener {
 
@@ -206,7 +206,7 @@ public class DominionEventHandler implements Listener {
 
     // ========== DominionRenameEvent START
     @EventHandler(priority = EventPriority.HIGH)
-    public void onDominionRenameEventPreProcess(DominionRenameEvent event) {
+    public void onDominionRenameEvent(DominionRenameEvent event) {
         DominionDTO dominion = event.getDominionBefore();
         event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_RenameDominionSuccess, dominion.getName(), event.getNewName());
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_RenameDominionFailed);
@@ -240,7 +240,7 @@ public class DominionEventHandler implements Listener {
 
     // ========== DominionTransferEvent START
     @EventHandler(priority = EventPriority.HIGH)
-    public void onDominionTransferEventPreProcess(DominionTransferEvent event) {
+    public void onDominionTransferEvent(DominionTransferEvent event) {
         DominionDTO dominion = event.getDominionBefore();
         String newOwnerName = event.getNewOwner().getLastKnownName();
         event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_GiveDominionSuccess, dominion.getName(), newOwnerName);
@@ -283,6 +283,71 @@ public class DominionEventHandler implements Listener {
         event.getOperator().completeResult();
     }
     // ========== DominionTransferEvent END
+
+    // ========== DominionSetTpLocationEvent START
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDominionSetTpLocationEvent(DominionSetTpLocationEvent event) {
+        DominionDTO dominion = event.getDominionBefore();
+        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetTpLocationSuccess, dominion.getName(),
+                event.getNewTpLocation().getBlockX(), event.getNewTpLocation().getBlockY(), event.getNewTpLocation().getBlockZ()
+        );
+        event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetTpLocationFailed);
+        // check owner
+        if (notOwner(event.getOperator(), dominion)) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+        }
+        // check tp location in dominion
+        if (!isInDominion(event.getDominionBefore(), event.getNewTpLocation())) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_TpLocationNotInDominion, dominion.getName());
+        }
+        // do db update
+        if (!event.isCancelled()) {
+            Location loc = event.getNewTpLocation();
+            loc.setY(loc.getY() + 1.5);
+            DominionDTO modified = dominion.setTpLocation(loc);
+            event.setDominionAfter(modified);
+            if (modified == null) {
+                event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
+            }
+        }
+        // complete with result
+        event.getOperator().completeResult();
+    }
+    // ========== DominionSetTpLocationEvent END
+
+    // ========== DominionSetMessageEvent START
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDominionSetMessageEvent(DominionSetMessageEvent event) {
+        DominionDTO dominion = event.getDominionBefore();
+        if (event.getType() == DominionSetMessageEvent.MessageChangeType.ENTER) {
+            event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetEnterMessageSuccess, dominion.getName());
+            event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetEnterMessageFailed);
+        } else {
+            event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetLeaveMessageSuccess, dominion.getName());
+            event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetLeaveMessageFailed);
+        }
+        // check owner
+        if (notOwner(event.getOperator(), dominion)) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+        }
+        // do db update
+        if (!event.isCancelled()) {
+            DominionDTO modified;
+            if (event.getType() == DominionSetMessageEvent.MessageChangeType.ENTER) {
+                modified = dominion.setJoinMessage(event.getNewMessage());
+            } else {
+                modified = dominion.setLeaveMessage(event.getNewMessage());
+            }
+            event.setDominionAfter(modified);
+            if (modified == null) {
+                event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
+            }
+        }
+        // complete with result
+        event.getOperator().completeResult();
+    }
+    // ========== DominionSetMessageEvent END
+
 
     // ============================================================
     // ============================================================

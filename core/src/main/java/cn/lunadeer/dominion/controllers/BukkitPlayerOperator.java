@@ -149,9 +149,7 @@ public class BukkitPlayerOperator extends AbstractOperator {
         if (!getResults().get(ResultType.FAILURE).isEmpty()) {
             show(ResultType.FAILURE);
         } else {
-            if (!getResults().get(ResultType.SUCCESS).isEmpty()) {
-                show(ResultType.SUCCESS);
-            }
+            show(ResultType.SUCCESS);
         }
     }
 }

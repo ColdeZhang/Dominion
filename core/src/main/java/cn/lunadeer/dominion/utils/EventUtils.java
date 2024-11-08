@@ -2,10 +2,10 @@ package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

@@ -1,5 +1,7 @@
 package cn.lunadeer.dominion.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,7 @@ public class ArgumentParser {
         return arguments.get(key);
     }
 
-    public @Nullable String getVal(String key, String def) {
+    public @NotNull String getVal(String key, String def) {
         return arguments.getOrDefault(key, def);
     }
 

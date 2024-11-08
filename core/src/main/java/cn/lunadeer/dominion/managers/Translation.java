@@ -280,8 +280,12 @@ public class Translation extends Localization {
     public static i18n Messages_DeleteDominionForceConfirm;
     @i18nField(defaultValue = "成功设置领地 %s 的进入消息")
     public static i18n Messages_SetEnterMessageSuccess;
+    @i18nField(defaultValue = "设置领地进入消息失败")
+    public static i18n Messages_SetEnterMessageFailed;
     @i18nField(defaultValue = "成功设置领地 %s 的离开消息")
     public static i18n Messages_SetLeaveMessageSuccess;
+    @i18nField(defaultValue = "设置领地离开消息失败")
+    public static i18n Messages_SetLeaveMessageFailed;
     @i18nField(defaultValue = "设置领地传送点失败")
     public static i18n Messages_SetTpLocationFailed;
     @i18nField(defaultValue = "领地 %s 不存在")

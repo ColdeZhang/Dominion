@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
