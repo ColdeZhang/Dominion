@@ -513,10 +513,31 @@ public class Translation extends Localization {
 
     @i18nField(defaultValue = "你不是领地 %s 的拥有者或管理员，无权访问此页面")
     public static i18n TUI_NotDominionOwnerOrAdminForPage;
-    @i18nField(defaultValue = "领地插件命令帮助")
+    @i18nField(defaultValue = "Dominion 命令帮助")
     public static i18n TUI_CommandHelp_Title;
     @i18nField(defaultValue = "<>表示必填参数 []表示可选参数")
     public static i18n TUI_CommandHelp_SubTitle;
+    @i18nField(defaultValue = "领地管理相关指令帮助")
+    public static i18n TUI_CommandHelp_DominionManageDescription;
+    @i18nField(defaultValue = "成员管理相关指令帮助")
+    public static i18n TUI_CommandHelp_MemberManageDescription;
+    @i18nField(defaultValue = "权限组管理相关指令帮助")
+    public static i18n TUI_CommandHelp_GroupManageDescription;
+    @i18nField(defaultValue = "杂项相关指令帮助")
+    public static i18n TUI_CommandHelp_MiscDescription;
+    @i18nField(defaultValue = "管理员指令帮助")
+    public static i18n TUI_CommandHelp_OpCommandDescription;
+
+    @i18nField(defaultValue = "领地管理")
+    public static i18n TUI_CommandHelp_DominionManageButton;
+    @i18nField(defaultValue = "成员管理")
+    public static i18n TUI_CommandHelp_MemberManageButton;
+    @i18nField(defaultValue = "权限组管理")
+    public static i18n TUI_CommandHelp_GroupManageButton;
+    @i18nField(defaultValue = "杂项")
+    public static i18n TUI_CommandHelp_MiscButton;
+    @i18nField(defaultValue = "管理员指令")
+    public static i18n TUI_CommandHelp_OpCommandButton;
 
     @i18nField(defaultValue = "主菜单")
     public static i18n TUI_Navigation_Menu;
@@ -546,6 +567,8 @@ public class Translation extends Localization {
     public static i18n TUI_Navigation_MigrateList;
     @i18nField(defaultValue = "权限组称号列表")
     public static i18n TUI_Navigation_TitleList;
+    @i18nField(defaultValue = "帮助列表总览")
+    public static i18n TUI_Navigation_CommandHelpList;
 
     @i18nField(defaultValue = "管理")
     public static i18n TUI_ManageButton;
