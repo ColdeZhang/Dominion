@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
+import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -66,11 +67,39 @@ public class TuiUtils {
         Player player = playerOnly(sender);
         if (player == null) return;
         int page = getPage(args, 1);
+
+        //TODO 帮助菜单的子菜单
+        Line dominionManage = Line.create()
+                .append(Button.create(Translation.TUI_CommandHelp_DominionManageButton).setExecuteCommand("").build())
+                .append(Translation.TUI_CommandHelp_DominionManageDescription);
+
+        Line memberManage = Line.create()
+                .append(Button.create(Translation.TUI_CommandHelp_MemberManageButton).setExecuteCommand("").build())
+                .append(Translation.TUI_CommandHelp_MemberManageDescription);
+
+        Line groupManage = Line.create()
+                .append(Button.create(Translation.TUI_CommandHelp_GroupManageButton).setExecuteCommand("").build())
+                .append(Translation.TUI_CommandHelp_GroupManageDescription);
+
+        Line misc = Line.create()
+                .append(Button.create(Translation.TUI_CommandHelp_MiscButton).setExecuteCommand("").build())
+                .append(Translation.TUI_CommandHelp_MiscDescription);
+
+        Line opCommand = Line.create()
+                .append(Button.create(Translation.TUI_CommandHelp_OpCommandButton).setExecuteCommand("").build())
+                .append(Translation.TUI_CommandHelp_OpCommandDescription);
+
         ListView view = ListView.create(10, "/dominion help");
-        view.title(Translation.TUI_CommandHelp_Title.trans())
-                .subtitle(Line.create().append(Translation.TUI_CommandHelp_SubTitle.trans()))
-                // todo ...
-                .showOn(player, page);
+        view.title(Translation.TUI_CommandHelp_Title);
+        view.navigator(Line.create()
+                .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
+                .append(Translation.TUI_Navigation_CommandHelpList));
+        view.add(dominionManage);
+        view.add(memberManage);
+        view.add(groupManage);
+        view.add(misc);
+        view.add(opCommand);
+        view.showOn(player, page);
     }
 
 }
