@@ -20,6 +20,12 @@ import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
 public class DominionList {
+    /**
+     * 在聊天栏显示个人领地列表菜单，包含快捷操作按钮和领地名称
+     *
+     * @param sender 命令的来源
+     * @param args   传递的命令参数
+     */
     public static void show(CommandSender sender, String[] args) {
         Player player = playerOnly(sender);
         if (player == null) return;
