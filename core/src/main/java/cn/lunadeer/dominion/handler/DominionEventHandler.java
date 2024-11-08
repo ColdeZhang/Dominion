@@ -349,6 +349,29 @@ public class DominionEventHandler implements Listener {
     // ========== DominionSetMessageEvent END
 
 
+    // ========== DominionSetMapColorEvent START
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDominionSetMapColorEvent(DominionSetMapColorEvent event) {
+        DominionDTO dominion = event.getDominionBefore();
+        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetMapColorSuccess, dominion.getName(), event.getNewColor());
+        event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetMapColorFailed);
+        // check owner
+        if (notOwner(event.getOperator(), dominion)) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+        }
+        // do db update
+        if (!event.isCancelled()) {
+            DominionDTO modified = dominion.setColor(event.getNewColor());
+            event.setDominionAfter(modified);
+            if (modified == null) {
+                event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
+            }
+        }
+        // complete with result
+        event.getOperator().completeResult();
+    }
+    // ========== DominionSetMapColorEvent END
+
     // ============================================================
     // ============================================================
     // ============================================================

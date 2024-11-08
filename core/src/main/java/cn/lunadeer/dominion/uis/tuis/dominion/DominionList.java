@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.commands.Helper.playerAdminDominions;
+import static cn.lunadeer.dominion.commands.Helper.playerAdminDominionNames;
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
@@ -31,7 +31,7 @@ public class DominionList {
                 .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
                 .append(Translation.TUI_Navigation_DominionList));
         view.addLines(BuildTreeLines(DominionNode.BuildNodeTree(-1, DominionDTO.selectByOwner(player.getUniqueId())), 0));
-        List<String> admin_dominions = playerAdminDominions(sender);
+        List<String> admin_dominions = playerAdminDominionNames(sender);
         if (!admin_dominions.isEmpty()) {
             view.add(Line.create().append(""));
             view.add(Line.create().append(Component.text(Translation.TUI_DominionList_AdminSection.trans(), ViewStyles.main_color)));

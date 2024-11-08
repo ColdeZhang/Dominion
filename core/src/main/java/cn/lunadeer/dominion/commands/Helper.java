@@ -1,7 +1,8 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.controllers.DominionController;
-import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.DominionInterface;
+import cn.lunadeer.dominion.api.dtos.*;
+import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,12 +15,13 @@ import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 public class Helper {
 
     public static List<String> dominionFlags() {
-        List<Flag> flags = Flag.getDominionFlagsEnabled();
+        List<Flag> flags = DominionInterface.instance.getEnvironmentFlagsEnabled();
+        flags.addAll(DominionInterface.instance.getPrivilegeFlagsEnabled());
         return Arrays.asList(flags.stream().map(Flag::getFlagName).toArray(String[]::new));
     }
 
     public static List<String> playerPrivileges() {
-        List<Flag> flags = Flag.getPrivilegeFlagsEnabled();
+        List<Flag> flags = DominionInterface.instance.getPrivilegeFlagsEnabled();
         return Arrays.asList(flags.stream().map(Flag::getFlagName).toArray(String[]::new));
     }
 
@@ -33,56 +35,44 @@ public class Helper {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
-        dominions_name.addAll(playerOwnDominions(sender));
-        dominions_name.addAll(playerAdminDominions(sender));
+        dominions_name.addAll(playerOwnDominionNames(sender));
+        dominions_name.addAll(playerAdminDominionNames(sender));
         return dominions_name;
     }
 
     public static List<String> dominionGroups(String dominionName) {
-        List<String> groups_name = new ArrayList<>();
-        DominionDTO dominion = DominionDTO.select(dominionName);
-        if (dominion == null) return groups_name;
-        List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
-        for (GroupDTO group : groups) {
-            groups_name.add(group.getNamePlain());
-        }
-        return groups_name;
+        DominionDTO dominion = DominionInterface.instance.getDominion(dominionName);
+        if (dominion == null) return new ArrayList<>();
+        else return dominion.getGroups().stream().map(GroupDTO::getNamePlain).toList();
     }
 
     public static List<String> groupPlayers(String domName, String groupName) {
         List<String> players_name = new ArrayList<>();
-        DominionDTO dominion = DominionDTO.select(domName);
+        DominionDTO dominion = DominionInterface.instance.getDominion(domName);
         if (dominion == null) return players_name;
-        GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
+        GroupDTO group = dominion.getGroups().stream().filter(g -> g.getNamePlain().equals(groupName)).findFirst().orElse(null);
         if (group == null) return players_name;
-        List<MemberDTO> privileges = MemberDTO.selectByDomGroupId(dominion.getId(), group.getId());
-        for (MemberDTO privilege : privileges) {
-            PlayerDTO player = PlayerDTO.select(privilege.getPlayerUUID());
-            if (player == null) continue;
-            players_name.add(player.getLastKnownName());
+        for (MemberDTO member : group.getMembers()) {
+            PlayerDTO player = DominionInterface.instance.getPlayerDTO(member.getPlayerUUID());
+            if (player != null) players_name.add(player.getLastKnownName());
         }
         return players_name;
     }
 
-    public static List<String> playerOwnDominions(CommandSender sender) {
-        List<String> dominions_name = new ArrayList<>();
+    public static List<String> playerOwnDominionNames(CommandSender sender) {
         Player player = playerOnly(sender);
-        if (player == null) return dominions_name;
-        List<DominionDTO> dominions_own = DominionController.all(player);
-        for (DominionDTO dominion : dominions_own) {
-            dominions_name.add(dominion.getName());
-        }
-        return dominions_name;
+        if (player == null) return new ArrayList<>();
+        return DominionInterface.instance.getPlayerDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
     }
 
-    public static List<String> playerAdminDominions(CommandSender sender) {
+    public static List<String> playerAdminDominionNames(CommandSender sender) {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
-        List<MemberDTO> dominions_admin = MemberDTO.selectAll(player.getUniqueId());
-        for (MemberDTO privilege : dominions_admin) {
-            if (privilege.getAdmin()) {
-                DominionDTO dom = DominionDTO.select(privilege.getDomID());
+        List<MemberDTO> dominions_admin = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player.getUniqueId()));
+        for (MemberDTO member : dominions_admin) {
+            if (member.getAdmin()) {
+                DominionDTO dom = DominionInterface.instance.getDominion(member.getDomID());
                 if (dom == null) continue;
                 dominions_name.add(dom.getName());
             }
@@ -92,7 +82,7 @@ public class Helper {
 
     public static List<String> allDominions() {
         List<String> dominions_name = new ArrayList<>();
-        List<DominionDTO> dominions = DominionController.all();
+        List<DominionDTO> dominions = DominionInterface.instance.getAllDominions();
         for (DominionDTO dominion : dominions) {
             dominions_name.add(dominion.getName());
         }
