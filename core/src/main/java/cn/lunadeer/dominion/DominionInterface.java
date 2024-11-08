@@ -101,4 +101,9 @@ public class DominionInterface implements DominionAPI {
         return cn.lunadeer.dominion.dtos.PlayerDTO.select(name);
     }
 
+    @Override
+    public List<DominionDTO> getPlayerDominions(@NotNull UUID playerUid) {
+        return new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectByOwner(playerUid));
+    }
+
 }

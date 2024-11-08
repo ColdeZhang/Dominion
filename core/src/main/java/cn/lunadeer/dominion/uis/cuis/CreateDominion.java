@@ -1,8 +1,7 @@
 package cn.lunadeer.dominion.uis.cuis;
 
-import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -12,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static cn.lunadeer.dominion.utils.CommandUtils.autoPoints;
 import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
@@ -32,12 +30,11 @@ public class CreateDominion {
 
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             Map<Integer, Location> points = autoPoints(sender);
-            operator.getResponse().thenAccept(result -> {
-                if (Objects.equals(result.getStatus(), AbstractOperator.Result.SUCCESS)) {
-                    DominionManage.show(sender, new String[]{"manage", input});
-                }
-            });
-            DominionController.create(operator, input, points.get(0), points.get(1));
+            DominionCreateEvent event = new DominionCreateEvent(operator, input, sender.getUniqueId(), points.get(0), points.get(1), null);
+            event.callEvent();
+            if (!event.isCancelled()) {
+                DominionManage.show(sender, new String[]{"manage", input});
+            }
         }
     }
 

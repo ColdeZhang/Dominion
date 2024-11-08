@@ -3,6 +3,8 @@ package cn.lunadeer.dominion.dtos;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
@@ -10,6 +12,7 @@ import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -510,9 +513,19 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return new Location(getWorld(), getX2(), getY2(), getZ2());
     }
 
-    public DominionDTO setColor(String color) {
-        this.color.value = color;
+    public @Nullable DominionDTO setColor(@NotNull Color color) {
+        this.color.value = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         return doUpdate(new UpdateRow().field(this.color));
+    }
+
+    @Override
+    public List<GroupDTO> getGroups() {
+        return new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectByDominionId(getId()));
+    }
+
+    @Override
+    public List<MemberDTO> getMembers() {
+        return new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId(getId()));
     }
 
     @Override

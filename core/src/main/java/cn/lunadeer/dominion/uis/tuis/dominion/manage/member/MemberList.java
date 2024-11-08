@@ -46,7 +46,7 @@ public class MemberList {
         int page = getPage(args, 3);
         ListView view = ListView.create(10, "/dominion member list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
-        List<MemberDTO> privileges = MemberDTO.select(dominion.getId());
+        List<MemberDTO> privileges = MemberDTO.selectByDominionId(dominion.getId());
         view.title(String.format(Translation.TUI_MemberList_Title.trans(), dominion.getName()));
         view.navigator(
                 Line.create()

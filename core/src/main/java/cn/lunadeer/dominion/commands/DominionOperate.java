@@ -8,7 +8,6 @@ import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.DominionController;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
 import cn.lunadeer.dominion.events.dominion.modify.*;
@@ -18,6 +17,7 @@ import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import cn.lunadeer.minecraftpluginutils.XLogger;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -509,6 +509,7 @@ public class DominionOperate {
 
     /**
      * 设置领地卫星地图地块颜色
+     * /dominion set_map_color <颜色> [领地名称]
      *
      * @param sender 命令发送者
      * @param args   命令参数
@@ -522,11 +523,26 @@ public class DominionOperate {
             return;
         }
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
+        DominionDTO dominion;
         if (args.length == 2) {
-            DominionController.setMapColor(operator, args[1]);
+            dominion = getPlayerCurrentDominion(operator);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_CannotGetDominionAuto);
+                return;
+            }
         } else {
-            DominionController.setMapColor(operator, args[1], args[2]);
+            dominion = DominionInterface.instance.getDominion(args[2]);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
+                return;
+            }
         }
+        if (!args[1].matches("^#[0-9a-fA-F]{6}$")) {
+            Notification.error(sender, Translation.Messages_MapColorInvalid);
+            return;
+        }
+        Color color = Color.fromRGB(Integer.parseInt(args[1].substring(1), 16));
+        new DominionSetMapColorEvent(operator, dominion, color).callEvent();
     }
 
 }

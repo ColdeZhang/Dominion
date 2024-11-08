@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.dtos;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -111,6 +112,11 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         return doUpdate(updateRow);
     }
 
+    @Override
+    public List<MemberDTO> getMembers() {
+        return new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectByDomGroupId(getDomID(), getId()));
+    }
+
     public static GroupDTO create(String name, DominionDTO dominionDTO) {
         GroupDTO group = new GroupDTO(name, dominionDTO.getId());
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null));
@@ -133,16 +139,12 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         }
     }
 
-    public void delete() {
-        delete(getId());
-    }
-
-    public static void delete(Integer id) {
+    public static void deleteById(Integer id) {
         String sql = "DELETE FROM dominion_group WHERE id = ?;";
         DatabaseManager.instance.query(sql, id);
         Cache.instance.loadGroups(id);
-        List<MemberDTO> players = MemberDTO.selectByGroupId(id);
-        for (MemberDTO player : players) {
+        List<cn.lunadeer.dominion.dtos.MemberDTO> players = cn.lunadeer.dominion.dtos.MemberDTO.selectByGroupId(id);
+        for (cn.lunadeer.dominion.dtos.MemberDTO player : players) {
             player.setGroupId(-1);
         }
     }

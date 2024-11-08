@@ -92,7 +92,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return p.get(0);
     }
 
-    public static List<MemberDTO> select(Integer dom_id) {
+    public static List<MemberDTO> selectByDominionId(Integer dom_id) {
         String sql = "SELECT * FROM dominion_member WHERE dom_id = ?;";
         return query(sql, dom_id);
     }
