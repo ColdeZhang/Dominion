@@ -90,7 +90,8 @@ allprojects {
 dependencies {
     implementation(project(":core"))
     implementation(project(":v1_20_1"))
-    implementation(project(":v1_21"))
+    implementation(project(":v1_21_paper"))
+    implementation(project(":v1_21_spigot"))
 }
 
 tasks.shadowJar {

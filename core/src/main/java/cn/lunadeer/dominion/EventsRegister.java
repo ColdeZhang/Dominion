@@ -20,13 +20,16 @@ public class EventsRegister {
             switch (version) {
                 case v1_21:
                     XLogger.debug("Load API version: 1.21");
-                    registerEvents("cn.lunadeer.dominion.events_v1_21.PlayerEvents");
-                    registerEvents("cn.lunadeer.dominion.events_v1_21.EnvironmentEvents");
-                    registerEvents("cn.lunadeer.dominion.events_v1_21.SelectPointEvents");
                     if (Common.isPaper()) {
-                        registerEvents("cn.lunadeer.dominion.events_v1_21.special.Paper");
+                        XLogger.debug("Load Paper special events");
+                        registerEvents("cn.lunadeer.dominion.events_v1_21_paper.PlayerEvents");
+                        registerEvents("cn.lunadeer.dominion.events_v1_21_paper.EnvironmentEvents");
+                        registerEvents("cn.lunadeer.dominion.events_v1_21_paper.SelectPointEvents");
                     } else {
-                        registerEvents("cn.lunadeer.dominion.events_v1_21.special.Spigot");
+                        XLogger.debug("Load Spigot special events");
+                        registerEvents("cn.lunadeer.dominion.events_v1_21_spigot.PlayerEvents");
+                        registerEvents("cn.lunadeer.dominion.events_v1_21_spigot.EnvironmentEvents");
+                        registerEvents("cn.lunadeer.dominion.events_v1_21_spigot.SelectPointEvents");
                     }
                     break;
                 case v1_20_1:
@@ -54,6 +57,7 @@ public class EventsRegister {
 
     private static APIVersion GetAPIVersion(JavaPlugin plugin) {
         String version = plugin.getServer().getBukkitVersion();
+        XLogger.debug("API version: %s", version);
         if (version.contains("1.21")) {
             return APIVersion.v1_21;
         } else if (version.contains("1.20.1")
