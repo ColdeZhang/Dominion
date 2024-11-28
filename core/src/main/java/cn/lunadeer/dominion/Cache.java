@@ -240,15 +240,15 @@ public class Cache implements Listener {
             }
 
             // 如果玩家上次所在领地和当前所在领地不同，则触发玩家跨领地边界事件
-            new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).callEvent();
+            new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).call();
 
             // 如果上次记录的领地不为空，则触发玩家离开领地事件
             if (last_dom_id != -1) {
-                new PlayerMoveOutDominionEvent(player, last_dominion).callEvent();
+                new PlayerMoveOutDominionEvent(player, last_dominion).call();
             }
             // 如果当前领地不为空，则触发玩家进入领地事件
             if (current_dom_id != -1) {
-                new PlayerMoveInDominionEvent(player, current_dominion).callEvent();
+                new PlayerMoveInDominionEvent(player, current_dominion).call();
             }
             // 更新玩家当前所在领地缓存
             if (current_dominion == null) {
