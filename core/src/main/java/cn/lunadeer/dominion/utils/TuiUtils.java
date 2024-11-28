@@ -55,7 +55,7 @@ public class TuiUtils {
     }
 
     public static boolean notOp(CommandSender sender) {
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("dominion.admin")) {
             Notification.error(sender, Translation.Messages_PageNoPermission);
             return true;
         }
