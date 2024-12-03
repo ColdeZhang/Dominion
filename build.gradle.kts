@@ -42,7 +42,7 @@ allprojects {
         compileOnly("us.dynmap:DynmapCoreAPI:3.4")
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-        compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.2")
+        compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.7")
 
         if (!BuildFull) {
             libraries.forEach {
@@ -90,7 +90,8 @@ allprojects {
 dependencies {
     implementation(project(":core"))
     implementation(project(":v1_20_1"))
-    implementation(project(":v1_21"))
+    implementation(project(":v1_21_paper"))
+    implementation(project(":v1_21_spigot"))
 }
 
 tasks.shadowJar {
