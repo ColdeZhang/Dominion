@@ -1,13 +1,11 @@
-package cn.lunadeer.dominion.events_v1_21;
+package cn.lunadeer.dominion.events_v1_21_spigot;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.minecraftpluginutils.Common;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
-import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -17,10 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityMountEvent;
-import org.bukkit.event.entity.EntityPlaceEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -649,12 +644,7 @@ public class PlayerEvents implements Listener {
                     if (bed == null) {
                         bed = player.getWorld().getSpawnLocation();
                     }
-                    if (Common.isPaper()) {
-                        player.teleportAsync(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    } else {
-                        player.teleport(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    }
-
+                    player.teleport(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
                 }
             });
         }
@@ -793,7 +783,7 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // shoot - wind_charge knock back
     public void onWindChargeKnockBack(EntityKnockbackByEntityEvent event) {
-        Entity entity = event.getHitBy();
+        Entity entity = event.getSourceEntity();
         if (!(entity instanceof WindCharge windCharge)) {
             return;
         }

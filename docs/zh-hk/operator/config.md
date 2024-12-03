@@ -134,6 +134,14 @@ Timer: false # 性能測試計時器
 - OnlyXZ：是否只計算平面面積價值（忽略Y軸）。
 - Refund：刪除、縮小領地時的退還金錢比例。
 
+> 关于 Vault 兼容性：
+>
+> 本插件支持 Vault 和 [VaultUnlocked](https://www.spigotmc.org/resources/vaultunlocked.117277/)，其中
+>
+> Dominion 2.14.5-beta 及以下请使用 VaultUnlock 2.3 版本。
+>
+> Dominion 2.14.6-beta 及以上请使用 VaultUnlock 2.7 及以上版本。
+
 ### FlyPermissionNodes
 
 飛行權限節點，擁有此列表任意一個權限節點的玩家不會被本插件攔截飛行。

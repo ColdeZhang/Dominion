@@ -71,7 +71,7 @@ public class Menu {
         if (Dominion.config.getResidenceMigration()) {
             view.add(migrate);
         }
-        if (player.isOp()) {
+        if (player.hasPermission("dominion.admin")) {
             view.add(Line.create().append(""));
             view.add(Line.create().append(Component.text(Translation.TUI_Menu_OpOnlySection.trans(), ViewStyles.main_color)));
             view.add(all);
