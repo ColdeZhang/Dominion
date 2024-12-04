@@ -56,7 +56,7 @@ public class DominionEventHandler implements Listener {
         if (sizeNotValid(event.getOperator(),
                 toBeCreated.getX1(), toBeCreated.getY1(), toBeCreated.getZ1(),
                 toBeCreated.getX2(), toBeCreated.getY2(), toBeCreated.getZ2())) {
-            event.setCancelledAdnComplete(true);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_SizeInvalid);
         }
         // parent check
         if (parentNotValid(event.getOperator(), toBeCreated)) {
@@ -164,7 +164,6 @@ public class DominionEventHandler implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionDeleteEvent(DominionDeleteEvent event) {
         DominionDTO dominion = event.getDominion();
-        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_DeleteDominionSuccess, dominion.getName());
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_DeleteDominionFailed);
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
@@ -176,12 +175,13 @@ public class DominionEventHandler implements Listener {
         if (!event.isForce()) {
             event.setCancelled(true);
             event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_DeleteDominionConfirm, dominion.getName());
-            event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_SubDominionList, sub_dominions.stream().map(DominionDTO::getName).toArray());
+            if (!sub_dominions.isEmpty())
+                event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_SubDominionList, sub_dominions.stream().map(DominionDTO::getName).toArray());
             event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_DeleteDominionForceConfirm, dominion.getName());
             event.getOperator().completeResult();
             return;
         }
-
+        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_DeleteDominionSuccess, dominion.getName());
         // do db delete
         if (!event.isCancelled()) {
             cn.lunadeer.dominion.dtos.DominionDTO.deleteById(dominion.getId()); // do db delete
@@ -246,7 +246,6 @@ public class DominionEventHandler implements Listener {
     public void onDominionTransferEvent(DominionTransferEvent event) {
         DominionDTO dominion = event.getDominionBefore();
         String newOwnerName = event.getNewOwner().getLastKnownName();
-        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_GiveDominionSuccess, dominion.getName(), newOwnerName);
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_GiveDominionFailed);
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
@@ -266,11 +265,13 @@ public class DominionEventHandler implements Listener {
         if (!event.isForce()) {
             event.setCancelled(true);
             event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_GiveDominionConfirm, dominion.getName(), newOwnerName);
-            event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_SubDominionList, sub_dominions.stream().map(DominionDTO::getName).toArray());
+            if (!sub_dominions.isEmpty())
+                event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_SubDominionList, sub_dominions.stream().map(DominionDTO::getName).toArray());
             event.getOperator().addResult(AbstractOperator.ResultType.WARNING, Translation.Messages_GiveDominionForceConfirm, dominion.getName(), newOwnerName);
             event.getOperator().completeResult();
             return;
         }
+        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_GiveDominionSuccess, dominion.getName(), newOwnerName);
         // do db update
         if (!event.isCancelled()) {
             DominionDTO transfer = dominion.setOwner(event.getNewOwner().getUuid());
@@ -439,7 +440,6 @@ public class DominionEventHandler implements Listener {
      * @return 是否合法
      */
     private static boolean sizeNotValid(AbstractOperator operator, int x1, int y1, int z1, int x2, int y2, int z2) {
-        operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_SizeInvalid);
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
@@ -731,6 +731,7 @@ public class DominionEventHandler implements Listener {
             }
         }
         if (sizeNotValid(operator, result[0], result[1], result[2], result[3], result[4], result[5])) {
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_SizeInvalid);
             return null;
         }
         return cn.lunadeer.dominion.dtos.DominionDTO.create(
