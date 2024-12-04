@@ -126,8 +126,8 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
                 .field(group.name_raw)
                 .field(group.admin)
                 .field(group.name_color);
-        for (Flag f : dominionDTO.getGuestPrivilegeFlagValue().keySet()) {
-            insertRow.field(new Field(f.getFlagName(), (f)));
+        for (Map.Entry<Flag, Boolean> f : dominionDTO.getGuestPrivilegeFlagValue().entrySet()) {
+            insertRow.field(new Field(f.getKey().getFlagName(), f.getValue()));
         }
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);

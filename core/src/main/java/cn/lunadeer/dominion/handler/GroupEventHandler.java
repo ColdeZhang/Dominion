@@ -4,10 +4,7 @@ import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.events.group.GroupAddMemberEvent;
-import cn.lunadeer.dominion.events.group.GroupCreateEvent;
-import cn.lunadeer.dominion.events.group.GroupDeleteEvent;
-import cn.lunadeer.dominion.events.group.GroupRenamedEvent;
+import cn.lunadeer.dominion.events.group.*;
 import cn.lunadeer.dominion.managers.Translation;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,6 +28,10 @@ public class GroupEventHandler implements Listener {
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateGroupFailed, groupName, dominionName);
         if (notOwner(event.getOperator(), event.getDominion())) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominionName);
+            return;
+        }
+        if (groupName.contains(" ")) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_GroupNameInvalid);
             return;
         }
         GroupDTO group = GroupDTO.select(event.getDominion().getId(), groupName);
@@ -70,6 +71,10 @@ public class GroupEventHandler implements Listener {
         String newName = event.getNewNamePlain();
         event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_RenameGroupSuccess, oldName, newName);
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_RenameGroupFailed, oldName, newName);
+        if (newName.contains(" ")) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_GroupNameInvalid);
+            return;
+        }
         DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(event.getGroupBefore().getDomID());
         if (dominion == null) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Commands_Title_GroupDominionNotExist, oldName);
@@ -108,26 +113,26 @@ public class GroupEventHandler implements Listener {
             return;
         }
         if (notAdminOrOwner(event.getOperator(), dominion)) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NoPermissionForGroupMember, dominion.getName(), groupName);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NoPermissionForGroupMember, dominion.getName(), groupName);
             return;
         }
         cn.lunadeer.dominion.dtos.MemberDTO member = cn.lunadeer.dominion.dtos.MemberDTO.select(player.getUuid(), dominion.getId());
         if (member == null) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotDominionMember, playerName, dominion.getName());
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotDominionMember, playerName, dominion.getName());
             return;
         }
         if (member.getGroupId().equals(event.getGroup().getId())) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerAlreadyInGroup, playerName, groupName);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerAlreadyInGroup, playerName, groupName);
             return;
         }
         // only owner can add a member to an admin group
         if (notOwner(event.getOperator(), dominion) && event.getGroup().getAdmin()) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForGroupMember, dominion.getName());
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForGroupMember, dominion.getName());
             return;
         }
         // only owner can add an admin to a group
         if (notOwner(event.getOperator(), dominion) && member.getAdmin()) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerIsOwnerForGroupMember, playerName, dominion.getName());
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerIsOwnerForGroupMember, playerName, dominion.getName());
             return;
         }
 
@@ -141,7 +146,7 @@ public class GroupEventHandler implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onGroupRemoveMemberEvent(GroupAddMemberEvent event) {
+    public void onGroupRemoveMemberEvent(GroupRemoveMemberEvent event) {
         PlayerDTO player = event.getMember().getPlayer();
         String playerName = player.getLastKnownName();
         String groupName = event.getGroup().getNamePlain();
@@ -153,20 +158,20 @@ public class GroupEventHandler implements Listener {
             return;
         }
         if (notAdminOrOwner(event.getOperator(), dominion)) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NoPermissionForGroupMember, dominion.getName(), groupName);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NoPermissionForGroupMember, dominion.getName(), groupName);
             return;
         }
         if (notOwner(event.getOperator(), dominion) && event.getGroup().getAdmin()) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForGroup, dominion.getName());
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForGroup, dominion.getName());
             return;
         }
         cn.lunadeer.dominion.dtos.MemberDTO member = cn.lunadeer.dominion.dtos.MemberDTO.select(player.getUuid(), dominion.getId());
         if (member == null) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotDominionMember, playerName, dominion.getName());
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotDominionMember, playerName, dominion.getName());
             return;
         }
         if (!member.getGroupId().equals(event.getGroup().getId())) {
-            event.getOperator().addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotInGroup, playerName, groupName);
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotInGroup, playerName, groupName);
             return;
         }
         if (!event.isCancelled()) {
