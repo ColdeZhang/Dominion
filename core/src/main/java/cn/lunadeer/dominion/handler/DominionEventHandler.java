@@ -96,10 +96,10 @@ public class DominionEventHandler implements Listener {
     public void onDominionSizeChangeEvent(DominionSizeChangeEvent event) {
         DominionDTO dominion = event.getDominionBefore();
         if (event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND) {
-            event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ExpandDominionSuccess, dominion.getName());
+            event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ExpandDominionSuccess, dominion.getName(), event.getSize());
             event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_ExpandDominionFailed);
         } else {
-            event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ContractDominionSuccess, dominion.getName());
+            event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ContractDominionSuccess, dominion.getName(), event.getSize());
             event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_ContractDominionFailed);
         }
         event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ExpandDominionSuccess, dominion.getName());
