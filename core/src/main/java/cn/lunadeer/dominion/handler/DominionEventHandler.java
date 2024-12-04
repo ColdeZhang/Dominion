@@ -34,9 +34,14 @@ public class DominionEventHandler implements Listener {
     // ========== DominionCreateEvent START
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionCreateEvent(DominionCreateEvent event) {
+        int x1 = Math.min(event.getLoc1().getBlockX(), event.getLoc2().getBlockX());
+        int y1 = Math.min(event.getLoc1().getBlockY(), event.getLoc2().getBlockY());
+        int z1 = Math.min(event.getLoc1().getBlockZ(), event.getLoc2().getBlockZ());
+        int x2 = Math.max(event.getLoc1().getBlockX(), event.getLoc2().getBlockX());
+        int y2 = Math.max(event.getLoc1().getBlockY(), event.getLoc2().getBlockY());
+        int z2 = Math.max(event.getLoc1().getBlockZ(), event.getLoc2().getBlockZ());
         cn.lunadeer.dominion.dtos.DominionDTO toBeCreated = cn.lunadeer.dominion.dtos.DominionDTO.create(event.getOwner(), event.getName(), event.getLoc1().getWorld(),
-                event.getLoc1().getBlockX(), event.getLoc1().getBlockY(), event.getLoc1().getBlockZ(),
-                event.getLoc2().getBlockX(), event.getLoc2().getBlockY(), event.getLoc2().getBlockZ(),
+                x1, y1, z1, x2, y2, z2,
                 event.getParent());
         event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_CreateDominionSuccess, toBeCreated.getName());
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionFailed);
