@@ -3,26 +3,40 @@ package cn.lunadeer.dominion.utils;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.AbstractOperator;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 public class ControllerUtils {
 
+    /**
+     * 检查玩家是否不是领地的所有者
+     *
+     * @param player   玩家
+     * @param dominion 领地
+     * @return 是否不是领地的所有者
+     */
     public static boolean notOwner(AbstractOperator player, DominionDTO dominion) {
         if (player.isOp() && Dominion.config.getLimitOpBypass()) return false;
         return !dominion.getOwner().equals(player.getUniqueId());
     }
 
-    public static boolean noAuthToChangeFlags(AbstractOperator player, DominionDTO dominion) {
+    /**
+     * 检查玩家是否不是领地的所有者或管理员
+     *
+     * @param player   玩家
+     * @param dominion 领地
+     * @return 是否不是领地的所有者或管理员
+     */
+    public static boolean notAdminOrOwner(AbstractOperator player, DominionDTO dominion) {
         if (player.isOp() && Dominion.config.getLimitOpBypass()) return false;
         if (!dominion.getOwner().equals(player.getUniqueId())) {
-            MemberDTO privileges = MemberDTO.select(player.getUniqueId(), dominion.getId());
+            MemberDTO privileges = cn.lunadeer.dominion.dtos.MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
-                player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_NotDominionOwnerOrAdmin, dominion.getName()));
+                player.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerOrAdmin, dominion.getName());
                 return true;
             }
         }
@@ -39,7 +53,7 @@ public class ControllerUtils {
     public static DominionDTO getPlayerCurrentDominion(AbstractOperator player) {
         Location location = player.getLocation();
         if (location == null) {
-            player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CannotGetDominionAuto));
+            player.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_CannotGetDominionAuto);
             return null;
         }
         DominionDTO dominion = Cache.instance.getDominionByLoc(location);
@@ -49,7 +63,7 @@ public class ControllerUtils {
         if (dominion.getParentDomId() == -1) {
             return dominion;
         } else {
-            player.setResponse(new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_InSubDominion));
+            player.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_InSubDominion);
             return null;
         }
     }
@@ -62,7 +76,7 @@ public class ControllerUtils {
      * @return 是否是管理员
      */
     public static boolean isAdmin(@NotNull MemberDTO member) {
-        GroupDTO group = GroupDTO.select(member.getGroupId());
+        GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.select(member.getGroupId());
         if (group == null) {
             return member.getAdmin();
         } else {

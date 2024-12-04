@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
@@ -125,8 +126,8 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
                 .field(group.name_raw)
                 .field(group.admin)
                 .field(group.name_color);
-        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
-            insertRow.field(new Field(f.getFlagName(), dominionDTO.getFlagValue(f)));
+        for (Flag f : dominionDTO.getGuestPrivilegeFlagValue().keySet()) {
+            insertRow.field(new Field(f.getFlagName(), (f)));
         }
         try (ResultSet rs = insertRow.execute()) {
             List<GroupDTO> groups = getDTOFromRS(rs);

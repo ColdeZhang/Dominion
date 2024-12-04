@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.dominion;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
-import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
@@ -30,7 +30,7 @@ public class DominionList {
         view.navigator(Line.create()
                 .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
                 .append(Translation.TUI_Navigation_DominionList));
-        view.addLines(BuildTreeLines(DominionNode.BuildNodeTree(-1, DominionDTO.selectByOwner(player.getUniqueId())), 0));
+        view.addLines(BuildTreeLines(DominionNode.BuildNodeTree(-1, Cache.instance.getPlayerDominions(player.getUniqueId())), 0));
         List<String> admin_dominions = playerAdminDominionNames(sender);
         if (!admin_dominions.isEmpty()) {
             view.add(Line.create().append(""));

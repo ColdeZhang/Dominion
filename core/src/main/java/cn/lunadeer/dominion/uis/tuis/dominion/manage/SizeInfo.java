@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage;
 
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.controllers.PlayerController;
-import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;

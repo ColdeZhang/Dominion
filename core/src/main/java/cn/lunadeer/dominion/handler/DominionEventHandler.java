@@ -42,7 +42,7 @@ public class DominionEventHandler implements Listener {
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateDominionFailed);
         // name check
         if (nameNotValid(event.getOperator(), toBeCreated.getName())) {
-            event.setCancelled(true);
+            event.setCancelledAdnComplete(true);
         }
         // world check
         if (worldNotValid(event.getOperator(), Objects.requireNonNull(toBeCreated.getWorld()).getName())) {
@@ -56,22 +56,22 @@ public class DominionEventHandler implements Listener {
         if (sizeNotValid(event.getOperator(),
                 toBeCreated.getX1(), toBeCreated.getY1(), toBeCreated.getZ1(),
                 toBeCreated.getX2(), toBeCreated.getY2(), toBeCreated.getZ2())) {
-            event.setCancelled(true);
+            event.setCancelledAdnComplete(true);
         }
         // parent check
         if (parentNotValid(event.getOperator(), toBeCreated)) {
-            event.setCancelled(true);
+            event.setCancelledAdnComplete(true);
         }
         // intersect check
         if (intersectWithOther(event.getOperator(), toBeCreated)) {
-            event.setCancelled(true);
+            event.setCancelledAdnComplete(true);
         }
         // handle economy
         if (!event.isCancelled() && !event.isSkipEconomy()) {
             if (handleEconomyFailed(event.getOperator(),
                     Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? toBeCreated.getSquare() : toBeCreated.getVolume(),
                     true)) {
-                event.setCancelled(true);
+                event.setCancelledAdnComplete(true);
             }
         }
         // do db insert
@@ -106,20 +106,21 @@ public class DominionEventHandler implements Listener {
         event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_ExpandDominionFailed);
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+            return;
         }
         DominionDTO tempDominion = constractSizeChangeDominionDTO(event.getOperator(), dominion, event.getType(), event.getSize(), event.getDirection());
         if (tempDominion == null) {
-            event.setCancelled(true);
+            event.setCancelledAdnComplete(true);
             return;
         }
         if (event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND) {
             // parent check
             if (parentNotValid(event.getOperator(), tempDominion)) {
-                event.setCancelled(true);
+                event.setCancelledAdnComplete(true);
             }
             // intersect check
             if (intersectWithOther(event.getOperator(), tempDominion)) {
-                event.setCancelled(true);
+                event.setCancelledAdnComplete(true);
             }
         } else {
             // child check
@@ -136,7 +137,7 @@ public class DominionEventHandler implements Listener {
             if (handleEconomyFailed(event.getOperator(),
                     Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? tempDominion.getSquare() : tempDominion.getVolume(),
                     event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND)) {
-                event.setCancelled(true);
+                event.setCancelledAdnComplete(true);
             }
         }
         // do db update
@@ -168,6 +169,7 @@ public class DominionEventHandler implements Listener {
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+            return;
         }
         // check subs
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
@@ -196,7 +198,7 @@ public class DominionEventHandler implements Listener {
                 }
             }
             if (!event.isSkipEconomy() && handleEconomyFailed(event.getOperator(), count, false)) {
-                event.setCancelled(true);
+                event.setCancelledAdnComplete(true);
             }
         }
         // complete with result
@@ -213,10 +215,11 @@ public class DominionEventHandler implements Listener {
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+            return;
         }
         // name check
         if (nameNotValid(event.getOperator(), event.getNewName())) {
-            event.setCancelled(true);
+            event.setCancelledAdnComplete(true);
         }
         // same name check
         if (Objects.equals(dominion.getName(), event.getNewName())) {
@@ -248,6 +251,7 @@ public class DominionEventHandler implements Listener {
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+            return;
         }
         // check same owner
         if (event.getNewOwner().getUuid().equals(event.getOldOwner().getUuid())) {
@@ -295,6 +299,7 @@ public class DominionEventHandler implements Listener {
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+            return;
         }
         // check tp location in dominion
         if (!isInDominion(event.getDominionBefore(), event.getNewTpLocation())) {
@@ -329,6 +334,7 @@ public class DominionEventHandler implements Listener {
         // check owner
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
+            return;
         }
         // do db update
         if (!event.isCancelled()) {

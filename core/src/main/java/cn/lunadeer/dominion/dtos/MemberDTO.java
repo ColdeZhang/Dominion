@@ -1,7 +1,9 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.FieldType;
@@ -176,6 +178,20 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
         return doUpdate(updateRow);
+    }
+
+    /**
+     * 获取成员对象
+     *
+     * @return 成员对象
+     */
+    @Override
+    public @NotNull PlayerDTO getPlayer() {
+        PlayerDTO player = cn.lunadeer.dominion.dtos.PlayerDTO.select(getPlayerUUID());
+        if (player == null) {
+            throw new RuntimeException("Player not found");
+        }
+        return player;
     }
 
     @Override

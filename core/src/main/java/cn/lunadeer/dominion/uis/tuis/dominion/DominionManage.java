@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.dominion;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;

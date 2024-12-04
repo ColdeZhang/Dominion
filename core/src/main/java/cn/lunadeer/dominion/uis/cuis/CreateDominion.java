@@ -30,9 +30,7 @@ public class CreateDominion {
 
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
             Map<Integer, Location> points = autoPoints(sender);
-            DominionCreateEvent event = new DominionCreateEvent(operator, input, sender.getUniqueId(), points.get(0), points.get(1), null);
-            event.callEvent();
-            if (!event.isCancelled()) {
+            if (new DominionCreateEvent(operator, input, sender.getUniqueId(), points.get(0), points.get(1), null).call()) {
                 DominionManage.show(sender, new String[]{"manage", input});
             }
         }

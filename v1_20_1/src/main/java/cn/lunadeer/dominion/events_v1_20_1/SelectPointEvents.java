@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.events_v1_20_1;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
@@ -80,7 +80,7 @@ public class SelectPointEvents implements Listener {
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
-            DominionDTO dominion = new DominionDTO(player.getUniqueId(), "", loc1.getWorld(),
+            DominionDTO dominion = new cn.lunadeer.dominion.dtos.DominionDTO(player.getUniqueId(), "", loc1.getWorld(),
                     minX, minY, minZ, maxX, maxY, maxZ);
             if (Dominion.config.getEconomyEnable()) {
                 if (!VaultConnect.instance.economyAvailable()) {

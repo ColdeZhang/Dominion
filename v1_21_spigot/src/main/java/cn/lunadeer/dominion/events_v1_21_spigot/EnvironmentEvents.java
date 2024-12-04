@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.events_v1_21_spigot;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -172,7 +172,7 @@ public class EnvironmentEvents implements Listener {
         if (!Flag.MOB_DROP_ITEM.getEnable()) {
             return;
         }
-        if (dom.getFlagValue(Flag.MOB_DROP_ITEM)) {
+        if (dom.getEnvironmentFlagValue().get(Flag.MOB_DROP_ITEM)) {
             return;
         }
         event.getDrops().clear();
@@ -365,7 +365,7 @@ public class EnvironmentEvents implements Listener {
         }
         if (pistonDom != null && endBlockDom != null) {
             if (!pistonDom.getId().equals(endBlockDom.getId())) {
-                if (!endBlockDom.getFlagValue(Flag.PISTON_OUTSIDE) || !pistonDom.getFlagValue(Flag.PISTON_OUTSIDE)) {
+                if (!endBlockDom.getEnvironmentFlagValue().get(Flag.PISTON_OUTSIDE) || !pistonDom.getEnvironmentFlagValue().get(Flag.PISTON_OUTSIDE)) {
                     event.setCancelled(true);
                 }
             }

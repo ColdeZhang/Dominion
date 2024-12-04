@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.events_v1_20_1.special;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import org.bukkit.entity.Animals;

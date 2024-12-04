@@ -1,9 +1,11 @@
 package cn.lunadeer.dominion.uis.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.DominionController;
+import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.events.dominion.modify.DominionRenameEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
+import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
 import org.bukkit.command.CommandSender;
@@ -26,8 +28,14 @@ public class RenameDominion {
         public void handleData(String input) {
             XLogger.debug("renameDominionCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            DominionController.rename(operator, oldName, input);
-            DominionManage.show(sender, new String[]{"manage", input});
+            DominionDTO dominion = DominionDTO.select(oldName);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, oldName);
+                return;
+            }
+            if (new DominionRenameEvent(operator, dominion, input).call()) {
+                DominionManage.show(sender, new String[]{"manage", input});
+            }
         }
     }
 

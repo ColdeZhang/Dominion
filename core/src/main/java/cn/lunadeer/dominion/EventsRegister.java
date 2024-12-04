@@ -1,6 +1,8 @@
 package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.handler.DominionEventHandler;
+import cn.lunadeer.dominion.handler.GroupEventHandler;
+import cn.lunadeer.dominion.handler.MemberEventHandler;
 import cn.lunadeer.minecraftpluginutils.Common;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Bukkit;
@@ -51,6 +53,8 @@ public class EventsRegister {
         }
 
         new DominionEventHandler(plugin);
+        new MemberEventHandler(plugin);
+        new GroupEventHandler(plugin);
     }
 
     enum APIVersion {

@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -36,7 +36,7 @@ public class TuiUtils {
      */
     public static DominionDTO getDominionNameArg_1(Player player, String[] args) {
         if (args.length >= 2) {
-            return DominionDTO.select(args[1]);
+            return cn.lunadeer.dominion.dtos.DominionDTO.select(args[1]);
         } else {
             return Cache.instance.getPlayerCurrentDominion(player);
         }
@@ -45,7 +45,7 @@ public class TuiUtils {
     public static boolean noAuthToManage(Player player, DominionDTO dominion) {
         if (player.isOp()) return false;
         if (!dominion.getOwner().equals(player.getUniqueId())) {
-            MemberDTO privileges = MemberDTO.select(player.getUniqueId(), dominion.getId());
+            MemberDTO privileges = cn.lunadeer.dominion.dtos.MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
                 Notification.error(player, Translation.TUI_NotDominionOwnerOrAdminForPage, dominion.getName());
                 return true;

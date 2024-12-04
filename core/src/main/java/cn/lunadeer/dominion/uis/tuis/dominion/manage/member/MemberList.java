@@ -1,7 +1,11 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.member;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.*;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -38,7 +42,7 @@ public class MemberList {
         }
         Player player = playerOnly(sender);
         if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[2]);
+        DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(args[2]);
         if (dominion == null) {
             Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
             return;
@@ -46,7 +50,7 @@ public class MemberList {
         int page = getPage(args, 3);
         ListView view = ListView.create(10, "/dominion member list " + dominion.getName());
         if (noAuthToManage(player, dominion)) return;
-        List<MemberDTO> privileges = MemberDTO.selectByDominionId(dominion.getId());
+        List<MemberDTO> privileges = dominion.getMembers();
         view.title(String.format(Translation.TUI_MemberList_Title.trans(), dominion.getName()));
         view.navigator(
                 Line.create()
@@ -58,7 +62,7 @@ public class MemberList {
         view.add(Line.create().append(Button.create(Translation.TUI_MemberList_AddButton)
                 .setExecuteCommand(CommandParser("/dominion member select_player %s", dominion.getName())).build()));
         for (MemberDTO privilege : privileges) {
-            PlayerDTO p_player = PlayerDTO.select(privilege.getPlayerUUID());
+            PlayerDTO p_player = cn.lunadeer.dominion.dtos.PlayerDTO.select(privilege.getPlayerUUID());
             if (p_player == null) continue;
             GroupDTO group = Cache.instance.getGroup(privilege.getGroupId());
             Line line = Line.create();
