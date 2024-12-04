@@ -16,25 +16,25 @@ public class TemplateController {
      * @param templateName 模板名称
      */
     public static void createTemplate(AbstractOperator operator, String templateName) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_CreateTemplateSuccess, templateName);
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_CreateTemplateFailed, templateName);
+        operator.addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_CreateTemplateSuccess, templateName);
+        operator.addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_CreateTemplateFailed, templateName);
         if (templateName.contains(" ")) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNameInvalid));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TemplateNameInvalid);
             return;
         }
         List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(operator.getUniqueId());
         for (PrivilegeTemplateDTO template : templates) {
             if (template.getName().equals(templateName)) {
-                operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNameExist, templateName));
+                operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TemplateNameExist, templateName);
                 return;
             }
         }
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.create(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_DatabaseError));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
             return;
         }
-        operator.setResponse(SUCCESS);
+        operator.completeResult();
     }
 
     /**
@@ -44,19 +44,19 @@ public class TemplateController {
      * @param templateName 模板名称
      */
     public static void deleteTemplate(AbstractOperator operator, String templateName) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_DeleteTemplateSuccess, templateName);
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_DeleteTemplateFailed, templateName);
+        operator.addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_DeleteTemplateSuccess, templateName);
+        operator.addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_DeleteTemplateFailed, templateName);
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TemplateNotExist, templateName);
             return;
         }
         if (!template.getCreator().equals(operator.getUniqueId())) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TemplateNotExist, templateName);
             return;
         }
         PrivilegeTemplateDTO.delete(operator.getUniqueId(), templateName);
-        operator.setResponse(SUCCESS);
+        operator.completeResult();
     }
 
     /**
@@ -68,11 +68,11 @@ public class TemplateController {
      * @param value        权限值
      */
     public static void setTemplateFlag(AbstractOperator operator, String templateName, String flag_name, boolean value) {
-        AbstractOperator.Result SUCCESS = new AbstractOperator.Result(AbstractOperator.Result.SUCCESS, Translation.Messages_SetTemplateFlagSuccess, templateName, flag_name, value);
-        AbstractOperator.Result FAIL = new AbstractOperator.Result(AbstractOperator.Result.FAILURE, Translation.Messages_SetTemplateFlagFailed, templateName, flag_name, value);
+        operator.addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetTemplateFlagSuccess, templateName, flag_name, value);
+        operator.addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetTemplateFlagFailed, templateName, flag_name, value);
         PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(operator.getUniqueId(), templateName);
         if (template == null) {
-            operator.setResponse(FAIL.addMessage(Translation.Messages_TemplateNotExist, templateName));
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_TemplateNotExist, templateName);
             return;
         }
         if (flag_name.equals("admin")) {
@@ -80,12 +80,12 @@ public class TemplateController {
         } else {
             Flag f = Flag.getFlag(flag_name);
             if (f == null) {
-                operator.setResponse(FAIL.addMessage(Translation.Messages_UnknownFlag, flag_name));
+                operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_UnknownFlag, flag_name);
                 return;
             }
             template.setFlagValue(f, value);
         }
-        operator.setResponse(SUCCESS);
+        operator.completeResult();
     }
 
 }

@@ -1,11 +1,10 @@
 package cn.lunadeer.dominion.uis.cuis;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.events.group.GroupCreateEvent;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
-import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
@@ -30,7 +29,12 @@ public class CreateGroup {
         public void handleData(String input) {
             XLogger.debug("createGroupCB.run: %s", input);
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            GroupController.createGroup(operator, dominionName, ColorParser.getPlainText(input), input);
+            DominionDTO dominion = DominionDTO.select(dominionName);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, dominionName);
+                return;
+            }
+            new GroupCreateEvent(operator, dominion, input).call();
             GroupList.show(sender, dominionName);
         }
     }

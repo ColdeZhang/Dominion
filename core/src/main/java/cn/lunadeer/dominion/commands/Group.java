@@ -2,11 +2,15 @@ package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
+import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.events.group.*;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.SelectMember;
-import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -39,10 +43,14 @@ public class Group {
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            String dominionName = args[2];
+            DominionDTO dominion = DominionDTO.select(args[2]);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
+                return;
+            }
             String groupName = args[3];
-            GroupController.createGroup(operator, dominionName, ColorParser.getPlainText(groupName), groupName);
-            GroupList.show(sender, dominionName);
+            new GroupCreateEvent(operator, dominion, groupName).call();
+            GroupList.show(sender, dominion.getName());
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }
@@ -64,10 +72,18 @@ public class Group {
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            String dominionName = args[2];
-            String groupName = args[3];
-            GroupController.deleteGroup(operator, dominionName, groupName);
-            GroupList.show(sender, dominionName);
+            DominionDTO dominion = DominionDTO.select(args[2]);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
+                return;
+            }
+            GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
+            if (group == null) {
+                Notification.error(sender, Translation.Messages_GroupNotExist, dominion.getName(), args[3]);
+                return;
+            }
+            new GroupDeleteEvent(operator, dominion, group).call();
+            GroupList.show(sender, dominion.getName());
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }
@@ -92,8 +108,18 @@ public class Group {
             String dominionName = args[2];
             String oldGroupName = args[3];
             String newGroupName = args[4];
-            GroupController.renameGroup(operator, dominionName, oldGroupName, ColorParser.getPlainText(newGroupName), newGroupName);
-            GroupSetting.show(sender, dominionName, newGroupName);
+            DominionDTO dominion = DominionDTO.select(dominionName);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, dominionName);
+                return;
+            }
+            GroupDTO group = GroupDTO.select(dominion.getId(), oldGroupName);
+            if (group == null) {
+                Notification.error(sender, Translation.Messages_GroupNotExist, dominionName, oldGroupName);
+                return;
+            }
+            new GroupRenamedEvent(operator, group, newGroupName).call();
+            GroupSetting.show(sender, dominion.getName(), newGroupName);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }
@@ -143,12 +169,29 @@ public class Group {
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            String dominionName = args[2];
-            String groupName = args[3];
-            String playerName = args[4];
+            DominionDTO dominion = DominionDTO.select(args[2]);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
+                return;
+            }
+            PlayerDTO player = PlayerDTO.select(args[4]);
+            if (player == null) {
+                Notification.error(sender, Translation.Messages_PlayerNotExist, args[4]);
+                return;
+            }
+            MemberDTO member = MemberDTO.select(player.getUuid(), dominion.getId());
+            if (member == null) {
+                Notification.error(sender, Translation.Messages_PlayerNotDominionMember, args[4], dominion.getName());
+                return;
+            }
+            GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
+            if (group == null) {
+                Notification.error(sender, Translation.Messages_GroupNotExist, dominion.getName(), args[3]);
+                return;
+            }
             int page = getPage(args, 5);
-            GroupController.addMember(operator, dominionName, groupName, playerName);
-            GroupList.show(sender, dominionName, page);
+            new GroupAddMemberEvent(operator, group, member).call();
+            GroupList.show(sender, dominion.getName(), page);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }
@@ -170,12 +213,29 @@ public class Group {
                 return;
             }
             BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            String dominionName = args[2];
-            String groupName = args[3];
-            String playerName = args[4];
+            DominionDTO dominion = DominionDTO.select(args[2]);
+            if (dominion == null) {
+                Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
+                return;
+            }
+            GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
+            if (group == null) {
+                Notification.error(sender, Translation.Messages_GroupNotExist, dominion.getName(), args[3]);
+                return;
+            }
+            PlayerDTO player = PlayerDTO.select(args[4]);
+            if (player == null) {
+                Notification.error(sender, Translation.Messages_PlayerNotExist, args[4]);
+                return;
+            }
+            MemberDTO member = MemberDTO.select(player.getUuid(), dominion.getId());
+            if (member == null) {
+                Notification.error(sender, Translation.Messages_PlayerNotDominionMember, args[4], dominion.getName());
+                return;
+            }
             int page = getPage(args, 5);
-            GroupController.removeMember(operator, dominionName, groupName, playerName);
-            GroupList.show(sender, dominionName, page);
+            new GroupRemoveMemberEvent(operator, group, member).call();
+            GroupList.show(sender, dominion.getName(), page);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }

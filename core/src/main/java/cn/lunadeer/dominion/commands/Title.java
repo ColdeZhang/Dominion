@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.TitleList;

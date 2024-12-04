@@ -65,7 +65,7 @@ public class DominionOperate {
         }
         String name = args[1];
         BukkitPlayerOperator operator = BukkitPlayerOperator.create(player);
-        new DominionCreateEvent(operator, name, player.getUniqueId(), points.get(0), points.get(1), null).callEvent();
+        new DominionCreateEvent(operator, name, player.getUniqueId(), points.get(0), points.get(1), null).call();
     }
 
     /**
@@ -105,7 +105,7 @@ public class DominionOperate {
                 return;
             }
         }
-        new DominionCreateEvent(operator, args[1], player.getUniqueId(), points.get(0), points.get(1), parent).callEvent();
+        new DominionCreateEvent(operator, args[1], player.getUniqueId(), points.get(0), points.get(1), parent).call();
     }
 
 
@@ -217,7 +217,7 @@ public class DominionOperate {
                 return;
             }
         }
-        new DominionSizeChangeEvent(operator, dominion, type, blockFace, size).callEvent();
+        new DominionSizeChangeEvent(operator, dominion, type, blockFace, size).call();
     }
 
     /**
@@ -249,7 +249,7 @@ public class DominionOperate {
         }
         DominionDeleteEvent event = new DominionDeleteEvent(operator, dominion);
         event.setForce(force);
-        event.callEvent();
+        event.call();
     }
 
     /**
@@ -284,9 +284,9 @@ public class DominionOperate {
             return;
         }
         if (type == DominionSetMessageEvent.MessageChangeType.ENTER) {
-            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.ENTER, args[1]).callEvent();
+            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.ENTER, args[1]).call();
         } else {
-            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.LEAVE, args[1]).callEvent();
+            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.LEAVE, args[1]).call();
         }
     }
 
@@ -319,7 +319,7 @@ public class DominionOperate {
             return;
         }
         Location location = player.getLocation();
-        new DominionSetTpLocationEvent(operator, dominion, location).callEvent();
+        new DominionSetTpLocationEvent(operator, dominion, location).call();
     }
 
     /**
@@ -343,7 +343,7 @@ public class DominionOperate {
             Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
             return;
         }
-        new DominionRenameEvent(operator, dominion, args[2]).callEvent();
+        new DominionRenameEvent(operator, dominion, args[2]).call();
     }
 
     /**
@@ -380,7 +380,7 @@ public class DominionOperate {
         }
         DominionTransferEvent event = new DominionTransferEvent(operator, dominion, playerDTO);
         event.setForce(force);
-        event.callEvent();
+        event.call();
     }
 
     /**
@@ -542,7 +542,7 @@ public class DominionOperate {
             return;
         }
         Color color = Color.fromRGB(Integer.parseInt(args[1].substring(1), 16));
-        new DominionSetMapColorEvent(operator, dominion, color).callEvent();
+        new DominionSetMapColorEvent(operator, dominion, color).call();
     }
 
 }

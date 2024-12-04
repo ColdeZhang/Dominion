@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.events_v1_21_paper;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.minecraftpluginutils.Notification;

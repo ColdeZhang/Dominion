@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -34,9 +34,9 @@ public class TitleList {
         GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
 
         // 将其拥有的所有领地的权限组称号都加入列表 - 领地所有者可以使用其领地的任意权限组称号
-        List<DominionDTO> dominions = DominionDTO.selectByOwner(player.getUniqueId());
+        List<DominionDTO> dominions = Cache.instance.getPlayerDominions(player.getUniqueId());
         for (DominionDTO dominion : dominions) {
-            List<GroupDTO> groupsOfDom = GroupDTO.selectByDominionId(dominion.getId());
+            List<GroupDTO> groupsOfDom = dominion.getGroups();
             groups.addAll(groupsOfDom);
         }
 

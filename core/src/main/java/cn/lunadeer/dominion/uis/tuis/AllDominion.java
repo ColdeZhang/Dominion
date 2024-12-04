@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
-import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
@@ -24,7 +24,7 @@ public class AllDominion {
         if (notOp(player)) return;
         int page = getPage(args, 1);
 
-        List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, DominionDTO.selectAll());
+        List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, Cache.instance.getAllDominions());
 
         ListView view = ListView.create(10, "/dominion all_dominion");
 

@@ -67,8 +67,14 @@ public class EventUtils {
                 }
             }
         } else {
-            if (dom.getFlagValue(flag)) {
-                return true;
+            if (flag.isEnvironmentFlag()) {
+                if (dom.getEnvironmentFlagValue().get(flag)) {
+                    return true;
+                }
+            } else {
+                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+                    return true;
+                }
             }
         }
         String msg = String.format(Translation.Messages_NoPermissionForFlag.trans(), flag.getDisplayName(), flag.getDescription());
@@ -87,9 +93,16 @@ public class EventUtils {
         if (dom == null) {
             return true;
         }
-        if (dom.getFlagValue(flag)) {
-            return true;
+        if (flag.isEnvironmentFlag()) {
+            if (dom.getEnvironmentFlagValue().get(flag)) {
+                return true;
+            }
+        } else {
+            if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+                return true;
+            }
         }
+
         if (event != null) {
             event.setCancelled(true);
         }

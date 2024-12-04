@@ -1,12 +1,12 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.api.AbstractOperator;
-import cn.lunadeer.dominion.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.ControllerUtils;
 
-import static cn.lunadeer.dominion.utils.ControllerUtils.noAuthToChangeFlags;
+import static cn.lunadeer.dominion.utils.ControllerUtils.notAdminOrOwner;
 
 public class FlagsController {
 
@@ -33,12 +33,12 @@ public class FlagsController {
      * @param dominionName 领地名称
      */
     public static void setFlag(AbstractOperator operator, String flag, boolean value, String dominionName) {
-        DominionDTO dominion = DominionDTO.select(dominionName);
+        DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(dominionName);
         if (dominion == null) {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionNotExist, dominionName);
             return;
         }
-        if (noAuthToChangeFlags(operator, dominion)) return;
+        if (notAdminOrOwner(operator, dominion)) return;
         Flag f = Flag.getFlag(flag);
         if (f == null) {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_UnknownFlag, flag);
