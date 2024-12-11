@@ -1,4 +1,5 @@
 {
+  "title": "Dominion插件文档",
   "plugins": [
     "chapter-fold",
     "sidebar-style",
