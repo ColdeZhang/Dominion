@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.api.AbstractOperator;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.managers.Translation;
 
@@ -20,7 +20,7 @@ public class GroupController {
      * @param flag      权限名称
      * @param value     权限值
      */
-    public static void setGroupFlag(AbstractOperator operator, String domName, String groupName, String flag, boolean value) {
+    public static void setGroupFlag(AbstractOperator operator, String domName, String groupName, PreFlag flag, boolean value) {
         operator.addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetGroupFlagFailed, groupName, flag, value);
         operator.addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetGroupFlagSuccess, groupName, flag, value);
         DominionDTO dominion = DominionDTO.select(domName);
@@ -36,19 +36,14 @@ public class GroupController {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_GroupNotExist, domName, groupName);
             return;
         }
-        if ((flag.equals("admin") || group.getAdmin()) && notOwner(operator, dominion)) {
+        if ((flag.getFlagName().equals("admin") || group.getAdmin()) && notOwner(operator, dominion)) {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForGroup, domName);
             return;
         }
-        if (flag.equals("admin")) {
+        if (flag.getFlagName().equals("admin")) {
             group = group.setAdmin(value);
         } else {
-            Flag f = Flag.getFlag(flag);
-            if (f == null) {
-                operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_UnknownFlag, flag);
-                return;
-            }
-            group = group.setFlagValue(f, value);
+            group = group.setFlagValue(flag, value);
         }
         if (group == null) {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);

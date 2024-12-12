@@ -2,7 +2,10 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.DominionAPI;
-import cn.lunadeer.dominion.api.dtos.*;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -64,21 +67,6 @@ public class DominionInterface implements DominionAPI {
     @Override
     public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
         return Cache.instance.getPlayerUsingGroupTitle(uuid);
-    }
-
-    @Override
-    public @NotNull List<Flag> getEnvironmentFlagsEnabled() {
-        return new ArrayList<>(cn.lunadeer.dominion.dtos.Flag.getEnvironmentFlagsEnabled());
-    }
-
-    @Override
-    public @NotNull List<Flag> getPrivilegeFlagsEnabled() {
-        return new ArrayList<>(cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled());
-    }
-
-    @Override
-    public @Nullable Flag getFlagByName(@NotNull String flagName) {
-        return cn.lunadeer.dominion.dtos.Flag.getFlag(flagName);
     }
 
     @Override

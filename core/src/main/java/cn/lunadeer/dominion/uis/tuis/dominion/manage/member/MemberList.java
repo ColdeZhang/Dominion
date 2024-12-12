@@ -5,7 +5,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
-import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -72,7 +72,7 @@ public class MemberList {
             } else if (privilege.getAdmin()) {
                 line.append(adminTag);
             } else {
-                if (!privilege.getFlagValue(Flag.MOVE)) {
+                if (!privilege.getFlagValue(Flags.MOVE)) {
                     line.append(banTag);
                 } else {
                     line.append(normalTag);

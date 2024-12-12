@@ -3,9 +3,10 @@ package cn.lunadeer.dominion.utils;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
-import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.managers.Translation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -44,7 +45,7 @@ public class EventUtils {
         }
     }
 
-    public static boolean checkFlag(DominionDTO dom, Flag flag, Player player, Cancellable event) {
+    public static boolean checkFlag(DominionDTO dom, PreFlag flag, Player player, Cancellable event) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -67,14 +68,8 @@ public class EventUtils {
                 }
             }
         } else {
-            if (flag.isEnvironmentFlag()) {
-                if (dom.getEnvironmentFlagValue().get(flag)) {
-                    return true;
-                }
-            } else {
-                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
-                    return true;
-                }
+            if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+                return true;
             }
         }
         String msg = String.format(Translation.Messages_NoPermissionForFlag.trans(), flag.getDisplayName(), flag.getDescription());
@@ -86,23 +81,32 @@ public class EventUtils {
         return false;
     }
 
-    public static boolean checkFlag(@Nullable DominionDTO dom, @NotNull Flag flag, @Nullable Cancellable event) {
+    public static boolean checkFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag, @Nullable Cancellable event) {
         if (!flag.getEnable()) {
             return true;
         }
         if (dom == null) {
             return true;
         }
-        if (flag.isEnvironmentFlag()) {
-            if (dom.getEnvironmentFlagValue().get(flag)) {
-                return true;
-            }
-        } else {
-            if (dom.getGuestPrivilegeFlagValue().get(flag)) {
-                return true;
-            }
+        if (dom.getEnvironmentFlagValue().get(flag)) {
+            return true;
         }
+        if (event != null) {
+            event.setCancelled(true);
+        }
+        return false;
+    }
 
+    public static boolean checkFlag(@Nullable DominionDTO dom, @NotNull PreFlag flag, @Nullable Cancellable event) {
+        if (!flag.getEnable()) {
+            return true;
+        }
+        if (dom == null) {
+            return true;
+        }
+        if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+            return true;
+        }
         if (event != null) {
             event.setCancelled(true);
         }

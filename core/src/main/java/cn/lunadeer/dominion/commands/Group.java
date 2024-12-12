@@ -1,5 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.GroupController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -146,7 +148,12 @@ public class Group {
             String flag = args[4];
             boolean value = Boolean.parseBoolean(args[5]);
             int page = getPage(args, 6);
-            GroupController.setGroupFlag(operator, dominionName, groupName, flag, value);
+            PreFlag f = Flags.getPreFlag(flag);
+            if (f == null) {
+                Notification.error(sender, Translation.Messages_UnknownFlag, flag);
+                return;
+            }
+            GroupController.setGroupFlag(operator, dominionName, groupName, f, value);
             GroupSetting.show(sender, dominionName, groupName, page);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

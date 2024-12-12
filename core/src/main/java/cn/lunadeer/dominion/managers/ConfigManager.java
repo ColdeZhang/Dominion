@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -103,7 +102,7 @@ public class ConfigManager {
 
         checkRules();
         saveAll();  // 回写文件 防止文件中的数据不完整
-        Flag.loadFromFile();    // 加载 Flag 配置
+        FlagConfiguration.loadFromFile();    // 加载 Flag 配置
     }
 
     public void saveAll() {

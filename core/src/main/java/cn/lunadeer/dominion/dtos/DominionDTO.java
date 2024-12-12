@@ -2,10 +2,13 @@ package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
-import cn.lunadeer.dominion.api.dtos.Flag;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
+import cn.lunadeer.dominion.api.dtos.flag.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.minecraftpluginutils.XLogger;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -51,7 +54,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             Integer parentDomId = rs.getInt("parent_dom_id");
             String tp_location = rs.getString("tp_location");
             Map<Flag, Boolean> flags = new HashMap<>();
-            for (Flag f : cn.lunadeer.dominion.dtos.Flag.getDominionFlagsEnabled()) {
+            for (Flag f : Flags.getAllFlagsEnable()) {
                 flags.put(f, rs.getBoolean(f.getFlagName()));
             }
             String color = rs.getString("color");
@@ -131,7 +134,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
                 .field(dominion.parentDomId)
                 .field(dominion.joinMessage).field(dominion.leaveMessage)
                 .field(dominion.tp_location);
-        for (Flag f : cn.lunadeer.dominion.dtos.Flag.getDominionFlagsEnabled()) {
+        for (Flag f : Flags.getAllFlagsEnable()) {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
         try (ResultSet rs = insert.execute()) {
@@ -422,21 +425,50 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     }
 
     @Override
-    public @NotNull Map<Flag, Boolean> getEnvironmentFlagValue() {
+    public @NotNull Map<EnvFlag, Boolean> getEnvironmentFlagValue() {
         return flags.entrySet().stream()
-                .filter(e -> e.getKey().isEnvironmentFlag())
-                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+                .filter(e -> e.getKey() instanceof EnvFlag)
+                .collect(HashMap::new, (m, e) -> m.put((EnvFlag) e.getKey(), e.getValue()), HashMap::putAll);
+    }
+
+    /**
+     * 获取领地某个环境配置的值
+     *
+     * @param flag 权限
+     * @return 权限值
+     */
+    @Override
+    public boolean getEnvFlagValue(@NotNull EnvFlag flag) {
+        return getFlagValue(flag);
     }
 
     @Override
-    public @NotNull Map<Flag, Boolean> getGuestPrivilegeFlagValue() {
+    public @NotNull Map<PreFlag, Boolean> getGuestPrivilegeFlagValue() {
         return flags.entrySet().stream()
-                .filter(e -> !e.getKey().isEnvironmentFlag())
-                .collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+                .filter(e -> e.getKey() instanceof PreFlag)
+                .collect(HashMap::new, (m, e) -> m.put((PreFlag) e.getKey(), e.getValue()), HashMap::putAll);
+    }
+
+    /**
+     * 获取领地某个访客权限的值
+     *
+     * @param flag 权限
+     * @return 权限值
+     */
+    @Override
+    public boolean getGuestFlagValue(@NotNull PreFlag flag) {
+        return getFlagValue(flag);
     }
 
     @Override
-    public DominionDTO setFlagValue(@NotNull Flag flag, @NotNull Boolean value) {
+    public DominionDTO setEnvFlagValue(@NotNull EnvFlag flag, @NotNull Boolean value) {
+        flags.put(flag, value);
+        Field flagField = new Field(flag.getFlagName(), value);
+        return doUpdate(new UpdateRow().field(flagField));
+    }
+
+    @Override
+    public DominionDTO setGuestFlagValue(@NotNull PreFlag flag, @NotNull Boolean value) {
         flags.put(flag, value);
         Field flagField = new Field(flag.getFlagName(), value);
         return doUpdate(new UpdateRow().field(flagField));

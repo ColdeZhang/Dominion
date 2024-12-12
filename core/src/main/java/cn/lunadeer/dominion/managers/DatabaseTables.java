@@ -1,8 +1,9 @@
 package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.api.dtos.flag.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.commands.Operator;
-import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Scheduler;
 import cn.lunadeer.minecraftpluginutils.XLogger;
@@ -73,7 +74,7 @@ public class DatabaseTables {
                 .foreignKey(dominion_parent_dom_id_fk);
         dominion.execute();
 
-        for (Flag flag : Flag.getAllDominionFlags()) {
+        for (Flag flag : Flags.getAllFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("dominion").ifNotExists().execute();
         }
@@ -97,7 +98,7 @@ public class DatabaseTables {
                     .unique(player_privilege_player_uuid, player_privilege_dom_id);
             player_privilege.execute();
 
-            for (Flag flag : Flag.getAllPrivilegeFlags()) {
+            for (Flag flag : Flags.getAllPreFlags()) {
                 TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
                 new AddColumn(column).table("player_privilege").ifNotExists().execute();
             }
@@ -164,7 +165,7 @@ public class DatabaseTables {
         privilege_template.execute();
 
 
-        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+        for (Flag flag : Flags.getAllPreFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("privilege_template").ifNotExists().execute();
         }
@@ -193,7 +194,7 @@ public class DatabaseTables {
                 .foreignKey(group_dom_id_fk)
                 .unique(dominion_group_dom_id, dominion_group_name);
         group.execute();
-        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+        for (Flag flag : Flags.getAllPreFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("dominion_group").ifNotExists().execute();
         }
@@ -217,7 +218,7 @@ public class DatabaseTables {
                 .foreignKey(dominion_member_dom_id_fk)
                 .unique(dominion_member_player_uuid, dominion_member_dom_id);
         dominion_member.execute();
-        for (Flag flag : Flag.getAllPrivilegeFlags()) {
+        for (Flag flag : Flags.getAllPreFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("dominion_member").ifNotExists().execute();
         }
@@ -235,7 +236,7 @@ public class DatabaseTables {
                             .field(new Field("dom_id", dom_id))
                             .field(new Field("group_id", group_id))
                             .field(new Field("admin", admin));
-                    for (Flag flag : Flag.getAllPrivilegeFlags()) {
+                    for (Flag flag : Flags.getAllPreFlags()) {
                         insert.field(new Field(flag.getFlagName(), rs.getBoolean(flag.getFlagName())));
                     }
                     insert.execute();

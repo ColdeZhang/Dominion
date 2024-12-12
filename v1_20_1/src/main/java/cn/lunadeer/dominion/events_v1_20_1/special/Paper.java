@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.events_v1_20_1.special;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
@@ -22,7 +22,7 @@ public class Paper implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
-        checkFlag(dom, Flag.MONSTER_MOVE, event);
+        checkFlag(dom, Flags.MONSTER_MOVE, event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // animal_move
@@ -32,7 +32,7 @@ public class Paper implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
-        checkFlag(dom, Flag.ANIMAL_MOVE, event);
+        checkFlag(dom, Flags.ANIMAL_MOVE, event);
     }
 
 }

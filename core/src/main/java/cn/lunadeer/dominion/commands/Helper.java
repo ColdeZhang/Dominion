@@ -1,7 +1,12 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.DominionInterface;
-import cn.lunadeer.dominion.api.dtos.*;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.api.dtos.flag.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,14 +20,11 @@ import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 public class Helper {
 
     public static List<String> dominionFlags() {
-        List<Flag> flags = DominionInterface.instance.getEnvironmentFlagsEnabled();
-        flags.addAll(DominionInterface.instance.getPrivilegeFlagsEnabled());
-        return Arrays.asList(flags.stream().map(Flag::getFlagName).toArray(String[]::new));
+        return Arrays.asList(Flags.getAllFlagsEnable().stream().map(Flag::getFlagName).toArray(String[]::new));
     }
 
     public static List<String> playerPrivileges() {
-        List<Flag> flags = DominionInterface.instance.getPrivilegeFlagsEnabled();
-        return Arrays.asList(flags.stream().map(Flag::getFlagName).toArray(String[]::new));
+        return Arrays.asList(Flags.getAllPreFlagsEnable().stream().map(Flag::getFlagName).toArray(String[]::new));
     }
 
     /**

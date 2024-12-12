@@ -1,6 +1,8 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.api.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
 import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
@@ -26,8 +28,8 @@ public class PrivilegeTemplateDTO {
         if (rs == null) return templates;
         try {
             while (rs.next()) {
-                Map<Flag, Boolean> flags = new HashMap<>();
-                for (Flag f : cn.lunadeer.dominion.dtos.Flag.getPrivilegeFlagsEnabled()) {
+                Map<PreFlag, Boolean> flags = new HashMap<>();
+                for (PreFlag f : Flags.getAllPreFlagsEnable()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
                 PrivilegeTemplateDTO template = new PrivilegeTemplateDTO(
@@ -94,7 +96,7 @@ public class PrivilegeTemplateDTO {
         query(sql, creator.toString(), name);
     }
 
-    private PrivilegeTemplateDTO(Integer id, UUID creator, String name, Boolean admin, Map<Flag, Boolean> flags) {
+    private PrivilegeTemplateDTO(Integer id, UUID creator, String name, Boolean admin, Map<PreFlag, Boolean> flags) {
         this.id = id;
         this.creator = creator;
         this.name = name;
@@ -107,7 +109,7 @@ public class PrivilegeTemplateDTO {
     private final String name;
     private Boolean admin;
 
-    private final Map<Flag, Boolean> flags = new HashMap<>();
+    private final Map<PreFlag, Boolean> flags = new HashMap<>();
 
     public Integer getId() {
         return id;
@@ -130,7 +132,7 @@ public class PrivilegeTemplateDTO {
         return flags.get(flag);
     }
 
-    public PrivilegeTemplateDTO setFlagValue(Flag flag, Boolean value) {
+    public PrivilegeTemplateDTO setFlagValue(PreFlag flag, Boolean value) {
         flags.put(flag, value);
         return doUpdate(new UpdateRow().field(new Field(flag.getFlagName(), value)));
     }

@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.template;
 
-import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
@@ -60,13 +61,13 @@ public class TemplateSetting {
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
         }
-        for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+        for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
             view.add(createOption(flag, template.getFlagValue(flag), template.getName(), page));
         }
         view.showOn(player, page);
     }
 
-    private static Line createOption(Flag flag, boolean value, String templateName, int page) {
+    private static Line createOption(PreFlag flag, boolean value, String templateName, int page) {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + templateName + " " + flag.getFlagName() + " false " + page).build())
