@@ -1,7 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.group;
 
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.TuiUtils;
@@ -71,7 +72,7 @@ public class GroupSetting {
                             Component.text(Translation.Flags_admin_DisplayName.trans())
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
-            view.add(createOption(Flag.GLOW, group.getFlagValue(Flag.GLOW), dominion.getName(), group.getNamePlain(), page));
+            view.add(createOption(Flags.GLOW, group.getFlagValue(Flags.GLOW), dominion.getName(), group.getNamePlain(), page));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐")
@@ -81,14 +82,14 @@ public class GroupSetting {
                             Component.text(Translation.Flags_admin_DisplayName.trans())
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
-            for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+            for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
                 view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getNamePlain(), page));
             }
         }
         view.showOn(player, page);
     }
 
-    private static Line createOption(Flag flag, boolean value, String DominionName, String groupName, int page) {
+    private static Line createOption(PreFlag flag, boolean value, String DominionName, String groupName, int page) {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑")

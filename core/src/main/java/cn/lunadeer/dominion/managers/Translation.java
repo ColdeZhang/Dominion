@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.managers;
 
 
-import cn.lunadeer.dominion.dtos.Flag;
+import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.minecraftpluginutils.i18n.Localization;
 import cn.lunadeer.minecraftpluginutils.i18n.i18n;
 import cn.lunadeer.minecraftpluginutils.i18n.i18nField;

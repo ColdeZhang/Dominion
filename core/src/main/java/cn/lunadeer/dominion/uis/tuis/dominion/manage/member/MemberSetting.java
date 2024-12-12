@@ -1,7 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.member;
 
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.Translation;
@@ -73,7 +74,7 @@ public class MemberSetting {
                             Component.text(Translation.Flags_admin_DisplayName.trans())
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
-            view.add(createOption(Flag.GLOW, privilege.getFlagValue(Flag.GLOW), playerName, dominion.getName(), page));
+            view.add(createOption(Flags.GLOW, privilege.getFlagValue(Flags.GLOW), playerName, dominion.getName(), page));
         } else {
             view.add(Line.create()
                     .append(Button.createRed("☐").setExecuteCommand(
@@ -83,14 +84,14 @@ public class MemberSetting {
                             Component.text(Translation.Flags_admin_DisplayName.trans())
                                     .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
                     ));
-            for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+            for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
                 view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
             }
         }
         view.showOn(player, page);
     }
 
-    private static Line createOption(Flag flag, boolean value, String player_name, String dominion_name, int page) {
+    private static Line createOption(PreFlag flag, boolean value, String player_name, String dominion_name, int page) {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand(

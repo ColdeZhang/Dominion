@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
@@ -431,19 +432,19 @@ public class DominionOperate {
         MemberDTO privilegeDTO = DominionInterface.instance.getMember(player.getUniqueId(), dominionDTO);
         if (!canByPass(player, dominionDTO, privilegeDTO)) {
             if (privilegeDTO == null) {
-                if (!dominionDTO.getGuestPrivilegeFlagValue().get(cn.lunadeer.dominion.dtos.Flag.TELEPORT)) {
+                if (!dominionDTO.getGuestPrivilegeFlagValue().get(Flags.TELEPORT)) {
                     Notification.error(sender, Translation.Messages_DominionNoTp);
                     return;
                 }
             } else {
                 GroupDTO groupDTO = Cache.instance.getGroup(privilegeDTO.getGroupId());
                 if (privilegeDTO.getGroupId() != -1 && groupDTO != null) {
-                    if (!groupDTO.getFlagValue(cn.lunadeer.dominion.dtos.Flag.TELEPORT)) {
+                    if (!groupDTO.getFlagValue(Flags.TELEPORT)) {
                         Notification.error(sender, Translation.Messages_GroupNoTp);
                         return;
                     }
                 } else {
-                    if (!privilegeDTO.getFlagValue(cn.lunadeer.dominion.dtos.Flag.TELEPORT)) {
+                    if (!privilegeDTO.getFlagValue(Flags.TELEPORT)) {
                         Notification.error(sender, Translation.Messages_PrivilegeNoTp);
                         return;
                     }

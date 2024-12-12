@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.events.PlayerCrossDominionBorderEvent;
 import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
 import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
@@ -286,7 +287,7 @@ public class Cache implements Listener {
      * @param dominion 领地
      */
     private void lightOrNot(Player player, DominionDTO dominion) {
-        if (!cn.lunadeer.dominion.dtos.Flag.GLOW.getEnable()) {
+        if (!Flags.GLOW.getEnable()) {
             return;
         }
         if (dominion == null) {
@@ -296,17 +297,17 @@ public class Cache implements Listener {
         MemberDTO privilege = getMember(player, dominion);
         if (privilege != null) {
             if (privilege.getGroupId() == -1) {
-                player.setGlowing(privilege.getFlagValue(cn.lunadeer.dominion.dtos.Flag.GLOW));
+                player.setGlowing(privilege.getFlagValue(Flags.GLOW));
             } else {
                 GroupDTO group = getGroup(privilege.getGroupId());
                 if (group != null) {
-                    player.setGlowing(group.getFlagValue(cn.lunadeer.dominion.dtos.Flag.GLOW));
+                    player.setGlowing(group.getFlagValue(Flags.GLOW));
                 } else {
-                    player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(cn.lunadeer.dominion.dtos.Flag.GLOW));
+                    player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(Flags.GLOW));
                 }
             }
         } else {
-            player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(cn.lunadeer.dominion.dtos.Flag.GLOW));
+            player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(Flags.GLOW));
         }
     }
 
@@ -322,7 +323,7 @@ public class Cache implements Listener {
         if (player.isOp() && Dominion.config.getLimitOpBypass()) {
             return;
         }
-        if (!cn.lunadeer.dominion.dtos.Flag.FLY.getEnable()) {
+        if (!Flags.FLY.getEnable()) {
             player.setAllowFlight(false);
             return;
         }
@@ -333,17 +334,17 @@ public class Cache implements Listener {
         MemberDTO privilege = getMember(player, dominion);
         if (privilege != null) {
             if (privilege.getGroupId() == -1) {
-                player.setAllowFlight(privilege.getFlagValue(cn.lunadeer.dominion.dtos.Flag.FLY));
+                player.setAllowFlight(privilege.getFlagValue(Flags.FLY));
             } else {
                 GroupDTO group = getGroup(privilege.getGroupId());
                 if (group != null) {
-                    player.setAllowFlight(group.getFlagValue(cn.lunadeer.dominion.dtos.Flag.FLY));
+                    player.setAllowFlight(group.getFlagValue(Flags.FLY));
                 } else {
-                    player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(cn.lunadeer.dominion.dtos.Flag.FLY));
+                    player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
                 }
             }
         } else {
-            player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(cn.lunadeer.dominion.dtos.Flag.FLY));
+            player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
         }
     }
 
@@ -636,7 +637,7 @@ public class Cache implements Listener {
                         .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
         );
         // show border
-        if (event.getDominion().getEnvironmentFlagValue().get(cn.lunadeer.dominion.dtos.Flag.SHOW_BORDER)) {
+        if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
             Particle.showBorder(event.getPlayer(), event.getDominion());
         }
     }
@@ -650,7 +651,7 @@ public class Cache implements Listener {
                         .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
         );
         // show border
-        if (event.getDominion().getEnvironmentFlagValue().get(cn.lunadeer.dominion.dtos.Flag.SHOW_BORDER)) {
+        if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
             Particle.showBorder(event.getPlayer(), event.getDominion());
         }
     }

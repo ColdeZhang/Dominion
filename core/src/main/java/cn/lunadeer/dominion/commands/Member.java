@@ -1,5 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.MemberController;
 import cn.lunadeer.dominion.dtos.DominionDTO;
@@ -89,7 +91,12 @@ public class Member {
             String flagName = args[4];
             boolean flagValue = Boolean.parseBoolean(args[5]);
             Integer page = args.length == 7 ? Integer.parseInt(args[6]) : 1;
-            MemberController.setMemberFlag(operator, dominionName, playerName, flagName, flagValue);
+            PreFlag flag = Flags.getPreFlag(flagName);
+            if (flag == null) {
+                Notification.error(sender, Translation.Messages_UnknownFlag, flagName);
+                return;
+            }
+            MemberController.setMemberFlag(operator, dominionName, playerName, flag, flagValue);
             MemberSetting.show(sender, dominionName, playerName, page);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

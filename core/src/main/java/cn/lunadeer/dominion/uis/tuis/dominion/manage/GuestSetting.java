@@ -1,7 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage;
 
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.Flag;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -36,13 +37,13 @@ public class GuestSetting {
                         .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
                         .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append(Translation.TUI_Navigation_GuestSetting));
-        for (Flag flag : Flag.getPrivilegeFlagsEnabled()) {
+        for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }
         view.showOn(player, page);
     }
 
-    private static Line createOption(Flag flag, boolean value, String dominion_name, int page) {
+    private static Line createOption(PreFlag flag, boolean value, String dominion_name, int page) {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion set " + flag.getFlagName() + " false " + dominion_name + " " + page).build())

@@ -1,5 +1,7 @@
 package cn.lunadeer.dominion.commands;
 
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.controllers.TemplateController;
 import cn.lunadeer.dominion.managers.Translation;
@@ -98,7 +100,12 @@ public class Template {
             String templateName = args[2];
             String flagName = args[3];
             boolean value = Boolean.parseBoolean(args[4]);
-            TemplateController.setTemplateFlag(operator, templateName, flagName, value);
+            PreFlag flag = Flags.getPreFlag(flagName);
+            if (flag == null) {
+                Notification.error(sender, Translation.Messages_UnknownFlag, flagName);
+                return;
+            }
+            TemplateController.setTemplateFlag(operator, templateName, flag, value);
             TemplateSetting.show(sender, templateName, getPage(args, 5));
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

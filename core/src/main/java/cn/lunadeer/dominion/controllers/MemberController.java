@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.controllers;
 
 import cn.lunadeer.dominion.api.AbstractOperator;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.dtos.*;
 import cn.lunadeer.dominion.managers.Translation;
 
@@ -17,7 +18,7 @@ public class MemberController {
      * @param value        权限值
      * @param dominionName 领地名称
      */
-    public static void setMemberFlag(AbstractOperator operator, String dominionName, String player_name, String flag, boolean value) {
+    public static void setMemberFlag(AbstractOperator operator, String dominionName, String player_name, PreFlag flag, boolean value) {
         operator.addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_SetMemberFlagFailed, player_name, dominionName, flag, value);
         operator.addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_SetMemberFlagSuccess, player_name, dominionName, flag, value);
         DominionDTO dominion = DominionDTO.select(dominionName);
@@ -41,19 +42,14 @@ public class MemberController {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerBelongToGroup, player_name, group.getNamePlain());
             return;
         }
-        if ((flag.equals("admin") || isAdmin(privilege)) && notOwner(operator, dominion)) {
+        if ((flag.getFlagName().equals("admin") || isAdmin(privilege)) && notOwner(operator, dominion)) {
             operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForSetAdmin, dominionName);
             return;
         }
-        if (flag.equals("admin")) {
+        if (flag.getFlagName().equals("admin")) {
             privilege.setAdmin(value);
         } else {
-            Flag f = Flag.getFlag(flag);
-            if (f == null) {
-                operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_UnknownFlag, flag);
-                return;
-            }
-            privilege.setFlagValue(f, value);
+            privilege.setFlagValue(flag, value);
         }
         operator.completeResult();
     }
