@@ -43,7 +43,7 @@ public class TuiUtils {
     }
 
     public static boolean noAuthToManage(Player player, DominionDTO dominion) {
-        if (player.isOp()) return false;
+        if (player.hasPermission("dominion.admin")) return false;
         if (!dominion.getOwner().equals(player.getUniqueId())) {
             MemberDTO privileges = cn.lunadeer.dominion.dtos.MemberDTO.select(player.getUniqueId(), dominion.getId());
             if (privileges == null || !privileges.getAdmin()) {
