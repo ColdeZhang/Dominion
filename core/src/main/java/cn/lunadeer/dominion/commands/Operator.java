@@ -182,6 +182,7 @@ public class Operator {
             return;
         }
         GiteaReleaseCheck.instance.getLatestRelease();
+        Notification.info(sender, Dominion.instance.getDescription().getVersion());
     }
 
     private static int convertWorld2Mca(int world) {
