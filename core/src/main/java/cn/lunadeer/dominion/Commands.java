@@ -267,7 +267,7 @@ public class Commands implements TabExecutor {
                     return dominionFlags();
                 case "expand":
                 case "contract":
-                    List<String> l = Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN");
+                    List<String> l = new ArrayList<>(Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN"));
                     l.addAll(playerDominions(sender).stream().map(s -> "name=" + s).toList());
                     return l;
                 case "create_sub":
@@ -287,7 +287,7 @@ public class Commands implements TabExecutor {
                     return boolOptions();
                 case "expand":
                 case "contract":
-                    List<String> l = Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN");
+                    List<String> l = new ArrayList<>(Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN"));
                     l.addAll(playerDominions(sender).stream().map(s -> "name=" + s).toList());
                     return l;
                 case "auto_create_sub":
