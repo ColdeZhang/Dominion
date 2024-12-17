@@ -308,7 +308,7 @@ public class Commands implements TabExecutor {
                     return playerDominions(sender);
                 case "expand":
                 case "contract":
-                    List<String> l = Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN");
+                    List<String> l = new ArrayList<>(Arrays.asList("size=10", "face=NORTH", "face=SOUTH", "face=EAST", "face=WEST", "face=UP", "face=DOWN"));
                     l.addAll(playerDominions(sender).stream().map(s -> "name=" + s).toList());
                     return l;
             }
