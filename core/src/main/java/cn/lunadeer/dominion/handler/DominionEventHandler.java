@@ -107,8 +107,6 @@ public class DominionEventHandler implements Listener {
             event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ContractDominionSuccess, dominion.getName(), event.getSize());
             event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_ContractDominionFailed);
         }
-        event.getOperator().addResultHeader(AbstractOperator.ResultType.SUCCESS, Translation.Messages_ExpandDominionSuccess, dominion.getName());
-        event.getOperator().addResultHeader(AbstractOperator.ResultType.FAILURE, Translation.Messages_ExpandDominionFailed);
         if (notOwner(event.getOperator(), dominion)) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwner, dominion.getName());
             return;
