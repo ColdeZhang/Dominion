@@ -301,6 +301,10 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
         checkFlag(dom, Flags.ENDER_MAN, event);
+        if (event.getTo() != null) {
+            DominionDTO domTo = Cache.instance.getDominionByLoc(event.getTo());
+            checkFlag(domTo, Flags.ENDER_MAN, event);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) // monster_spawn
