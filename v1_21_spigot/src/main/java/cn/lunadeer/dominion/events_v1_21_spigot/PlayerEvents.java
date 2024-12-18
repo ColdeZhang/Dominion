@@ -158,6 +158,9 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST) // break - item frame
     public void onItemFrameBreak(HangingBreakByEntityEvent event) {
+        if (!(event.getRemover() instanceof Player)) {
+            return;
+        }
         Entity entity = event.getEntity();
         if (event.getCause() != HangingBreakEvent.RemoveCause.ENTITY) {
             return;
