@@ -10,6 +10,7 @@ import cn.lunadeer.dominion.events.dominion.modify.*;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Particle;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
+import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -427,7 +428,12 @@ public class DominionEventHandler implements Listener {
         if (operator.isOp() && Dominion.config.getLimitOpBypass()) {
             return false;
         }
-        return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount(operator.getPlayer()) && Dominion.config.getLimitAmount(operator.getPlayer()) != -1;
+        if (Dominion.config.getLimitAmount(operator.getPlayer()) == -1) {
+            return false;
+        }
+        XLogger.debug("Dominion.config.getLimitAmount(operator.getPlayer(): %d", Dominion.config.getLimitAmount(operator.getPlayer()));
+        XLogger.debug("Cache.instance.getPlayerDominionCount(operator.getUniqueId()): %d", Cache.instance.getPlayerDominionCount(operator.getUniqueId()));
+        return Cache.instance.getPlayerDominionCount(operator.getUniqueId()) >= Dominion.config.getLimitAmount(operator.getPlayer());
     }
 
     /**
