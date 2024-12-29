@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:2.3-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:3.2-SNAPSHOT")
 }
 ```
 
@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:2.3-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:3.2-SNAPSHOT")
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
     <dependency>
         <groupId>cn.lunadeer</groupId>
         <artifactId>DominionAPI</artifactId>
-        <version>2.3-SNAPSHOT</version>
+        <version>3.2-SNAPSHOT</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>

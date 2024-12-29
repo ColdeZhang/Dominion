@@ -27,7 +27,6 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     Field id = new Field("id", FieldType.INT);
     Field domID = new Field("dom_id", FieldType.INT);
     Field name_raw = new Field("name", FieldType.STRING);
-    Field admin = new Field("admin", FieldType.BOOLEAN);
     Field name_color = new Field("name_colored", FieldType.STRING);
 
     private final Map<PreFlag, Boolean> flags = new HashMap<>();
@@ -74,7 +73,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
 
     @Override
     public @NotNull Boolean getAdmin() {
-        return (Boolean) admin.value;
+        return getFlagValue(Flags.ADMIN);
     }
 
     @Override
@@ -98,9 +97,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
 
     @Override
     public @Nullable GroupDTO setAdmin(@NotNull Boolean admin) {
-        this.admin.value = admin;
-        UpdateRow updateRow = new UpdateRow().field(this.admin);
-        return doUpdate(updateRow);
+        return setFlagValue(Flags.ADMIN, admin);
     }
 
     @Override
@@ -122,7 +119,6 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         insertRow.table("dominion_group")
                 .field(group.domID)
                 .field(group.name_raw)
-                .field(group.admin)
                 .field(group.name_color);
         for (Map.Entry<PreFlag, Boolean> f : dominionDTO.getGuestPrivilegeFlagValue().entrySet()) {
             insertRow.field(new Field(f.getKey().getFlagName(), f.getValue()));
@@ -176,17 +172,15 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         this.domID.value = domID;
         this.name_raw.value = ColorParser.getPlainText(name);
         this.name_color.value = name;
-        this.admin.value = false;
         for (PreFlag f : Flags.getAllPreFlagsEnable()) {
             flags.put(f, f.getDefaultValue());
         }
     }
 
-    private GroupDTO(Integer id, Integer domID, String name, Boolean admin, Map<PreFlag, Boolean> flags, String nameColored) {
+    private GroupDTO(Integer id, Integer domID, String name, Map<PreFlag, Boolean> flags, String nameColored) {
         this.id.value = id;
         this.domID.value = domID;
         this.name_raw.value = name;
-        this.admin.value = admin;
         this.flags.putAll(flags);
         this.name_color.value = nameColored;
     }
@@ -204,7 +198,6 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
                         rs.getInt("id"),
                         rs.getInt("dom_id"),
                         rs.getString("name"),
-                        rs.getBoolean("admin"),
                         flags,
                         rs.getString("name_colored")
                 );

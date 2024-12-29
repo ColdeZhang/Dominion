@@ -36,7 +36,6 @@ public class PrivilegeTemplateDTO {
                         rs.getInt("id"),
                         UUID.fromString(rs.getString("creator")),
                         rs.getString("name"),
-                        rs.getBoolean("admin"),
                         flags
                 );
                 templates.add(template);
@@ -96,18 +95,16 @@ public class PrivilegeTemplateDTO {
         query(sql, creator.toString(), name);
     }
 
-    private PrivilegeTemplateDTO(Integer id, UUID creator, String name, Boolean admin, Map<PreFlag, Boolean> flags) {
+    private PrivilegeTemplateDTO(Integer id, UUID creator, String name, Map<PreFlag, Boolean> flags) {
         this.id = id;
         this.creator = creator;
         this.name = name;
-        this.admin = admin;
         this.flags.putAll(flags);
     }
 
     private final Integer id;
     private final UUID creator;
     private final String name;
-    private Boolean admin;
 
     private final Map<PreFlag, Boolean> flags = new HashMap<>();
 
@@ -124,10 +121,10 @@ public class PrivilegeTemplateDTO {
     }
 
     public Boolean getAdmin() {
-        return admin;
+        return flags.get(Flags.ADMIN);
     }
 
-    public Boolean getFlagValue(Flag flag) {
+    public Boolean getFlagValue(PreFlag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
     }
@@ -138,8 +135,7 @@ public class PrivilegeTemplateDTO {
     }
 
     public PrivilegeTemplateDTO setAdmin(Boolean admin) {
-        this.admin = admin;
-        return doUpdate(new UpdateRow().field(new Field("admin", admin)));
+        return setFlagValue(Flags.ADMIN, admin);
     }
 
 }
