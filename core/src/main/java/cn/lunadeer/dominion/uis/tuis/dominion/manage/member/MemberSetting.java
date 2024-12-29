@@ -48,8 +48,8 @@ public class MemberSetting {
             Notification.error(sender, Translation.Messages_PlayerNotExist, playerName);
             return;
         }
-        MemberDTO privilege = MemberDTO.select(playerDTO.getUuid(), dominion.getId());
-        if (privilege == null) {
+        MemberDTO member = MemberDTO.select(playerDTO.getUuid(), dominion.getId());
+        if (member == null) {
             Notification.warn(sender, Translation.Messages_PlayerNotMember, playerName, dominion.getName());
             return;
         }
@@ -65,27 +65,12 @@ public class MemberSetting {
         view.add(Line.create().append(Button.createGreen(Translation.TUI_MemberSetting_ApplyTemplateButton)
                 .setHoverText(Translation.TUI_MemberSetting_ApplyTemplateDescription)
                 .setExecuteCommand("/dominion member select_template " + dominion.getName() + " " + playerName).build()));
-        if (privilege.getAdmin()) {
-            view.add(Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand(
-                            parseCommand(dominion.getName(), playerName, "admin", false, page)
-                    ).build())
-                    .append(
-                            Component.text(Translation.Flags_admin_DisplayName.trans())
-                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
-                    ));
-            view.add(createOption(Flags.GLOW, privilege.getFlagValue(Flags.GLOW), playerName, dominion.getName(), page));
+        if (member.getAdmin()) {
+            view.add(createOption(Flags.ADMIN, true, playerName, dominion.getName(), page));
+            view.add(createOption(Flags.GLOW, member.getFlagValue(Flags.GLOW), playerName, dominion.getName(), page));
         } else {
-            view.add(Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand(
-                            parseCommand(dominion.getName(), playerName, "admin", true, page)
-                    ).build())
-                    .append(
-                            Component.text(Translation.Flags_admin_DisplayName.trans())
-                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
-                    ));
             for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
-                view.add(createOption(flag, privilege.getFlagValue(flag), playerName, dominion.getName(), page));
+                view.add(createOption(flag, member.getFlagValue(flag), playerName, dominion.getName(), page));
             }
         }
         view.showOn(player, page);

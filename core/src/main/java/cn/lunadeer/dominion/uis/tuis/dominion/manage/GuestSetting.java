@@ -38,6 +38,7 @@ public class GuestSetting {
                         .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
                         .append(Translation.TUI_Navigation_GuestSetting));
         for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
+            if (flag.equals(Flags.ADMIN)) continue; // Skip admin flag
             view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
         }
         view.showOn(player, page);

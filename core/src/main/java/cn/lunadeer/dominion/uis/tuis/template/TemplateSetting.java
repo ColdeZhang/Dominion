@@ -45,22 +45,6 @@ public class TemplateSetting {
         );
 
         // /dominion template_set_flag <模板名称> <权限名称> <true/false> [页码]
-
-        if (template.getAdmin()) {
-            view.add(Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + template.getName() + " admin false " + page).build())
-                    .append(
-                            Component.text(Translation.Flags_admin_DisplayName.trans())
-                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
-                    ));
-        } else {
-            view.add(Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion template set_flag " + template.getName() + " admin true " + page).build())
-                    .append(
-                            Component.text(Translation.Flags_admin_DisplayName.trans())
-                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
-                    ));
-        }
         for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
             view.add(createOption(flag, template.getFlagValue(flag), template.getName(), page));
         }

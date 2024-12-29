@@ -40,7 +40,6 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
                 MemberDTO player = new MemberDTO(
                         rs.getInt("id"),
                         UUID.fromString(rs.getString("player_uuid")),
-                        rs.getBoolean("admin"),
                         rs.getInt("dom_id"),
                         flags,
                         rs.getInt("group_id")
@@ -72,7 +71,6 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null))
                 .table("dominion_member")
                 .field(player.playerUUID)
-                .field(player.admin)
                 .field(player.domID);
         for (PreFlag f : Flags.getAllPreFlagsEnable()) {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
@@ -128,7 +126,6 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
 
     Field id = new Field("id", FieldType.INT);
     Field playerUUID = new Field("player_uuid", FieldType.STRING);
-    Field admin = new Field("admin", FieldType.BOOLEAN);
     Field domID = new Field("dom_id", FieldType.INT);
     Field groupId = new Field("group_id", FieldType.INT);
 
@@ -144,7 +141,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
 
     @Override
     public Boolean getAdmin() {
-        return (Boolean) admin.value;
+        return getFlagValue(Flags.ADMIN);
     }
 
     @Override
@@ -194,9 +191,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
 
     @Override
     public @Nullable MemberDTO setAdmin(@NotNull Boolean admin) {
-        this.admin.value = admin;
-        UpdateRow updateRow = new UpdateRow().field(this.admin);
-        return doUpdate(updateRow);
+        return setFlagValue(Flags.ADMIN, admin);
     }
 
     public MemberDTO setGroupId(Integer groupId) {
@@ -206,8 +201,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
     }
 
     public MemberDTO applyTemplate(PrivilegeTemplateDTO template) {
-        this.admin.value = template.getAdmin();
-        UpdateRow updateRow = new UpdateRow().field(admin);
+        UpdateRow updateRow = new UpdateRow();
         for (PreFlag f : Flags.getAllPreFlagsEnable()) {
             this.flags.put(f, template.getFlagValue(f));
             updateRow.field(new Field(f.getFlagName(), template.getFlagValue(f)));
@@ -215,10 +209,9 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return doUpdate(updateRow);
     }
 
-    private MemberDTO(Integer id, UUID playerUUID, Boolean admin, Integer domID, Map<PreFlag, Boolean> flags, Integer groupId) {
+    private MemberDTO(Integer id, UUID playerUUID, Integer domID, Map<PreFlag, Boolean> flags, Integer groupId) {
         this.id.value = id;
         this.playerUUID.value = playerUUID.toString();
-        this.admin.value = admin;
         this.domID.value = domID;
         this.groupId.value = groupId;
         this.flags.putAll(flags);
@@ -227,7 +220,6 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
     public MemberDTO(UUID playerUUID, DominionDTO dom) {
         this.id.value = null;
         this.playerUUID.value = playerUUID.toString();
-        this.admin.value = false;
         this.domID.value = dom.getId();
         this.flags.putAll(dom.getGuestPrivilegeFlagValue());
     }

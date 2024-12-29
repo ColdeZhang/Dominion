@@ -64,24 +64,9 @@ public class GroupSetting {
         view.add(Line.create().append(rename_btn.build()));
 
         if (group.getAdmin()) {
-            view.add(Line.create()
-                    .append(Button.createGreen("☑")
-                            .setExecuteCommand(parseCommand(dominion.getName(), group.getNamePlain(), "admin", false, page))
-                            .build())
-                    .append(
-                            Component.text(Translation.Flags_admin_DisplayName.trans())
-                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
-                    ));
+            view.add(createOption(Flags.ADMIN, true, dominion.getName(), group.getNamePlain(), page));
             view.add(createOption(Flags.GLOW, group.getFlagValue(Flags.GLOW), dominion.getName(), group.getNamePlain(), page));
         } else {
-            view.add(Line.create()
-                    .append(Button.createRed("☐")
-                            .setExecuteCommand(parseCommand(dominion.getName(), group.getNamePlain(), "admin", true, page))
-                            .build())
-                    .append(
-                            Component.text(Translation.Flags_admin_DisplayName.trans())
-                                    .hoverEvent(Component.text(Translation.Flags_admin_Description.trans()))
-                    ));
             for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
                 view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getNamePlain(), page));
             }
