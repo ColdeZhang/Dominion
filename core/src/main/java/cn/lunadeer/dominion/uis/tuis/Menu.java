@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis;
 
 import cn.lunadeer.dominion.Dominion;
+import cn.lunadeer.dominion.managers.ConfigManager;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.ViewStyles;
@@ -38,13 +39,11 @@ public class Menu {
                 .append(Button.create(Translation.TUI_Menu_TemplateListButton).setExecuteCommand("/dominion template list").build())
                 .append(Translation.TUI_Menu_TemplateListDescription);
         Line help = Line.create()
-                .append(Button.create(Translation.TUI_Menu_CommandHelpButton).setOpenURL(
-                        String.format("https://dominion.lunadeer.cn/%s/command-list.html", Dominion.config.getLanguage())
+                .append(Button.create(Translation.TUI_Menu_CommandHelpButton).setOpenURL(ConfigManager.instance.getCommandLink()
                 ).build())
                 .append(Translation.TUI_Menu_CommandHelpDescription);
         Line link = Line.create()
-                .append(Button.create(Translation.TUI_Menu_DocumentButton).setOpenURL(
-                        String.format("https://dominion.lunadeer.cn/%s", Dominion.config.getLanguage())
+                .append(Button.create(Translation.TUI_Menu_DocumentButton).setOpenURL(ConfigManager.instance.getDocLink()
                 ).build())
                 .append(Translation.TUI_Menu_DocumentDescription);
         Line migrate = Line.create()
