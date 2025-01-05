@@ -885,6 +885,10 @@ public class Translation extends Localization {
     public static i18n Config_Comment_MessageDisplayNoPermission;
     @i18nField(defaultValue = "进入/离开领地时的提示消息位置")
     public static i18n Config_Comment_MessageDisplayJoinLeave;
+    @i18nField(defaultValue = "设置菜单中文档链接指向地址")
+    public static i18n Config_Comment_DocLink;
+    @i18nField(defaultValue = "设置菜单中指令帮助链接指向地址")
+    public static i18n Config_Comment_CommandLink;
     @i18nField(defaultValue = "-1表示不开启")
     public static i18n Config_Comment_NegativeOneDisabled;
     @i18nField(defaultValue = "默认玩家圈地限制")

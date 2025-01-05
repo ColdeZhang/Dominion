@@ -46,6 +46,9 @@ public class ConfigManager {
         _message_display_no_permission = _file.getString("MessageDisplay.NoPermission", "ACTION_BAR");
         _message_display_join_leave = _file.getString("MessageDisplay.JoinLeave", "ACTION_BAR");
 
+        _command_link = _file.getString("CommandLink", "https://dominion.lunadeer.cn/");
+        _doc_link = _file.getString("DocLink", "https://dominion.lunadeer.cn/");
+
         _spawn_protection = _file.getInt("Limit.SpawnProtection", 10);
         _blue_map = _file.getBoolean("BlueMap", false);
         _dynmap = _file.getBoolean("Dynmap", false);
@@ -137,6 +140,11 @@ public class ConfigManager {
         _file.setComments("MessageDisplay.NoPermission", Collections.singletonList(Translation.Config_Comment_MessageDisplayNoPermission.trans()));
         _file.set("MessageDisplay.JoinLeave", _message_display_join_leave);
         _file.setComments("MessageDisplay.JoinLeave", Collections.singletonList(Translation.Config_Comment_MessageDisplayJoinLeave.trans()));
+
+        _file.set("CommandLink", _command_link);
+        _file.setComments("CommandLink", Collections.singletonList(Translation.Config_Comment_CommandLink.trans()));
+        _file.set("DocLink", _doc_link);
+        _file.setComments("DocLink", Collections.singletonList(Translation.Config_Comment_DocLink.trans()));
 
         _file.setComments("Limit", List.of(Translation.Config_Comment_DefaultLimit.trans()));
         _file.set("Limit.SpawnProtection", _spawn_protection);
@@ -456,6 +464,14 @@ public class ConfigManager {
         return _language;
     }
 
+    public String getCommandLink() {
+        return _command_link;
+    }
+
+    public String getDocLink() {
+        return _doc_link;
+    }
+
     public void checkRules() {
         if (Material.getMaterial(_tool) == null) {
             XLogger.err(Translation.Config_Check_ToolNameError);
@@ -540,6 +556,9 @@ public class ConfigManager {
 
     private String _message_display_no_permission;
     private String _message_display_join_leave;
+
+    private String _command_link;
+    private String _doc_link;
 
     private final Map<String, GroupLimit> groupLimits = new HashMap<>();
 
