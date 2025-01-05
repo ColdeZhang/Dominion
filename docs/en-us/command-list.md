@@ -4,24 +4,24 @@
 
 ## Dominion Management
 
-| Function                                           | Command                                                      | Note                                                                                                                                       |
-|----------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| Create a dominion                                  | `/dominion create <dom_name>`                                |
-| Automatically create a dominion                    | `/dominion auto_create <dom_name>`                           |
-| Create a sub-dominion                              | `/dominion create_sub <sub-dom_name> [parent dom_name]`      | If the parent dom_name is not specified, the current dominion will be used by default;                                                     |
-| Automatically create a sub-dominion                | `/dominion auto_create_sub <sub-dom_name> [parent dom_name]` | If the parent dom_name is not specified, the current dominion will be used by default;                                                     |
-| List territories                                   | `/dominion list`                                             |
-| Manage territories                                 | `/dominion manage <dom_name>`                                |
-| Set visitor permissions for a dominion             | `/dominion set <flag_name> <true/false> [dom_name]`          | If the dom_name is not specified, the current dominion will be used as the default;                                                        |
-| Expand the dominion in the direction of the view   | `/dominion expand [size] [dom_name]`                         | If the size is not specified, the default is 10; if the dom_name is not specified, the default is the current dominion;                    |
-| Contract the dominion in the direction of the view | `/dominion contract [size] [dom_name]`                       | If the size is not specified, the default is 10; if the dom_name is not specified, the default is the current dominion;                    |
-| Delete the dominion                                | `/dominion delete <dom_name>`                                |
-| Set the prompt message for entering the dominion   | `/dominion set_enter_msg <enter_msg> [dom_name]`             | If the dom_name is not specified, the default is the current dominion;                                                                     |
-| Set the prompt message for leaving the dominion    | `/dominion set_leave_msg <leave_msg> [dom_name]`             | If the dom_name is not specified, the default is the current dominion;                                                                     |
-| Set the teleport point of the dominion             | `/dominion set_tp_location [dom_name]`                       | Set the dominion's teleport point to the current location; if the dom_name is not specified, the default is the current dominion;          |
-| Rename the dominion                                | `/dominion rename <old_name> <new_name>`                     |
-| Transfer the dominion to another player            | `/dominion give <dom_name> <player_name>`                    |
-| Set the dominion's color on the satellite map      | `/dominion set_map_color <hex_color> [dom_name]`             | The color needs to be a hexadecimal color value, such as `#ff0000`; if the dom_name is not specified, the default is the current dominion; |
+| Function                                           | Command                                                                         | Note                                                                                                                                       |
+|----------------------------------------------------|---------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| Create a dominion                                  | `/dominion create <dom_name>`                                                   |
+| Automatically create a dominion                    | `/dominion auto_create <dom_name>`                                              |
+| Create a sub-dominion                              | `/dominion create_sub <sub-dom_name> [parent dom_name]`                         | If the parent dom_name is not specified, the current dominion will be used by default;                                                     |
+| Automatically create a sub-dominion                | `/dominion auto_create_sub <sub-dom_name> [parent dom_name]`                    | If the parent dom_name is not specified, the current dominion will be used by default;                                                     |
+| List territories                                   | `/dominion list`                                                                |
+| Manage territories                                 | `/dominion manage <dom_name>`                                                   |
+| Set visitor permissions for a dominion             | `/dominion set <flag_name> <true/false> [dom_name]`                             | If the dom_name is not specified, the current dominion will be used as the default;                                                        |
+| Expand the dominion in the direction of the view   | `/dominion expand [size=10] [face=NORTH,SOUTH,EAST,WEST,UP,DOWN] [name=领地名称]`   | If the size is not specified, the default is 10; if the dom_name is not specified, the default is the current dominion;                    |
+| Contract the dominion in the direction of the view | `/dominion contract [size=10] [face=NORTH,SOUTH,EAST,WEST,UP,DOWN] [name=领地名称]` | If the size is not specified, the default is 10; if the dom_name is not specified, the default is the current dominion;                    |
+| Delete the dominion                                | `/dominion delete <dom_name>`                                                   |
+| Set the prompt message for entering the dominion   | `/dominion set_enter_msg <enter_msg> [dom_name]`                                | If the dom_name is not specified, the default is the current dominion;                                                                     |
+| Set the prompt message for leaving the dominion    | `/dominion set_leave_msg <leave_msg> [dom_name]`                                | If the dom_name is not specified, the default is the current dominion;                                                                     |
+| Set the teleport point of the dominion             | `/dominion set_tp_location [dom_name]`                                          | Set the dominion's teleport point to the current location; if the dom_name is not specified, the default is the current dominion;          |
+| Rename the dominion                                | `/dominion rename <old_name> <new_name>`                                        |
+| Transfer the dominion to another player            | `/dominion give <dom_name> <player_name>`                                       |
+| Set the dominion's color on the satellite map      | `/dominion set_map_color <hex_color> [dom_name]`                                | The color needs to be a hexadecimal color value, such as `#ff0000`; if the dom_name is not specified, the default is the current dominion; |
 
 ## Member Management
 
