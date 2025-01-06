@@ -203,14 +203,31 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         this(null, owner, name, world.getUID(), x1, y1, z1, x2, y2, z2, -1);
     }
 
+    /**
+     * Creates a new DominionDTO instance.
+     * <p>
+     * ONLY USED BY {@link cn.lunadeer.dominion.handler.DominionEventHandler}
+     *
+     * @param owner  The UUID of the owner of the dominion.
+     * @param name   The name of the dominion.
+     * @param world  The world where the dominion is located.
+     * @param x1     The first x-coordinate of the dominion.
+     * @param y1     The first y-coordinate of the dominion.
+     * @param z1     The first z-coordinate of the dominion.
+     * @param x2     The second x-coordinate of the dominion.
+     * @param y2     The second y-coordinate of the dominion.
+     * @param z2     The second z-coordinate of the dominion.
+     * @param parent The parent dominion, if any.
+     * @return A new DominionDTO instance.
+     */
     public static @NotNull DominionDTO create(UUID owner, String name, @NotNull World world,
                                               Integer x1, Integer y1, Integer z1, Integer x2, Integer y2, Integer z2, cn.lunadeer.dominion.api.dtos.DominionDTO parent) {
         x1 = Math.min(x1, x2);
         y1 = Math.min(y1, y2);
         z1 = Math.min(z1, z2);
-        x2 = Math.max(x1, x2) + 1;
-        y2 = Math.max(y1, y2) + 1;
-        z2 = Math.max(z1, z2) + 1;
+        x2 = Math.max(x1, x2);
+        y2 = Math.max(y1, y2);
+        z2 = Math.max(z1, z2);
         return new DominionDTO(null, owner, name, world.getUID(), x1, y1, z1, x2, y2, z2, parent == null ? -1 : parent.getId());
     }
 

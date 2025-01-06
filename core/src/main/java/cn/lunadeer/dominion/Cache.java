@@ -410,6 +410,17 @@ public class Cache implements Listener {
         return dominions;
     }
 
+    public List<DominionDTO> getPlayerAdminDominions(UUID player_uuid) {
+        List<DominionDTO> dominions = new ArrayList<>();
+        for (DominionDTO dominion : id_dominions.values()) {
+            MemberDTO privilege = getMember(player_uuid, dominion);
+            if (privilege != null && privilege.getAdmin()) {
+                dominions.add(dominion);
+            }
+        }
+        return dominions;
+    }
+
     public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
         if (residence_data == null) {
             residence_data = new HashMap<>();
