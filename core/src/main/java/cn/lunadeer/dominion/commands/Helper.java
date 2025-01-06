@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.commands;
 
+import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionInterface;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
@@ -64,22 +65,14 @@ public class Helper {
     public static List<String> playerOwnDominionNames(CommandSender sender) {
         Player player = playerOnly(sender);
         if (player == null) return new ArrayList<>();
-        return DominionInterface.instance.getPlayerDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
+        return Cache.instance.getPlayerDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
     }
 
     public static List<String> playerAdminDominionNames(CommandSender sender) {
         List<String> dominions_name = new ArrayList<>();
         Player player = playerOnly(sender);
         if (player == null) return dominions_name;
-        List<MemberDTO> dominions_admin = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player.getUniqueId()));
-        for (MemberDTO member : dominions_admin) {
-            if (member.getAdmin()) {
-                DominionDTO dom = DominionInterface.instance.getDominion(member.getDomID());
-                if (dom == null) continue;
-                dominions_name.add(dom.getName());
-            }
-        }
-        return dominions_name;
+        return Cache.instance.getPlayerAdminDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
     }
 
     public static List<String> allDominions() {
