@@ -421,7 +421,7 @@ public class Cache implements Listener {
         return dominions;
     }
 
-    public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
+    private void updateData() {
         if (residence_data == null) {
             residence_data = new HashMap<>();
             List<ResMigration.ResidenceNode> residences = ResMigration.extractFromResidence(Dominion.instance);
@@ -437,6 +437,18 @@ public class Cache implements Listener {
             }
             XLogger.debug("residence_data: %d", residence_data.size());
         }
+    }
+
+    public List<ResMigration.ResidenceNode> getResidenceData() {
+        updateData();
+        return residence_data.values().stream().reduce(new ArrayList<>(), (a, b) -> {
+            a.addAll(b);
+            return a;
+        });
+    }
+
+    public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
+        updateData();
         return residence_data.get(player_uuid);
     }
 

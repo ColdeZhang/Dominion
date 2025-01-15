@@ -35,7 +35,13 @@ public class MigrateList {
         view.title(Translation.TUI_Migrate_Title);
         view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_MigrateList));
 
-        List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
+        List<ResMigration.ResidenceNode> res_data;
+
+        if (player.hasPermission("dominion.admin")) {
+            res_data = Cache.instance.getResidenceData();   // get all residence data
+        } else {
+            res_data = Cache.instance.getResidenceData(player.getUniqueId());   // get player's residence data
+        }
 
         if (res_data == null) {
             view.add(Line.create().append(Translation.TUI_Migrate_NoData));

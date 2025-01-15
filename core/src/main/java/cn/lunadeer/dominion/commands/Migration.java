@@ -38,7 +38,12 @@ public class Migration {
                 return;
             }
             String resName = args[1];
-            List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData(player.getUniqueId());
+            List<ResMigration.ResidenceNode> res_data;
+            if (player.hasPermission("dominion.admin")) {
+                res_data = Cache.instance.getResidenceData();   // get all residence data
+            } else {
+                res_data = Cache.instance.getResidenceData(player.getUniqueId());   // get player's residence data
+            }
             if (res_data == null) {
                 Notification.error(sender, Translation.Commands_Residence_NoMigrationData);
                 return;
@@ -48,7 +53,7 @@ public class Migration {
                 Notification.error(sender, Translation.Commands_Residence_NoResidenceDominion);
                 return;
             }
-            if (!resNode.owner.equals(player.getUniqueId())) {
+            if (!resNode.owner.equals(player.getUniqueId()) && !player.hasPermission("dominion.admin")) {
                 Notification.error(sender, Translation.Commands_Residence_ResidenceNotOwner);
                 return;
             }
@@ -67,7 +72,7 @@ public class Migration {
 
     private static void create(Player player, ResMigration.ResidenceNode node, DominionDTO parent) {
         BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
-        DominionCreateEvent event = new DominionCreateEvent(operator, node.name, player.getUniqueId(), node.loc1, node.loc2, parent);
+        DominionCreateEvent event = new DominionCreateEvent(operator, node.name, node.owner, node.loc1, node.loc2, parent);
         event.setSkipEconomy(true);
         event.callEvent();
         if (!event.isCancelled()) {

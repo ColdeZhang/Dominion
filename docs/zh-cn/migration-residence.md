@@ -11,6 +11,7 @@
 
 1. 删除 Residence 插件，保留其数据文件 `plugins/Residence`;
 2. 在 Dominion 配置中将 `ResidenceMigration` 打开（设置为true）；
+3. 如果您是个勤劳的服主，那么你也可以亲自帮玩家迁移领地，具体操作请参考下面的玩家要做的事；
 
 ## 玩家要做的事
 
