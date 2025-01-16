@@ -30,7 +30,7 @@ import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
 import static org.bukkit.Material.FARMLAND;
 
 public class EnvironmentEvents implements Listener {
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode
+    @EventHandler(priority = EventPriority.LOWEST) // creeper_explode
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
         XLogger.debug("EntityExplodeEvent: " + entity.getType());
@@ -44,7 +44,7 @@ public class EnvironmentEvents implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - bed anchor
+    @EventHandler(priority = EventPriority.LOWEST) // creeper_explode - bed anchor
     public void onBedAnchorExplosion(BlockExplodeEvent event) {
         BlockState block = event.getExplodedBlockState();
         if (block == null) {
@@ -56,7 +56,7 @@ public class EnvironmentEvents implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - item frame
+    @EventHandler(priority = EventPriority.LOWEST) // creeper_explode - item frame
     public void onItemFrameExploded(HangingBreakByEntityEvent event) {
         Entity entity = event.getEntity();
         if (event.getCause() != HangingBreakEvent.RemoveCause.EXPLOSION) {
@@ -66,7 +66,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.CREEPER_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - item frame
+    @EventHandler(priority = EventPriority.LOWEST) // creeper_explode - item frame
     public void onItemFrameShot(ProjectileHitEvent event) {
         Entity hit = event.getHitEntity();
         if (hit == null) {
@@ -82,7 +82,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.CREEPER_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // creeper_explode - armor stand
+    @EventHandler(priority = EventPriority.LOWEST) // creeper_explode - armor stand
     public void onArmorStandExploded(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.ARMOR_STAND) {
@@ -95,7 +95,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.CREEPER_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // item_frame_proj_damage
+    @EventHandler(priority = EventPriority.LOWEST) // item_frame_proj_damage
     public void removeSomeOnItemFrameByArrow(HangingBreakByEntityEvent event) {
         if (event.getCause() != HangingBreakEvent.RemoveCause.ENTITY) {
             return;
@@ -121,7 +121,7 @@ public class EnvironmentEvents implements Listener {
                 && damager.getType() != EntityType.DRAGON_FIREBALL;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // dragon_break_block
+    @EventHandler(priority = EventPriority.LOWEST) // dragon_break_block
     public void onDragonBreakBlock(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.ENDER_DRAGON) {
@@ -133,7 +133,7 @@ public class EnvironmentEvents implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // fire_spread
+    @EventHandler(priority = EventPriority.LOWEST) // fire_spread
     public void onFireSpread(BlockIgniteEvent event) {
         Player player = event.getPlayer();
         if (player != null) {
@@ -144,7 +144,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.FIRE_SPREAD, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // flow_in_protection
+    @EventHandler(priority = EventPriority.LOWEST) // flow_in_protection
     public void onLiquidFlowIn(BlockFromToEvent event) {
         Location from = event.getBlock().getLocation();
         Location to = event.getToBlock().getLocation();
@@ -161,7 +161,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom_to, Flags.FLOW_IN_PROTECTION, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // mob_drop_item
+    @EventHandler(priority = EventPriority.LOWEST) // mob_drop_item
     public void onMobDropItem(EntityDeathEvent event) {
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
@@ -180,7 +180,7 @@ public class EnvironmentEvents implements Listener {
         event.getDrops().clear();
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode
+    @EventHandler(priority = EventPriority.LOWEST) // tnt_explode
     public void onTntExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.MINECART_TNT && entity.getType() != EntityType.PRIMED_TNT) {
@@ -192,7 +192,7 @@ public class EnvironmentEvents implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // tnt_explode - entity
+    @EventHandler(priority = EventPriority.LOWEST) // tnt_explode - entity
     public void onArmorStandExplodedByTnt(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         Entity harmer = event.getDamager();
@@ -203,7 +203,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.TNT_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // trample
+    @EventHandler(priority = EventPriority.LOWEST) // trample
     public void onFarmlandTrample(PlayerInteractEvent event) {
         if (event.getAction() != Action.PHYSICAL) {
             return;
@@ -224,7 +224,7 @@ public class EnvironmentEvents implements Listener {
     TRIG_PRESSURE_MOB("trig_pressure_mob", "生物触发压力板", "生物（不包含玩家）是否可以触发压力板", false, true, true),
     TRIG_PRESSURE_DROP("trig_pressure_drop", "掉落物触发压力板", "掉落物是否可以触发压力板", false, true, true),
      */
-    @EventHandler(priority = EventPriority.HIGHEST) // trig_pressure_proj
+    @EventHandler(priority = EventPriority.LOWEST) // trig_pressure_proj
     public void onPressurePlateTriggeredByProjectile(EntityInteractEvent event) {
         if (!(event.getEntity() instanceof Projectile)) {
             return;
@@ -237,7 +237,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.TRIG_PRESSURE_PROJ, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // trig_pressure_mob
+    @EventHandler(priority = EventPriority.LOWEST) // trig_pressure_mob
     public void onPressurePlateTriggeredByMob(EntityInteractEvent event) {
         if (!(event.getEntity() instanceof Mob)) {
             return;
@@ -250,7 +250,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.TRIG_PRESSURE_MOB, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // trig_pressure_drop
+    @EventHandler(priority = EventPriority.LOWEST) // trig_pressure_drop
     public void onPressurePlateTriggeredByDrop(EntityInteractEvent event) {
         if (!(event.getEntity() instanceof Item)) {
             return;
@@ -263,7 +263,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.TRIG_PRESSURE_DROP, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // wither_spawn
+    @EventHandler(priority = EventPriority.LOWEST) // wither_spawn
     public void onWitherSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.WITHER) {
@@ -273,7 +273,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.WITHER_SPAWN, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // wither_spawn - explode
+    @EventHandler(priority = EventPriority.LOWEST) // wither_spawn - explode
     public void onWitherSpawnExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.WITHER) {
@@ -285,7 +285,7 @@ public class EnvironmentEvents implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // ender_man spawn
+    @EventHandler(priority = EventPriority.LOWEST) // ender_man spawn
     public void onEnderManSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.ENDERMAN) {
@@ -295,7 +295,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.ENDER_MAN, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // ender_man escape
+    @EventHandler(priority = EventPriority.LOWEST) // ender_man escape
     public void onEnderManEscape(EntityTeleportEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.ENDERMAN) {
@@ -309,7 +309,7 @@ public class EnvironmentEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // monster_spawn
+    @EventHandler(priority = EventPriority.LOWEST) // monster_spawn
     public void onMonsterSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof Monster)) {
@@ -319,7 +319,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.MONSTER_SPAWN, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // animal_spawn
+    @EventHandler(priority = EventPriority.LOWEST) // animal_spawn
     public void onAnimalSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof Animals)) {
@@ -329,7 +329,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.ANIMAL_SPAWN, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // villager_spawn
+    @EventHandler(priority = EventPriority.LOWEST) // villager_spawn
     public void onVillagerSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
         if (entity.getType() != EntityType.VILLAGER) {
@@ -339,7 +339,7 @@ public class EnvironmentEvents implements Listener {
         checkFlag(dom, Flags.VILLAGER_SPAWN, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onHopper(InventoryMoveItemEvent event) {    // hopper_outside
         Inventory hopper = event.getDestination();
         Inventory inventory = event.getSource();
@@ -355,7 +355,7 @@ public class EnvironmentEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockPushedByPiston(BlockPistonExtendEvent event) {   // piston_outside
         Block piston = event.getBlock();
         DominionDTO pistonDom = Cache.instance.getDominionByLoc(piston.getLocation());
@@ -377,7 +377,7 @@ public class EnvironmentEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onGravityBlockFalling(EntityChangeBlockEvent event) {   // gravity_block
         Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) {

@@ -15,7 +15,7 @@ import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
 
 public class Paper implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST) // monster_move
+    @EventHandler(priority = EventPriority.LOWEST) // monster_move
     public void onMonsterPathfinding(EntityPathfindEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof Monster)) {
@@ -25,7 +25,7 @@ public class Paper implements Listener {
         checkFlag(dom, Flags.MONSTER_MOVE, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // animal_move
+    @EventHandler(priority = EventPriority.LOWEST) // animal_move
     public void onAnimalPathfinding(EntityPathfindEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof Animals)) {

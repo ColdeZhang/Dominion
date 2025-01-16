@@ -47,7 +47,7 @@ public class PlayerEvents implements Listener {
         Cache.instance.onPlayerQuit(bukkitPlayer);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // anchor
+    @EventHandler(priority = EventPriority.LOWEST) // anchor
     public void onRespawnAnchor(PlayerRespawnEvent event) {
         Player bukkitPlayer = event.getPlayer();
         if (!event.isAnchorSpawn()) {
@@ -63,7 +63,7 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // anchor
+    @EventHandler(priority = EventPriority.LOWEST) // anchor
     public void onAnchorInteractive(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -81,7 +81,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.ANCHOR, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // animal_killing
+    @EventHandler(priority = EventPriority.LOWEST) // animal_killing
     public void onAnimalKilling(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player bukkitPlayer)) {
             return;
@@ -94,7 +94,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.ANIMAL_KILLING, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // anvil
+    @EventHandler(priority = EventPriority.LOWEST) // anvil
     public void onAnvilUse(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.ANVIL) {
             return;
@@ -106,7 +106,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.ANVIL, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // beacon
+    @EventHandler(priority = EventPriority.LOWEST) // beacon
     public void onBeaconUse(InventoryOpenEvent event) {
         Inventory inv = event.getInventory();
         if (inv.getType() != InventoryType.BEACON) {
@@ -122,7 +122,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.BEACON, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // bed
+    @EventHandler(priority = EventPriority.LOWEST) // bed
     public void onBedUse(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -139,7 +139,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.BED, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // brew
+    @EventHandler(priority = EventPriority.LOWEST) // brew
     public void onBrewUse(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.BREWING) {
             return;
@@ -151,7 +151,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.BREW, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // break
+    @EventHandler(priority = EventPriority.LOWEST) // break
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (onBreak(player, event.getBlock().getLocation())) {
@@ -160,7 +160,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // break - item frame
+    @EventHandler(priority = EventPriority.LOWEST) // break - item frame
     public void onItemFrameBreak(HangingBreakByEntityEvent event) {
         if (!(event.getRemover() instanceof Player)) {
             return;
@@ -183,7 +183,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // break - armor stand
+    @EventHandler(priority = EventPriority.LOWEST) // break - armor stand
     public void onArmorStandBreak(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof ArmorStand)) {
@@ -203,7 +203,7 @@ public class PlayerEvents implements Listener {
         return checkFlag(dom, Flags.BREAK_BLOCK, player, null);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // button
+    @EventHandler(priority = EventPriority.LOWEST) // button
     public void onButton(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -220,7 +220,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.BUTTON, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // cake
+    @EventHandler(priority = EventPriority.LOWEST) // cake
     public void eatCake(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -249,7 +249,7 @@ public class PlayerEvents implements Listener {
         return checkFlag(dom, Flags.CONTAINER, player, null);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container
+    @EventHandler(priority = EventPriority.LOWEST) // container
     public void openContainer(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.CHEST &&
                 event.getInventory().getType() != InventoryType.BARREL &&
@@ -265,7 +265,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container (armor stand)
+    @EventHandler(priority = EventPriority.LOWEST) // container (armor stand)
     public void manipulateArmorStand(PlayerArmorStandManipulateEvent event) {
         Player bukkitPlayer = event.getPlayer();
         if (hasContainerPermission(bukkitPlayer, event.getRightClicked().getLocation())) {
@@ -274,7 +274,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame put）
+    @EventHandler(priority = EventPriority.LOWEST) // container （item frame put）
     public void putSomeOnItemFrame(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
         if (!(entity instanceof ItemFrame itemFrame)) {
@@ -290,7 +290,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame get）
+    @EventHandler(priority = EventPriority.LOWEST) // container （item frame get）
     public void removeSomeOnItemFrame(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof ItemFrame itemFrame)) {
@@ -308,7 +308,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // container （item frame get）
+    @EventHandler(priority = EventPriority.LOWEST) // container （item frame get）
     public void removeSomeOnItemFrameByArrow(EntityDamageByEntityEvent event) {
         Entity entity = event.getEntity();
         if (!(entity instanceof ItemFrame itemFrame)) {
@@ -329,7 +329,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // craft
+    @EventHandler(priority = EventPriority.LOWEST) // craft
     public void onCraft(InventoryOpenEvent event) {
         Inventory inv = event.getInventory();
         if (inv.getType() != InventoryType.WORKBENCH) {
@@ -342,7 +342,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.CRAFT, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // crafter
+    @EventHandler(priority = EventPriority.LOWEST) // crafter
     public void onCrafterOpen(InventoryOpenEvent event) {
         Inventory inv = event.getInventory();
         // InventoryType.CRAFTER;
@@ -356,7 +356,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.CRAFTER, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // comparer
+    @EventHandler(priority = EventPriority.LOWEST) // comparer
     public void comparerChange(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -374,7 +374,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.COMPARER, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // door
+    @EventHandler(priority = EventPriority.LOWEST) // door
     public void doorUse(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -391,7 +391,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.DOOR, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // dragon_egg
+    @EventHandler(priority = EventPriority.LOWEST) // dragon_egg
     public void touchDragonEdd(PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         if (block == null) {
@@ -405,7 +405,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.DRAGON_EGG, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // dye
+    @EventHandler(priority = EventPriority.LOWEST) // dye
     public void dyeEvent(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         Entity entity = event.getRightClicked();
@@ -416,7 +416,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.DYE, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // edit sign
+    @EventHandler(priority = EventPriority.LOWEST) // edit sign
     public void onSignOpen(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -433,7 +433,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.EDIT_SIGN, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // edit sign
+    @EventHandler(priority = EventPriority.LOWEST) // edit sign
     public void onSignEdit(SignChangeEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -441,7 +441,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.EDIT_SIGN, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // egg
+    @EventHandler(priority = EventPriority.LOWEST) // egg
     public void onThrowingEgg(ProjectileHitEvent event) {
         Projectile projectile = event.getEntity();
         if (!(projectile.getShooter() instanceof Player player)) {
@@ -454,7 +454,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.EGG, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // enchant
+    @EventHandler(priority = EventPriority.LOWEST) // enchant
     public void onEnchant(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.ENCHANTING) {
             return;
@@ -466,7 +466,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.ENCHANT, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // ender_pearl
+    @EventHandler(priority = EventPriority.LOWEST) // ender_pearl
     public void onThrowingEndPearl(ProjectileHitEvent event) {
         Projectile projectile = event.getEntity();
         if (!(projectile.getShooter() instanceof Player player)) {
@@ -479,7 +479,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.ENDER_PEARL, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // feed
+    @EventHandler(priority = EventPriority.LOWEST) // feed
     public void onFeedAnimal(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof Animals)) {
             return;
@@ -493,7 +493,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.FEED, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // harvest
+    @EventHandler(priority = EventPriority.LOWEST) // harvest
     public void onHarvest(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (block.getType() != Material.COCOA &&
@@ -519,7 +519,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.HARVEST, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // honey
+    @EventHandler(priority = EventPriority.LOWEST) // honey
     public void honeyInteractive(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -537,7 +537,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.HONEY, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // hook
+    @EventHandler(priority = EventPriority.LOWEST) // hook
     public void onHook(PlayerFishEvent event) {
         Entity caught = event.getCaught();
         if (caught == null) {
@@ -548,7 +548,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.HOOK, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // hopper
+    @EventHandler(priority = EventPriority.LOWEST) // hopper
     public void openHopper(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.HOPPER &&
                 event.getInventory().getType() != InventoryType.DROPPER &&
@@ -566,7 +566,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.HOPPER, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // ignite
+    @EventHandler(priority = EventPriority.LOWEST) // ignite
     public void onPlayerIgnite(BlockIgniteEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
@@ -576,7 +576,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.IGNITE, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // item_frame_interactive
+    @EventHandler(priority = EventPriority.LOWEST) // item_frame_interactive
     public void onItemFrameInteractive(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
         if (!(entity instanceof ItemFrame itemFrame)) {
@@ -591,7 +591,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.ITEM_FRAME_INTERACTIVE, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // lever
+    @EventHandler(priority = EventPriority.LOWEST) // lever
     public void onLever(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -609,7 +609,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.LEVER, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // monster_killing
+    @EventHandler(priority = EventPriority.LOWEST) // monster_killing
     public void onMonsterKilling(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player bukkitPlayer)) {
             return;
@@ -623,7 +623,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.MONSTER_KILLING, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // move
+    @EventHandler(priority = EventPriority.LOWEST) // move
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
@@ -657,7 +657,7 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // note_block
+    @EventHandler(priority = EventPriority.LOWEST) // note_block
     public void onNoteBlockClicked(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -675,7 +675,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.NOTE_BLOCK, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // place
+    @EventHandler(priority = EventPriority.LOWEST) // place
     public void onPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         if (onPlace(player, event.getBlock().getLocation())) {
@@ -684,7 +684,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // place - lava or water
+    @EventHandler(priority = EventPriority.LOWEST) // place - lava or water
     public void onPlaceLavaOrWater(PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
         if (onPlace(player, event.getBlock().getLocation())) {
@@ -693,7 +693,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // place - item frame
+    @EventHandler(priority = EventPriority.LOWEST) // place - item frame
     public void placeItemFrame(HangingPlaceEvent event) {
         Entity entity = event.getEntity();
         Player player = event.getPlayer();
@@ -706,7 +706,7 @@ public class PlayerEvents implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // place - armor stand
+    @EventHandler(priority = EventPriority.LOWEST) // place - armor stand
     public void placeArmorStand(EntityPlaceEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
@@ -727,7 +727,7 @@ public class PlayerEvents implements Listener {
         return checkFlag(dom, Flags.PLACE, player, null);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // pressure
+    @EventHandler(priority = EventPriority.LOWEST) // pressure
     public void onPressure(PlayerInteractEvent event) {
         if (event.getAction() != Action.PHYSICAL) {
             return;
@@ -744,7 +744,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.PRESSURE, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // riding
+    @EventHandler(priority = EventPriority.LOWEST) // riding
     public void onRiding(EntityMountEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
@@ -753,7 +753,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.RIDING, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // repeater
+    @EventHandler(priority = EventPriority.LOWEST) // repeater
     public void onRepeaterChange(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
             return;
@@ -768,14 +768,14 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.REPEATER, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // shear
+    @EventHandler(priority = EventPriority.LOWEST) // shear
     public void onShear(PlayerShearEntityEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
         checkFlag(dom, Flags.SHEAR, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // shoot
+    @EventHandler(priority = EventPriority.LOWEST) // shoot
     public void onShootArrowSnowball(ProjectileHitEvent event) {
         Projectile projectile = event.getEntity();
         if (!(projectile.getShooter() instanceof Player player)) {
@@ -788,7 +788,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.SHOOT, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // shoot - wind_charge knock back
+    @EventHandler(priority = EventPriority.LOWEST) // shoot - wind_charge knock back
     public void onWindChargeKnockBack(EntityKnockbackByEntityEvent event) {
         Entity entity = event.getHitBy();
         if (!(entity instanceof WindCharge windCharge)) {
@@ -801,7 +801,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.SHOOT, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // trade
+    @EventHandler(priority = EventPriority.LOWEST) // trade
     public void onTrade(InventoryOpenEvent event) {
         if (event.getInventory().getType() != InventoryType.MERCHANT) {
             return;
@@ -813,7 +813,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.TRADE, bukkitPlayer, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // vehicle_destroy
+    @EventHandler(priority = EventPriority.LOWEST) // vehicle_destroy
     public void onVehicleDestroy(VehicleDestroyEvent event) {
         if (!(event.getAttacker() instanceof Player player)) {
             return;
@@ -822,7 +822,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.VEHICLE_DESTROY, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) // vehicle_spawn
+    @EventHandler(priority = EventPriority.LOWEST) // vehicle_spawn
     public void onVehicleSpawn(EntityPlaceEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
@@ -836,7 +836,7 @@ public class PlayerEvents implements Listener {
         checkFlag(dom, Flags.VEHICLE_SPAWN, player, event);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)  // villager_killing
+    @EventHandler(priority = EventPriority.LOWEST)  // villager_killing
     public void onVillagerKilling(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player player)) {
             return;
