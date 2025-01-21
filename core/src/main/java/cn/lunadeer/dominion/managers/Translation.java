@@ -236,7 +236,7 @@ public class Translation extends Localization {
     public static i18n Messages_SelectPointsWorldNotSame;
     @i18nField(defaultValue = "禁止在世界 %s 创建领地")
     public static i18n Messages_CreateDominionDisabledWorld;
-    @i18nField(defaultValue = "你的领地数量已达上限(%d个)")
+    @i18nField(defaultValue = "领地数量已达上限(%d个)")
     public static i18n Messages_DominionAmountLimit;
     @i18nField(defaultValue = "父领地 %s 不存在")
     public static i18n Messages_ParentDominionNotExist;
@@ -304,6 +304,8 @@ public class Translation extends Localization {
     public static i18n Messages_RenameDominionSuccess;
     @i18nField(defaultValue = "转让领地失败")
     public static i18n Messages_GiveDominionFailed;
+    @i18nField(defaultValue = "玩家 %s 不在线")
+    public static i18n Messages_PlayerNotOnline;
     @i18nField(defaultValue = "玩家 %s 不存在或没有登录过")
     public static i18n Messages_PlayerNotExist;
     @i18nField(defaultValue = "领地 %s 已经属于 %s，无需转移")
