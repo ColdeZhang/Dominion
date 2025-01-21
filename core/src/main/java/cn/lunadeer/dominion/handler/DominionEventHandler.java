@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
 import cn.lunadeer.dominion.events.dominion.modify.*;
@@ -14,6 +15,7 @@ import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -264,6 +266,15 @@ public class DominionEventHandler implements Listener {
         if (dominion.getParentDomId() != -1) {
             event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_SubDominionCannotGive, newOwnerName, dominion.getName());
         }
+        // check amount
+        Player newOwner = Dominion.instance.getServer().getPlayer(event.getNewOwner().getUuid());
+        if (newOwner == null) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_PlayerNotOnline, newOwnerName);
+            return;
+        }
+        if (amountNotValid(newOwner)) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionAmountLimit, Dominion.config.getLimitAmount(event.getOperator().getPlayer()));
+        }
         // check subs
         List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
         if (!event.isForce()) {
@@ -422,6 +433,10 @@ public class DominionEventHandler implements Listener {
             return false;
         }
         return Dominion.config.getWorldBlackList(operator.getPlayer()).contains(worldName);
+    }
+
+    private static boolean amountNotValid(Player operator) {
+        return amountNotValid(BukkitPlayerOperator.create(operator));
     }
 
     private static boolean amountNotValid(AbstractOperator operator) {
