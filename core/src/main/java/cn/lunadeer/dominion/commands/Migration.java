@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.commands;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.managers.Translation;
@@ -72,7 +73,12 @@ public class Migration {
 
     private static void create(Player player, ResMigration.ResidenceNode node, DominionDTO parent) {
         BukkitPlayerOperator operator = new BukkitPlayerOperator(player);
-        DominionCreateEvent event = new DominionCreateEvent(operator, node.name, node.owner, node.loc1, node.loc2, parent);
+        PlayerDTO ownerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.tryCreate(node.owner, node.ownerName);
+        if (ownerDTO == null) {
+            Notification.error(player, Translation.Messages_PlayerNotExist, node.owner);
+            return;
+        }
+        DominionCreateEvent event = new DominionCreateEvent(operator, node.name, ownerDTO.getUuid(), node.loc1, node.loc2, parent);
         event.setSkipEconomy(true);
         event.callEvent();
         if (!event.isCancelled()) {
