@@ -19,6 +19,7 @@ import java.util.*;
 public class ResMigration {
     public static class ResidenceNode {
         public UUID owner;
+        public String ownerName;
         public World world;
         public String name;
         public Location loc1;
@@ -63,6 +64,7 @@ public class ResMigration {
         }
         ResidenceNode dominionNode = new ResidenceNode();
         dominionNode.owner = UUID.fromString(res.Permissions.OwnerUUID);
+        dominionNode.ownerName = res.Permissions.OwnerLastKnownName;
         dominionNode.world = world;
         dominionNode.name = name;
         dominionNode.joinMessage = save.Messages.get(res.Messages).EnterMessage;

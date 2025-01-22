@@ -19,6 +19,14 @@ import java.util.UUID;
 
 public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
 
+    public static PlayerDTO tryCreate(UUID uuid, String name) {
+        PlayerDTO re = select(uuid);
+        if (re == null) {
+            re = insert(new PlayerDTO(uuid, name, System.currentTimeMillis()));
+        }
+        return re;
+    }
+
     public static PlayerDTO get(Player player) {
         PlayerDTO re = select(player.getUniqueId());
         if (re == null) {
