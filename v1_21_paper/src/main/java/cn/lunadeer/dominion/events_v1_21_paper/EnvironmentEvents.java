@@ -374,6 +374,19 @@ public class EnvironmentEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST) // player_damage
+    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+        if (!(damager instanceof Player)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
+        checkFlag(dom, Flags.PLAYER_DAMAGE, event);
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onGravityBlockFalling(EntityChangeBlockEvent event) {   // gravity_block
         Entity entity = event.getEntity();
@@ -414,6 +427,19 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
         checkFlag(dom, Flags.MONSTER_MOVE, event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST) // monster_damage
+    public void onMonsterDamageToPlayer(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+        if (!(damager instanceof Monster)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(damager.getLocation());
+        checkFlag(dom, Flags.MONSTER_DAMAGE, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // animal_move
