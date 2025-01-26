@@ -45,7 +45,7 @@ public class EventUtils {
         }
     }
 
-    public static boolean checkFlag(DominionDTO dom, PreFlag flag, Player player, Cancellable event) {
+    public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PreFlag flag, @NotNull Player player, @Nullable Cancellable event) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -81,7 +81,7 @@ public class EventUtils {
         return false;
     }
 
-    public static boolean checkFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag, @Nullable Cancellable event) {
+    public static boolean checkEnvironmentFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag, @Nullable Cancellable event) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -89,22 +89,6 @@ public class EventUtils {
             return true;
         }
         if (dom.getEnvironmentFlagValue().get(flag)) {
-            return true;
-        }
-        if (event != null) {
-            event.setCancelled(true);
-        }
-        return false;
-    }
-
-    public static boolean checkFlag(@Nullable DominionDTO dom, @NotNull PreFlag flag, @Nullable Cancellable event) {
-        if (!flag.getEnable()) {
-            return true;
-        }
-        if (dom == null) {
-            return true;
-        }
-        if (dom.getGuestPrivilegeFlagValue().get(flag)) {
             return true;
         }
         if (event != null) {

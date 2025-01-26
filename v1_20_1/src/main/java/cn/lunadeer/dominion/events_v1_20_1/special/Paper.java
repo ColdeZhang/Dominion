@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
+import static cn.lunadeer.dominion.utils.EventUtils.checkEnvironmentFlag;
 
 public class Paper implements Listener {
 
@@ -22,7 +22,7 @@ public class Paper implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
-        checkFlag(dom, Flags.MONSTER_MOVE, event);
+        checkEnvironmentFlag(dom, Flags.MONSTER_MOVE, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // animal_move
@@ -32,7 +32,7 @@ public class Paper implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getLoc());
-        checkFlag(dom, Flags.ANIMAL_MOVE, event);
+        checkEnvironmentFlag(dom, Flags.ANIMAL_MOVE, event);
     }
 
 }

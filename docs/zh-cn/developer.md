@@ -14,11 +14,11 @@
 ```groovy
 // build.gradle
 repositories {
-    maven { url = "https://ssl.lunadeer.cn:14454/repository/maven-snapshots/" }
+    mavenCentral()
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:3.2-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:3.5")
 }
 ```
 
@@ -27,11 +27,11 @@ dependencies {
 ```kotlin
 // build.gradle.kts
 repositories {
-    maven("https://ssl.lunadeer.cn:14454/repository/maven-snapshots/")
+    mavenCentral()
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:3.2-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:3.5")
 }
 ```
 
@@ -39,18 +39,12 @@ dependencies {
 
 ```xml
 <!-- pom.xml -->
-<repositories>
-    <repository>
-        <id>lunadeer</id>
-        <url>https://ssl.lunadeer.cn:14454/repository/maven-snapshots/</url>
-    </repository>
-</repositories>
 
 <dependencies>
     <dependency>
         <groupId>cn.lunadeer</groupId>
         <artifactId>DominionAPI</artifactId>
-        <version>3.2-SNAPSHOT</version>
+        <version>3.5</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
@@ -70,10 +64,9 @@ depend: [ Dominion ]
 可以通过如下方法直接获取 DominionAPI 实例：
 
 ```java
-import cn.lunadeer.dominion.api.Dominion;
 import cn.lunadeer.dominion.api.DominionAPI;
 
-DominionAPI dominionAPI = Dominion.getInstance();
+DominionAPI dominionAPI = DominionAPI.getInstance();
 ```
 
 例如，获取某个位置的领地信息：
@@ -84,7 +77,7 @@ DominionAPI dominionAPI = Dominion.getInstance();
 public void onEnable() {
     // Plugin startup logic
     try {
-        DominionAPI dominionAPI = Dominion.getInstance();
+        DominionAPI dominionAPI = DominionAPI.getInstance();
         DominionDTO d = dominionAPI.getDominionByLoc(some_location);
         if (d == null) {
             this.getLogger().info("no dominion found");

@@ -14,11 +14,11 @@ For gradle, you can add the following code to your `build.gradle` file:
 ```groovy
 // build.gradle
 repositories {
-    maven { url = "https://ssl.lunadeer.cn:14454/repository/maven-snapshots/" }
+    mavenCentral()
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:3.2-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:3.5")
 }
 ```
 
@@ -27,11 +27,11 @@ Or if you use kotlin, you can add the following code to your `build.gradle.kts` 
 ```kotlin
 // build.gradle.kts
 repositories {
-    maven("https://ssl.lunadeer.cn:14454/repository/maven-snapshots/")
+    mavenCentral()
 }
 
 dependencies {
-    compileOnly("cn.lunadeer:DominionAPI:3.2-SNAPSHOT")
+    compileOnly("cn.lunadeer:DominionAPI:3.5")
 }
 ```
 
@@ -39,18 +39,11 @@ For maven, you can add the following code to your `pom.xml` file:
 
 ```xml
 <!-- pom.xml -->
-<repositories>
-    <repository>
-        <id>lunadeer</id>
-        <url>https://ssl.lunadeer.cn:14454/repository/maven-snapshots/</url>
-    </repository>
-</repositories>
-
 <dependencies>
 <dependency>
     <groupId>cn.lunadeer</groupId>
     <artifactId>DominionAPI</artifactId>
-    <version>3.2-SNAPSHOT</version>
+    <version>3.5</version>
     <scope>provided</scope>
 </dependency>
 </dependencies>
@@ -71,10 +64,9 @@ depend: [ Dominion ]
 Get the DominionAPI instance directly as follows:
 
 ```java
-import cn.lunadeer.dominion.api.Dominion;
 import cn.lunadeer.dominion.api.DominionAPI;
 
-DominionAPI dominionAPI = Dominion.getInstance();
+DominionAPI dominionAPI = DominionAPI.getInstance();
 ```
 
 Then you can use the API, for example, to get the dominion information at a certain location:
@@ -85,7 +77,7 @@ Then you can use the API, for example, to get the dominion information at a cert
 public void onEnable() {
     // Plugin startup logic
     try {
-        DominionAPI dominionAPI = Dominion.getInstance();
+        DominionAPI dominionAPI = DominionAPI.getInstance();
         DominionDTO d = dominionAPI.getDominionByLoc(some_location);
         if (d == null) {
             this.getLogger().info("no dominion found");

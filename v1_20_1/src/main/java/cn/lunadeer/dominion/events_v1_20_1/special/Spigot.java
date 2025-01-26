@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.lunadeer.dominion.utils.EventUtils.checkFlag;
+import static cn.lunadeer.dominion.utils.EventUtils.checkEnvironmentFlag;
 
 public class Spigot implements Listener {
 
@@ -33,9 +33,9 @@ public class Spigot implements Listener {
                         Location lastLoc = entityMap.get(entity.getUniqueId());
                         Location currentLoc = entity.getLocation();
                         DominionDTO dom = Cache.instance.getDominionByLoc(currentLoc);
-                        if (!checkFlag(dom, Flags.ANIMAL_MOVE, null) && entity instanceof Animals) {
+                        if (!checkEnvironmentFlag(dom, Flags.ANIMAL_MOVE, null) && entity instanceof Animals) {
                             entity.teleport(lastLoc);
-                        } else if (!checkFlag(dom, Flags.MONSTER_MOVE, null) && entity instanceof Monster) {
+                        } else if (!checkEnvironmentFlag(dom, Flags.MONSTER_MOVE, null) && entity instanceof Monster) {
                             entity.teleport(lastLoc);
                         } else {
                             entityMap.put(entity.getUniqueId(), currentLoc);
