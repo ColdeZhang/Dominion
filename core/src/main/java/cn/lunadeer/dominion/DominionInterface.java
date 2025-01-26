@@ -6,7 +6,10 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
+import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
+import cn.lunadeer.dominion.utils.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DominionInterface implements DominionAPI {
+public class DominionInterface extends DominionAPI {
 
     public static DominionInterface instance;
 
@@ -92,6 +95,16 @@ public class DominionInterface implements DominionAPI {
     @Override
     public List<DominionDTO> getPlayerDominions(@NotNull UUID playerUid) {
         return new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectByOwner(playerUid));
+    }
+
+    @Override
+    public boolean checkPrivilegeFlag(DominionDTO dom, PreFlag flag, Player player) {
+        return EventUtils.checkPrivilegeFlag(dom, flag, player, null);
+    }
+
+    @Override
+    public boolean checkEnvironmentFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag) {
+        return EventUtils.checkEnvironmentFlag(dom, flag, null);
     }
 
 }
