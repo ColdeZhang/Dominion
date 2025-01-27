@@ -28,6 +28,10 @@ public class MemberEventHandler implements Listener {
             event.setCancelledAdnComplete(true);
             return;
         }
+        if (event.getOperator().getUniqueId().equals(event.getPlayer().getUuid())) {
+            event.setCancelled(true, AbstractOperator.ResultType.FAILURE, Translation.Messages_OwnerCannotBeMember, player_name, dominionName);
+            return;
+        }
         if (!event.isCancelled()) {
             MemberDTO member = MemberDTO.insert(new MemberDTO(event.getPlayer().getUuid(), event.getDominion()));
             event.setMember(member);

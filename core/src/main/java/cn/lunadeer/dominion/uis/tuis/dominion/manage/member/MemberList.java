@@ -86,7 +86,7 @@ public class MemberList {
                     .setHoverText(Translation.TUI_MemberList_RemoveDescription)
                     .setExecuteCommand(CommandParser("/dominion member remove %s %s", dominion.getName(), p_player.getLastKnownName()));
 
-            if (!player.getUniqueId().equals(dominion.getOwner())) {
+            if (!player.getUniqueId().equals(dominion.getOwner()) && !player.hasPermission("dominion.admin")) {
                 boolean disable = false;
                 if (group == null) {
                     if (privilege.getAdmin()) {
