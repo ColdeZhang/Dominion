@@ -310,7 +310,7 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST) // monster_spawn
     public void onMonsterSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
-        if (!(entity instanceof Monster)) {
+        if (!(entity instanceof Enemy)) {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
@@ -320,7 +320,7 @@ public class EnvironmentEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST) // monster_damage
     public void onMonsterDamageToPlayer(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
-        if (!(damager instanceof Monster)) {
+        if (!(damager instanceof Enemy)) {
             return;
         }
         if (!(event.getEntity() instanceof Player)) {
