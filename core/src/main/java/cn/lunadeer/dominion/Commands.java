@@ -15,6 +15,7 @@ import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.Resize;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.SizeInfo;
 import cn.lunadeer.dominion.utils.TuiUtils;
 import org.bukkit.command.Command;
@@ -62,6 +63,9 @@ public class Commands implements TabExecutor {
                 break;
             case "info":
                 SizeInfo.show(sender, args);
+                break;
+            case "resize":
+                Resize.show(sender, args);
                 break;
             case "manage":
                 DominionManage.show(sender, args);
@@ -190,6 +194,9 @@ public class Commands implements TabExecutor {
                 break;
             case "cui_rename_group":
                 RenameGroup.open(sender, args);
+                break;
+            case "cui_resize_dominion":
+                ResizeDominion.open(sender, args);
                 break;
             default:
                 return false;
