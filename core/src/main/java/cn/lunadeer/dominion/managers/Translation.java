@@ -809,6 +809,27 @@ public class Translation extends Localization {
     @i18nField(defaultValue = "来自领地：")
     public static i18n TUI_TitleList_FromDominion;
 
+    @i18nField(defaultValue = "修改尺寸")
+    public static i18n TUI_ResizeButton;
+    @i18nField(defaultValue = "修改领地 %s 的尺寸")
+    public static i18n TUI_ResizeDominion;
+    @i18nField(defaultValue = "北(Y-)")
+    public static i18n TUI_ResizeDominion_North;
+    @i18nField(defaultValue = "东(X+)")
+    public static i18n TUI_ResizeDominion_East;
+    @i18nField(defaultValue = "南(Y+)")
+    public static i18n TUI_ResizeDominion_South;
+    @i18nField(defaultValue = "西(X-)")
+    public static i18n TUI_ResizeDominion_West;
+    @i18nField(defaultValue = "上(Z+)")
+    public static i18n TUI_ResizeDominion_Up;
+    @i18nField(defaultValue = "下(Z-)")
+    public static i18n TUI_ResizeDominion_Down;
+    @i18nField(defaultValue = "扩大")
+    public static i18n TUI_ResizeDominion_Expand;
+    @i18nField(defaultValue = "缩小")
+    public static i18n TUI_ResizeDominion_Contract;
+
     @i18nField(defaultValue = "输入要创建的领地名称")
     public static i18n CUI_Input_CreateDominion;
     @i18nField(defaultValue = "输入要创建的权限组名称")
@@ -827,6 +848,8 @@ public class Translation extends Localization {
     public static i18n CUI_Input_RenameGroup;
     @i18nField(defaultValue = "输入卫星地图地块颜色（16进制）")
     public static i18n CUI_Input_SetMapColor;
+    @i18nField(defaultValue = "%s 领地 %s 的边界 方向：%s")
+    public static i18n CUI_Input_ResizeDominion;
 
     @i18nField(defaultValue = "AutoCreateRadius 不能等于 0，已重置为 10")
     public static i18n Config_Check_AutoCreateRadiusError;

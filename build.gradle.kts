@@ -11,7 +11,7 @@ var libraries = listOf<String>()
 libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:2.0.7"
 
 group = "cn.lunadeer"
-version = "3.4.1-alpha.3"
+version = "3.5.0-alpha.2"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))

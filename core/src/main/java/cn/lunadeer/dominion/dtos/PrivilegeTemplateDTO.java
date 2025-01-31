@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
