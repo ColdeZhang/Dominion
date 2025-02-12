@@ -4,12 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
-import cn.lunadeer.minecraftpluginutils.databse.Field;
-import cn.lunadeer.minecraftpluginutils.databse.FieldType;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,8 +28,8 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         if (rs == null) return players;
         try {
             while (rs.next()) {
-                Map<PreFlag, Boolean> flags = new HashMap<>();
-                for (PreFlag f : Flags.getAllPreFlagsEnable()) {
+                Map<PriFlag, Boolean> flags = new HashMap<>();
+                for (PriFlag f : Flags.getAllPriFlagsEnable()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
                 MemberDTO player = new MemberDTO(
@@ -72,7 +67,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
                 .table("dominion_member")
                 .field(player.playerUUID)
                 .field(player.domID);
-        for (PreFlag f : Flags.getAllPreFlagsEnable()) {
+        for (PriFlag f : Flags.getAllPriFlagsEnable()) {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
         try (ResultSet rs = insertRow.execute()) {
@@ -154,21 +149,21 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return (Integer) groupId.value;
     }
 
-    private final Map<PreFlag, Boolean> flags = new HashMap<>();
+    private final Map<PriFlag, Boolean> flags = new HashMap<>();
 
     @Override
-    public @NotNull Boolean getFlagValue(PreFlag flag) {
+    public @NotNull Boolean getFlagValue(PriFlag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
     }
 
     @Override
-    public @NotNull Map<PreFlag, Boolean> getFlagsValue() {
+    public @NotNull Map<PriFlag, Boolean> getFlagsValue() {
         return flags;
     }
 
     @Override
-    public MemberDTO setFlagValue(@NotNull PreFlag flag, @NotNull Boolean value) {
+    public MemberDTO setFlagValue(@NotNull PriFlag flag, @NotNull Boolean value) {
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
@@ -200,16 +195,16 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return doUpdate(updateRow);
     }
 
-    public MemberDTO applyTemplate(PrivilegeTemplateDTO template) {
+    public MemberDTO applyTemplate(TemplateDTO template) {
         UpdateRow updateRow = new UpdateRow();
-        for (PreFlag f : Flags.getAllPreFlagsEnable()) {
+        for (PriFlag f : Flags.getAllPriFlagsEnable()) {
             this.flags.put(f, template.getFlagValue(f));
             updateRow.field(new Field(f.getFlagName(), template.getFlagValue(f)));
         }
         return doUpdate(updateRow);
     }
 
-    private MemberDTO(Integer id, UUID playerUUID, Integer domID, Map<PreFlag, Boolean> flags, Integer groupId) {
+    private MemberDTO(Integer id, UUID playerUUID, Integer domID, Map<PriFlag, Boolean> flags, Integer groupId) {
         this.id.value = id;
         this.playerUUID.value = playerUUID.toString();
         this.domID.value = domID;

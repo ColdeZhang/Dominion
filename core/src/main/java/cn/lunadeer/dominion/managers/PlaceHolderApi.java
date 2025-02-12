@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.managers;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.XLogger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

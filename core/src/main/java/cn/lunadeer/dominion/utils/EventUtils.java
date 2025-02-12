@@ -1,12 +1,12 @@
 package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.managers.Translation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class EventUtils {
     public static boolean canByPass(Player player, DominionDTO dom, MemberDTO prev) {
-        if (player.isOp() && Dominion.config.getLimitOpBypass()) {
+        if (player.isOp() && Configuration.adminBypass) {
             return true;
         }
         if (dom == null) {
@@ -45,7 +45,7 @@ public class EventUtils {
         }
     }
 
-    public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PreFlag flag, @NotNull Player player, @Nullable Cancellable event) {
+    public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player, @Nullable Cancellable event) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -74,7 +74,7 @@ public class EventUtils {
         }
         String msg = String.format(Translation.Messages_NoPermissionForFlag.trans(), flag.getDisplayName(), flag.getDescription());
         msg = "&#FF0000" + "&l" + msg;
-        MessageDisplay.show(player, Dominion.config.getMessageDisplayNoPermission(), msg);
+        MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace), msg);
         if (event != null) {
             event.setCancelled(true);
         }

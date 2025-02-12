@@ -1,57 +1,69 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.member;
 
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.commands.TemplateCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.CommandParser;
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 
 public class SelectTemplate {
 
-    public static void show(CommandSender sender, String[] args) {
-        if (args.length < 4) {
-            // /dominion member select_template <领地名称> <玩家名称>  [页码]
-            Notification.error(sender, Translation.TUI_SelectTemplate_Usage);
-            return;
+    public static class SelectTemplateTuiText extends ConfigurationPart {
+        public String title = "Select Template";
+        public String description = "Select a template to apply to this member.";
+        public String button = "SELECT TEMPLATE";
+        public String back = "BACK";
+        public String apply = "APPLY";
+    }
+
+    public static ListViewButton button(CommandSender sender, String dominionName, String playerName) {
+        return (ListViewButton) new ListViewButton(Language.selectTemplateTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, dominionName, playerName, pageStr);
+            }
+        }.needPermission(defaultPermission).setHoverText(Language.selectTemplateTuiText.description);
+    }
+
+    public static void show(CommandSender sender, String dominionName, String playerName, String pageStr) {
+        try {
+            Player player = toPlayer(sender);
+            int page = toIntegrity(pageStr);
+            List<TemplateDTO> templates = TemplateDTO.selectAll(player.getUniqueId());
+
+            ListView view = ListView.create(10, button(sender, dominionName, playerName));
+            view.title(Language.selectTemplateTuiText.title);
+            Line sub = Line.create()
+                    .append(MemberSetting.button(sender, dominionName, playerName).setText(Language.selectTemplateTuiText.back).build());
+            view.subtitle(sub);
+
+            for (TemplateDTO template : templates) {
+                view.add(Line.create()
+                        .append(new FunctionalButton(Language.selectTemplateTuiText.apply) {
+                            @Override
+                            public void function() {
+                                TemplateCommand.memberApplyTemplate(sender, dominionName, playerName, template.getName());
+                            }
+                        }.build())
+                        .append(Component.text(template.getName())));
+            }
+            view.showOn(player, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-
-        Player player = playerOnly(sender);
-        if (player == null) return;
-
-        String dominionName = args[2];
-        String playerName = args[3];
-
-
-        int page = getPage(args, 4);
-
-        List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(player.getUniqueId());
-
-        ListView view = ListView.create(10, "/dominion member select_template " + dominionName + " " + playerName);
-        view.title(Translation.TUI_SelectTemplate_Title);
-        Line sub = Line.create()
-                .append(String.format(Translation.TUI_SelectTemplate_Description.trans(), dominionName, playerName))
-                .append(Button.create(Translation.TUI_BackButton).setExecuteCommand("/dominion member setting " + dominionName + " " + playerName).build());
-        view.subtitle(sub);
-
-        for (PrivilegeTemplateDTO template : templates) {
-            // /dominion member apply_template <领地名称> <成员名称> <模板名称>
-            view.add(Line.create()
-                    .append(Button.create(Translation.TUI_SelectButton)
-                            .setExecuteCommand(CommandParser("/dominion member apply_template %s %s %s", dominionName, playerName, template.getName()))
-                            .build())
-                    .append(Component.text(template.getName())));
-        }
-        view.showOn(player, page);
     }
 
 }

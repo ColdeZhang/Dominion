@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.utils.configuration;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -21,15 +22,15 @@ public class ConfigurationManager {
      * @param file  The file to load.
      * @throws Exception If failed to load the file.
      */
-    public static void load(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
+    public static ConfigurationFile load(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
         if (!file.exists()) {
-            save(clazz, file);
-            return;
+            return save(clazz, file);
         }
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-        readConfigurationFile(yaml, clazz, null);
+        ConfigurationFile instance = readConfigurationFile(yaml, clazz);
         yaml.options().width(250);
         yaml.save(file);
+        return instance;
     }
 
     /**
@@ -40,10 +41,10 @@ public class ConfigurationManager {
      * @param versionFieldName The name of the version field.
      * @throws Exception If failed to load the file.
      */
-    public static void load(Class<? extends ConfigurationFile> clazz, File file, String versionFieldName) throws Exception {
+    public static ConfigurationFile load(Class<? extends ConfigurationFile> clazz, File file, String versionFieldName) throws Exception {
         Field versionField = clazz.getField(versionFieldName);
         int currentVersion = versionField.getInt(null);
-        load(clazz, file);
+        ConfigurationFile instance = load(clazz, file);
         if (versionField.getInt(null) != currentVersion) {
             File backup = new File(file.getParentFile(), file.getName() + ".bak");
             if (backup.exists() && !backup.delete()) {
@@ -53,8 +54,9 @@ public class ConfigurationManager {
                 throw new Exception("Failed to backup the configuration file.");
             }
             clazz.getField(versionFieldName).set(null, currentVersion);
-            save(clazz, file);
+            return save(clazz, file);
         }
+        return instance;
     }
 
     /**
@@ -64,52 +66,50 @@ public class ConfigurationManager {
      * @param file  The file to save.
      * @throws Exception If failed to save the file.
      */
-    public static void save(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
+    public static ConfigurationFile save(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
         createIfNotExist(file);
-        YamlConfiguration yaml = new YamlConfiguration();
+        YamlConfiguration yaml = writeConfigurationFile(clazz);
         yaml.options().width(250);
-        writeConfigurationFile(yaml, clazz, null);
         yaml.save(file);
+        return clazz.getDeclaredConstructor().newInstance();
     }
 
-    private static void writeConfigurationFile(YamlConfiguration yaml, Class<? extends ConfigurationFile> clazz, String prefix) throws Exception {
-        for (Field field : clazz.getFields()) {
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(HandleManually.class)) {
-                continue;
-            }
-            String key = camelToKebab(field.getName());
-            if (prefix != null && !prefix.isEmpty()) {
-                key = prefix + "." + key;
-            }
-            // if field is extending ConfigurationPart, recursively write the content
-            if (ConfigurationPart.class.isAssignableFrom(field.getType())) {
-                writeConfigurationPart(yaml, (ConfigurationPart) field.get(null), key);
-            } else {
-                yaml.set(key, field.get(null));
-            }
-            if (field.isAnnotationPresent(Comments.class)) {
-                yaml.setComments(key, List.of(field.getAnnotation(Comments.class).value()));
-            }
-        }
+    private static YamlConfiguration writeConfigurationFile(Class<? extends ConfigurationFile> clazz) throws Exception {
+        YamlConfiguration yaml = new YamlConfiguration();
+        ConfigurationFile instance = clazz.getDeclaredConstructor().newInstance();
+        writeConfigurationPart(yaml, instance, null);
+        return yaml;
     }
 
-    private static void writeConfigurationPart(YamlConfiguration yaml, ConfigurationPart obj, String key) throws Exception {
+    public static ConfigurationSection writeConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix) throws Exception {
+        return writeConfigurationPart(yaml, obj, prefix, false);
+    }
+
+    public static ConfigurationSection writeConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix, boolean ignoreComment) throws Exception {
         for (Field field : obj.getClass().getFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(HandleManually.class)) {
                 continue;
             }
-            String newKey = key + "." + camelToKebab(field.getName());
+            String newKey = camelToKebab(field.getName());
+            if (prefix != null && !prefix.isEmpty()) {
+                newKey = prefix + "." + newKey;
+            }
             if (ConfigurationPart.class.isAssignableFrom(field.getType())) {
-                writeConfigurationPart(yaml, (ConfigurationPart) field.get(obj), newKey);
+                field.set(obj, writeConfigurationPart(yaml, (ConfigurationPart) field.get(obj), newKey));
             } else {
                 yaml.set(newKey, field.get(obj));
             }
-            if (field.isAnnotationPresent(Comments.class)) {
-                yaml.setComments(newKey, List.of(field.getAnnotation(Comments.class).value()));
+            if (!ignoreComment) {
+                if (field.isAnnotationPresent(Comments.class)) {
+                    yaml.setComments(newKey, List.of(field.getAnnotation(Comments.class).value()));
+                }
+                if (field.isAnnotationPresent(Comment.class)) {
+                    yaml.setInlineComments(newKey, List.of(field.getAnnotation(Comments.class).value()));
+                }
             }
         }
+        return yaml;
     }
 
     private static void createIfNotExist(File file) throws Exception {
@@ -119,13 +119,24 @@ public class ConfigurationManager {
         if (!file.createNewFile()) throw new Exception("Failed to create %s file.".formatted(file.getAbsolutePath()));
     }
 
-    private static void readConfigurationFile(YamlConfiguration yaml, Class<? extends ConfigurationFile> clazz, String prefix) throws Exception {
+    private static ConfigurationFile readConfigurationFile(YamlConfiguration yaml, Class<? extends ConfigurationFile> clazz) throws Exception {
+        ConfigurationFile instance = clazz.getDeclaredConstructor().newInstance();
+        instance.yaml = yaml;
         PrePostProcessInorder processes = getAndSortPrePostProcess(clazz);
         // execute methods with @PreProcess annotation
         for (Method method : processes.preProcessMethods) {
-            method.invoke(null);
+            method.invoke(instance);
         }
-        for (Field field : clazz.getFields()) {
+        readConfigurationPart(yaml, instance, null);
+        // execute methods with @PostProcess annotation
+        for (Method method : processes.postProcessMethods) {
+            method.invoke(instance);
+        }
+        return instance;
+    }
+
+    public static ConfigurationPart readConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix) throws Exception {
+        for (Field field : obj.getClass().getFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(HandleManually.class)) {
                 continue;
@@ -140,47 +151,21 @@ public class ConfigurationManager {
                 if (field.isAnnotationPresent(Comments.class)) {
                     yaml.setComments(key, List.of(field.getAnnotation(Comments.class).value()));
                 }
-            }
-            if (ConfigurationPart.class.isAssignableFrom(field.getType())) {
-                readConfigurationPart(yaml, (ConfigurationPart) field.get(null), key);
-            } else {
-                if (missingKey) {
-                    yaml.set(key, field.get(null));
-                } else {
-                    field.set(null, yaml.get(key));
-                }
-            }
-        }
-        // execute methods with @PostProcess annotation
-        for (Method method : processes.postProcessMethods) {
-            method.invoke(null);
-        }
-    }
-
-    private static void readConfigurationPart(YamlConfiguration yaml, ConfigurationPart obj, String key) throws Exception {
-        for (Field field : obj.getClass().getFields()) {
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(HandleManually.class)) {
-                continue;
-            }
-            String newKey = key + "." + camelToKebab(field.getName());
-            boolean missingKey = !yaml.contains(newKey);
-            if (missingKey) {
-                yaml.createSection(newKey);
-                if (field.isAnnotationPresent(Comments.class)) {
-                    yaml.setComments(newKey, List.of(field.getAnnotation(Comments.class).value()));
+                if (field.isAnnotationPresent(Comment.class)) {
+                    yaml.setInlineComments(key, List.of(field.getAnnotation(Comments.class).value()));
                 }
             }
             if (ConfigurationPart.class.isAssignableFrom(field.getType())) {
-                readConfigurationPart(yaml, (ConfigurationPart) field.get(obj), newKey);
+                field.set(obj, readConfigurationPart(yaml, (ConfigurationPart) field.get(obj), key));
             } else {
                 if (missingKey) {
-                    yaml.set(newKey, field.get(obj));
+                    yaml.set(key, field.get(obj));
                 } else {
-                    field.set(obj, yaml.get(newKey));
+                    field.set(obj, yaml.get(key));
                 }
             }
         }
+        return obj;
     }
 
     /**

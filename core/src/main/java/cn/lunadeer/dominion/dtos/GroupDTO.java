@@ -5,7 +5,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.minecraftpluginutils.ColorParser;
 import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
 import cn.lunadeer.minecraftpluginutils.databse.Field;
@@ -29,7 +29,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     Field name_raw = new Field("name", FieldType.STRING);
     Field name_color = new Field("name_colored", FieldType.STRING);
 
-    private final Map<PreFlag, Boolean> flags = new HashMap<>();
+    private final Map<PriFlag, Boolean> flags = new HashMap<>();
 
     @Override
     public @NotNull Integer getId() {
@@ -77,13 +77,13 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     }
 
     @Override
-    public @NotNull Boolean getFlagValue(@NotNull PreFlag flag) {
+    public @NotNull Boolean getFlagValue(@NotNull PriFlag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
     }
 
     @Override
-    public @NotNull Map<PreFlag, Boolean> getFlagsValue() {
+    public @NotNull Map<PriFlag, Boolean> getFlagsValue() {
         return flags;
     }
 
@@ -101,7 +101,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     }
 
     @Override
-    public GroupDTO setFlagValue(@NotNull PreFlag flag, @NotNull Boolean value) {
+    public GroupDTO setFlagValue(@NotNull PriFlag flag, @NotNull Boolean value) {
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
@@ -120,7 +120,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
                 .field(group.domID)
                 .field(group.name_raw)
                 .field(group.name_color);
-        for (Map.Entry<PreFlag, Boolean> f : dominionDTO.getGuestPrivilegeFlagValue().entrySet()) {
+        for (Map.Entry<PriFlag, Boolean> f : dominionDTO.getGuestPrivilegeFlagValue().entrySet()) {
             insertRow.field(new Field(f.getKey().getFlagName(), f.getValue()));
         }
         try (ResultSet rs = insertRow.execute()) {
@@ -172,12 +172,12 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         this.domID.value = domID;
         this.name_raw.value = ColorParser.getPlainText(name);
         this.name_color.value = name;
-        for (PreFlag f : Flags.getAllPreFlagsEnable()) {
+        for (PriFlag f : Flags.getAllPriFlagsEnable()) {
             flags.put(f, f.getDefaultValue());
         }
     }
 
-    private GroupDTO(Integer id, Integer domID, String name, Map<PreFlag, Boolean> flags, String nameColored) {
+    private GroupDTO(Integer id, Integer domID, String name, Map<PriFlag, Boolean> flags, String nameColored) {
         this.id.value = id;
         this.domID.value = domID;
         this.name_raw.value = name;
@@ -190,8 +190,8 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         if (rs == null) return list;
         try {
             while (rs.next()) {
-                Map<PreFlag, Boolean> flags = new HashMap<>();
-                for (PreFlag f : Flags.getAllPreFlagsEnable()) {
+                Map<PriFlag, Boolean> flags = new HashMap<>();
+                for (PriFlag f : Flags.getAllPriFlagsEnable()) {
                     flags.put(f, rs.getBoolean(f.getFlagName()));
                 }
                 GroupDTO group = new GroupDTO(

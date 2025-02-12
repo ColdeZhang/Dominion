@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.group;
 
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.managers.Translation;
@@ -67,14 +67,14 @@ public class GroupSetting {
             view.add(createOption(Flags.ADMIN, true, dominion.getName(), group.getNamePlain(), page));
             view.add(createOption(Flags.GLOW, group.getFlagValue(Flags.GLOW), dominion.getName(), group.getNamePlain(), page));
         } else {
-            for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
+            for (PriFlag flag : Flags.getAllPriFlagsEnable()) {
                 view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getNamePlain(), page));
             }
         }
         view.showOn(player, page);
     }
 
-    private static Line createOption(PreFlag flag, boolean value, String DominionName, String groupName, int page) {
+    private static Line createOption(PriFlag flag, boolean value, String DominionName, String groupName, int page) {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑")

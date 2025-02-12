@@ -1,55 +1,64 @@
 package cn.lunadeer.dominion.uis.cuis;
 
-import cn.lunadeer.dominion.DominionInterface;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
-import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.dominion.modify.DominionSetMessageEvent;
-import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.scui.CuiTextInput;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.PermissionButton;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.commands.DominionOperateCommand.setMessage;
+import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class EditLeaveMessage {
 
-    private static class editLeaveMessageCB implements CuiTextInput.InputCallback {
-        private final Player sender;
-        private final String dominionName;
+    public static class EditLeaveMessageCuiText extends ConfigurationPart {
+        public String title = "Edit {0} Leave Message";
+        public String button = "LEAVE MSG";
+        public String description = "Message shown when player leaves dominion.";
+    }
 
-        public editLeaveMessageCB(Player sender, String dominionName) {
-            this.sender = sender;
-            this.dominionName = dominionName;
-        }
+    public static PermissionButton button(CommandSender sender, String dominionName) {
+        return new FunctionalButton(Language.editLeaveMessageCuiText.button) {
+            @Override
+            public void function() {
+                open(sender, dominionName);
+            }
+        }.needPermission(defaultPermission);
+    }
 
+    private record editLeaveMessageCB(Player sender, String dominionName) implements CuiTextInput.InputCallback {
         @Override
         public void handleData(String input) {
-            XLogger.debug("editLeaveMessageCB.run: %s", input);
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            DominionDTO dominion = DominionInterface.instance.getDominion(dominionName);
-            if (dominion == null) {
-                Notification.error(sender, Translation.Messages_DominionNotExist, dominionName);
-                return;
+            try {
+                setMessage(sender, dominionName, DominionSetMessageEvent.TYPE.LEAVE.name(), input);
+                DominionManage.show(sender, dominionName, "1");
+            } catch (Exception e) {
+                Notification.error(sender, e.getMessage());
             }
-            new DominionSetMessageEvent(operator, dominion, DominionSetMessageEvent.MessageChangeType.LEAVE, input).callEvent();
-            DominionManage.show(sender, new String[]{"manage", dominionName});
         }
     }
 
-    public static void open(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = DominionInterface.instance.getDominion(args[1]);
-        if (dominion == null) {
-            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
-            return;
+    public static void open(CommandSender sender, String dominionName) {
+        try {
+            Player player = toPlayer(sender);
+            DominionDTO dominion = toDominionDTO(dominionName);
+            CuiTextInput.InputCallback editLeaveMessageCB = new editLeaveMessageCB(player, dominionName);
+            CuiTextInput view = CuiTextInput.create(editLeaveMessageCB).title(
+                    formatString(Language.editLeaveMessageCuiText.title, dominionName)
+            ).setText(dominion.getLeaveMessage());
+            view.setSuggestCommand(setMessage.getUsage());
+            view.open(player);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-        CuiTextInput.InputCallback editLeaveMessageCB = new editLeaveMessageCB(player, dominion.getName());
-        CuiTextInput view = CuiTextInput.create(editLeaveMessageCB).setText(dominion.getLeaveMessage()).title(Translation.CUI_Input_EditLeaveMessage.trans());
-        view.setSuggestCommand(Translation.Commands_Dominion_SetLeaveMessageUsage.trans());
-        view.open(player);
     }
 }
