@@ -1,31 +1,15 @@
 package cn.lunadeer.dominion.commands;
 
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.controllers.GroupController;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.dtos.MemberDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.events.group.*;
-import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupSetting;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.SelectMember;
-import cn.lunadeer.minecraftpluginutils.Notification;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static cn.lunadeer.dominion.Commands.boolOptions;
-import static cn.lunadeer.dominion.commands.Helper.*;
-import static cn.lunadeer.dominion.utils.CommandUtils.hasPermission;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 
 public class Group {
 
@@ -148,7 +132,7 @@ public class Group {
             String flag = args[4];
             boolean value = Boolean.parseBoolean(args[5]);
             int page = getPage(args, 6);
-            PreFlag f = Flags.getPreFlag(flag);
+            PriFlag f = Flags.getPreFlag(flag);
             if (f == null) {
                 Notification.error(sender, Translation.Messages_UnknownFlag, flag);
                 return;
@@ -246,94 +230,6 @@ public class Group {
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }
-    }
-
-    public static void handle(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length < 2) {
-            Notification.error(sender, Translation.Commands_Group_GroupUsage);
-            return;
-        }
-        switch (args[1]) {
-            case "create":
-                createGroup(sender, args);
-                break;
-            case "delete":
-                deleteGroup(sender, args);
-                break;
-            case "rename":
-                renameGroup(sender, args);
-                break;
-            case "set_flag":
-                setGroupFlag(sender, args);
-                break;
-            case "add_member":
-                addMember(sender, args);
-                break;
-            case "remove_member":
-                removeMember(sender, args);
-                break;
-            case "select_member":
-                SelectMember.show(sender, args);
-                break;
-            case "setting":
-                GroupSetting.show(sender, args);
-                break;
-            case "list":
-                GroupList.show(sender, args);
-                break;
-        }
-    }
-
-    public static @Nullable List<String> handleTab(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 2) {
-            return Arrays.asList("create", "delete", "rename", "set_flag", "add_member", "remove_member",
-                    "select_member", "list");
-        }
-        if (args.length == 3) {
-            switch (args[1]) {
-                case "create":
-                case "delete":
-                case "rename":
-                case "set_flag":
-                case "add_member":
-                case "remove_member":
-                case "select_member":
-                case "setting":
-                case "list":
-                    return playerDominions(sender);
-            }
-        }
-        if (args.length == 4) {
-            switch (args[1]) {
-                case "create":
-                    return Collections.singletonList(Translation.Commands_Group_NewGroupName.trans());
-                case "delete":
-                case "rename":
-                case "set_flag":
-                case "add_member":
-                case "remove_member":
-                case "select_member":
-                case "setting":
-                    return dominionGroups(args[2]);
-            }
-        }
-        if (args.length == 5) {
-            switch (args[1]) {
-                case "rename":
-                    return Collections.singletonList(Translation.Commands_Group_NewGroupName.trans());
-                case "set_flag":
-                    return playerPrivileges();
-                case "remove_member":
-                    return groupPlayers(args[2], args[3]);
-            }
-        }
-        if (args.length == 6) {
-            switch (args[1]) {
-                case "set_flag":
-                    return boolOptions();
-            }
-        }
-        return null;
     }
 
 }

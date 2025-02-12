@@ -1,10 +1,11 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
-import cn.lunadeer.minecraftpluginutils.databse.Field;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.databse.DatabaseManager;
+import cn.lunadeer.dominion.utils.databse.Field;
+import cn.lunadeer.dominion.utils.databse.syntax.InsertRow;
+import cn.lunadeer.dominion.utils.databse.syntax.UpdateRow;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -13,14 +14,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
 
+    private static Map<UUID, cn.lunadeer.dominion.api.dtos.PlayerDTO> cache = new HashMap<>();
+    private static Map<String, UUID> nameCache = new HashMap<>();
+
+    private static void updateCache(PlayerDTO player) {
+        cache.put(player.getUuid(), player);
+        nameCache.put(player.getLastKnownName(), player.getUuid());
+    }
+
+
     public static PlayerDTO tryCreate(UUID uuid, String name) {
-        PlayerDTO re = select(uuid);
+        PlayerDTO re = (PlayerDTO) select(uuid);
         if (re == null) {
             re = insert(new PlayerDTO(uuid, name, System.currentTimeMillis()));
         }
@@ -28,7 +36,7 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
     }
 
     public static PlayerDTO get(Player player) {
-        PlayerDTO re = select(player.getUniqueId());
+        PlayerDTO re = (PlayerDTO) select(player.getUniqueId());
         if (re == null) {
             re = insert(new PlayerDTO(player.getUniqueId(), player.getName(), System.currentTimeMillis()));
         }
@@ -39,21 +47,27 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
         if (player.getName() == null) {
             return null;
         }
-        PlayerDTO re = select(player.getUniqueId());
+        PlayerDTO re = (PlayerDTO) select(player.getUniqueId());
         if (re == null) {
             re = insert(new PlayerDTO(player.getUniqueId(), player.getName(), System.currentTimeMillis()));
         }
         return re;
     }
 
-    public static List<PlayerDTO> all() {
+    public static List<cn.lunadeer.dominion.api.dtos.PlayerDTO> all() {
+        if (!cache.isEmpty()) return new ArrayList<>(cache.values());
         String sql = "SELECT * FROM player_name WHERE id > 0;";
-        return query(sql);
+        for (PlayerDTO player : query(sql)) {
+            updateCache(player);
+        }
+        return new ArrayList<>(cache.values());
     }
 
     public PlayerDTO onJoin(String name) {
         this.setLastKnownName(name);
-        return update(this);
+        PlayerDTO dto = update(this);
+        updateCache(dto);
+        return dto;
     }
 
     private static List<PlayerDTO> query(String sql, Object... params) {
@@ -61,7 +75,7 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
         try (ResultSet rs = DatabaseManager.instance.query(sql, params)) {
             return getDTOFromRS(rs);
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("PlayerDTO.query ", e, sql);
+            XLogger.error("PlayerDTO.query ", e);
         }
         return players;
     }
@@ -81,24 +95,32 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
         return players;
     }
 
-    public static PlayerDTO select(UUID uuid) {
+    public static cn.lunadeer.dominion.api.dtos.PlayerDTO select(UUID uuid) {
+        if (cache.containsKey(uuid)) return cache.get(uuid);
         String sql = "SELECT * FROM player_name WHERE uuid = ?;";
         List<PlayerDTO> players = query(sql, uuid.toString());
         if (players.isEmpty()) return null;
+        updateCache(players.get(0));
         return players.get(0);
     }
 
-    public static PlayerDTO select(String name) {
+    public static cn.lunadeer.dominion.api.dtos.PlayerDTO select(String name) {
+        if (nameCache.containsKey(name)) return select(nameCache.get(name));
         String sql = "SELECT * FROM player_name WHERE last_known_name = ?;";
         List<PlayerDTO> players = query(sql, name);
         if (players.isEmpty()) return null;
+        updateCache(players.get(0));
         return players.get(0);
     }
 
-    public static List<PlayerDTO> search(String name) {
-        // 模糊搜索
-        String sql = "SELECT * FROM player_name WHERE last_known_name LIKE ?;";
-        return query(sql, "%" + name + "%");
+    public static List<cn.lunadeer.dominion.api.dtos.PlayerDTO> search(String name) {
+        List<cn.lunadeer.dominion.api.dtos.PlayerDTO> players = new ArrayList<>();
+        for (Map.Entry<String, UUID> entry : nameCache.entrySet()) {
+            if (entry.getKey().contains(name)) {
+                players.add(select(entry.getValue()));
+            }
+        }
+        return players;
     }
 
     public static void delete(PlayerDTO player) {
@@ -122,9 +144,10 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
         try (ResultSet rs = insertRow.execute()) {
             List<PlayerDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
+            updateCache(players.get(0));
             return players.get(0);
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("PlayerDTO.insert ", e, insertRow.toString());
+            XLogger.error("PlayerDTO.insert ", e);
             return null;
         }
     }
@@ -144,9 +167,10 @@ public class PlayerDTO implements cn.lunadeer.dominion.api.dtos.PlayerDTO {
         try (ResultSet rs = updateRow.execute()) {
             List<PlayerDTO> players = getDTOFromRS(rs);
             if (players.isEmpty()) return null;
+            updateCache(players.get(0));
             return players.get(0);
         } catch (SQLException e) {
-            DatabaseManager.handleDatabaseError("PlayerDTO.update ", e, updateRow.toString());
+            XLogger.error("PlayerDTO.update ", e);
             return null;
         }
     }

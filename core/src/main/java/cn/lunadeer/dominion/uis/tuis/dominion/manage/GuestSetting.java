@@ -1,58 +1,84 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage;
 
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.commands.DominionFlagCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
+import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class GuestSetting {
-
-    public static void show(CommandSender sender, String[] args) {
-        if (args.length < 2) {
-            Notification.error(sender, Translation.TUI_GuestSetting_Usage);
-            return;
-        }
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[1]);
-        if (dominion == null) {
-            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
-            return;
-        }
-        int page = getPage(args, 2);
-        ListView view = ListView.create(10, "/dominion guest_setting " + dominion.getName());
-        view.title(String.format(Translation.TUI_GuestSetting_Title.trans(), dominion.getName()))
-                .navigator(Line.create()
-                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
-                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
-                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Translation.TUI_Navigation_GuestSetting));
-        for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
-            if (flag.equals(Flags.ADMIN)) continue; // Skip admin flag
-            view.add(createOption(flag, dominion.getFlagValue(flag), dominion.getName(), page));
-        }
-        view.showOn(player, page);
+    public static class GuestSettingTuiText extends ConfigurationPart {
+        public String title = "{0} Guest Setting";
+        public String button = "GUEST SET";
+        public String description = "Set guest behavior of dominion.";
     }
 
-    private static Line createOption(PreFlag flag, boolean value, String dominion_name, int page) {
-        if (value) {
-            return Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion set " + flag.getFlagName() + " false " + dominion_name + " " + page).build())
-                    .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
-        } else {
-            return Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion set " + flag.getFlagName() + " true " + dominion_name + " " + page).build())
-                    .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
+    public static ListViewButton button(CommandSender sender, String dominionName) {
+        return (ListViewButton) new ListViewButton(Language.guestSettingTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, dominionName, pageStr);
+            }
+        }.needPermission(defaultPermission);
+    }
+
+    public static void show(CommandSender sender, String dominionName, String pageStr) {
+        try {
+            DominionDTO dominion = toDominionDTO(dominionName);
+            assertDominionAdmin(sender, dominion);
+            int page = toIntegrity(pageStr);
+
+            ListView view = ListView.create(10, button(sender, dominionName));
+            view.title(formatString(Language.guestSettingTuiText.title, dominion.getName()))
+                    .navigator(Line.create()
+                            .append(MainMenu.button(sender).build())
+                            .append(DominionList.button(sender).build())
+                            .append(DominionManage.button(sender, dominionName).build())
+                            .append(Language.guestSettingTuiText.button));
+            for (PriFlag flag : Flags.getAllPriFlagsEnable()) {
+                if (flag.equals(Flags.ADMIN)) continue; // Skip admin flag this only for group or member
+                if (dominion.getGuestFlagValue(flag)) {
+                    view.add(Line.create()
+                            .append(new FunctionalButton("☑") {
+                                @Override
+                                public void function() {
+                                    DominionFlagCommand.setGuest(sender, dominionName, flag.getFlagName(), "false", String.valueOf(page));
+                                }
+                            }.red().build())
+                            .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())))
+                    );
+                } else {
+                    view.add(Line.create()
+                            .append(new FunctionalButton("☐") {
+                                @Override
+                                public void function() {
+                                    DominionFlagCommand.setGuest(sender, dominionName, flag.getFlagName(), "true", String.valueOf(page));
+                                }
+                            }.green().build())
+                            .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())))
+                    );
+                }
+            }
+            view.showOn(sender, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
     }
 }

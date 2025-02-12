@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Marks a method to be called after the configuration is loaded.
  * <p>
- * The method must be public and static.
+ * The method must be public.
  * <p>
  * The method must have no parameters.
  * <p>

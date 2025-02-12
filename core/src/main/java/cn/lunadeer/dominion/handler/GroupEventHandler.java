@@ -1,23 +1,57 @@
 package cn.lunadeer.dominion.handler;
 
-import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.dtos.GroupDTO;
 import cn.lunadeer.dominion.events.group.*;
-import cn.lunadeer.dominion.managers.Translation;
+import cn.lunadeer.dominion.utils.Notification;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static cn.lunadeer.dominion.utils.ControllerUtils.notAdminOrOwner;
-import static cn.lunadeer.dominion.utils.ControllerUtils.notOwner;
 
 public class GroupEventHandler implements Listener {
 
     public GroupEventHandler(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onGroupSetFlagEvent(GroupSetFlagEvent event) {
+        try {
+
+        } catch (Exception e) {
+            Notification.error(event.getOperator(), Language.memberEventHandlerText.removeMemberFailed, e.getMessage());
+        }
+
+        cn.lunadeer.dominion.dtos.DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(domName);
+        if (dominion == null) {
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DominionNotExist, domName);
+            return;
+        }
+        if (notAdminOrOwner(operator, dominion)) {
+            return;
+        }
+        GroupDTO group = GroupDTO.select(dominion.getId(), groupName);
+        if (group == null) {
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_GroupNotExist, domName, groupName);
+            return;
+        }
+        if ((flag.getFlagName().equals("admin") || group.getAdmin()) && notOwner(operator, dominion)) {
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_NotDominionOwnerForGroup, domName);
+            return;
+        }
+        if (flag.getFlagName().equals("admin")) {
+            group = group.setAdmin(value);
+        } else {
+            group = group.setFlagValue(flag, value);
+        }
+        if (group == null) {
+            operator.addResult(AbstractOperator.ResultType.FAILURE, Translation.Messages_DatabaseError);
+            return;
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)

@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis.template;
 
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.dtos.TemplateDTO;
 import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
@@ -18,19 +18,11 @@ import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 public class TemplateSetting {
 
     // /dominion template setting <模板名称> [页码]
-    public static void show(CommandSender sender, String templateName, int page) {
-        show(sender, new String[]{"", "", templateName, String.valueOf(page)});
-    }
-
-    public static void show(CommandSender sender, String templateName) {
-        show(sender, new String[]{"", "", templateName});
-    }
-
-    public static void show(CommandSender sender, String[] args) {
+    public static void show(CommandSender sender, String templateName, String pageStr) {
         Player player = playerOnly(sender);
         if (player == null) return;
         int page = getPage(args, 3);
-        PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[2]);
+        TemplateDTO template = TemplateDTO.select(player.getUniqueId(), args[2]);
         if (template == null) {
             Notification.error(sender, Translation.Messages_TemplateNotExist, args[2]);
             return;
@@ -45,13 +37,13 @@ public class TemplateSetting {
         );
 
         // /dominion template_set_flag <模板名称> <权限名称> <true/false> [页码]
-        for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
+        for (PriFlag flag : Flags.getAllPriFlagsEnable()) {
             view.add(createOption(flag, template.getFlagValue(flag), template.getName(), page));
         }
         view.showOn(player, page);
     }
 
-    private static Line createOption(PreFlag flag, boolean value, String templateName, int page) {
+    private static Line createOption(PriFlag flag, boolean value, String templateName, int page) {
         if (value) {
             return Line.create()
                     .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + templateName + " " + flag.getFlagName() + " false " + page).build())

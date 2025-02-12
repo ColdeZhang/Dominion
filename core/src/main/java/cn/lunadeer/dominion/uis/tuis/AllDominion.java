@@ -2,7 +2,6 @@ package cn.lunadeer.dominion.uis.tuis;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
-import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.minecraftpluginutils.stui.ListView;
 import cn.lunadeer.minecraftpluginutils.stui.components.Button;
 import cn.lunadeer.minecraftpluginutils.stui.components.Line;
@@ -12,7 +11,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 import static cn.lunadeer.dominion.uis.tuis.dominion.DominionList.BuildTreeLines;
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
 import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
 import static cn.lunadeer.dominion.utils.TuiUtils.notOp;
 
