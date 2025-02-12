@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import static cn.lunadeer.dominion.utils.EventUtils.checkEnvironmentFlag;
+import static cn.lunadeer.dominion.misc.Others.checkEnvironmentFlag;
 import static org.bukkit.Material.FARMLAND;
 
 public class EnvironmentEvents implements Listener {

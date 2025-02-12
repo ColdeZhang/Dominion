@@ -7,7 +7,6 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
-import cn.lunadeer.dominion.utils.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

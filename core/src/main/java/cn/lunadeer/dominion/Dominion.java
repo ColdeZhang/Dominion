@@ -4,10 +4,7 @@ import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.misc.Others;
-import cn.lunadeer.dominion.utils.Notification;
-import cn.lunadeer.dominion.utils.Scheduler;
-import cn.lunadeer.dominion.utils.XLogger;
-import cn.lunadeer.dominion.utils.bStatsMetrics;
+import cn.lunadeer.dominion.utils.*;
 import cn.lunadeer.dominion.utils.command.CommandManager;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
@@ -34,6 +31,7 @@ public final class Dominion extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        XVersionManager.VERSION = XVersionManager.GetVersion(this);
         new Notification(this);
         new XLogger(this);
         try {
