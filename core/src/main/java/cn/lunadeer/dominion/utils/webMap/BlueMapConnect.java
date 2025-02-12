@@ -3,9 +3,8 @@ package cn.lunadeer.dominion.utils.webMap;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Scheduler;
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.XLogger;
 import com.flowpowered.math.vector.Vector2d;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
@@ -79,7 +78,7 @@ public class BlueMapConnect {
                 });
             } catch (NoClassDefFoundError e) {
                 XLogger.warn(Translation.Messages_BlueMapConnectFailed);
-                XLogger.err(e.getMessage());
+                XLogger.error(e.getMessage());
             }
         });
     }
@@ -132,7 +131,7 @@ public class BlueMapConnect {
                 });
             } catch (NoClassDefFoundError e) {
                 XLogger.warn(Translation.Messages_BlueMapConnectFailed);
-                XLogger.err(e.getMessage());
+                XLogger.error(e.getMessage());
             }
         });
     }

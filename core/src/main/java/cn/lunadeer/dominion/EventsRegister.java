@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.handler.DominionEventHandler;
 import cn.lunadeer.dominion.handler.GroupEventHandler;
 import cn.lunadeer.dominion.handler.MemberEventHandler;
 import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.XVersionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,13 +16,9 @@ public class EventsRegister {
     private JavaPlugin plugin;
 
     public EventsRegister(JavaPlugin plugin) {
-        APIVersion version = GetAPIVersion(plugin);
         this.plugin = plugin;
-        if (version == null) {
-            return;
-        }
         try {
-            switch (version) {
+            switch (XVersionManager.VERSION) {
                 case v1_21:
                     XLogger.debug("Load API version: 1.21");
                     if (isPaper()) {
@@ -58,26 +55,6 @@ public class EventsRegister {
         new DominionEventHandler(plugin);
         new MemberEventHandler(plugin);
         new GroupEventHandler(plugin);
-    }
-
-    public enum APIVersion {
-        v1_21,
-        v1_20_1
-    }
-
-    public static APIVersion GetAPIVersion(JavaPlugin plugin) {
-        String version = plugin.getServer().getBukkitVersion();
-        XLogger.debug("API version: %s", version);
-        if (version.contains("1.21")) {
-            return APIVersion.v1_21;
-        } else if (version.contains("1.20.1")
-                || version.contains("1.20.4")
-                || version.contains("1.20.6")) {
-            return APIVersion.v1_20_1;
-        }
-        XLogger.error("Unsupported API version: %s", version);
-        plugin.getServer().getPluginManager().disablePlugin(plugin);
-        return null;
     }
 
     public void registerEvents(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {

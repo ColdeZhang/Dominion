@@ -4,8 +4,8 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.minecraftpluginutils.Scheduler;
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.lunadeer.dominion.utils.EventUtils.checkEnvironmentFlag;
+import static cn.lunadeer.dominion.misc.Others.checkEnvironmentFlag;
 import static org.bukkit.Material.FARMLAND;
 
 public class EnvironmentEvents implements Listener {

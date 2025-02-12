@@ -2,18 +2,29 @@ package cn.lunadeer.dominion.misc;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Dominion.adminPermission;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class Others {
 
@@ -21,6 +32,7 @@ public class Others {
         public String autoCleanStart = "Start auto clean players who have not logged in for {0} days.";
         public String autoCleaningPlayer = "Cleaned {0}'s data.";
         public String autoCleanEnd = "Auto clean finished.";
+        public String noPermissionForFlag = "You do not have {0}({1}) permission.";
     }
 
     public static boolean bypassLimit(Player player) {
@@ -85,5 +97,67 @@ public class Others {
             }
         }
         XLogger.info(Language.othersText.autoCleanEnd);
+    }
+
+    public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player, @Nullable Cancellable event) {
+        if (!flag.getEnable()) {
+            return true;
+        }
+        if (dom == null) {
+            return true;
+        }
+        MemberDTO member = Cache.instance.getMember(player, dom);
+        try {
+            assertDominionAdmin(player, dom);
+            return true;
+        } catch (Exception e) {
+            if (member != null) {
+                GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+                if (member.getGroupId() != -1 && group != null) {
+                    if (group.getFlagValue(flag)) {
+                        return true;
+                    }
+                } else {
+                    if (member.getFlagValue(flag)) {
+                        return true;
+                    }
+                }
+            } else {
+                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+                    return true;
+                }
+            }
+            String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
+            msg = "&#FF0000" + "&l" + msg;
+            MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace), msg);
+            if (event != null) {
+                event.setCancelled(true);
+            }
+            return false;
+        }
+    }
+
+    public static boolean checkEnvironmentFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag, @Nullable Cancellable event) {
+        if (!flag.getEnable()) {
+            return true;
+        }
+        if (dom == null) {
+            return true;
+        }
+        if (dom.getEnvironmentFlagValue().get(flag)) {
+            return true;
+        }
+        if (event != null) {
+            event.setCancelled(true);
+        }
+        return false;
+    }
+
+    public static DominionDTO getInventoryDominion(Player bukkitPlayer, Inventory inv) {
+        if (inv.getLocation() == null) {
+            return null;
+        } else {
+            return Cache.instance.getDominionByLoc(inv.getLocation());
+        }
     }
 }

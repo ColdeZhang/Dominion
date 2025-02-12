@@ -2,9 +2,8 @@ package cn.lunadeer.dominion.utils.webMap;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Scheduler;
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.DynmapCommonAPIListener;
 import org.dynmap.markers.AreaMarker;

@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils.VaultConnect;
 
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.XLogger;
 import net.milkbowl.vault2.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -21,7 +21,7 @@ public class Vault2 implements VaultInterface {
             PluginName = plugin.getName();
             return true;
         }
-        XLogger.err("VaultUnlocked not available.");
+        XLogger.error("VaultUnlocked not available.");
         return false;
     }
 

@@ -4,7 +4,6 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.utils.EventUtils;
 import cn.lunadeer.minecraftpluginutils.Notification;
 import cn.lunadeer.minecraftpluginutils.Teleport;
 import org.bukkit.Location;

@@ -4,7 +4,6 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.configuration.Configuration;
-import cn.lunadeer.dominion.managers.Translation;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.ParticleUtil;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
