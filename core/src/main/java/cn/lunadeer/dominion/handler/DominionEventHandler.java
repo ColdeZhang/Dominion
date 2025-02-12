@@ -141,7 +141,9 @@ public class DominionEventHandler implements Listener {
         // handle economy
         if (!event.isCancelled() && !event.isSkipEconomy()) {
             if (handleEconomyFailed(event.getOperator(),
-                    Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ? tempDominion.getSquare() : tempDominion.getVolume(),
+                    Dominion.config.getEconomyOnlyXZ(event.getOperator().getPlayer()) ?
+                            Math.abs(tempDominion.getSquare() - dominion.getSquare()) :
+                            Math.abs(tempDominion.getVolume() - dominion.getVolume()),
                     event.getType() == DominionSizeChangeEvent.SizeChangeType.EXPAND)) {
                 event.setCancelledAdnComplete(true);
             }
