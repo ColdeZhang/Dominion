@@ -58,7 +58,7 @@ public class MemberCommand {
      */
     public static SecondaryCommand setMemberPrivilege = new SecondaryCommand("member_set_pri", List.of(
             new CommandArguments.RequiredDominionArgument(),
-            new CommandArguments.RequiredPlayerArgument(),
+            new CommandArguments.RequiredMemberArgument(0),
             new CommandArguments.PriFlagArgument(),
             new CommandArguments.BollenOption(),
             new CommandArguments.OptionalPageArgument()
@@ -91,7 +91,7 @@ public class MemberCommand {
             PriFlag flag = toPriFlag(flagName);
             boolean value = toBoolean(valueStr);
             DominionDTO dominion = toDominionDTO(dominionName);
-            MemberDTO member = toMember(dominion, playerName);
+            MemberDTO member = toMemberDTO(dominion, playerName);
             new MemberSetFlagEvent(sender, dominion, member, flag, value).call();
             MemberSetting.show(sender, dominionName, playerName, pageStr);
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class MemberCommand {
      */
     public static SecondaryCommand removeMember = new SecondaryCommand("member_remove", List.of(
             new CommandArguments.RequiredDominionArgument(),
-            new CommandArguments.RequiredPlayerArgument(),
+            new CommandArguments.RequiredMemberArgument(0),
             new CommandArguments.OptionalPageArgument()
     )) {
         @Override
@@ -124,7 +124,7 @@ public class MemberCommand {
     public static void removeMember(CommandSender sender, String dominionName, String playerName, String pageStr) {
         try {
             DominionDTO dominion = toDominionDTO(dominionName);
-            MemberDTO member = toMember(dominion, playerName);
+            MemberDTO member = toMemberDTO(dominion, playerName);
             new MemberRemovedEvent(sender, dominion, member).call();
             MemberList.show(sender, dominionName, pageStr);
         } catch (Exception e) {

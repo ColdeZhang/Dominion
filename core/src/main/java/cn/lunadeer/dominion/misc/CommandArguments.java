@@ -2,15 +2,20 @@ package cn.lunadeer.dominion.misc;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.TemplateDTO;
 import cn.lunadeer.dominion.utils.command.Argument;
+import cn.lunadeer.dominion.utils.command.ConditionalArgument;
 import cn.lunadeer.dominion.utils.command.Option;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+
+import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
 
 public class CommandArguments {
 
@@ -104,6 +109,31 @@ public class CommandArguments {
                     return List.of();
                 }
             });
+        }
+    }
+
+    public static class RequiredMemberArgument extends ConditionalArgument {
+
+        public RequiredMemberArgument(Integer dominionArgumentIndex) {
+            super("member_name", List.of(dominionArgumentIndex));
+        }
+
+        @Override
+        public List<String> handelCondition(CommandSender sender) {
+            DominionDTO dominion = toDominionDTO(getConditionArguments().get(0));
+            return dominion.getMembers().stream().map(member -> member.getPlayer().getLastKnownName()).toList();
+        }
+    }
+
+    public static class RequiredGroupArgument extends ConditionalArgument {
+        public RequiredGroupArgument(Integer dominionArgumentIndex) {
+            super("group_name", List.of(dominionArgumentIndex));
+        }
+
+        @Override
+        public List<String> handelCondition(CommandSender sender) {
+            DominionDTO dominion = toDominionDTO(getConditionArguments().get(0));
+            return dominion.getGroups().stream().map(GroupDTO::getNamePlain).toList();
         }
     }
 }

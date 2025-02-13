@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.commands.AdministratorCommand;
+import cn.lunadeer.dominion.commands.GroupTitleCommand;
 import cn.lunadeer.dominion.commands.MigrationCommand;
 import cn.lunadeer.dominion.commands.TemplateCommand;
 import cn.lunadeer.dominion.handler.DominionEventHandler;
@@ -21,6 +22,9 @@ import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.Info;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.SetSize;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.SelectMember;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberList;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.SelectPlayer;
@@ -62,6 +66,9 @@ public class Language extends ConfigurationFile {
     public static MemberSetting.MemberSettingTuiText memberSettingTuiText = new MemberSetting.MemberSettingTuiText();
     public static TemplateList.TemplateListTuiText templateListTuiText = new TemplateList.TemplateListTuiText();
     public static SelectTemplate.SelectTemplateTuiText selectTemplateTuiText = new SelectTemplate.SelectTemplateTuiText();
+    public static GroupList.GroupListTuiText groupListTuiText = new GroupList.GroupListTuiText();
+    public static GroupSetting.GroupSettingTuiText groupSettingTuiText = new GroupSetting.GroupSettingTuiText();
+    public static SelectMember.SelectMemberTuiText selectMemberTuiText = new SelectMember.SelectMemberTuiText();
 
     // CUI
     public static ResizeDominion.ResizeDominionCuiText resizeDominionCuiText = new ResizeDominion.ResizeDominionCuiText();
@@ -72,11 +79,14 @@ public class Language extends ConfigurationFile {
     public static SetMapColor.SetMapColorCuiText setMapColorCuiText = new SetMapColor.SetMapColorCuiText();
     public static SearchPlayer.SearchPlayerCuiText searchPlayerCuiText = new SearchPlayer.SearchPlayerCuiText();
     public static CreateTemplate.CreateTemplateCuiText createTemplateCuiText = new CreateTemplate.CreateTemplateCuiText();
+    public static CreateGroup.CreateGroupCuiText createGroupCuiText = new CreateGroup.CreateGroupCuiText();
+    public static RenameGroup.RenameGroupCuiText renameGroupCuiText = new RenameGroup.RenameGroupCuiText();
 
     // Commands
     public static AdministratorCommand.AdministratorCommandText administratorCommandText = new AdministratorCommand.AdministratorCommandText();
     public static MigrationCommand.MigrationCommandText migrationCommandText = new MigrationCommand.MigrationCommandText();
     public static TemplateCommand.TemplateCommandText templateCommandText = new TemplateCommand.TemplateCommandText();
+    public static GroupTitleCommand.GroupTitleCommandText groupTitleCommandText = new GroupTitleCommand.GroupTitleCommandText();
 
 
     public static Configuration.ConfigurationText configurationText = new Configuration.ConfigurationText();

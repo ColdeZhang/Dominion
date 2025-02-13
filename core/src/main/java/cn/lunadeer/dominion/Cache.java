@@ -373,6 +373,16 @@ public class Cache implements Listener {
         return id_groups.get(id);
     }
 
+    public List<GroupDTO> getGroups(@NotNull Integer dominionId) {
+        List<GroupDTO> groups = new ArrayList<>();
+        for (GroupDTO group : id_groups.values()) {
+            if (group.getDomID().equals(dominionId)) {
+                groups.add(group);
+            }
+        }
+        return groups;
+    }
+
     public MemberDTO getMember(@NotNull Player player, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
         if (!player_uuid_to_member.containsKey(player.getUniqueId())) return null;
         return player_uuid_to_member.get(player.getUniqueId()).get(dominion.getId());
@@ -383,13 +393,38 @@ public class Cache implements Listener {
         return player_uuid_to_member.get(player_uuid).get(dominion.getId());
     }
 
-    public List<GroupDTO> getBelongGroupsOf(UUID plauer_uuid) {
+    public List<MemberDTO> getMembers(@NotNull Integer dominionId) {
+        List<MemberDTO> members = new ArrayList<>();
+        for (Map<Integer, MemberDTO> member : player_uuid_to_member.values()) {
+            if (member.containsKey(dominionId)) {
+                members.add(member.get(dominionId));
+            }
+        }
+        return members;
+    }
+
+    /**
+     * Retrieves the list of group titles for a player.
+     * This method collects all group titles associated with the player, including those from the player's memberships
+     * and the dominions they own.
+     *
+     * @param playerUuid The UUID of the player.
+     * @return A list of GroupDTO objects representing the player's group titles.
+     */
+    public List<GroupDTO> getPlayerGroupTitleList(UUID playerUuid) {
         List<GroupDTO> groups = new ArrayList<>();
-        if (!player_uuid_to_member.containsKey(plauer_uuid)) return groups;
-        for (MemberDTO member : player_uuid_to_member.get(plauer_uuid).values()) {
+        if (!player_uuid_to_member.containsKey(playerUuid)) return groups;
+        for (MemberDTO member : player_uuid_to_member.get(playerUuid).values()) {
             if (member.getGroupId() != -1) {
                 GroupDTO group = getGroup(member.getGroupId());
                 if (group != null) {
+                    groups.add(group);
+                }
+            }
+        }
+        for (DominionDTO dominion : getPlayerDominions(playerUuid)) {
+            for (GroupDTO group : getGroups(dominion.getId())) {
+                if (!groups.contains(group)) {
                     groups.add(group);
                 }
             }

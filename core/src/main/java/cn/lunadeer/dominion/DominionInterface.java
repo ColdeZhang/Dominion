@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.misc.Others;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,13 +40,23 @@ public class DominionInterface extends DominionAPI {
     }
 
     @Override
-    public MemberDTO getMember(@NotNull Player player, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
+    public @Nullable List<GroupDTO> getGroups(@NotNull DominionDTO dominion) {
+        return Cache.instance.getGroups(dominion.getId());
+    }
+
+    @Override
+    public MemberDTO getMember(@NotNull Player player, @NotNull DominionDTO dominion) {
         return Cache.instance.getMember(player.getUniqueId(), dominion);
     }
 
     @Override
-    public MemberDTO getMember(@NotNull UUID player_uuid, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
+    public MemberDTO getMember(@NotNull UUID player_uuid, @NotNull DominionDTO dominion) {
         return Cache.instance.getMember(player_uuid, dominion);
+    }
+
+    @Override
+    public @Nullable List<MemberDTO> getMembers(@NotNull DominionDTO dominion) {
+        return Cache.instance.getMembers(dominion.getId());
     }
 
     @Override
@@ -90,12 +101,12 @@ public class DominionInterface extends DominionAPI {
 
     @Override
     public boolean checkPrivilegeFlag(DominionDTO dom, PriFlag flag, Player player) {
-        return EventUtils.checkPrivilegeFlag(dom, flag, player, null);
+        return Others.checkPrivilegeFlag(dom, flag, player, null);
     }
 
     @Override
     public boolean checkEnvironmentFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag) {
-        return EventUtils.checkEnvironmentFlag(dom, flag, null);
+        return Others.checkEnvironmentFlag(dom, flag, null);
     }
 
 }
