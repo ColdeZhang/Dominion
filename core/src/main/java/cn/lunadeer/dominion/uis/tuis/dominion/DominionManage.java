@@ -12,6 +12,7 @@ import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.Info;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberList;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.command.SecondaryCommand;
@@ -78,8 +79,8 @@ public class DominionManage {
                     .append(MemberList.button(sender, dominionName).build())
                     .append(Language.memberListTuiText.description);
             Line group_list = Line.create()
-                    .append(Button.create(Translation.TUI_DominionManage_GroupListButton).setExecuteCommand("/dominion group list " + dominion.getName()).build())
-                    .append(Translation.TUI_DominionManage_GroupListDescription);
+                    .append(GroupList.button(sender, dominionName).build())
+                    .append(Language.groupListTuiText.description);
             Line set_tp = Line.create()
                     .append(Button.create(Translation.TUI_DominionManage_SetTpLocationButton).setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
                     .append(Translation.TUI_DominionManage_SetTpLocationDescription);

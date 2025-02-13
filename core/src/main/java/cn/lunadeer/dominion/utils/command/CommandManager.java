@@ -109,6 +109,18 @@ public class CommandManager implements TabExecutor {
         if (strings.length - 1 > args.size()) {
             return null;
         }
+        for (int i = 1; i < strings.length - 1; i++) {
+            args.get(i - 1).setValue(strings[i]);
+        }
+        for (Argument arg : args) {
+            if (arg instanceof ConditionalArgument cond) {
+                for (Integer key : cond.getConditionArguments().keySet()) {
+                    if (key < strings.length - 2) {
+                        cond.setConditionArguments(key, strings[key + 1]);
+                    }
+                }
+            }
+        }
         return args.get(strings.length - 2).getSuggestion().get(commandSender);
     }
 }

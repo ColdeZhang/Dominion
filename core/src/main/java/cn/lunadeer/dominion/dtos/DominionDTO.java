@@ -443,12 +443,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
     @Override
     public List<GroupDTO> getGroups() {
-        return new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectByDominionId(getId()));
+        return Cache.instance.getGroups(getId());
     }
 
     @Override
     public List<MemberDTO> getMembers() {
-        return new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId(getId()));
+        return Cache.instance.getMembers(getId());
     }
 
     @Override

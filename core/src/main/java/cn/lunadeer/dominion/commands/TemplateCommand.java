@@ -159,7 +159,7 @@ public class TemplateCommand {
 
     public static SecondaryCommand memberApplyTemplate = new SecondaryCommand("member_apply_template", List.of(
             new CommandArguments.RequiredDominionArgument(),
-            new CommandArguments.RequiredPlayerArgument(),
+            new CommandArguments.RequiredMemberArgument(0),
             new CommandArguments.RequiredTemplateArgument()
     )) {
         @Override
@@ -181,7 +181,7 @@ public class TemplateCommand {
             } else {
                 assertDominionAdmin(player, dominion);
             }
-            MemberDTO member = toMember(dominion, playerName);
+            MemberDTO member = toMemberDTO(dominion, playerName);
             ((cn.lunadeer.dominion.dtos.MemberDTO) member).applyTemplate(template);
             Notification.info(sender, Language.templateCommandText.applyTemplateSuccess, templateName, playerName);
         } catch (Exception e) {

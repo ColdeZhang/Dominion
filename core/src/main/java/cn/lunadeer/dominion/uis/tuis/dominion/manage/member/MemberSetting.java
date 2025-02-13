@@ -57,7 +57,7 @@ public class MemberSetting {
     public static void show(CommandSender sender, String dominionName, String playerName, String pageStr) {
         try {
             DominionDTO dominion = toDominionDTO(dominionName);
-            MemberDTO member = toMember(dominion, playerName);
+            MemberDTO member = toMemberDTO(dominion, playerName);
             int page = toIntegrity(pageStr);
             ListView view = ListView.create(10, button(sender, dominionName, playerName));
             view.title(formatString(Language.memberSettingTuiText.title, playerName));

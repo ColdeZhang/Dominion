@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.misc;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
@@ -46,6 +47,8 @@ public class Converts {
         public String unknownPlayer = "Player {0} have not been recorded (after the plugin is installed).";
 
         public String notMember = "Player {0} is not a member of dominion {1}.";
+
+        public String noGroupFound = "No group found with the name {0} in dominion {1}.";
     }
 
     /**
@@ -361,6 +364,15 @@ public class Converts {
         }
     }
 
+    public static PlayerDTO toPlayerDTO(UUID uuid) {
+        PlayerDTO playerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.select(uuid);
+        if (playerDTO == null) {
+            throw new DominionException(Language.convertsText.unknownPlayer, uuid.toString());
+        } else {
+            return playerDTO;
+        }
+    }
+
     /**
      * Converts a player name to a MemberDTO object.
      *
@@ -369,13 +381,21 @@ public class Converts {
      * @return The corresponding MemberDTO object.
      * @throws DominionException If the player is not a member of the dominion.
      */
-    public static @NotNull MemberDTO toMember(@NotNull DominionDTO dominion, String playerName) {
+    public static @NotNull MemberDTO toMemberDTO(@NotNull DominionDTO dominion, String playerName) {
         PlayerDTO player = toPlayerDTO(playerName);
         MemberDTO member = Cache.instance.getMember(player.getUuid(), dominion);
         if (member != null) {
             return member;
         }
         throw new DominionException(Language.convertsText.notMember, playerName, dominion.getName());
+    }
+
+    public static @NotNull GroupDTO toGroupDTO(@NotNull DominionDTO dominion, String groupName) {
+        GroupDTO group = dominion.getGroups().stream().filter(g -> g.getNamePlain().equals(groupName)).findFirst().orElse(null);
+        if (group != null) {
+            return group;
+        }
+        throw new DominionException(Language.convertsText.noGroupFound, groupName, dominion.getName());
     }
 
 }
