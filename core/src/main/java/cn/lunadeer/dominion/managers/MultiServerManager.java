@@ -1,27 +1,37 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.utils.Notification;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
-public class TeleportManager implements PluginMessageListener, Listener {
+import static cn.lunadeer.dominion.utils.Misc.isPaper;
 
-    public static TeleportManager instance;
+// https://docs.papermc.io/paper/dev/plugin-messaging#forward
+public class MultiServerManager implements PluginMessageListener, Listener {
+
+    public static MultiServerManager instance;
 
     private final JavaPlugin plugin;
     private final ServerInfoDTO thisServerInfo;
     private final Map<Integer, String> allServerInfo;
 
-    public TeleportManager(JavaPlugin plugin) {
+    public MultiServerManager(JavaPlugin plugin) {
         this.plugin = plugin;
         File infoFile = new File(plugin.getDataFolder(), "server_info.json");
         this.plugin.getServer().getMessenger().registerOutgoingPluginChannel(this.plugin, "BungeeCord");
@@ -111,5 +121,76 @@ public class TeleportManager implements PluginMessageListener, Listener {
         }
         sql = "DELETE FROM bc_tp_cache WHERE player_uuid = ?";
         DatabaseManager.instance.query(sql, player.getUniqueId().toString());
+    }
+
+    /**
+     * 安全传送玩家到指定位置
+     *
+     * @param player   玩家
+     * @param location 位置
+     * @return 是否成功 (true: 成功, false: 失败)
+     * <p>
+     * 如果需要处理传送失败的情况，可以使用 CompletableFuture 的 thenAccept 方法
+     * 例如:
+     * Teleport.doTeleportSafely(player, location).thenAccept((success) -> {
+     * if (!success) {
+     * // 传送失败的处理
+     * }
+     * });
+     */
+    public static CompletableFuture<Boolean> doTeleportSafely(Player player, Location location) {
+        if (!player.getPassengers().isEmpty()) {
+            player.getPassengers().forEach(player::removePassenger);
+        }
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        if (!isPaper()) {
+            Location loc = getSafeTeleportLocation(location);
+            if (loc == null) {
+                Notification.error(player, Localization.Utils_TeleportUnsafe);
+                future.complete(false);
+                return future;
+            }
+            player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        } else {
+            location.getWorld().getChunkAtAsyncUrgently(location).thenAccept((chunk) -> {
+                Location loc = getSafeTeleportLocation(location);
+                if (loc == null) {
+                    Notification.error(player, Localization.Utils_TeleportUnsafe);
+                    future.complete(false);
+                    return;
+                }
+                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                future.complete(true);
+            });
+        }
+        return future;
+    }
+
+    public static Location getSafeTeleportLocation(Location location) {
+        int max_attempts = 512;
+        while (location.getBlock().isPassable()) {
+            location.setY(location.getY() - 1);
+            max_attempts--;
+            if (max_attempts <= 0) {
+                return null;
+            }
+        }
+        Block up1 = location.getBlock().getRelative(BlockFace.UP);
+        Block up2 = up1.getRelative(BlockFace.UP);
+        max_attempts = 512;
+        while (!(up1.isPassable() && !up1.isLiquid()) || !(up2.isPassable() && !up2.isLiquid())) {
+            location.setY(location.getY() + 1);
+            up1 = location.getBlock().getRelative(BlockFace.UP);
+            up2 = up1.getRelative(BlockFace.UP);
+            max_attempts--;
+            if (max_attempts <= 0) {
+                return null;
+            }
+        }
+        location.setY(location.getY() + 1);
+        if (location.getBlock().getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
+            return null;
+        }
+        return location;
     }
 }

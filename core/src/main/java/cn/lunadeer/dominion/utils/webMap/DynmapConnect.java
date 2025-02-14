@@ -1,9 +1,11 @@
 package cn.lunadeer.dominion.utils.webMap;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.Scheduler;
 import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.dynmap.DynmapCommonAPI;
 import org.dynmap.DynmapCommonAPIListener;
 import org.dynmap.markers.AreaMarker;
@@ -13,7 +15,15 @@ import org.dynmap.markers.MarkerSet;
 import java.util.List;
 import java.util.Map;
 
+import static cn.lunadeer.dominion.utils.Misc.formatString;
+
 public class DynmapConnect extends DynmapCommonAPIListener {
+
+    public static class DynmapConnectText extends ConfigurationPart {
+        public String registerSuccess = "Register to dynmap success!";
+        public String registerFail = "Register to dynmap failed!";
+        public String infoLabel = "<div>{0}</div><div>Owner: {1}</div>";
+    }
 
     public static DynmapConnect instance;
 
@@ -36,17 +46,17 @@ public class DynmapConnect extends DynmapCommonAPIListener {
         if (this.markerSet_mca == null) {
             this.markerSet_mca = markerAPI.createMarkerSet("mca", "MCA文件", null, false);
         }
-        XLogger.info(Translation.Messages_DynmapRegisterSuccess);
+        XLogger.info(Language.dynmapConnectText.registerSuccess);
     }
 
     private void setDominionMarker(DominionDTO dominion) {
-        PlayerDTO p = PlayerDTO.select(dominion.getOwner());
+        PlayerDTO p = (PlayerDTO) PlayerDTO.select(dominion.getOwner());
         if (p == null) {
             return;
         }
-        String nameLabel = String.format(Translation.Messages_MapInfoDetail.trans(), dominion.getName(), p.getLastKnownName());
-        double[] xx = {dominion.getX1(), dominion.getX2()};
-        double[] zz = {dominion.getZ1(), dominion.getZ2()};
+        String nameLabel = formatString(Language.dynmapConnectText.infoLabel, dominion.getName(), p.getLastKnownName());
+        double[] xx = {dominion.getCuboid().x1(), dominion.getCuboid().x2()};
+        double[] zz = {dominion.getCuboid().z1(), dominion.getCuboid().z2()};
         if (dominion.getWorld() == null) {
             return;
         }
@@ -67,7 +77,7 @@ public class DynmapConnect extends DynmapCommonAPIListener {
     public void setDominionMarkers(List<DominionDTO> dominions) {
         Scheduler.runTaskAsync(() -> {
             if (this.markerSet_dominion == null) {
-                XLogger.warn(Translation.Messages_DynmapConnectFailed);
+                XLogger.warn(Language.dynmapConnectText.registerFail);
                 return;
             }
             this.markerSet_dominion.getAreaMarkers().forEach(AreaMarker::deleteMarker);
@@ -80,7 +90,7 @@ public class DynmapConnect extends DynmapCommonAPIListener {
     public void setMCAMarkers(Map<String, List<String>> mca_files) {
         Scheduler.runTaskAsync(() -> {
             if (this.markerSet_mca == null) {
-                XLogger.warn(Translation.Messages_DynmapConnectFailed);
+                XLogger.warn(Language.dynmapConnectText.registerFail);
                 return;
             }
             this.markerSet_mca.getAreaMarkers().forEach(AreaMarker::deleteMarker);

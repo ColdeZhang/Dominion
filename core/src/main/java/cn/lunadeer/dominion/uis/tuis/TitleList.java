@@ -3,56 +3,105 @@ package cn.lunadeer.dominion.uis.tuis;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.commands.GroupTitleCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.misc.CommandArguments;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.command.SecondaryCommand;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class TitleList {
 
-    public static void show(CommandSender sender, int page) {
-        show(sender, new String[]{String.valueOf(page)});
+    public static class TitleListTuiText extends ConfigurationPart {
+        public String title = "Group Title List";
+        public String description = "List of group titles you can use.";
+        public String button = "TITLES";
+        public String useButton = "USE";
+        public String disuseButton = "DISUSE";
+        public String fromDominion = "From dominion {0}";
     }
 
-    public static void show(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        int page = getPage(args, 1);
-        ListView view = ListView.create(10, "/dominion title_list");
-
-        view.title(Translation.TUI_TitleList_Title);
-        view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_TitleList));
-
-        List<GroupDTO> groups = Cache.instance.getBelongGroupsOf(player.getUniqueId());
-        GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
-
-        // 将其拥有的所有领地的权限组称号都加入列表 - 领地所有者可以使用其领地的任意权限组称号
-        List<DominionDTO> dominions = Cache.instance.getPlayerDominions(player.getUniqueId());
-        for (DominionDTO dominion : dominions) {
-            List<GroupDTO> groupsOfDom = dominion.getGroups();
-            groups.addAll(groupsOfDom);
-        }
-
-        for (GroupDTO group : groups) {
-            DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
-            Line line = Line.create();
-            if (using != null && using.getId().equals(group.getId())) {
-                line.append(Button.createRed(Translation.TUI_TitleList_RemoveButton).setExecuteCommand("/dominion use_title -1").build());
-            } else {
-                line.append(Button.createGreen(Translation.TUI_TitleList_ApplyButton).setExecuteCommand("/dominion use_title " + group.getId()).build());
+    public static SecondaryCommand titleList = new SecondaryCommand("title_list", List.of(
+            new CommandArguments.OptionalPageArgument()
+    )) {
+        @Override
+        public void executeHandler(CommandSender sender) {
+            try {
+                show(sender, getArgumentValue(0));
+            } catch (Exception e) {
+                Notification.error(sender, e.getMessage());
             }
-            line.append(group.getNameColoredComponent()).append(Translation.TUI_TitleList_FromDominion.trans() + dominion.getName());
-            view.add(line);
         }
+    }.needPermission(defaultPermission).register();
 
-        view.showOn(player, page);
+    public static ListViewButton button(CommandSender sender) {
+        return (ListViewButton) new ListViewButton(Language.titleListTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, pageStr);
+            }
+        }.needPermission(defaultPermission);
+    }
+
+    public static void show(CommandSender sender, String pageStr) {
+        try {
+            Player player = toPlayer(sender);
+            int page = toIntegrity(pageStr);
+
+            ListView view = ListView.create(10, button(sender));
+
+            view.title(Language.titleListTuiText.title);
+            view.navigator(Line.create()
+                    .append(MainMenu.button(sender).build())
+                    .append(Language.titleListTuiText.button));
+
+            List<GroupDTO> groups = Cache.instance.getPlayerGroupTitleList(player.getUniqueId());
+            GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
+
+            for (GroupDTO group : groups) {
+                DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
+                if (dominion == null) {
+                    continue;
+                }
+                Line line = Line.create();
+                line.append(Component.text(group.getId() + ". "));
+                if (using != null && using.getId().equals(group.getId())) {
+                    line.append(new FunctionalButton(Language.titleListTuiText.useButton) {
+                        @Override
+                        public void function() {
+                            GroupTitleCommand.useTitle(sender, "-1", pageStr);
+                        }
+                    }.needPermission(defaultPermission).red().build());
+                } else {
+                    line.append(new FunctionalButton(Language.titleListTuiText.disuseButton) {
+                        @Override
+                        public void function() {
+                            GroupTitleCommand.useTitle(sender, group.getId().toString(), pageStr);
+                        }
+                    }.needPermission(defaultPermission).green().build());
+                }
+                line.append(group.getNameColoredComponent().hoverEvent(Component.text(formatString(Language.titleListTuiText.fromDominion, dominion.getName()))));
+                view.add(line);
+            }
+
+            view.showOn(player, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
+        }
     }
 
 }

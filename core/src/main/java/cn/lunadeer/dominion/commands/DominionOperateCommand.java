@@ -59,13 +59,7 @@ public class DominionOperateCommand {
     )) {
         @Override
         public void executeHandler(CommandSender sender) {
-            try {
-                Player player = toPlayer(sender);
-                DominionDTO dominion = toDominionDTO(getArgumentValue(0));
-                new DominionSetTpLocationEvent(sender, dominion, player.getLocation()).call();
-            } catch (Exception e) {
-                Notification.error(sender, e.getMessage());
-            }
+            setTp(sender, getArgumentValue(0));
         }
     }.needPermission(defaultPermission).register();
 
@@ -199,6 +193,16 @@ public class DominionOperateCommand {
             DominionDTO dominion = toDominionDTO(dominionName);
             Color color = toColor(colorStr);
             new DominionSetMapColorEvent(sender, dominion, color).call();
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
+        }
+    }
+
+    public static void setTp(CommandSender sender, String dominionName) {
+        try {
+            Player player = toPlayer(sender);
+            DominionDTO dominion = toDominionDTO(dominionName);
+            new DominionSetTpLocationEvent(sender, dominion, player.getLocation()).call();
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
         }

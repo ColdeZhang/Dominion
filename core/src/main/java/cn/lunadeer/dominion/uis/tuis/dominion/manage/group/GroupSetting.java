@@ -60,7 +60,7 @@ public class GroupSetting {
             );
             view.add(Line.create().append(RenameGroup.button(sender, dominionName, groupName).build()));
 
-            if (group.getAdmin()) {
+            if (group.getFlagValue(Flags.ADMIN)) {
                 view.add(createOption(sender, Flags.ADMIN, true, dominion.getName(), group.getNamePlain(), pageStr));
                 view.add(createOption(sender, Flags.GLOW, group.getFlagValue(Flags.GLOW), dominion.getName(), group.getNamePlain(), pageStr));
             } else {

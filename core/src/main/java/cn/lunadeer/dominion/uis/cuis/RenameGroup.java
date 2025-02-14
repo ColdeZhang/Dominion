@@ -42,7 +42,7 @@ public class RenameGroup {
             try {
                 DominionDTO dominion = toDominionDTO(dominionName);
                 GroupDTO group = toGroupDTO(dominion, oldGroupName);
-                new GroupRenamedEvent(sender, group, input).call();
+                new GroupRenamedEvent(sender, dominion, group, input).call();
                 GroupSetting.show(sender, dominionName, ColorParser.getPlainText(input), "1");
             } catch (Exception e) {
                 Notification.error(sender, e.getMessage());

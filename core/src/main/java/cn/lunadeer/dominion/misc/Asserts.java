@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.configuration.Limitation;
@@ -36,6 +37,10 @@ public class Asserts {
         public String domNameInvalid = "Dominion name should not contain space or dot.";
         public String domNameExist = "Dominion name: {0} already exists.";
 
+        public String groupNameShouldNotEmpty = "Group name should not be empty.";
+        public String groupNameInvalid = "Group name should not contain space or dot.";
+        public String groupNameExist = "Group name: {0} already exists.";
+
         public String notAllowDomInWorld = "Player {0} is not allowed to create dominions in world {1}.";
         public String exceedMaxAmount = "Player {0} can not create more dominions (max: {1}).";
         public String exceedMaxAmountOfWorld = "Player {0} can not create more dominions in world {1} (max: {2}).";
@@ -62,6 +67,9 @@ public class Asserts {
 
         public String withDrawMoney = "Successfully paid {0} for dominion.";
         public String depositMoney = "Successfully refunded {0} from dominion.";
+
+        public String groupNotBelongDominion = "Group {0} does not belong to dominion {1}.";
+        public String memberNotBelongDominion = "Member {0} does not belong to dominion {1}.";
     }
 
     /**
@@ -79,6 +87,18 @@ public class Asserts {
         }
         if (cn.lunadeer.dominion.dtos.DominionDTO.select(dominionName) != null) {
             throw new DominionException(Language.assertsText.domNameExist, dominionName);
+        }
+    }
+
+    public static void assertGroupName(@NotNull DominionDTO dominion, String groupNamePlain) throws DominionException, SQLException {
+        if (groupNamePlain.isEmpty()) {
+            throw new DominionException(Language.assertsText.groupNameShouldNotEmpty);
+        }
+        if (groupNamePlain.contains(" ") || groupNamePlain.contains(".")) {
+            throw new DominionException(Language.assertsText.groupNameInvalid);
+        }
+        if (dominion.getGroups().stream().anyMatch(group -> group.getNamePlain().equals(groupNamePlain))) {
+            throw new DominionException(Language.assertsText.groupNameExist, groupNamePlain);
         }
     }
 
@@ -209,10 +229,10 @@ public class Asserts {
             throw new DominionException(Language.assertsText.notAdmin, dominion.getName());
         }
         GroupDTO group = Cache.instance.getGroup(member.getGroupId());
-        if (group != null && group.getAdmin()) {
+        if (group != null && group.getFlagValue(Flags.ADMIN)) {
             return;
         }
-        if (member.getAdmin()) {
+        if (member.getFlagValue(Flags.ADMIN)) {
             return;
         }
         throw new DominionException(Language.assertsText.notAdmin, dominion.getName());
@@ -346,6 +366,18 @@ public class Asserts {
             price = price * ecoConf.refundRate * -1;
             VaultConnect.instance.depositPlayer(associatedPlayer, price);
             Notification.info(associatedPlayer, Language.assertsText.depositMoney, price);
+        }
+    }
+
+    public static void assertGroupBelongDominion(@NotNull GroupDTO group, @NotNull DominionDTO dominion) throws DominionException {
+        if (dominion.getGroups().stream().noneMatch(g -> g.getId().equals(group.getId()))) {
+            throw new DominionException(Language.assertsText.groupNotBelongDominion, group.getNamePlain(), dominion.getName());
+        }
+    }
+
+    public static void assertMemberBelongDominion(@NotNull MemberDTO member, @NotNull DominionDTO dominion) throws DominionException {
+        if (dominion.getMembers().stream().noneMatch(m -> m.getId().equals(member.getId()))) {
+            throw new DominionException(Language.assertsText.groupNotBelongDominion, member.getPlayer().getLastKnownName(), dominion.getName());
         }
     }
 }

@@ -96,7 +96,7 @@ public class MemberList {
                 // Tag
                 if (group != null) {
                     line.append(groupTag);
-                } else if (member.getAdmin()) {
+                } else if (member.getFlagValue(Flags.ADMIN)) {
                     line.append(adminTag);
                 } else {
                     if (!member.getFlagValue(Flags.MOVE)) {
@@ -120,7 +120,7 @@ public class MemberList {
                     assertDominionOwner(sender, dominion);
                 } catch (Exception e) {
                     // not owner then the sender is admin so he should not remove other admin
-                    disable = member.getAdmin();
+                    disable = member.getFlagValue(Flags.ADMIN);
                 }
                 if (disable) {
                     prev.setDisabled(Language.memberListTuiText.ownerOnly);

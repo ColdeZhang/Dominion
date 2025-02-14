@@ -47,9 +47,6 @@ public final class Dominion extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new PlaceHolderApi(this);
         }
-        if (Configuration.groupTitle.enable && !Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            XLogger.warn(Translation.Messages_PlaceholderAPINotFound);
-        }
 
         new EventsRegister(this);
         new CommandManager("/dominion");

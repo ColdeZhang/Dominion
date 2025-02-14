@@ -88,9 +88,7 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionCreateEvent(DominionCreateEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         try {
             World world = event.getWorld();
             DominionDTO parent = event.getParent();
@@ -136,9 +134,7 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSizeChangeEvent(DominionReSizeEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         int amount = event.getNewCuboid().minusVolumeWith(event.getOldCuboid());
         if (amount == 0) {
             return;
@@ -155,6 +151,7 @@ public class DominionEventHandler implements Listener {
                 assertEconomy(player, event.getOldCuboid(), event.getNewCuboid());
             }
             DominionDTO modified = dominion.setCuboid(event.getNewCuboid());
+            event.setDominion(modified);
             ParticleUtil.showBorder(player, modified);
             if (expand) {
                 Notification.info(player, Language.dominionEventHandlerText.expandSuccess, dominion.getName());
@@ -181,9 +178,7 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionDeleteEvent(DominionDeleteEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
@@ -221,9 +216,7 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionRenameEvent(DominionRenameEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
@@ -231,7 +224,7 @@ public class DominionEventHandler implements Listener {
                 throw new DominionException(Language.dominionEventHandlerText.sameName);
             }
             assertDominionName(event.getNewName());
-            dominion.setName(event.getNewName());
+            event.setDominion(dominion.setName(event.getNewName()));
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.renameSuccess, event.getOldName(), event.getNewName());
         } catch (Exception e) {
             event.setCancelled(true);
@@ -248,9 +241,7 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionTransferEvent(DominionTransferEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
@@ -275,7 +266,7 @@ public class DominionEventHandler implements Listener {
                 sub_dominion.setOwner(newOwner.getUniqueId());
                 Notification.info(event.getOperator(), Language.dominionEventHandlerText.giveSuccess, sub_dominion.getName(), newOwner.getName());
             }
-            dominion.setOwner(newOwner.getUniqueId());
+            event.setDominion(dominion.setOwner(newOwner.getUniqueId()));
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.giveSuccess, dominion.getName(), newOwner.getName());
         } catch (Exception e) {
             event.setCancelled(true);
@@ -292,9 +283,7 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSetTpLocationEvent(DominionSetTpLocationEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
@@ -302,7 +291,7 @@ public class DominionEventHandler implements Listener {
             if (d == null) {
                 throw new DominionException(Language.dominionEventHandlerText.tpLocationNotInDominion, dominion.getName());
             }
-            dominion.setTpLocation(event.getNewTpLocation());
+            event.setDominion(dominion.setTpLocation(event.getNewTpLocation()));
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.tpLocationSetSuccess, dominion.getName());
         } catch (Exception e) {
             event.setCancelled(true);
@@ -319,17 +308,15 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSetMessageEvent(DominionSetMessageEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
             if (event.getType() == DominionSetMessageEvent.TYPE.ENTER) {
-                dominion.setJoinMessage(event.getNewMessage());
+                event.setDominion(dominion.setJoinMessage(event.getNewMessage()));
                 Notification.info(event.getOperator(), Language.dominionEventHandlerText.setEnterMessageSuccess, dominion.getName());
             } else {
-                dominion.setLeaveMessage(event.getNewMessage());
+                event.setDominion(dominion.setLeaveMessage(event.getNewMessage()));
                 Notification.info(event.getOperator(), Language.dominionEventHandlerText.setLeaveMessageSuccess, dominion.getName());
             }
         } catch (Exception e) {
@@ -351,13 +338,11 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSetMapColorEvent(DominionSetMapColorEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
-            dominion.setColor(event.getNewColor());
+            event.setDominion(dominion.setColor(event.getNewColor()));
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.SetMapColorSuccess, dominion.getName());
         } catch (Exception e) {
             event.setCancelled(true);
@@ -375,13 +360,11 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSetEnvFlagEvent(DominionSetEnvFlagEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionAdmin(event.getOperator(), dominion);
-            dominion.setEnvFlagValue(event.getFlag(), event.getNewValue());
+            event.setDominion(dominion.setEnvFlagValue(event.getFlag(), event.getNewValue()));
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.setEnvFlagSuccess, event.getFlag(), event.getNewValue());
         } catch (Exception e) {
             event.setCancelled(true);
@@ -398,13 +381,11 @@ public class DominionEventHandler implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH)
     public void onDominionSetGuestFlagEvent(DominionSetGuestFlagEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionAdmin(event.getOperator(), dominion);
-            dominion.setGuestFlagValue(event.getFlag(), event.getNewValue());
+            event.setDominion(dominion.setGuestFlagValue(event.getFlag(), event.getNewValue()));
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.setGuestFlagSuccess, event.getFlag(), event.getNewValue());
         } catch (Exception e) {
             event.setCancelled(true);

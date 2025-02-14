@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.utils.Teleport;
+import cn.lunadeer.dominion.managers.MultiServerManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -627,36 +627,22 @@ public class PlayerEvents implements Listener {
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
         if (!checkPrivilegeFlag(dom, Flags.MOVE, player, null)) {
             Location to = player.getLocation();
-            int x1 = Math.abs(to.getBlockX() - dom.getX1());
-            int x2 = Math.abs(to.getBlockX() - dom.getX2());
-            int z1 = Math.abs(to.getBlockZ() - dom.getZ1());
-            int z2 = Math.abs(to.getBlockZ() - dom.getZ2());
+            int x1 = Math.abs(to.getBlockX() - dom.getCuboid().x1());
+            int x2 = Math.abs(to.getBlockX() - dom.getCuboid().x2());
+            int z1 = Math.abs(to.getBlockZ() - dom.getCuboid().z1());
+            int z2 = Math.abs(to.getBlockZ() - dom.getCuboid().z2());
             // find min distance
             int min = Math.min(Math.min(x1, x2), Math.min(z1, z2));
             if (min == x1) {
-                to.setX(dom.getX1() - 2);
+                to.setX(dom.getCuboid().x1() - 2);
             } else if (min == x2) {
-                to.setX(dom.getX2() + 2);
+                to.setX(dom.getCuboid().x2() + 2);
             } else if (min == z1) {
-                to.setZ(dom.getZ1() - 2);
+                to.setZ(dom.getCuboid().z1() - 2);
             } else {
-                to.setZ(dom.getZ2() + 2);
+                to.setZ(dom.getCuboid().z2() + 2);
             }
-            Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
-                if (!success) {
-                    Notification.warn(player, "传送失败，你将被传送到复活点");
-                    Location bed = player.getBedSpawnLocation();
-                    if (bed == null) {
-                        bed = player.getWorld().getSpawnLocation();
-                    }
-                    if (Common.isPaper()) {
-                        player.teleportAsync(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    } else {
-                        player.teleport(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    }
-
-                }
-            });
+            MultiServerManager.doTeleportSafely(player, to);
         }
     }
 

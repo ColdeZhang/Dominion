@@ -13,7 +13,6 @@ import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.stui.ListView;
 import cn.lunadeer.dominion.utils.stui.ViewStyles;
 import cn.lunadeer.dominion.utils.stui.components.Line;
-import cn.lunadeer.dominion.utils.stui.components.buttons.Button;
 import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import cn.lunadeer.dominion.utils.stui.components.buttons.UrlButton;
 import net.kyori.adventure.text.Component;
@@ -73,8 +72,8 @@ public class MainMenu {
                 .append(DominionList.button(sender).build())
                 .append(Language.dominionListTuiText.description);
         Line title = Line.create()
-                .append(Button.create(Translation.TUI_Menu_TitleListButton).setExecuteCommand("/dominion title_list").build())
-                .append(Translation.TUI_Menu_TitleListDescription);
+                .append(TitleList.button(sender).build())
+                .append(Language.titleListTuiText.description);
         Line template = Line.create()
                 .append(TemplateList.button(sender).build())
                 .append(Language.templateListTuiText.description);
@@ -88,8 +87,8 @@ public class MainMenu {
                 .append(MigrateList.button(sender).build())
                 .append(Language.migrateListText.description);
         Line all = Line.create()
-                .append(Button.create(Translation.TUI_Menu_AllDominionButton).setExecuteCommand("/dominion all_dominion").build())
-                .append(Translation.TUI_Menu_AllDominionDescription);
+                .append(AllDominion.button(sender).build())
+                .append(Language.allDominionTuiText.description);
         Line reload_cache = Line.create()
                 .append(AdministratorCommand.reloadCacheButton(sender).build())
                 .append(Language.administratorCommandText.reloadCacheDescription);

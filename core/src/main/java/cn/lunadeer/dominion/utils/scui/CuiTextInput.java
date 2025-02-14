@@ -17,6 +17,12 @@ import static cn.lunadeer.dominion.utils.Misc.isPaper;
 
 
 public class CuiTextInput implements CuiView {
+
+    public static String CUI_NOT_AVAILABLE = "CUI is not available on no-paper (fork) core server.";
+    public static String CUI_SUGGEST_COMMAND = "You can use command {0} instead.";
+    public static String CUI_BUTTON = "Left Click: Confirm | Right Click: Cancel";
+    public static String CUI_INPUT_INVALID = "Input can not contain space.";
+
     public interface InputCallback {
         public void handleData(String input);
     }
@@ -38,9 +44,9 @@ public class CuiTextInput implements CuiView {
     @Override
     public void open(Player audience) {
         if (!isPaper()) {
-            Notification.error(audience, Localization.Utils_CUI_NotAvailable);
+            Notification.error(audience, CUI_NOT_AVAILABLE);
             if (suggest_command != null) {
-                Notification.info(audience, Localization.Utils_CUI_SuggestCommand, suggest_command);
+                Notification.info(audience, CUI_SUGGEST_COMMAND, suggest_command);
             }
             return;
         }
@@ -52,13 +58,13 @@ public class CuiTextInput implements CuiView {
         inv.setFirstItem(btn_1.build());
 
         ItemStackButton btn_2 = ItemStackButton.create(this, Material.GREEN_CONCRETE)
-                .title(Localization.Utils_CUI_LeftRightClick.trans());
+                .title(CUI_BUTTON);
         btn_2.addLeftClickTask(0, (view, event) -> {
             try {
                 XLogger.debug("inv class: %s", inv.getClass().getName());
                 String input = inv.getRenameText();
                 if (input != null && input.contains(" ")) {
-                    Notification.error(audience, Localization.Utils_CUI_NoSpace);
+                    Notification.error(audience, CUI_INPUT_INVALID);
                     return;
                 }
                 callback_handle_input.handleData(input);
