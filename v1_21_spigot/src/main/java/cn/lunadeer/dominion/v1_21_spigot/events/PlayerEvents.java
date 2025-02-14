@@ -4,8 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.Teleport;
+import cn.lunadeer.dominion.managers.MultiServerManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -26,7 +25,8 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.material.Colorable;
 
-import static cn.lunadeer.dominion.utils.EventUtils.getInvDominion;
+import static cn.lunadeer.dominion.misc.Others.checkPrivilegeFlag;
+import static cn.lunadeer.dominion.misc.Others.getInventoryDominion;
 
 public class PlayerEvents implements Listener {
     @EventHandler
@@ -49,7 +49,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getRespawnLocation());
-        if (!EventUtils.checkPrivilegeFlag(dom, Flags.ANCHOR, bukkitPlayer, null)) {
+        if (!checkPrivilegeFlag(dom, Flags.ANCHOR, bukkitPlayer, null)) {
             if (bukkitPlayer.getRespawnLocation() != null) {
                 event.setRespawnLocation(bukkitPlayer.getRespawnLocation());
             } else {
@@ -73,7 +73,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.ANCHOR, player, event);
+        checkPrivilegeFlag(dom, Flags.ANCHOR, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // animal_killing
@@ -86,7 +86,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.ANIMAL_KILLING, bukkitPlayer, event);
+        checkPrivilegeFlag(dom, Flags.ANIMAL_KILLING, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // anvil
@@ -98,7 +98,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        EventUtils.checkPrivilegeFlag(dom, Flags.ANVIL, bukkitPlayer, event);
+        checkPrivilegeFlag(dom, Flags.ANVIL, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // beacon
@@ -114,7 +114,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(inv.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.BEACON, bukkitPlayer, event);
+        checkPrivilegeFlag(dom, Flags.BEACON, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // bed
@@ -131,7 +131,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.BED, bukkitPlayer, event);
+        checkPrivilegeFlag(dom, Flags.BED, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // brew
@@ -143,7 +143,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        EventUtils.checkPrivilegeFlag(dom, Flags.BREW, bukkitPlayer, event);
+        checkPrivilegeFlag(dom, Flags.BREW, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // break
@@ -195,7 +195,7 @@ public class PlayerEvents implements Listener {
 
     public static boolean onBreak(Player player, Location location) {
         DominionDTO dom = Cache.instance.getDominionByLoc(location);
-        return EventUtils.checkPrivilegeFlag(dom, Flags.BREAK_BLOCK, player, null);
+        return checkPrivilegeFlag(dom, Flags.BREAK_BLOCK, player, null);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // button
@@ -212,7 +212,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.BUTTON, player, event);
+        checkPrivilegeFlag(dom, Flags.BUTTON, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // cake
@@ -230,7 +230,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.CAKE, player, event);
+        checkPrivilegeFlag(dom, Flags.CAKE, player, event);
     }
 
     // 检查是否有容器权限
@@ -241,7 +241,7 @@ public class PlayerEvents implements Listener {
         } else {
             dom = Cache.instance.getDominionByLoc(loc);
         }
-        return EventUtils.checkPrivilegeFlag(dom, Flags.CONTAINER, player, null);
+        return checkPrivilegeFlag(dom, Flags.CONTAINER, player, null);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // container
@@ -333,8 +333,8 @@ public class PlayerEvents implements Listener {
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        DominionDTO dom = getInvDominion(bukkitPlayer, inv);
-        EventUtils.checkPrivilegeFlag(dom, Flags.CRAFT, bukkitPlayer, event);
+        DominionDTO dom = getInventoryDominion(bukkitPlayer, inv);
+        checkPrivilegeFlag(dom, Flags.CRAFT, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // crafter
@@ -347,8 +347,8 @@ public class PlayerEvents implements Listener {
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        DominionDTO dom = getInvDominion(bukkitPlayer, inv);
-        EventUtils.checkPrivilegeFlag(dom, Flags.CRAFTER, bukkitPlayer, event);
+        DominionDTO dom = getInventoryDominion(bukkitPlayer, inv);
+        checkPrivilegeFlag(dom, Flags.CRAFTER, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // comparer
@@ -366,7 +366,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.COMPARER, player, event);
+        checkPrivilegeFlag(dom, Flags.COMPARER, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // door
@@ -383,7 +383,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.DOOR, player, event);
+        checkPrivilegeFlag(dom, Flags.DOOR, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // dragon_egg
@@ -397,7 +397,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.DRAGON_EGG, player, event);
+        checkPrivilegeFlag(dom, Flags.DRAGON_EGG, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // dye
@@ -408,7 +408,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.DYE, player, event);
+        checkPrivilegeFlag(dom, Flags.DYE, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // edit sign
@@ -425,7 +425,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.EDIT_SIGN, player, event);
+        checkPrivilegeFlag(dom, Flags.EDIT_SIGN, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // edit sign
@@ -433,7 +433,7 @@ public class PlayerEvents implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.EDIT_SIGN, player, event);
+        checkPrivilegeFlag(dom, Flags.EDIT_SIGN, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // egg
@@ -446,7 +446,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.EGG, player, event);
+        checkPrivilegeFlag(dom, Flags.EGG, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // enchant
@@ -457,8 +457,8 @@ public class PlayerEvents implements Listener {
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
-        EventUtils.checkPrivilegeFlag(dom, Flags.ENCHANT, bukkitPlayer, event);
+        DominionDTO dom = getInventoryDominion(bukkitPlayer, event.getInventory());
+        checkPrivilegeFlag(dom, Flags.ENCHANT, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // ender_pearl
@@ -471,7 +471,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.ENDER_PEARL, player, event);
+        checkPrivilegeFlag(dom, Flags.ENDER_PEARL, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // feed
@@ -485,7 +485,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getRightClicked().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.FEED, player, event);
+        checkPrivilegeFlag(dom, Flags.FEED, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // harvest
@@ -511,7 +511,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.HARVEST, player, event);
+        checkPrivilegeFlag(dom, Flags.HARVEST, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // honey
@@ -529,7 +529,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.HONEY, player, event);
+        checkPrivilegeFlag(dom, Flags.HONEY, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // hook
@@ -540,7 +540,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(caught.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.HOOK, player, event);
+        checkPrivilegeFlag(dom, Flags.HOOK, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // hopper
@@ -557,8 +557,8 @@ public class PlayerEvents implements Listener {
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
-        EventUtils.checkPrivilegeFlag(dom, Flags.HOPPER, bukkitPlayer, event);
+        DominionDTO dom = getInventoryDominion(bukkitPlayer, event.getInventory());
+        checkPrivilegeFlag(dom, Flags.HOPPER, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // ignite
@@ -568,7 +568,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getBlock().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.IGNITE, player, event);
+        checkPrivilegeFlag(dom, Flags.IGNITE, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // item_frame_interactive
@@ -583,7 +583,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.ITEM_FRAME_INTERACTIVE, player, event);
+        checkPrivilegeFlag(dom, Flags.ITEM_FRAME_INTERACTIVE, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // lever
@@ -601,7 +601,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.LEVER, player, event);
+        checkPrivilegeFlag(dom, Flags.LEVER, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // monster_killing
@@ -615,40 +615,31 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.MONSTER_KILLING, bukkitPlayer, event);
+        checkPrivilegeFlag(dom, Flags.MONSTER_KILLING, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // move
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getPlayerCurrentDominion(player);
-        if (!EventUtils.checkPrivilegeFlag(dom, Flags.MOVE, player, null)) {
+        if (!checkPrivilegeFlag(dom, Flags.MOVE, player, null)) {
             Location to = player.getLocation();
-            int x1 = Math.abs(to.getBlockX() - dom.getX1());
-            int x2 = Math.abs(to.getBlockX() - dom.getX2());
-            int z1 = Math.abs(to.getBlockZ() - dom.getZ1());
-            int z2 = Math.abs(to.getBlockZ() - dom.getZ2());
+            int x1 = Math.abs(to.getBlockX() - dom.getCuboid().x1());
+            int x2 = Math.abs(to.getBlockX() - dom.getCuboid().x2());
+            int z1 = Math.abs(to.getBlockZ() - dom.getCuboid().z1());
+            int z2 = Math.abs(to.getBlockZ() - dom.getCuboid().z2());
             // find min distance
             int min = Math.min(Math.min(x1, x2), Math.min(z1, z2));
             if (min == x1) {
-                to.setX(dom.getX1() - 2);
+                to.setX(dom.getCuboid().x1() - 2);
             } else if (min == x2) {
-                to.setX(dom.getX2() + 2);
+                to.setX(dom.getCuboid().x2() + 2);
             } else if (min == z1) {
-                to.setZ(dom.getZ1() - 2);
+                to.setZ(dom.getCuboid().z1() - 2);
             } else {
-                to.setZ(dom.getZ2() + 2);
+                to.setZ(dom.getCuboid().z2() + 2);
             }
-            Teleport.doTeleportSafely(player, to).thenAccept((success) -> {
-                if (!success) {
-                    Notification.warn(player, "传送失败，你将被传送到复活点");
-                    Location bed = player.getRespawnLocation();
-                    if (bed == null) {
-                        bed = player.getWorld().getSpawnLocation();
-                    }
-                    player.teleport(bed, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                }
-            });
+            MultiServerManager.doTeleportSafely(player, to);
         }
     }
 
@@ -667,7 +658,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.NOTE_BLOCK, player, event);
+        checkPrivilegeFlag(dom, Flags.NOTE_BLOCK, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // place
@@ -719,7 +710,7 @@ public class PlayerEvents implements Listener {
 
     public static boolean onPlace(Player player, Location location) {
         DominionDTO dom = Cache.instance.getDominionByLoc(location);
-        return EventUtils.checkPrivilegeFlag(dom, Flags.PLACE, player, null);
+        return checkPrivilegeFlag(dom, Flags.PLACE, player, null);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // pressure
@@ -736,7 +727,7 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.PRESSURE, player, event);
+        checkPrivilegeFlag(dom, Flags.PRESSURE, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // riding
@@ -745,7 +736,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getMount().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.RIDING, player, event);
+        checkPrivilegeFlag(dom, Flags.RIDING, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // repeater
@@ -760,14 +751,14 @@ public class PlayerEvents implements Listener {
         }
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(block.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.REPEATER, player, event);
+        checkPrivilegeFlag(dom, Flags.REPEATER, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // shear
     public void onShear(PlayerShearEntityEvent event) {
         Player player = event.getPlayer();
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.SHEAR, player, event);
+        checkPrivilegeFlag(dom, Flags.SHEAR, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // shoot
@@ -780,7 +771,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(projectile.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.SHOOT, player, event);
+        checkPrivilegeFlag(dom, Flags.SHOOT, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // shoot - wind_charge knock back
@@ -793,7 +784,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(windCharge.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.SHOOT, player, event);
+        checkPrivilegeFlag(dom, Flags.SHOOT, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // trade
@@ -804,8 +795,8 @@ public class PlayerEvents implements Listener {
         if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
             return;
         }
-        DominionDTO dom = getInvDominion(bukkitPlayer, event.getInventory());
-        EventUtils.checkPrivilegeFlag(dom, Flags.TRADE, bukkitPlayer, event);
+        DominionDTO dom = getInventoryDominion(bukkitPlayer, event.getInventory());
+        checkPrivilegeFlag(dom, Flags.TRADE, bukkitPlayer, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // vehicle_destroy
@@ -814,7 +805,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getVehicle().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.VEHICLE_DESTROY, player, event);
+        checkPrivilegeFlag(dom, Flags.VEHICLE_DESTROY, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // vehicle_spawn
@@ -828,7 +819,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(entity.getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.VEHICLE_SPAWN, player, event);
+        checkPrivilegeFlag(dom, Flags.VEHICLE_SPAWN, player, event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)  // villager_killing
@@ -840,6 +831,6 @@ public class PlayerEvents implements Listener {
             return;
         }
         DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
-        EventUtils.checkPrivilegeFlag(dom, Flags.VILLAGER_KILLING, player, event);
+        checkPrivilegeFlag(dom, Flags.VILLAGER_KILLING, player, event);
     }
 }

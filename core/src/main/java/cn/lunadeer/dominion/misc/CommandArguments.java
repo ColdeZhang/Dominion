@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.command.Argument;
 import cn.lunadeer.dominion.utils.command.ConditionalArgument;
 import cn.lunadeer.dominion.utils.command.Option;
@@ -104,7 +105,12 @@ public class CommandArguments {
         public RequiredTemplateArgument() {
             super("template_name", true, (commandSender) -> {
                 if (commandSender instanceof Player player) {
-                    return TemplateDTO.selectAll(player.getUniqueId()).stream().map(TemplateDTO::getName).toList();
+                    try {
+                        return TemplateDTO.selectAll(player.getUniqueId()).stream().map(TemplateDTO::getName).toList();
+                    } catch (Exception e) {
+                        XLogger.error(e.getMessage());
+                        return List.of();
+                    }
                 } else {
                     return List.of();
                 }
@@ -134,6 +140,18 @@ public class CommandArguments {
         public List<String> handelCondition(CommandSender sender) {
             DominionDTO dominion = toDominionDTO(getConditionArguments().get(0));
             return dominion.getGroups().stream().map(GroupDTO::getNamePlain).toList();
+        }
+    }
+
+    public static class PlayerTitleIdArgument extends Argument {
+        public PlayerTitleIdArgument() {
+            super("title_id", true, (commandSender) -> {
+                if (commandSender instanceof Player player) {
+                    return Cache.instance.getPlayerGroupTitleList(player.getUniqueId()).stream().map(title -> title.getId().toString()).toList();
+                } else {
+                    return List.of();
+                }
+            });
         }
     }
 }

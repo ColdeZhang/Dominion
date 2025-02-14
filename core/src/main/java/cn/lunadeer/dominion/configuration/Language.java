@@ -8,14 +8,17 @@ import cn.lunadeer.dominion.commands.GroupTitleCommand;
 import cn.lunadeer.dominion.commands.MigrationCommand;
 import cn.lunadeer.dominion.commands.TemplateCommand;
 import cn.lunadeer.dominion.handler.DominionEventHandler;
+import cn.lunadeer.dominion.handler.GroupEventHandler;
 import cn.lunadeer.dominion.handler.MemberEventHandler;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.misc.Asserts;
 import cn.lunadeer.dominion.misc.Converts;
 import cn.lunadeer.dominion.misc.Others;
 import cn.lunadeer.dominion.uis.cuis.*;
+import cn.lunadeer.dominion.uis.tuis.AllDominion;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.uis.tuis.MigrateList;
+import cn.lunadeer.dominion.uis.tuis.TitleList;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
@@ -30,6 +33,7 @@ import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.SelectPlayer;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.SelectTemplate;
 import cn.lunadeer.dominion.uis.tuis.template.TemplateList;
+import cn.lunadeer.dominion.uis.tuis.template.TemplateSetting;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
 import cn.lunadeer.dominion.utils.command.InvalidArgumentException;
 import cn.lunadeer.dominion.utils.command.NoPermissionException;
@@ -37,6 +41,9 @@ import cn.lunadeer.dominion.utils.configuration.ConfigurationFile;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.configuration.PostProcess;
 import cn.lunadeer.dominion.utils.configuration.PreProcess;
+import cn.lunadeer.dominion.utils.scui.CuiTextInput;
+import cn.lunadeer.dominion.utils.webMap.BlueMapConnect;
+import cn.lunadeer.dominion.utils.webMap.DynmapConnect;
 
 public class Language extends ConfigurationFile {
 
@@ -51,6 +58,7 @@ public class Language extends ConfigurationFile {
     // Event Handler
     public static DominionEventHandler.DominionEventHandlerText dominionEventHandlerText = new DominionEventHandler.DominionEventHandlerText();
     public static MemberEventHandler.MemberEventHandlerText memberEventHandlerText = new MemberEventHandler.MemberEventHandlerText();
+    public static GroupEventHandler.GroupEventHandlerText groupEventHandlerText = new GroupEventHandler.GroupEventHandlerText();
 
     // TUI
     public static MainMenu.MenuTuiText menuTuiText = new MainMenu.MenuTuiText();
@@ -69,6 +77,9 @@ public class Language extends ConfigurationFile {
     public static GroupList.GroupListTuiText groupListTuiText = new GroupList.GroupListTuiText();
     public static GroupSetting.GroupSettingTuiText groupSettingTuiText = new GroupSetting.GroupSettingTuiText();
     public static SelectMember.SelectMemberTuiText selectMemberTuiText = new SelectMember.SelectMemberTuiText();
+    public static TitleList.TitleListTuiText titleListTuiText = new TitleList.TitleListTuiText();
+    public static AllDominion.AllDominionTuiText allDominionTuiText = new AllDominion.AllDominionTuiText();
+    public static TemplateSetting.TemplateSettingText templateSettingText = new TemplateSetting.TemplateSettingText();
 
     // CUI
     public static ResizeDominion.ResizeDominionCuiText resizeDominionCuiText = new ResizeDominion.ResizeDominionCuiText();
@@ -95,12 +106,25 @@ public class Language extends ConfigurationFile {
 
     public static DatabaseTables.DatabaseManagerText databaseManagerText = new DatabaseTables.DatabaseManagerText();
 
+    // web map render
+    public static BlueMapConnect.BlueMapConnectText blueMapConnectText = new BlueMapConnect.BlueMapConnectText();
+    public static DynmapConnect.DynmapConnectText dynmapConnectText = new DynmapConnect.DynmapConnectText();
+
 
     public static CommandExceptionText commandExceptionText = new CommandExceptionText();
 
     public static class CommandExceptionText extends ConfigurationPart {
         public String noPermission = "You do not have permission {0} to do this.";
         public String invalidArguments = "Invalid arguments, usage e.g. {0}.";
+    }
+
+    public static CuiInputText cuiInputText = new CuiInputText();
+
+    public static class CuiInputText extends ConfigurationPart {
+        public String cuiNotAvailable = "CUI is not available on no-paper (fork) core server.";
+        public String cuiSuggestCommand = "You can use command {0} instead.";
+        public String cuiButton = "Left Click: Confirm | Right Click: Cancel";
+        public String cuiInputInvalid = "Input can not contain space.";
     }
 
     @PreProcess
@@ -120,9 +144,15 @@ public class Language extends ConfigurationFile {
     }
 
     @PostProcess
-    public static void setCommandExceptionText() {
+    public static void setOtherStaticText() {
+        // cn.lunadeer.dominion.utils.command
         InvalidArgumentException.MSG = commandExceptionText.invalidArguments;
         NoPermissionException.MSG = commandExceptionText.noPermission;
+        // cn.lunadeer.dominion.utils.scui.CuiTextInput
+        CuiTextInput.CUI_NOT_AVAILABLE = cuiInputText.cuiNotAvailable;
+        CuiTextInput.CUI_SUGGEST_COMMAND = cuiInputText.cuiSuggestCommand;
+        CuiTextInput.CUI_BUTTON = cuiInputText.cuiButton;
+        CuiTextInput.CUI_INPUT_INVALID = cuiInputText.cuiInputInvalid;
     }
 
 }

@@ -77,7 +77,7 @@ public class GroupCommand {
         try {
             DominionDTO dominion = toDominionDTO(dominionName);
             GroupDTO group = toGroupDTO(dominion, oldGroupName);
-            new GroupRenamedEvent(sender, group, newGroupName).call();
+            new GroupRenamedEvent(sender, dominion, group, newGroupName).call();
             GroupSetting.show(sender, dominion.getName(), newGroupName, "1");
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
@@ -126,7 +126,7 @@ public class GroupCommand {
             DominionDTO dominion = toDominionDTO(dominionName);
             MemberDTO member = toMemberDTO(dominion, playerName);
             GroupDTO group = toGroupDTO(dominion, groupName);
-            new GroupAddMemberEvent(sender, group, member).call();
+            new GroupAddMemberEvent(sender, dominion, group, member).call();
             GroupList.show(sender, dominion.getName(), "1");
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());
@@ -150,7 +150,7 @@ public class GroupCommand {
             DominionDTO dominion = toDominionDTO(dominionName);
             GroupDTO group = toGroupDTO(dominion, groupName);
             MemberDTO member = toMemberDTO(dominion, playerName);
-            new GroupRemoveMemberEvent(sender, group, member).call();
+            new GroupRemoveMemberEvent(sender, dominion, group, member).call();
             GroupList.show(sender, dominion.getName(), pageStr);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

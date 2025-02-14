@@ -102,6 +102,26 @@ public class Configuration extends ConfigurationFile {
         public String password = "dominion";
     }
 
+    @Comments({
+            "The settings of the multi server.",
+            "If you have multiple servers proxied by BungeeCord, you can configure and enable this.",
+            "Player can manage/teleport across multi-servers.",
+            "Database with type sqlite is not supported in multi-server mode."
+    })
+    public static MultiServer multiServer = new MultiServer();
+
+    public static class MultiServer extends ConfigurationPart {
+        @Comments("Enable multi server mode.")
+        public boolean enable = false;
+        @Comments("The name of this server show in menu.")
+        public String serverName = "server";
+        @Comments({
+                "The id of this server, must be unique among all servers.",
+                "DO NOT CHANGE THIS AFTER THERE ARE DATA IN THE DATABASE."
+        })
+        public int serverId = 0;
+    }
+
     @Comments("Language of the plugin, see others in the plugins/Dominion/languages folder.")
     public static String language = "en_us";
 
@@ -192,6 +212,11 @@ public class Configuration extends ConfigurationFile {
 
     @PostProcess
     public static void checkConfigurationParams() {
+        if (database.type.equalsIgnoreCase("sqlite") && multiServer.enable) {
+            XLogger.warn("Database with type sqlite is not supported in multi-server mode.");
+            multiServer.enable = false;
+        }
+
         if (autoCreateRadius < 0 && autoCreateRadius != -1) {
             autoCreateRadius = -1;
         }

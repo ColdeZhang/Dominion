@@ -1,6 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.dominion;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.commands.DominionOperateCommand;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.misc.CommandArguments;
@@ -19,7 +20,7 @@ import cn.lunadeer.dominion.utils.command.SecondaryCommand;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.stui.ListView;
 import cn.lunadeer.dominion.utils.stui.components.Line;
-import cn.lunadeer.dominion.utils.stui.components.buttons.Button;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
 import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -38,6 +39,8 @@ public class DominionManage {
     public static class DominionManageTuiText extends ConfigurationPart {
         public String title = "Manage {0}";
         public String button = "MANAGE";
+        public String setTpButton = "SET TP";
+        public String setTpDescription = "Set your current location as tp location.";
     }
 
     public static SecondaryCommand manage = new SecondaryCommand("manage", List.of(
@@ -82,8 +85,13 @@ public class DominionManage {
                     .append(GroupList.button(sender, dominionName).build())
                     .append(Language.groupListTuiText.description);
             Line set_tp = Line.create()
-                    .append(Button.create(Translation.TUI_DominionManage_SetTpLocationButton).setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
-                    .append(Translation.TUI_DominionManage_SetTpLocationDescription);
+                    .append(new FunctionalButton(Language.dominionManageTuiText.setTpButton) {
+                        @Override
+                        public void function() {
+                            DominionOperateCommand.setTp(sender, dominionName);
+                        }
+                    }.build())
+                    .append(Language.dominionManageTuiText.setTpDescription);
             Line rename = Line.create()
                     .append(RenameDominion.button(sender, dominionName).build())
                     .append(Language.renameDominionCuiText.description);

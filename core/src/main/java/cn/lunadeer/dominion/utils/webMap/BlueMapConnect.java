@@ -2,9 +2,11 @@ package cn.lunadeer.dominion.utils.webMap;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.Scheduler;
 import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import com.flowpowered.math.vector.Vector2d;
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import de.bluecolored.bluemap.api.BlueMapMap;
@@ -15,7 +17,15 @@ import de.bluecolored.bluemap.api.math.Shape;
 
 import java.util.*;
 
+import static cn.lunadeer.dominion.utils.Misc.formatString;
+
 public class BlueMapConnect {
+
+    public static class BlueMapConnectText extends ConfigurationPart {
+        public String registerFail = "Failed to register BlueMap API.";
+        public String infoLabel = "<div>{0}</div><div>Owner: {1}</div>";
+    }
+
     public static void render() {
         Scheduler.runTaskAsync(() -> {
             try {
@@ -37,20 +47,20 @@ public class BlueMapConnect {
                                     .build();
 
                             for (DominionDTO dominion : d.getValue()) {
-                                PlayerDTO p = PlayerDTO.select(dominion.getOwner());
+                                PlayerDTO p = (PlayerDTO) PlayerDTO.select(dominion.getOwner());
                                 if (p == null) {
                                     continue;
                                 }
 
                                 Collection<Vector2d> vectors = new ArrayList<>();
-                                vectors.add(new Vector2d(dominion.getX1() + 0.001, dominion.getZ1() + 0.001));
-                                vectors.add(new Vector2d(dominion.getX2() - 0.001, dominion.getZ1() + 0.001));
-                                vectors.add(new Vector2d(dominion.getX2() - 0.001, dominion.getZ2() - 0.001));
-                                vectors.add(new Vector2d(dominion.getX1() + 0.001, dominion.getZ2() - 0.001));
+                                vectors.add(new Vector2d(dominion.getCuboid().x1() + 0.001, dominion.getCuboid().z1() + 0.001));
+                                vectors.add(new Vector2d(dominion.getCuboid().x2() - 0.001, dominion.getCuboid().z1() + 0.001));
+                                vectors.add(new Vector2d(dominion.getCuboid().x2() - 0.001, dominion.getCuboid().z2() - 0.001));
+                                vectors.add(new Vector2d(dominion.getCuboid().x1() + 0.001, dominion.getCuboid().z2() - 0.001));
                                 Shape shape = new Shape(vectors);
                                 double x = vectors.iterator().next().getX();
                                 double z = vectors.iterator().next().getY();
-                                double y = dominion.getY1();
+                                double y = dominion.getCuboid().y1();
 
                                 int r = dominion.getColorR();
                                 int g = dominion.getColorG();
@@ -60,9 +70,9 @@ public class BlueMapConnect {
                                 Color fill = new Color(r, g, b, 0.2F);
                                 ExtrudeMarker marker = ExtrudeMarker.builder()
                                         .label(dominion.getName())
-                                        .detail(String.format(Translation.Messages_MapInfoDetail.trans(), dominion.getName(), p.getLastKnownName()))
+                                        .detail(formatString(Language.blueMapConnectText.infoLabel, dominion.getName(), p.getLastKnownName()))
                                         .position(x, y, z)
-                                        .shape(shape, dominion.getY1() + 0.001f, dominion.getY2() - 0.001f)
+                                        .shape(shape, dominion.getCuboid().y1() + 0.001f, dominion.getCuboid().y2() - 0.001f)
                                         .lineColor(line)
                                         .fillColor(fill)
                                         .build();
@@ -77,7 +87,7 @@ public class BlueMapConnect {
                     }
                 });
             } catch (NoClassDefFoundError e) {
-                XLogger.warn(Translation.Messages_BlueMapConnectFailed);
+                XLogger.warn(Language.blueMapConnectText.registerFail);
                 XLogger.error(e.getMessage());
             }
         });
@@ -130,7 +140,7 @@ public class BlueMapConnect {
                     }
                 });
             } catch (NoClassDefFoundError e) {
-                XLogger.warn(Translation.Messages_BlueMapConnectFailed);
+                XLogger.warn(Language.blueMapConnectText.registerFail);
                 XLogger.error(e.getMessage());
             }
         });

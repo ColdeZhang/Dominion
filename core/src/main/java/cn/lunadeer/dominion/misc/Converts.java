@@ -178,6 +178,15 @@ public class Converts {
         }
     }
 
+    public static @NotNull DominionDTO toDominionDTO(@NotNull Integer id) throws DominionException {
+        DominionDTO dom = Cache.instance.getDominion(id);
+        if (dom == null) {
+            throw new DominionException(Language.convertsText.unknownDominion, id.toString());
+        } else {
+            return dom;
+        }
+    }
+
     /**
      * Converts a string representation of an integer to an int.
      *
@@ -396,6 +405,14 @@ public class Converts {
             return group;
         }
         throw new DominionException(Language.convertsText.noGroupFound, groupName, dominion.getName());
+    }
+
+    public static @NotNull GroupDTO toGroupDTO(@NotNull Integer groupId) {
+        GroupDTO group = Cache.instance.getGroup(groupId);
+        if (group != null) {
+            return group;
+        }
+        throw new DominionException(Language.convertsText.noGroupFound, groupId.toString());
     }
 
 }

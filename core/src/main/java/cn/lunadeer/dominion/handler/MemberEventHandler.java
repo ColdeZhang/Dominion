@@ -18,8 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
-import static cn.lunadeer.dominion.misc.Asserts.assertDominionOwner;
+import static cn.lunadeer.dominion.misc.Asserts.*;
 
 public class MemberEventHandler implements Listener {
 
@@ -44,31 +43,30 @@ public class MemberEventHandler implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMemberSetFlag(MemberSetFlagEvent event) {
+        if (event.isCancelled()) return;
         try {
             DominionDTO dominion = event.getDominion();
-            assertDominionAdmin(event.getOperator(), dominion);
+            if (event.getFlag().equals(Flags.ADMIN)) {
+                assertDominionOwner(event.getOperator(), dominion);
+            } else {
+                assertDominionAdmin(event.getOperator(), dominion);
+            }
+            assertMemberBelongDominion(event.getMember(), dominion);
             MemberDTO member = event.getMember();
             if (member.getGroupId() != -1) {
                 throw new DominionException(Language.memberEventHandlerText.groupAlready, Cache.instance.getGroup(member.getGroupId()).getNamePlain());
             }
-            boolean owner = false;
-            try {
-                assertDominionOwner(event.getOperator(), dominion);
-            } catch (DominionException e) {
-                owner = true;
-            }
-            if (event.getFlag().equals(Flags.ADMIN) && !owner) {
-                throw new DominionException(Language.memberEventHandlerText.ownerOnly);
-            }
             member.setFlagValue(event.getFlag(), event.getNewValue());
             Notification.info(event.getOperator(), Language.memberEventHandlerText.setFlagSuccess, event.getFlag().getFlagName(), member.getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
+            event.setCancelled(true);
             Notification.error(event.getOperator(), Language.memberEventHandlerText.setFlagFailed, e.getMessage());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMemberAddEvent(MemberAddedEvent event) {
+        if (event.isCancelled()) return;
         try {
             DominionDTO dominion = event.getDominion();
             assertDominionAdmin(event.getOperator(), dominion);
@@ -84,35 +82,39 @@ public class MemberEventHandler implements Listener {
             event.setMember(member);
             Notification.info(event.getOperator(), Language.memberEventHandlerText.addMemberSuccess, event.getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
+            event.setCancelled(true);
             Notification.error(event.getOperator(), Language.memberEventHandlerText.addMemberFailed, e.getMessage());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMemberRemoveEvent(MemberRemovedEvent event) {
+        if (event.isCancelled()) return;
         try {
             DominionDTO dominion = event.getDominion();
             assertDominionAdmin(event.getOperator(), dominion);
             MemberDTO member = event.getMember();
+            assertMemberBelongDominion(member, dominion);
             boolean owner = false;
             try {
                 assertDominionOwner(event.getOperator(), dominion);
-            } catch (DominionException e) {
                 owner = true;
+            } catch (DominionException ignored) {
             }
             GroupDTO group = Cache.instance.getGroup(member.getGroupId());
             if (group != null) {
-                if (group.getAdmin() && !owner) {
-                    throw new DominionException(Language.memberEventHandlerText.ownerOnly);
+                if (group.getFlagValue(Flags.ADMIN) && !owner) {
+                    throw new DominionException(Language.groupEventHandlerText.ownerOnly);
                 }
             } else {
-                if (member.getAdmin() && !owner) {
+                if (member.getFlagValue(Flags.ADMIN) && !owner) {
                     throw new DominionException(Language.memberEventHandlerText.ownerOnly);
                 }
             }
             cn.lunadeer.dominion.dtos.MemberDTO.delete(member.getPlayerUUID(), dominion.getId());
             Notification.info(event.getOperator(), Language.memberEventHandlerText.removeMemberSuccess, event.getMember().getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
+            event.setCancelled(true);
             Notification.error(event.getOperator(), Language.memberEventHandlerText.removeMemberFailed, e.getMessage());
         }
     }

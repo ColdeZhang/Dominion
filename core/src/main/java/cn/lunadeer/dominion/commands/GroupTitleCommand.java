@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Objects;
 
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionOwner;
 import static cn.lunadeer.dominion.misc.Converts.*;
 
 public class GroupTitleCommand {
@@ -28,8 +29,8 @@ public class GroupTitleCommand {
         public String usingTitleFail = "Failed to use title, reason: {0}";
     }
 
-    public static SecondaryCommand useTitle = new SecondaryCommand("useTitle", List.of(
-            new CommandArguments.PlayerGroupsArgument(),
+    public static SecondaryCommand useTitle = new SecondaryCommand("title_use", List.of(
+            new CommandArguments.PlayerTitleIdArgument(),
             new CommandArguments.OptionalPageArgument()
     )) {
         @Override
@@ -38,34 +39,37 @@ public class GroupTitleCommand {
         }
     }.needPermission("dominion.default").register();
 
-    public static void useTitle(CommandSender sender, String groupPlainName, String pageStr) {
+    /**
+     * Uses a title for a player.
+     * This method allows a player to use a specific group title. It verifies the player's ownership or membership
+     * in the dominion associated with the group title and sets the title for the player if the checks pass.
+     *
+     * @param sender          The command sender.
+     * @param groupTitleIdStr The ID of the group title as a string. -1 for disuse current title.
+     * @param pageStr         The page number as a string.
+     */
+    public static void useTitle(CommandSender sender, String groupTitleIdStr, String pageStr) {
         try {
             Player player = toPlayer(sender);
-            int page = toIntegrity(pageStr);
+            int titleId = toIntegrity(groupTitleIdStr);
             PlayerDTO playerDto = toPlayerDTO(player.getUniqueId());
-            GroupDTO group = Cache.instance.getBelongGroupsOf(playerDto.getUuid()).stream()
-                    .filter(g -> g.getNamePlain().equals(groupPlainName))
-                    .findFirst()
-                    .orElse(null);
-            if (group == null) {
-                throw new DominionException(Language.groupTitleCommandText.groupNotBelonging, groupPlainName);
-            }
-            DominionDTO dominion = toDominionDTO(group.getDominionId());
-            if (!dominion.getOwner().equals(bukkit_player.getUniqueId())) {
-                MemberDTO member = Cache.instance.getMember(bukkit_player, dominion);
+            GroupDTO group = toGroupDTO(titleId);
+            DominionDTO dominion = toDominionDTO(group.getDomID());
+            try {
+                assertDominionOwner(player, dominion);
+            } catch (Exception e) {
+                MemberDTO member = Cache.instance.getMember(player, dominion);
                 if (member == null) {
-                    Notification.error(sender, Translation.Commands_Title_NotDominionMember, dominion.getName());
-                    return;
+                    throw new DominionException(Language.groupTitleCommandText.groupNotBelonging, group.getNamePlain());
                 }
                 if (!Objects.equals(member.getGroupId(), group.getId())) {
-                    Notification.error(sender, Translation.Commands_Title_NotGroupMember, group.getNamePlain());
-                    return;
+                    throw new DominionException(Language.groupTitleCommandText.groupNotBelonging, group.getNamePlain());
                 }
             }
-            ((cn.lunadeer.dominion.dtos.PlayerDTO) player).setUsingGroupTitleID(group.getId());
+            ((cn.lunadeer.dominion.dtos.PlayerDTO) playerDto).setUsingGroupTitleID(group.getId());
 
-            Notification.info(sender, Language.groupTitleCommandText.usingTitleSuccess, groupPlainName);
-            TitleList.show(sender, page);
+            Notification.info(sender, Language.groupTitleCommandText.usingTitleSuccess, groupTitleIdStr);
+            TitleList.show(sender, pageStr);
         } catch (Exception e) {
             Notification.error(sender, Language.groupTitleCommandText.usingTitleFail, e.getMessage());
         }

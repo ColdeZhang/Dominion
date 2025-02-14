@@ -165,15 +165,20 @@ public class Cache implements Listener {
         Scheduler.runTaskAsync(() -> {
             long start = System.currentTimeMillis();
             List<MemberDTO> all_privileges;
-            if (player_to_update == null) {
-                all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll());
-                player_uuid_to_member = new ConcurrentHashMap<>();
-            } else {
-                all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player_to_update));
-                if (!player_uuid_to_member.containsKey(player_to_update)) {
-                    player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
+            try {
+                if (player_to_update == null) {
+                    all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll());
+                    player_uuid_to_member = new ConcurrentHashMap<>();
+                } else {
+                    all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player_to_update));
+                    if (!player_uuid_to_member.containsKey(player_to_update)) {
+                        player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
+                    }
+                    player_uuid_to_member.get(player_to_update).clear();
                 }
-                player_uuid_to_member.get(player_to_update).clear();
+            } catch (SQLException e) {
+                XLogger.error(e.getMessage());
+                return;
             }
             for (MemberDTO privilege : all_privileges) {
                 UUID player_uuid = privilege.getPlayerUUID();
@@ -216,20 +221,30 @@ public class Cache implements Listener {
             long start = System.currentTimeMillis();
             if (groupId == null) {
                 id_groups = new ConcurrentHashMap<>();
-                List<GroupDTO> groups = new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectAll());
-                List<PlayerDTO> players = new ArrayList<>(cn.lunadeer.dominion.dtos.PlayerDTO.all());
-                for (GroupDTO group : groups) {
-                    id_groups.put(group.getId(), group);
-                }
-                for (PlayerDTO player : players) {
-                    map_player_using_group_title_id.put(player.getUuid(), player.getUsingGroupTitleID());
+                try {
+                    List<GroupDTO> groups = new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectAll());
+                    List<PlayerDTO> players = new ArrayList<>(cn.lunadeer.dominion.dtos.PlayerDTO.all());
+                    for (GroupDTO group : groups) {
+                        id_groups.put(group.getId(), group);
+                    }
+                    for (PlayerDTO player : players) {
+                        map_player_using_group_title_id.put(player.getUuid(), player.getUsingGroupTitleID());
+                    }
+                } catch (SQLException e) {
+                    XLogger.error(e.getMessage());
+                    return;
                 }
             } else {
-                GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.select(groupId);
-                if (group == null && id_groups.containsKey(groupId)) {
-                    id_groups.remove(groupId);
-                } else if (group != null) {
-                    id_groups.put(groupId, group);
+                try {
+                    GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.select(groupId);
+                    if (group == null && id_groups.containsKey(groupId)) {
+                        id_groups.remove(groupId);
+                    } else if (group != null) {
+                        id_groups.put(groupId, group);
+                    }
+                } catch (SQLException e) {
+                    XLogger.error(e.getMessage());
+                    return;
                 }
             }
             recheckPlayerState = true;
@@ -487,7 +502,7 @@ public class Cache implements Listener {
         List<DominionDTO> dominions = new ArrayList<>();
         for (DominionDTO dominion : id_dominions.values()) {
             MemberDTO privilege = getMember(player_uuid, dominion);
-            if (privilege != null && privilege.getAdmin()) {
+            if (privilege != null && privilege.getFlagValue(Flags.ADMIN)) {
                 dominions.add(dominion);
             }
         }

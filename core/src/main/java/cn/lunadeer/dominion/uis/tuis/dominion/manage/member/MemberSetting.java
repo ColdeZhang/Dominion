@@ -70,7 +70,7 @@ public class MemberSetting {
                             .append(Language.memberSettingTuiText.button)
             );
             view.add(Line.create().append(SelectTemplate.button(sender, dominionName, playerName).build()));
-            if (member.getAdmin()) {
+            if (member.getFlagValue(Flags.ADMIN)) {
                 view.add(createOption(sender, Flags.ADMIN, true, playerName, dominion.getName(), page));
                 view.add(createOption(sender, Flags.GLOW, member.getFlagValue(Flags.GLOW), playerName, dominion.getName(), page));
             } else {
