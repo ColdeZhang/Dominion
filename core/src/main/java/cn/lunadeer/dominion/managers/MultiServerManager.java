@@ -1,66 +1,47 @@
 package cn.lunadeer.dominion.managers;
 
-import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
-import static cn.lunadeer.dominion.utils.Misc.isPaper;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
 
 // https://docs.papermc.io/paper/dev/plugin-messaging#forward
-public class MultiServerManager implements PluginMessageListener, Listener {
+public class MultiServerManager implements PluginMessageListener {
+
+    public static class MultiServerManagerText extends ConfigurationPart {
+        public String sendingNotice = "Sending notice to all servers... ({0}:{1})";
+        public String receivedNotice = "Received notice from server {0}:{1}, responding... ({2}:{3})";
+        public String receiveRespNotice = "Received response notice from server {0}:{1}";
+    }
 
     public static MultiServerManager instance;
-
     private final JavaPlugin plugin;
-    private final ServerInfoDTO thisServerInfo;
-    private final Map<Integer, String> allServerInfo;
+    private final Map<Integer, String> serverMap = new HashMap<>();
 
     public MultiServerManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        File infoFile = new File(plugin.getDataFolder(), "server_info.json");
         this.plugin.getServer().getMessenger().registerOutgoingPluginChannel(this.plugin, "BungeeCord");
         this.plugin.getServer().getMessenger().registerIncomingPluginChannel(this.plugin, "BungeeCord", this);
-        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
         instance = this;
-
-        if (!infoFile.exists()) {
-            thisServerInfo = ServerInfoDTO.initServerInfo(plugin, infoFile);
-        } else {
-            thisServerInfo = ServerInfoDTO.updateServerInfo(plugin, infoFile);
-        }
-        allServerInfo = ServerInfoDTO.getAllServerInfo();
-    }
-
-    public String getThisServerName() {
-        return thisServerInfo.getName();
-    }
-
-    public int getThisServerId() {
-        return thisServerInfo.getId();
-    }
-
-    public String getServerName(int id) {
-        return allServerInfo.get(id);
-    }
-
-    public Map<Integer, String> getAllServerInfo() {
-        return allServerInfo;
+        serverMap.put(Configuration.multiServer.serverId, Configuration.multiServer.serverName);
+        Scheduler.runTaskRepeatAsync(this::sendNotice, 0, 20 * 60 * 5);   // send notice every 5 minutes
     }
 
     /**
@@ -72,125 +53,147 @@ public class MultiServerManager implements PluginMessageListener, Listener {
      * @param message The raw message that was sent.
      */
     @Override
-    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
+        if (!Configuration.multiServer.enable) {
+            return;
+        }
         if (!channel.equals("BungeeCord")) {
             return;
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subChannel = in.readUTF();
-    }
-
-    private void teleportToServer(Player player, DominionDTO dominionDTO) {
-        Field player_uuid = new Field("player_uuid", player.getUniqueId().toString());
-        Field dom_id = new Field("dom_id", dominionDTO.getId());
-        InsertRow addCache = new InsertRow();
-        addCache.field(player_uuid)
-                .field(dom_id)
-                .onConflictOverwrite(player_uuid)
-                .table("bc_tp_cache");
-        addCache.execute();
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Connect");
-        out.writeUTF(dominionDTO.getServerName());
-        player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        String sql = "SELECT dom_id FROM bc_tp_cache WHERE player_uuid = ?";
-        int dominionId;
-        try (ResultSet res = DatabaseManager.instance.query(sql, player.getUniqueId().toString())) {
-            if (res.next()) {
-                dominionId = res.getInt("dom_id");
-            } else {
-                XLogger.debug("玩家 %s 没有传送缓存", player.getName());
-                return;
-            }
-        } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("获取玩家的传送缓存失败", e, sql);
+        if (!subChannel.equals("dominion")) {
             return;
         }
-        DominionDTO dominionDTO = DominionDTO.select(dominionId);
-        if (dominionDTO == null) {
-            Notification.error(player, "无法获取目标领地信息");
-        } else {
-            if (dominionDTO.getServerId() == getThisServerId()) {
-                doTp(player, dominionDTO);
-            }
+        int serverId = in.readInt();
+        if (serverId != Configuration.multiServer.serverId && serverId != -1) {
+            return;
         }
-        sql = "DELETE FROM bc_tp_cache WHERE player_uuid = ?";
-        DatabaseManager.instance.query(sql, player.getUniqueId().toString());
+        String action = in.readUTF();
+        switch (action) {
+            case "notice":
+                handleNotice(in.readUTF(), in.readUTF());
+                break;
+            case "resp_notice":
+                handleRespNotice(in.readUTF(), in.readUTF());
+                break;
+        }
     }
 
     /**
-     * 安全传送玩家到指定位置
-     *
-     * @param player   玩家
-     * @param location 位置
-     * @return 是否成功 (true: 成功, false: 失败)
+     * Sends an action message to a specified server through the BungeeCord channel.
      * <p>
-     * 如果需要处理传送失败的情况，可以使用 CompletableFuture 的 thenAccept 方法
-     * 例如:
-     * Teleport.doTeleportSafely(player, location).thenAccept((success) -> {
-     * if (!success) {
-     * // 传送失败的处理
-     * }
-     * });
+     * This method constructs a ByteArrayDataOutput object that contains the server ID,
+     * action, and additional arguments, and sends it as a plugin message through the
+     * BungeeCord channel.
+     *
+     * @param serverId The ID of the server to which the message is sent. -1 for all servers.
+     * @param action   The action to be performed.
+     * @param args     A list of additional arguments to be included in the message.
+     * @throws IOException If an I/O error occurs while writing the data.
      */
-    public static CompletableFuture<Boolean> doTeleportSafely(Player player, Location location) {
-        if (!player.getPassengers().isEmpty()) {
-            player.getPassengers().forEach(player::removePassenger);
+    public void sendActionMessage(Integer serverId, String action, List<String> args) throws IOException {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Forward");
+        out.writeUTF("ALL");
+        out.writeUTF("dominion");
+        ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+        DataOutputStream msgout = new DataOutputStream(msgbytes);
+        msgout.writeInt(serverId);
+        msgout.writeUTF(action);
+        for (String data : args) {
+            msgout.writeUTF(data);
         }
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        if (!isPaper()) {
-            Location loc = getSafeTeleportLocation(location);
-            if (loc == null) {
-                Notification.error(player, Localization.Utils_TeleportUnsafe);
-                future.complete(false);
-                return future;
-            }
-            player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        } else {
-            location.getWorld().getChunkAtAsyncUrgently(location).thenAccept((chunk) -> {
-                Location loc = getSafeTeleportLocation(location);
-                if (loc == null) {
-                    Notification.error(player, Localization.Utils_TeleportUnsafe);
-                    future.complete(false);
-                    return;
-                }
-                player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                future.complete(true);
-            });
-        }
-        return future;
+        out.writeShort(msgbytes.toByteArray().length);
+        out.write(msgbytes.toByteArray());
+        plugin.getServer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
     }
 
-    public static Location getSafeTeleportLocation(Location location) {
-        int max_attempts = 512;
-        while (location.getBlock().isPassable()) {
-            location.setY(location.getY() - 1);
-            max_attempts--;
-            if (max_attempts <= 0) {
-                return null;
-            }
+    public void sendActionMessageAll(String action, List<String> args) throws IOException {
+        sendActionMessage(-1, action, args);
+    }
+
+    public void connectToServer(Player player, String serverName) {
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("Connect");
+        out.writeUTF(serverName);
+        player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+    }
+
+    /**
+     * Sends a notice to all other servers indicating that this server is loaded.
+     * <p>
+     * This method constructs a message containing the server ID and server name,
+     * and sends it to all other servers through the BungeeCord channel.
+     */
+    private void sendNotice() {
+        try {
+            String serverId = Configuration.multiServer.serverId + "";
+            String serverName = Configuration.multiServer.serverName;
+            XLogger.info(Language.multiServerManagerText.sendingNotice, serverId, serverName);
+            sendActionMessageAll("notice",
+                    List.of(serverId, serverName)
+            );
+        } catch (IOException e) {
+            XLogger.error(e.getMessage());
         }
-        Block up1 = location.getBlock().getRelative(BlockFace.UP);
-        Block up2 = up1.getRelative(BlockFace.UP);
-        max_attempts = 512;
-        while (!(up1.isPassable() && !up1.isLiquid()) || !(up2.isPassable() && !up2.isLiquid())) {
-            location.setY(location.getY() + 1);
-            up1 = location.getBlock().getRelative(BlockFace.UP);
-            up2 = up1.getRelative(BlockFace.UP);
-            max_attempts--;
-            if (max_attempts <= 0) {
-                return null;
-            }
+    }
+
+    /**
+     * Handles the notice message received from another server.
+     * <p>
+     * This method processes the received server ID and server name, logs the information,
+     * and sends a response notice back to the originating server.
+     *
+     * @param rcvServerId   The ID of the server that sent the notice.
+     * @param rcvServerName The name of the server that sent the notice.
+     */
+    private void handleNotice(String rcvServerId, String rcvServerName) {
+        try {
+            String thisServerId = Configuration.multiServer.serverId + "";
+            String thisServerName = Configuration.multiServer.serverName;
+            XLogger.info(Language.multiServerManagerText.receivedNotice, rcvServerId, rcvServerName, thisServerId, thisServerName);
+            int receivedServerId = toIntegrity(rcvServerId);
+            sendActionMessage(receivedServerId, "resp_notice",
+                    List.of(thisServerId, thisServerName)
+            );
+        } catch (Exception e) {
+            XLogger.error(e.getMessage());
         }
-        location.setY(location.getY() + 1);
-        if (location.getBlock().getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
-            return null;
+    }
+
+    /**
+     * Handles the response notice message received from another server.
+     * <p>
+     * This method processes the received server ID and server name, logs the information,
+     * and updates the server map with the received server information.
+     *
+     * @param rcvServerId   The ID of the server that sent the response notice.
+     * @param rcvServerName The name of the server that sent the response notice.
+     */
+    private void handleRespNotice(String rcvServerId, String rcvServerName) {
+        try {
+            XLogger.info(Language.multiServerManagerText.receiveRespNotice, rcvServerId, rcvServerName);
+            int receivedServerId = toIntegrity(rcvServerId);
+            serverMap.put(receivedServerId, rcvServerName);
+        } catch (Exception e) {
+            XLogger.error(e.getMessage());
         }
-        return location;
+    }
+
+    public Map<Integer, String> getServerMap() {
+        return serverMap;
+    }
+
+    public String getServerName(int serverId) {
+        return serverMap.get(serverId);
+    }
+
+    public Integer getServerId(String serverName) {
+        return serverMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(serverName))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 }

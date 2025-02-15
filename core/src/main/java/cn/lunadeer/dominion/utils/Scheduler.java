@@ -76,7 +76,7 @@ public class Scheduler {
      * Run a task later asynchronously
      *
      * @param task  The task to run
-     * @param delay The delay in milliseconds
+     * @param delay The delay in ticks (20 ticks = 1 second)
      */
     public static void runTaskLaterAsync(Runnable task, long delay) {
         if (delay <= 0) {
@@ -107,8 +107,8 @@ public class Scheduler {
      * Run a task repeatedly asynchronously
      *
      * @param task   The task to run
-     * @param delay  The delay in milliseconds
-     * @param period The period in milliseconds
+     * @param delay  The delay in ticks (20 ticks = 1 second)
+     * @param period The period in ticks (20 ticks = 1 second)
      */
     public static void runTaskRepeatAsync(Runnable task, long delay, long period) {
         if (instance.isPaper) {

@@ -53,13 +53,15 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
                 preFlags.put(f, rs.getBoolean(f.getFlagName()));
             }
             String color = rs.getString("color");
+            Integer serverId = rs.getInt("server_id");
             DominionDTO dominion = new DominionDTO(id, owner, name, world_uid, new DominionCuboid(rs), parentDomId,
                     rs.getString("join_message"),
                     rs.getString("leave_message"),
                     envFlags,
                     preFlags,
                     tp_location,
-                    color
+                    color,
+                    serverId
             );
             dominions.add(dominion);
         }
@@ -89,7 +91,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
                 -1,
                 "null", "null",
                 new HashMap<>(), new HashMap<>(),
-                "default", "#00BFFF");
+                "default", "#00BFFF", -1);
     }
 
     public static @Nullable DominionDTO select(Integer id) throws SQLException {
@@ -135,7 +137,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
                 .field(dominion.cuboid.x2Field()).field(dominion.cuboid.y2Field()).field(dominion.cuboid.z2Field())
                 .field(dominion.parentDomId)
                 .field(dominion.joinMessage).field(dominion.leaveMessage)
-                .field(dominion.tp_location);
+                .field(dominion.tp_location).field(dominion.serverId);
         for (Flag f : Flags.getAllFlagsEnable()) {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
@@ -162,7 +164,8 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
                         Map<EnvFlag, Boolean> envFlags,
                         Map<PriFlag, Boolean> preFlags,
                         String tp_location,
-                        String color) {
+                        String color,
+                        Integer serverId) {
         this.id.value = id;
         this.owner.value = owner.toString();
         this.name.value = name;
@@ -175,6 +178,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         this.preFlags.putAll(preFlags);
         this.tp_location.value = tp_location;
         this.color.value = color;
+        this.serverId.value = serverId;
     }
 
     // constructor for new dominion
@@ -190,6 +194,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         this.parentDomId.value = parentDomId;
         this.joinMessage.value = Configuration.pluginMessage.defaultEnterMessage;
         this.leaveMessage.value = Configuration.pluginMessage.defaultLeaveMessage;
+        this.serverId.value = Configuration.multiServer.serverId;
     }
 
     private static class DominionCuboid extends CuboidDTO {
@@ -243,6 +248,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     private final Field tp_location = new Field("tp_location", "default");
     private final Field color = new Field("color", "#00BFFF");
     private final Field world_uid = new Field("world_uid", FieldType.STRING);
+    private final Field serverId = new Field("server_id", FieldType.INT);
 
 
     // getters and setters
@@ -449,6 +455,11 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
     @Override
     public List<MemberDTO> getMembers() {
         return Cache.instance.getMembers(getId());
+    }
+
+    @Override
+    public Integer getServerId() {
+        return (Integer) serverId.value;
     }
 
     @Override

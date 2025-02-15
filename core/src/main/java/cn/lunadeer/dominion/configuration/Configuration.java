@@ -39,6 +39,9 @@ public class Configuration extends ConfigurationFile {
         public String debugEnabled = "Debug mode enabled.";
         public String prepareDatabase = "Preparing database...";
         public String databaseConnected = "Database connected successfully.";
+
+        public String multiServerSqlite = "Database with type sqlite is not supported in multi-server mode, disabled multi-server mode.";
+        public String serverIdInvalid = "Server id must be positive integer (> 0), disabled multi-server mode.";
     }
 
     @PreProcess(priority = 0)
@@ -106,17 +109,23 @@ public class Configuration extends ConfigurationFile {
             "The settings of the multi server.",
             "If you have multiple servers proxied by BungeeCord, you can configure and enable this.",
             "Player can manage/teleport across multi-servers.",
-            "Database with type sqlite is not supported in multi-server mode."
+            "Database with type sqlite is not supported in multi-server mode.",
+            "For migration of existing data, please refer to the documentation.",
+            "" // todo: docs link
     })
     public static MultiServer multiServer = new MultiServer();
 
     public static class MultiServer extends ConfigurationPart {
         @Comments("Enable multi server mode.")
         public boolean enable = false;
-        @Comments("The name of this server show in menu.")
+        @Comments({
+                "The name of this server.",
+                "This should be the same as configured in BC (Velocity)."
+        })
         public String serverName = "server";
         @Comments({
                 "The id of this server, must be unique among all servers.",
+                "Must be positive integer.",
                 "DO NOT CHANGE THIS AFTER THERE ARE DATA IN THE DATABASE."
         })
         public int serverId = 0;
@@ -213,7 +222,12 @@ public class Configuration extends ConfigurationFile {
     @PostProcess
     public static void checkConfigurationParams() {
         if (database.type.equalsIgnoreCase("sqlite") && multiServer.enable) {
-            XLogger.warn("Database with type sqlite is not supported in multi-server mode.");
+            XLogger.error(Language.configurationText.multiServerSqlite);
+            multiServer.enable = false;
+        }
+
+        if (multiServer.serverId <= 0) {
+            XLogger.error(Language.configurationText.serverIdInvalid);
             multiServer.enable = false;
         }
 
