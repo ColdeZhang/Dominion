@@ -11,6 +11,7 @@ import cn.lunadeer.dominion.handler.DominionEventHandler;
 import cn.lunadeer.dominion.handler.GroupEventHandler;
 import cn.lunadeer.dominion.handler.MemberEventHandler;
 import cn.lunadeer.dominion.managers.DatabaseTables;
+import cn.lunadeer.dominion.managers.MultiServerManager;
 import cn.lunadeer.dominion.misc.Asserts;
 import cn.lunadeer.dominion.misc.Converts;
 import cn.lunadeer.dominion.misc.Others;
@@ -48,6 +49,8 @@ import cn.lunadeer.dominion.utils.webMap.DynmapConnect;
 public class Language extends ConfigurationFile {
 
     public static Dominion.DominionText dominionText = new Dominion.DominionText();
+
+    public static MultiServerManager.MultiServerManagerText multiServerManagerText = new MultiServerManager.MultiServerManagerText();
 
     public static Asserts.AssertsText assertsText = new Asserts.AssertsText();
     public static Converts.ConvertsText convertsText = new Converts.ConvertsText();

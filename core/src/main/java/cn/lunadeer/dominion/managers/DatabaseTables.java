@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.commands.AdministratorCommand;
+import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.Scheduler;
@@ -286,6 +287,16 @@ public class DatabaseTables {
             }
             DatabaseManager.instance.query("UPDATE dominion SET world_uid = '00000000-0000-0000-0000-000000000000' WHERE world = 'all';");
             new RemoveColumn("world").table("dominion").IfExists().execute();
+        }
+
+        // 4.0.0-alpha add serverId to dominion
+        try {
+            assertFieldExist("dominion", "server_id");
+        } catch (Exception e) {
+            TableColumn dominion_server_id = new TableColumn("server_id", FieldType.INT, false, false, true, false, Configuration.multiServer.serverId);
+            new AddColumn(dominion_server_id).table("dominion").ifNotExists().execute();
+            String sql = "UPDATE dominion SET server_id = -1 WHERE id = -1;";   // server root dominion's server id is -1
+            DatabaseManager.instance.query(sql);
         }
     }
 
