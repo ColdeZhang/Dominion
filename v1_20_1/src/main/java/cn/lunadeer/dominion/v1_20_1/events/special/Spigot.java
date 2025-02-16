@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.lunadeer.dominion.utils.EventUtils.checkEnvironmentFlag;
+import static cn.lunadeer.dominion.misc.Others.checkEnvironmentFlag;
 
 public class Spigot implements Listener {
 

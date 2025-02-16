@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.lunadeer.dominion.managers.TeleportManager.handleTeleport;
 import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
 
 // https://docs.papermc.io/paper/dev/plugin-messaging#forward
@@ -77,6 +78,9 @@ public class MultiServerManager implements PluginMessageListener {
             case "resp_notice":
                 handleRespNotice(in.readUTF(), in.readUTF());
                 break;
+            case "teleport":
+                handleTeleport(in.readUTF(), in.readUTF());
+                break;
         }
     }
 
@@ -93,6 +97,9 @@ public class MultiServerManager implements PluginMessageListener {
      * @throws IOException If an I/O error occurs while writing the data.
      */
     public void sendActionMessage(Integer serverId, String action, List<String> args) throws IOException {
+        if (!Configuration.multiServer.enable) {
+            return;
+        }
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("Forward");
         out.writeUTF("ALL");

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.managers.MultiServerManager;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
+import cn.lunadeer.dominion.managers.TeleportManager;
 import cn.lunadeer.dominion.misc.Others;
 import cn.lunadeer.dominion.utils.*;
 import cn.lunadeer.dominion.utils.command.CommandManager;
@@ -43,6 +44,7 @@ public final class Dominion extends JavaPlugin {
         }
         new Scheduler(this);
         new MultiServerManager(this);
+        new TeleportManager(this);
         new Cache();
         new DominionInterface();
 

@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
 import cn.lunadeer.dominion.events.dominion.modify.*;
+import cn.lunadeer.dominion.managers.TeleportManager;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.command.Argument;
@@ -97,6 +98,21 @@ public class DominionOperateCommand {
                 DominionTransferEvent event = new DominionTransferEvent(sender, dominion, player);
                 event.setForce(force);
                 event.call();
+            } catch (Exception e) {
+                Notification.error(sender, e.getMessage());
+            }
+        }
+    }.needPermission(defaultPermission).register();
+
+    public static SecondaryCommand tp = new SecondaryCommand("tp", List.of(
+            new CommandArguments.RequiredDominionArgument()
+    )) {
+        @Override
+        public void executeHandler(CommandSender sender) {
+            try {
+                Player player = toPlayer(sender);
+                DominionDTO dominion = toDominionDTO(getArgumentValue(0));
+                TeleportManager.teleportToDominion(player, dominion);
             } catch (Exception e) {
                 Notification.error(sender, e.getMessage());
             }
