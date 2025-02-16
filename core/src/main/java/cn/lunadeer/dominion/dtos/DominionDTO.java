@@ -73,16 +73,6 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return query(sql);
     }
 
-    public static List<DominionDTO> search(String name) throws SQLException {
-        String sql = "SELECT * FROM dominion WHERE name LIKE ? AND id > 0;";
-        return query(sql, "%" + name + "%");
-    }
-
-    public static List<DominionDTO> selectByOwner(UUID owner) throws SQLException {
-        String sql = "SELECT * FROM dominion WHERE owner = ? AND id > 0 ORDER BY id DESC;";
-        return query(sql, owner.toString());
-    }
-
     public static DominionDTO rootDominion() {
         return new DominionDTO(-1,
                 UUID.fromString("00000000-0000-0000-0000-000000000000"),
@@ -102,23 +92,6 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         List<DominionDTO> dominions = query(sql, id);
         if (dominions.isEmpty()) return null;
         return dominions.get(0);
-    }
-
-    public static List<DominionDTO> selectByParentId(World world, Integer parentId) throws SQLException {
-        return selectByParentId(world.getUID(), parentId);
-    }
-
-    public static List<DominionDTO> selectByParentId(UUID world_uid, Integer parentId) throws SQLException {
-        String sql = "SELECT * FROM dominion WHERE world_uid = ? AND parent_dom_id = ? AND id > 0;";
-        return query(sql, world_uid.toString(), parentId);
-    }
-
-    public static List<DominionDTO> selectByLocation(UUID world_uid, Integer x, Integer y, Integer z) throws SQLException {
-        String sql = "SELECT * FROM dominion WHERE world_uid = ? AND " +
-                "x1 <= ? AND x2 >= ? AND " +
-                "y1 <= ? AND y2 >= ? AND " +
-                "z1 <= ? AND z2 >= ? AND " + "id > 0;";
-        return query(sql, world_uid.toString(), x, x, y, y, z, z);
     }
 
     public static @Nullable DominionDTO select(String name) throws SQLException {
@@ -419,9 +392,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
 
     @Override
-    public Location getTpLocation() {
+    public @NotNull Location getTpLocation() {
         if (Objects.equals(tp_location.value, "default")) {
-            return null;
+            return new Location(getWorld(),
+                    (double) (cuboid.x1() + cuboid.x2()) / 2,
+                    (double) (cuboid.y1() + cuboid.y2()) / 2,
+                    (double) (cuboid.z1() + cuboid.z2()) / 2);
         } else {
             // 0:0:0
             String[] loc = ((String) tp_location.value).split(":");

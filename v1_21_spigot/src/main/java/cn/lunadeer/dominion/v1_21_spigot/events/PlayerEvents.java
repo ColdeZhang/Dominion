@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.managers.MultiServerManager;
+import cn.lunadeer.dominion.managers.TeleportManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -639,7 +639,7 @@ public class PlayerEvents implements Listener {
             } else {
                 to.setZ(dom.getCuboid().z2() + 2);
             }
-            MultiServerManager.doTeleportSafely(player, to);
+            TeleportManager.doTeleportSafely(player, to);
         }
     }
 

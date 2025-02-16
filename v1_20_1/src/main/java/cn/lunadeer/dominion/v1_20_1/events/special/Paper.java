@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import static cn.lunadeer.dominion.utils.EventUtils.checkEnvironmentFlag;
+import static cn.lunadeer.dominion.misc.Others.checkEnvironmentFlag;
 
 public class Paper implements Listener {
 

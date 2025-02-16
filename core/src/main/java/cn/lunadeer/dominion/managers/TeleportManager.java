@@ -1,10 +1,12 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +14,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.misc.Others.checkPrivilegeFlag;
 import static cn.lunadeer.dominion.utils.Misc.isPaper;
+import static cn.lunadeer.dominion.utils.SafeLocationFinder.findNearestSafeLocation;
 
 public class TeleportManager implements Listener {
 
@@ -22,81 +30,76 @@ public class TeleportManager implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
+    public static Map<UUID, Integer> teleportingPlayers = new HashMap<>();
+
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-
+        if (!teleportingPlayers.containsKey(event.getPlayer().getUniqueId())) {
+            return;
+        }
+        Integer dominionId = teleportingPlayers.get(event.getPlayer().getUniqueId());
+        teleportingPlayers.remove(event.getPlayer().getUniqueId());
+        DominionDTO dominion = Cache.instance.getDominion(dominionId);
+        teleportToDominion(event.getPlayer(), dominion);
     }
 
     /**
-     * 安全传送玩家到指定位置
-     *
-     * @param player   玩家
-     * @param location 位置
-     * @return 是否成功 (true: 成功, false: 失败)
+     * Teleports a player to a specified dominion.
      * <p>
-     * 如果需要处理传送失败的情况，可以使用 CompletableFuture 的 thenAccept 方法
-     * 例如:
-     * Teleport.doTeleportSafely(player, location).thenAccept((success) -> {
-     * if (!success) {
-     * // 传送失败的处理
-     * }
-     * });
+     * This method checks if the player has the privilege to teleport to the dominion.
+     * If the dominion is on the same server, it teleports the player safely to the dominion's location.
+     * If the dominion is on a different server, it sends a teleport action message to the target server
+     * and connects the player to that server.
+     *
+     * @param player   The player to be teleported.
+     * @param dominion The dominion to which the player will be teleported.
      */
-    public static CompletableFuture<Boolean> doTeleportSafely(Player player, Location location) {
+    public static void teleportToDominion(Player player, DominionDTO dominion) {
+        if (!checkPrivilegeFlag(dominion, Flags.TELEPORT, player, null)) {
+            return;
+        }
+        if (dominion.getServerId() == Configuration.multiServer.serverId) {
+            doTeleportSafely(player, dominion.getTpLocation());
+        } else {
+            if (!Configuration.multiServer.enable) return;
+            try {
+                MultiServerManager.instance.sendActionMessage(dominion.getServerId(), "teleport",
+                        List.of(
+                                player.getUniqueId().toString(),
+                                dominion.getId().toString()
+                        )
+                );
+                MultiServerManager.instance.connectToServer(player, MultiServerManager.instance.getServerName(dominion.getServerId()));
+            } catch (Exception e) {
+                Notification.error(player, e.getMessage());
+            }
+        }
+    }
+
+    public static void handleTeleport(String playerUuid, String dominionId) {
+        try {
+            UUID uuid = UUID.fromString(playerUuid);
+            Integer id = toIntegrity(dominionId);
+            teleportingPlayers.put(uuid, id);
+        } catch (Exception e) {
+            XLogger.error(e.getMessage());
+        }
+    }
+
+    public static void doTeleportSafely(Player player, Location location) {
         if (!player.getPassengers().isEmpty()) {
             player.getPassengers().forEach(player::removePassenger);
         }
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
         if (!isPaper()) {
-            Location loc = getSafeTeleportLocation(location);
-            if (loc == null) {
-                Notification.error(player, "");
-                future.complete(false);
-                return future;
-            }
+            Location loc = findNearestSafeLocation(location);
             player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
         } else {
             location.getWorld().getChunkAtAsyncUrgently(location).thenAccept((chunk) -> {
-                Location loc = getSafeTeleportLocation(location);
-                if (loc == null) {
-                    Notification.error(player, "");
-                    future.complete(false);
-                    return;
-                }
+                Location loc = findNearestSafeLocation(location);
                 player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                future.complete(true);
             });
         }
-        return future;
-    }
-
-    public static Location getSafeTeleportLocation(Location location) {
-        int max_attempts = 512;
-        while (location.getBlock().isPassable()) {
-            location.setY(location.getY() - 1);
-            max_attempts--;
-            if (max_attempts <= 0) {
-                return null;
-            }
-        }
-        Block up1 = location.getBlock().getRelative(BlockFace.UP);
-        Block up2 = up1.getRelative(BlockFace.UP);
-        max_attempts = 512;
-        while (!(up1.isPassable() && !up1.isLiquid()) || !(up2.isPassable() && !up2.isLiquid())) {
-            location.setY(location.getY() + 1);
-            up1 = location.getBlock().getRelative(BlockFace.UP);
-            up2 = up1.getRelative(BlockFace.UP);
-            max_attempts--;
-            if (max_attempts <= 0) {
-                return null;
-            }
-        }
-        location.setY(location.getY() + 1);
-        if (location.getBlock().getRelative(BlockFace.DOWN).getType() == Material.LAVA) {
-            return null;
-        }
-        return location;
     }
 
 }
