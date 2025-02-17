@@ -26,9 +26,11 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionOwner;
 import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
@@ -79,7 +81,6 @@ public class MemberList {
             int page = toIntegrity(pageStr);
 
             ListView view = ListView.create(10, button(sender, dominionName));
-            List<MemberDTO> members = dominion.getMembers();
             view.title(formatString(Language.memberListTuiText.title, dominion.getName()));
             view.navigator(
                     Line.create()
@@ -89,6 +90,9 @@ public class MemberList {
                             .append(Language.memberListTuiText.button)
             );
             view.add(Line.create().append(SelectPlayer.button(sender, dominionName).build()));
+
+            // get data from database directly because cache update may not be in time
+            List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));
             for (MemberDTO member : members) {
                 PlayerDTO p_player = member.getPlayer();
                 GroupDTO group = Cache.instance.getGroup(member.getGroupId());
@@ -106,14 +110,13 @@ public class MemberList {
                     }
                 }
 
-                Button prev = MemberSetting.button(sender, dominionName, p_player.getLastKnownName())
-                        .setHoverText(Language.memberListTuiText.removeDescription).green();
+                Button prev = MemberSetting.button(sender, dominionName, p_player.getLastKnownName()).green();
                 Button remove = new FunctionalButton(Language.memberListTuiText.remove) {
                     @Override
                     public void function() {
                         MemberCommand.removeMember(sender, dominionName, p_player.getLastKnownName(), pageStr);
                     }
-                }.red();
+                }.setHoverText(Language.memberListTuiText.removeDescription).red();
 
                 boolean disable = false;
                 try {

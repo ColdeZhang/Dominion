@@ -69,7 +69,6 @@ public class Asserts {
         public String depositMoney = "Successfully refunded {0} from dominion.";
 
         public String groupNotBelongDominion = "Group {0} does not belong to dominion {1}.";
-        public String memberNotBelongDominion = "Member {0} does not belong to dominion {1}.";
     }
 
     /**

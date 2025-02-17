@@ -38,7 +38,8 @@ public class Option extends Argument {
      *
      * @return a Suggestion containing the list of possible values for this option
      */
-    public Suggestion getSuggestions() {
+    @Override
+    public Suggestion getSuggestion() {
         return (commandSender) -> options;
     }
 

@@ -173,8 +173,9 @@ public class Cache implements Listener {
                     all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player_to_update));
                     if (!player_uuid_to_member.containsKey(player_to_update)) {
                         player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
+                    } else {
+                        player_uuid_to_member.get(player_to_update).clear();
                     }
-                    player_uuid_to_member.get(player_to_update).clear();
                 }
             } catch (SQLException e) {
                 XLogger.error(e.getMessage());

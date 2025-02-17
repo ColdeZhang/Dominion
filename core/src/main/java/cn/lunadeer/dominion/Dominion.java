@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.managers.MultiServerManager;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.managers.TeleportManager;
+import cn.lunadeer.dominion.misc.InitCommands;
 import cn.lunadeer.dominion.misc.Others;
 import cn.lunadeer.dominion.utils.*;
 import cn.lunadeer.dominion.utils.command.CommandManager;
@@ -65,7 +66,8 @@ public final class Dominion extends JavaPlugin {
         }
 
         new EventsRegister(this);
-        new CommandManager("dominion");
+        new InitCommands();
+        new CommandManager(this, "dominion");
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> Configuration.database.type));

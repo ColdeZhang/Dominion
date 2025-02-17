@@ -365,10 +365,10 @@ public class DominionEventHandler implements Listener {
         try {
             assertDominionAdmin(event.getOperator(), dominion);
             event.setDominion(dominion.setEnvFlagValue(event.getFlag(), event.getNewValue()));
-            Notification.info(event.getOperator(), Language.dominionEventHandlerText.setEnvFlagSuccess, event.getFlag(), event.getNewValue());
+            Notification.info(event.getOperator(), Language.dominionEventHandlerText.setEnvFlagSuccess, event.getFlag().getDisplayName(), event.getNewValue());
         } catch (Exception e) {
             event.setCancelled(true);
-            Notification.error(event.getOperator(), Language.dominionEventHandlerText.setEnvFlagFailed, event.getFlag(), event.getNewValue(), e.getMessage());
+            Notification.error(event.getOperator(), Language.dominionEventHandlerText.setEnvFlagFailed, event.getFlag().getDisplayName(), event.getNewValue(), e.getMessage());
         }
     }
 
@@ -386,10 +386,10 @@ public class DominionEventHandler implements Listener {
         try {
             assertDominionAdmin(event.getOperator(), dominion);
             event.setDominion(dominion.setGuestFlagValue(event.getFlag(), event.getNewValue()));
-            Notification.info(event.getOperator(), Language.dominionEventHandlerText.setGuestFlagSuccess, event.getFlag(), event.getNewValue());
+            Notification.info(event.getOperator(), Language.dominionEventHandlerText.setGuestFlagSuccess, event.getFlag().getDisplayName(), event.getNewValue());
         } catch (Exception e) {
             event.setCancelled(true);
-            Notification.error(event.getOperator(), Language.dominionEventHandlerText.setGuestFlagFailed, event.getFlag(), event.getNewValue(), e.getMessage());
+            Notification.error(event.getOperator(), Language.dominionEventHandlerText.setGuestFlagFailed, event.getFlag().getDisplayName(), event.getNewValue(), e.getMessage());
         }
     }
 

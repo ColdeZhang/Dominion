@@ -5,6 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,19 +25,34 @@ import java.util.*;
  * ...
  * </pre></blockquote>
  */
-public class CommandManager implements TabExecutor {
+public class CommandManager implements TabExecutor, Listener {
 
     private static String rootCommand;
+    private final JavaPlugin plugin;
 
     /**
      * Constructs a CommandManager with the specified root command.
      *
      * @param rootCommand The root command to be managed, should start with a slash.
      */
-    public CommandManager(String rootCommand) {
+    public CommandManager(JavaPlugin plugin, String rootCommand) {
         CommandManager.rootCommand = "/" + rootCommand;
         Objects.requireNonNull(Bukkit.getPluginCommand(rootCommand)).setExecutor(this);
         XLogger.debug("Registered {0} commands.", commands.size());
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        if (plugin.getServer().getOnlinePlayers().isEmpty()) {
+            for (String cmd : commands.keySet()) {
+                // Unregister all commands that are hidden
+                if (commands.get(cmd).isHideUsage()) {
+                    unregisterCommand(cmd);
+                }
+            }
+        }
     }
 
     /**
@@ -46,6 +65,7 @@ public class CommandManager implements TabExecutor {
     }
 
     private static final Map<String, SecondaryCommand> commands = new HashMap<>();
+    private static final Map<String, SecondaryCommand> commandsUsable = new HashMap<>();
 
     /**
      * Registers a secondary command.
@@ -54,6 +74,9 @@ public class CommandManager implements TabExecutor {
      */
     public static void registerCommand(SecondaryCommand command) {
         commands.put(command.getCommand(), command);
+        if (!command.isHideUsage()) {
+            commandsUsable.put(command.getCommand(), command);
+        }
     }
 
     /**
@@ -63,6 +86,7 @@ public class CommandManager implements TabExecutor {
      */
     public static void unregisterCommand(SecondaryCommand command) {
         commands.remove(command.getCommand());
+        commandsUsable.remove(command.getCommand());
     }
 
     /**
@@ -72,6 +96,7 @@ public class CommandManager implements TabExecutor {
      */
     public static void unregisterCommand(String command) {
         commands.remove(command);
+        commandsUsable.remove(command);
     }
 
     /**
@@ -101,7 +126,7 @@ public class CommandManager implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length == 1) {
-            return new ArrayList<>(commands.keySet());
+            return new ArrayList<>(commandsUsable.keySet());
         }
         SecondaryCommand cmd = getCommand(strings[0]);
         if (cmd == null) {
