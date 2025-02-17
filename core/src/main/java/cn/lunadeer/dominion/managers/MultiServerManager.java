@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cn.lunadeer.dominion.managers.TeleportManager.handleTeleport;
+import static cn.lunadeer.dominion.managers.TeleportManager.handleTeleportBcMsg;
 import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
 
 // https://docs.papermc.io/paper/dev/plugin-messaging#forward
@@ -79,7 +79,7 @@ public class MultiServerManager implements PluginMessageListener {
                 handleRespNotice(in.readUTF(), in.readUTF());
                 break;
             case "teleport":
-                handleTeleport(in.readUTF(), in.readUTF());
+                handleTeleportBcMsg(in.readUTF(), in.readUTF());
                 break;
         }
     }

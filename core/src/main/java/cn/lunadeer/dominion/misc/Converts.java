@@ -12,6 +12,7 @@ import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.dominion.modify.DominionReSizeEvent;
 import cn.lunadeer.dominion.events.dominion.modify.DominionSetMessageEvent;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,7 +25,7 @@ import java.util.UUID;
 
 public class Converts {
 
-    public static class ConvertsText {
+    public static class ConvertsText extends ConfigurationPart {
         public String mustBePlayer = "Must be a player for this command/operation.";
         public String mustBeOnline = "The player ({0}) must be online.";
         public String worldNotExist = "The world ({0}) does not exist.";

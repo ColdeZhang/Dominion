@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.configuration;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
@@ -42,17 +43,6 @@ public class Configuration extends ConfigurationFile {
 
         public String multiServerSqlite = "Database with type sqlite is not supported in multi-server mode, disabled multi-server mode.";
         public String serverIdInvalid = "Server id must be positive integer (> 0), disabled multi-server mode.";
-    }
-
-    @PreProcess(priority = 0)
-    public static void loadLanguage() {
-        try {
-            XLogger.info(Language.configurationText.loadingLanguage, language);
-            ConfigurationManager.load(Language.class, new File(Dominion.instance.getDataFolder(), "languages/" + language + ".yml"));
-            XLogger.info(Language.configurationText.loadLanguageSuccess, language);
-        } catch (Exception e) {
-            XLogger.error(Language.configurationText.loadLanguageFail, language, e.getMessage());
-        }
     }
 
     @PreProcess(priority = 1)
@@ -125,10 +115,10 @@ public class Configuration extends ConfigurationFile {
         public String serverName = "server";
         @Comments({
                 "The id of this server, must be unique among all servers.",
-                "Must be positive integer.",
+                "Must be positive integer. > 0",
                 "DO NOT CHANGE THIS AFTER THERE ARE DATA IN THE DATABASE."
         })
-        public int serverId = 0;
+        public int serverId = 1;
     }
 
     @Comments("Language of the plugin, see others in the plugins/Dominion/languages folder.")
@@ -240,26 +230,26 @@ public class Configuration extends ConfigurationFile {
         }
 
         if (Material.matchMaterial(selectTool) == null) {
-            XLogger.warn("Invalid select tool: %s", selectTool);
+            XLogger.warn("Invalid select tool: {0}", selectTool);
             selectTool = "ARROW";
         }
 
         if (Material.matchMaterial(infoTool) == null) {
-            XLogger.warn("Invalid info tool: %s", infoTool);
+            XLogger.warn("Invalid info tool: {0}", infoTool);
             infoTool = "STRING";
         }
 
         try {
             MessageDisplay.Place.valueOf(pluginMessage.noPermissionDisplayPlace);
         } catch (IllegalArgumentException e) {
-            XLogger.warn("Invalid no permission display place: %s", pluginMessage.noPermissionDisplayPlace);
+            XLogger.warn("Invalid no permission display place: {0}", pluginMessage.noPermissionDisplayPlace);
             pluginMessage.noPermissionDisplayPlace = "ACTION_BAR";
         }
 
         try {
             MessageDisplay.Place.valueOf(pluginMessage.enterLeaveDisplayPlace);
         } catch (IllegalArgumentException e) {
-            XLogger.warn("Invalid enter leave display place: %s", pluginMessage.enterLeaveDisplayPlace);
+            XLogger.warn("Invalid enter leave display place: {0}", pluginMessage.enterLeaveDisplayPlace);
             pluginMessage.enterLeaveDisplayPlace = "ACTION_BAR";
         }
     }
@@ -281,7 +271,7 @@ public class Configuration extends ConfigurationFile {
         if (files.length == 0) {
             try {
                 XLogger.info(Language.configurationText.savingDefaultLimitation);
-                ConfigurationManager.save(Limitation.class, new File(folder, "default.yml"));
+                ConfigurationManager.saveDefault(Limitation.class, new File(folder, "default.yml"));
                 limitations.put("default", new Limitation());
             } catch (Exception e) {
                 XLogger.warn(Language.configurationText.saveLimitationFail, e.getMessage());
@@ -293,14 +283,14 @@ public class Configuration extends ConfigurationFile {
                 XLogger.info(Language.configurationText.loadingLimitation, file.getName());
                 ConfigurationFile limitationFile = ConfigurationManager.load(Limitation.class, file, "version");
                 Limitation limitation = (Limitation) limitationFile;
-                limitations.put(file.getName(), limitation);
+                limitations.put(file.getName().replace(".yml", ""), limitation);
             } catch (Exception e) {
                 XLogger.warn(Language.configurationText.loadLimitationFail, file.getName(), e.getMessage());
             }
         }
         if (!limitations.containsKey("default")) {  // guarantee the default limitation
             try {
-                ConfigurationManager.save(Limitation.class, new File(folder, "default.yml"));
+                ConfigurationManager.saveDefault(Limitation.class, new File(folder, "default.yml"));
                 limitations.put("default", new Limitation());
             } catch (Exception e) {
                 XLogger.warn(Language.configurationText.saveLimitationFail, e.getMessage());
@@ -346,9 +336,19 @@ public class Configuration extends ConfigurationFile {
     }
 
     public static void loadConfigurationAndDatabase(CommandSender sender) throws Exception {
+        // configuration
         ConfigurationManager.load(Configuration.class, new File(Dominion.instance.getDataFolder(), "config.yml"), "version");
         Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender()
                 , Language.configurationText.loadConfiguration);
+        // language
+        try {
+            Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender(), Language.configurationText.loadingLanguage, language);
+            ConfigurationManager.load(Language.class, new File(Dominion.instance.getDataFolder(), "languages/" + language + ".yml"));
+            Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender(), Language.configurationText.loadLanguageSuccess, language);
+        } catch (Exception e) {
+            Notification.error(sender != null ? sender : Dominion.instance.getServer().getConsoleSender(), Language.configurationText.loadLanguageFail, language, e.getMessage());
+        }
+        // database
         Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender()
                 , Language.configurationText.prepareDatabase);
         if (DatabaseManager.instance == null) {
@@ -373,5 +373,6 @@ public class Configuration extends ConfigurationFile {
         DatabaseManager.instance.reconnect();
         Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender()
                 , Language.configurationText.databaseConnected);
+        DatabaseTables.migrate();
     }
 }

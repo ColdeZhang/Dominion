@@ -24,12 +24,10 @@ public class ConfigurationManager {
      */
     public static ConfigurationFile load(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
         if (!file.exists()) {
-            return save(clazz, file);
+            return saveDefault(clazz, file);
         }
-        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-        ConfigurationFile instance = readConfigurationFile(yaml, clazz);
-        yaml.options().width(250);
-        yaml.save(file);
+        ConfigurationFile instance = readConfigurationFile(YamlConfiguration.loadConfiguration(file), clazz);
+        instance.save(file);
         return instance;
     }
 
@@ -54,7 +52,7 @@ public class ConfigurationManager {
                 throw new Exception("Failed to backup the configuration file.");
             }
             clazz.getField(versionFieldName).set(null, currentVersion);
-            return save(clazz, file);
+            return saveDefault(clazz, file);
         }
         return instance;
     }
@@ -66,26 +64,26 @@ public class ConfigurationManager {
      * @param file  The file to save.
      * @throws Exception If failed to save the file.
      */
-    public static ConfigurationFile save(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
+    public static ConfigurationFile saveDefault(Class<? extends ConfigurationFile> clazz, File file) throws Exception {
         createIfNotExist(file);
         YamlConfiguration yaml = writeConfigurationFile(clazz);
         yaml.options().width(250);
         yaml.save(file);
-        return clazz.getDeclaredConstructor().newInstance();
+        return load(clazz, file);
     }
 
     private static YamlConfiguration writeConfigurationFile(Class<? extends ConfigurationFile> clazz) throws Exception {
         YamlConfiguration yaml = new YamlConfiguration();
-        ConfigurationFile instance = clazz.getDeclaredConstructor().newInstance();
+        ConfigurationFile instance = clazz.getConstructor().newInstance();
         writeConfigurationPart(yaml, instance, null);
         return yaml;
     }
 
-    public static ConfigurationSection writeConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix) throws Exception {
-        return writeConfigurationPart(yaml, obj, prefix, false);
+    public static void writeConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix) throws Exception {
+        writeConfigurationPart(yaml, obj, prefix, false);
     }
 
-    public static ConfigurationSection writeConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix, boolean ignoreComment) throws Exception {
+    public static void writeConfigurationPart(ConfigurationSection yaml, ConfigurationPart obj, String prefix, boolean ignoreComment) throws Exception {
         for (Field field : obj.getClass().getFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(HandleManually.class)) {
@@ -96,7 +94,7 @@ public class ConfigurationManager {
                 newKey = prefix + "." + newKey;
             }
             if (ConfigurationPart.class.isAssignableFrom(field.getType())) {
-                field.set(obj, writeConfigurationPart(yaml, (ConfigurationPart) field.get(obj), newKey));
+                writeConfigurationPart(yaml, (ConfigurationPart) field.get(obj), newKey);
             } else {
                 yaml.set(newKey, field.get(obj));
             }
@@ -109,7 +107,6 @@ public class ConfigurationManager {
                 }
             }
         }
-        return yaml;
     }
 
     private static void createIfNotExist(File file) throws Exception {
@@ -120,14 +117,14 @@ public class ConfigurationManager {
     }
 
     private static ConfigurationFile readConfigurationFile(YamlConfiguration yaml, Class<? extends ConfigurationFile> clazz) throws Exception {
-        ConfigurationFile instance = clazz.getDeclaredConstructor().newInstance();
-        instance.yaml = yaml;
+        ConfigurationFile instance = clazz.getConstructor().newInstance();
+        instance.setYaml(yaml);
         PrePostProcessInorder processes = getAndSortPrePostProcess(clazz);
         // execute methods with @PreProcess annotation
         for (Method method : processes.preProcessMethods) {
             method.invoke(instance);
         }
-        readConfigurationPart(yaml, instance, null);
+        readConfigurationPart(instance.getYaml(), instance, null);
         // execute methods with @PostProcess annotation
         for (Method method : processes.postProcessMethods) {
             method.invoke(instance);

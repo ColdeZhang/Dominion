@@ -84,7 +84,7 @@ public class Cache implements Listener {
                 try {
                     dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll());
                 } catch (SQLException e) {
-                    XLogger.error("loadDominionsExecution error: %s", e.getMessage());
+                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
                     return;
                 }
                 CompletableFuture<Void> res = dominion_trees.initAsync(dominions);
@@ -105,7 +105,7 @@ public class Cache implements Listener {
                 try {
                     dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
                 } catch (SQLException e) {
-                    XLogger.error("loadDominionsExecution error: %s", e.getMessage());
+                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
                     return;
                 }
                 if (dominion == null && id_dominions.containsKey(idToLoad)) {
@@ -128,7 +128,7 @@ public class Cache implements Listener {
             MapRender.render();
             recheckPlayerState = true;
             _last_update_dominion.set(System.currentTimeMillis());
-            XLogger.debug("loadDominionsExecution cost: %d ms for %d dominions"
+            XLogger.debug("loadDominionsExecution cost: {0} ms for {1} dominions"
                     , System.currentTimeMillis() - start, count);
         });
     }
@@ -189,7 +189,7 @@ public class Cache implements Listener {
             }
             recheckPlayerState = true;
             _last_update_member.set(System.currentTimeMillis());
-            XLogger.debug("loadMembersExecution cost: %d ms for %d privileges"
+            XLogger.debug("loadMembersExecution cost: {0} ms for {1} privileges"
                     , System.currentTimeMillis() - start, all_privileges.size());
         });
     }
@@ -249,7 +249,7 @@ public class Cache implements Listener {
             }
             recheckPlayerState = true;
             _last_update_group.set(System.currentTimeMillis());
-            XLogger.debug("loadGroupsExecution cost: %d ms", System.currentTimeMillis() - start);
+            XLogger.debug("loadGroupsExecution cost: {0} ms", System.currentTimeMillis() - start);
         });
     }
 
@@ -488,6 +488,14 @@ public class Cache implements Listener {
         return count;
     }
 
+    /**
+     * Retrieves a list of dominions owned by a specific player.
+     * <p>
+     * Includes dominions on all servers.
+     *
+     * @param player_uuid The UUID of the player whose dominions are to be retrieved.
+     * @return A list of DominionDTO objects representing the dominions owned by the player.
+     */
     public List<DominionDTO> getPlayerDominions(UUID player_uuid) {
         List<DominionDTO> dominions = new ArrayList<>();
         for (DominionDTO dominion : id_dominions.values()) {
@@ -498,9 +506,20 @@ public class Cache implements Listener {
         return dominions;
     }
 
+    /**
+     * Retrieves a list of dominions where a specific player has admin privileges.
+     * <p>
+     * Only dominions on the current server are included in the list.
+     *
+     * @param player_uuid The UUID of the player whose admin dominions are to be retrieved.
+     * @return A list of DominionDTO objects representing the dominions where the player has admin privileges.
+     */
     public List<DominionDTO> getPlayerAdminDominions(UUID player_uuid) {
         List<DominionDTO> dominions = new ArrayList<>();
         for (DominionDTO dominion : id_dominions.values()) {
+            if (dominion.getServerId() != Configuration.multiServer.serverId) {
+                continue;
+            }
             MemberDTO privilege = getMember(player_uuid, dominion);
             if (privilege != null && privilege.getFlagValue(Flags.ADMIN)) {
                 dominions.add(dominion);
@@ -518,12 +537,12 @@ public class Cache implements Listener {
                     continue;
                 }
                 if (!residence_data.containsKey(node.owner)) {
-                    XLogger.debug("residence_data put %s", node.owner);
+                    XLogger.debug("residence_data put {0}", node.owner);
                     residence_data.put(node.owner, new ArrayList<>());
                 }
                 residence_data.get(node.owner).add(node);
             }
-            XLogger.debug("residence_data: %d", residence_data.size());
+            XLogger.debug("residence_data: {0}", residence_data.size());
         }
     }
 
@@ -637,7 +656,6 @@ public class Cache implements Listener {
             return CompletableFuture.runAsync(() -> init(dominions));
         }
 
-
         private void init(List<DominionDTO> dominions) {
             try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
                 world_dominion_tree_sector_a = new ConcurrentHashMap<>();
@@ -650,19 +668,21 @@ public class Cache implements Listener {
                 Map<UUID, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
                 Map<UUID, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
 
-                // 根据所有领地的最大最小坐标计算象限中心点
-
-                int max_x = dominions.stream().mapToInt(d -> d.getCuboid().x2()).max().orElse(0);
-                int min_x = dominions.stream().mapToInt(d -> d.getCuboid().x1()).min().orElse(0);
-                int max_z = dominions.stream().mapToInt(d -> d.getCuboid().z2()).max().orElse(0);
-                int min_z = dominions.stream().mapToInt(d -> d.getCuboid().z1()).min().orElse(0);
+                // calculate the section origin point
+                int max_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x2() : 0).max().orElse(0);
+                int min_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x1() : 0).min().orElse(0);
+                int max_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z2() : 0).max().orElse(0);
+                int min_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z1() : 0).min().orElse(0);
                 section_origin_x = (max_x + min_x) / 2;
                 section_origin_z = (max_z + min_z) / 2;
-                XLogger.debug("Cache init section origin: %d, %d", section_origin_x, section_origin_z);
-
+                XLogger.debug("Cache init section origin: {0}, {1}", section_origin_x, section_origin_z);
 
                 for (DominionDTO d : dominions) {
-                    // 对每个世界的领地进行四个象限的划分
+                    if (d.getServerId() != Configuration.multiServer.serverId) {
+                        // skip other server's dominions when building dominion tree
+                        continue;
+                    }
+                    // put dominions into different sectors
                     if (!world_dominions_sector_a.containsKey(d.getWorldUid()) ||
                             !world_dominions_sector_b.containsKey(d.getWorldUid()) ||
                             !world_dominions_sector_c.containsKey(d.getWorldUid()) ||
@@ -705,18 +725,19 @@ public class Cache implements Listener {
                         }
                     }
                 }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_a.entrySet()) {
-                    world_dominion_tree_sector_a.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_b.entrySet()) {
-                    world_dominion_tree_sector_b.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_c.entrySet()) {
-                    world_dominion_tree_sector_c.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_d.entrySet()) {
-                    world_dominion_tree_sector_d.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
+                // build dominion tree for each sector
+                world_dominions_sector_a.forEach((key, value) ->
+                        world_dominion_tree_sector_a.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
+                world_dominions_sector_b.forEach((key, value) ->
+                        world_dominion_tree_sector_b.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
+                world_dominions_sector_c.forEach((key, value) ->
+                        world_dominion_tree_sector_c.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
+                world_dominions_sector_d.forEach((key, value) ->
+                        world_dominion_tree_sector_d.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
             }
         }
     }

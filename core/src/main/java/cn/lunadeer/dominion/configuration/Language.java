@@ -10,8 +10,10 @@ import cn.lunadeer.dominion.commands.TemplateCommand;
 import cn.lunadeer.dominion.handler.DominionEventHandler;
 import cn.lunadeer.dominion.handler.GroupEventHandler;
 import cn.lunadeer.dominion.handler.MemberEventHandler;
+import cn.lunadeer.dominion.handler.SelectPointEventsHandler;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.managers.MultiServerManager;
+import cn.lunadeer.dominion.managers.TeleportManager;
 import cn.lunadeer.dominion.misc.Asserts;
 import cn.lunadeer.dominion.misc.Converts;
 import cn.lunadeer.dominion.misc.Others;
@@ -62,6 +64,7 @@ public class Language extends ConfigurationFile {
     public static DominionEventHandler.DominionEventHandlerText dominionEventHandlerText = new DominionEventHandler.DominionEventHandlerText();
     public static MemberEventHandler.MemberEventHandlerText memberEventHandlerText = new MemberEventHandler.MemberEventHandlerText();
     public static GroupEventHandler.GroupEventHandlerText groupEventHandlerText = new GroupEventHandler.GroupEventHandlerText();
+    public static SelectPointEventsHandler.SelectPointEventsHandlerText selectPointEventsHandlerText = new SelectPointEventsHandler.SelectPointEventsHandlerText();
 
     // TUI
     public static MainMenu.MenuTuiText menuTuiText = new MainMenu.MenuTuiText();
@@ -109,6 +112,8 @@ public class Language extends ConfigurationFile {
 
     public static DatabaseTables.DatabaseManagerText databaseManagerText = new DatabaseTables.DatabaseManagerText();
 
+    public static TeleportManager.TeleportManagerText teleportManagerText = new TeleportManager.TeleportManagerText();
+
     // web map render
     public static BlueMapConnect.BlueMapConnectText blueMapConnectText = new BlueMapConnect.BlueMapConnectText();
     public static DynmapConnect.DynmapConnectText dynmapConnectText = new DynmapConnect.DynmapConnectText();
@@ -133,15 +138,15 @@ public class Language extends ConfigurationFile {
     @PreProcess
     public void loadFlagsText() {
         for (Flag flag : Flags.getAllFlags()) {
-            if (yaml.contains(flag.getDisplayNameKey())) {
-                flag.setDisplayName(yaml.getString(flag.getDisplayNameKey()));
+            if (getYaml().contains(flag.getDisplayNameKey())) {
+                flag.setDisplayName(getYaml().getString(flag.getDisplayNameKey()));
             } else {
-                yaml.set(flag.getDisplayNameKey(), flag.getDisplayName());
+                getYaml().set(flag.getDisplayNameKey(), flag.getDisplayName());
             }
-            if (yaml.contains(flag.getDescriptionKey())) {
-                flag.setDescription(yaml.getString(flag.getDescriptionKey()));
+            if (getYaml().contains(flag.getDescriptionKey())) {
+                flag.setDescription(getYaml().getString(flag.getDescriptionKey()));
             } else {
-                yaml.set(flag.getDescriptionKey(), flag.getDescription());
+                getYaml().set(flag.getDescriptionKey(), flag.getDescription());
             }
         }
     }

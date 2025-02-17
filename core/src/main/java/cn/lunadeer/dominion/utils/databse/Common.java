@@ -23,8 +23,9 @@ public class Common {
                 if (rs != null && rs.next()) {
                     return;
                 }
-            } catch (Exception e) {
                 throw new FieldNotFound(tableName, fieldName);
+            } catch (SQLException e) {
+                throw new DatabaseException("Failed to check table existence ? ?", tableName, e.getMessage());
             }
         } else if (DatabaseManager.instance.getType().equals(DatabaseType.SQLITE)) {
             try (ResultSet rs = DatabaseManager.instance.query("PRAGMA table_info(" + tableName + ");")) {
@@ -35,19 +36,22 @@ public class Common {
                         }
                     }
                 }
-            } catch (SQLException e) {
                 throw new FieldNotFound(tableName, fieldName);
+            } catch (SQLException e) {
+                throw new DatabaseException("Failed to check table existence ? ?", tableName, e.getMessage());
             }
         } else if (DatabaseManager.instance.getType().equals(DatabaseType.MYSQL)) {
             try (ResultSet rs = DatabaseManager.instance.query("SHOW COLUMNS FROM " + tableName + " WHERE Field = '" + fieldName + "';")) {
                 if (rs != null && rs.next()) {
                     return;
                 }
-            } catch (SQLException e) {
                 throw new FieldNotFound(tableName, fieldName);
+            } catch (SQLException e) {
+                throw new DatabaseException("Failed to check table existence ? ?", tableName, e.getMessage());
             }
+        } else {
+            throw new DatabaseTypeNotSupport(DatabaseManager.instance.getType().toString());
         }
-        throw new DatabaseTypeNotSupport(DatabaseManager.instance.getType().toString());
     }
 
     /**
@@ -63,27 +67,31 @@ public class Common {
                 if (rs != null && rs.next()) {
                     return;
                 }
-            } catch (Exception e) {
                 throw new TableNotFound(tableName);
+            } catch (SQLException e) {
+                throw new DatabaseException("Failed to check table existence ? ?", tableName, e.getMessage());
             }
         } else if (DatabaseManager.instance.getType().equals(DatabaseType.SQLITE)) {
             try (ResultSet rs = DatabaseManager.instance.query("SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "';")) {
                 if (rs != null && rs.next()) {
                     return;
                 }
-            } catch (SQLException e) {
                 throw new TableNotFound(tableName);
+            } catch (SQLException e) {
+                throw new DatabaseException("Failed to check table existence ? ?", tableName, e.getMessage());
             }
         } else if (DatabaseManager.instance.getType().equals(DatabaseType.MYSQL)) {
             try (ResultSet rs = DatabaseManager.instance.query("SHOW TABLES LIKE '" + tableName + "';")) {
                 if (rs != null && rs.next()) {
                     return;
                 }
-            } catch (SQLException e) {
                 throw new TableNotFound(tableName);
+            } catch (SQLException e) {
+                throw new DatabaseException("Failed to check table existence ? ?", tableName, e.getMessage());
             }
+        } else {
+            throw new DatabaseTypeNotSupport(DatabaseManager.instance.getType().toString());
         }
-        throw new DatabaseTypeNotSupport(DatabaseManager.instance.getType().toString());
     }
 
     /**

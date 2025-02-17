@@ -13,10 +13,10 @@ import static cn.lunadeer.dominion.misc.Converts.toWorld;
 
 public class Limitation extends ConfigurationFile {
     public static class LimitationText extends ConfigurationPart {
-        public String loadingWorldSettings = "Loading world settings...";
-        public String loadingWorldSetting = "Loading setting for world %s...";
-        public String loadWorldSettingFailed = "Failed to load world setting for world %s reason: %s";
-        public String loadWorldSettingsSuccess = "Successfully loaded {0} world settings: {1}.";
+        public String loadingWorldSettings = "Loading world-settings...";
+        public String loadingWorldSetting = "Loading world-settings of {0}...";
+        public String loadWorldSettingFailed = "Failed to world-settings of {0} reason: {1}";
+        public String loadWorldSettingsSuccess = "Successfully loaded {0} world-settings: {1}.";
     }
 
 
@@ -25,7 +25,7 @@ public class Limitation extends ConfigurationFile {
 
     @Comments({
             "The priority of group when player has multiple groups.",
-            "The group with lower priority will be used."
+            "The group with lower number will be used first."
     })
     public int priority = 0;
 
@@ -51,9 +51,9 @@ public class Limitation extends ConfigurationFile {
     public static class Teleportation extends ConfigurationPart {
         @Comments("Enable the teleportation feature.")
         public boolean enable = true;
-        @Comments("The cooldown time of teleportation in seconds.")
+        @Comments("The cooldown time of teleportation in seconds. 0 means no cooldown.")
         public int cooldown = 10;
-        @Comments("Delay time before teleportation in seconds.")
+        @Comments("Delay time before teleportation in seconds. 0 means no delay.")
         public int delay = 5;
     }
 
@@ -64,16 +64,14 @@ public class Limitation extends ConfigurationFile {
     public int amountAllOverTheWorld = 10;
 
     @HandleManually // See comments at loadWorldLimitationSettings() method
-    public Map<String, WorldLimitationSettings> worldLimitations = Map.of(
-            "default", new WorldLimitationSettings()
-    );
+    public Map<String, WorldLimitationSettings> worldLimitations = new HashMap<>();
     @HandleManually
     private final String worldLimitationsKey = "world-limitations";
 
     public static class WorldLimitationSettings extends ConfigurationPart {
         @Comments({
                 "The maximum amount of dominions a player can create in this world.",
-                "Set -1 means no limitation (but still limited by amountAllOverTheWorld)."
+                "Set -1 means no limitation (but still limited by amount-all-over-the-world)."
         })
         public int amount = 5;
         @Comments({
@@ -122,14 +120,15 @@ public class Limitation extends ConfigurationFile {
         })
         public int sizeMinZ = 4;
         @Comments("Weather to include all vertical blocks when calculating the size.")
-        public boolean automaticIncludeVertical = false;
+        public boolean autoIncludeVertical = false;
     }
 
     @PreProcess
     public void checkWorldLimitationSettings() {
-        if (!yaml.contains(worldLimitationsKey)) {
-            yaml.createSection(worldLimitationsKey);
-            yaml.setComments(worldLimitationsKey, List.of(
+        worldLimitations.put("default", new WorldLimitationSettings());
+        if (!getYaml().contains(worldLimitationsKey)) {
+            getYaml().createSection(worldLimitationsKey);
+            getYaml().setComments(worldLimitationsKey, List.of(
                     "The settings of the limitations for each world.",
                     "The default settings will be used if the world is not listed here.",
                     "Do not delete the default."
@@ -140,20 +139,16 @@ public class Limitation extends ConfigurationFile {
     @PostProcess(priority = 1)
     public void loadWorldLimitationSettings() {
         XLogger.info(Language.limitationText.loadingWorldSettings);
-        ConfigurationSection section = yaml.getConfigurationSection(worldLimitationsKey);
+        ConfigurationSection section = getYaml().getConfigurationSection(worldLimitationsKey);
         if (section == null) {
             return;
         }
         Set<String> keys = section.getKeys(false);
         for (String key : keys) {
             XLogger.info(Language.limitationText.loadingWorldSetting, key);
-            ConfigurationSection worldSection = section.getConfigurationSection(key);
-            if (worldSection == null) {
-                continue;
-            }
             try {
                 WorldLimitationSettings settings = new WorldLimitationSettings();
-                ConfigurationManager.readConfigurationPart(worldSection, new WorldLimitationSettings(), null);
+                ConfigurationManager.readConfigurationPart(getYaml(), settings, worldLimitationsKey + "." + key);
                 worldLimitations.put(key, settings);
             } catch (Exception e) {
                 XLogger.error(Language.limitationText.loadWorldSettingFailed, key, e.getMessage());
@@ -228,21 +223,14 @@ public class Limitation extends ConfigurationFile {
 
     @PostProcess(priority = 3)
     public void saveWorldLimitationSettings() {
-        ConfigurationSection section = yaml.getConfigurationSection(worldLimitationsKey);
-        if (section == null) {
-            return;
-        }
         for (Map.Entry<String, WorldLimitationSettings> entry : worldLimitations.entrySet()) {
             try {
-                section.createSection(entry.getKey());
-                ConfigurationSection worldSection = section.getConfigurationSection(entry.getKey());
-                ConfigurationManager.writeConfigurationPart(worldSection, entry.getValue(), null, !Objects.equals(entry.getKey(), "default"));
-                section.set(entry.getKey(), worldSection);
+                String prefix = worldLimitationsKey + "." + entry.getKey();
+                ConfigurationManager.writeConfigurationPart(getYaml(), entry.getValue(), prefix, !Objects.equals(entry.getKey(), "default"));
             } catch (Exception e) {
-                XLogger.warn("Failed to save world limitation settings for world %s.", entry.getKey());
+                XLogger.warn("Failed to save world limitation settings for world {0}", entry.getKey());
             }
         }
-        yaml.set(worldLimitationsKey, section);
     }
 
     public @NotNull WorldLimitationSettings getWorldSettings(@NotNull UUID worldUUID) {

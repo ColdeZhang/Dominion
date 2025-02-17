@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.utils.command;
 
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,8 +31,9 @@ public class CommandManager implements TabExecutor {
      * @param rootCommand The root command to be managed, should start with a slash.
      */
     public CommandManager(String rootCommand) {
-        CommandManager.rootCommand = rootCommand;
+        CommandManager.rootCommand = "/" + rootCommand;
         Objects.requireNonNull(Bukkit.getPluginCommand(rootCommand)).setExecutor(this);
+        XLogger.debug("Registered {0} commands.", commands.size());
     }
 
     /**

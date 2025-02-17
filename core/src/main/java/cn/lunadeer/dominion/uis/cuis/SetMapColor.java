@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.commands.DominionOperateCommand;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
 import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.scui.CuiTextInput;
 import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
 import cn.lunadeer.dominion.utils.stui.components.buttons.PermissionButton;
@@ -17,7 +18,7 @@ import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 
 public class SetMapColor {
 
-    public static class SetMapColorCuiText {
+    public static class SetMapColorCuiText extends ConfigurationPart {
         public String title = "Set {0} Map Color";
         public String button = "COLOR";
         public String description = "Color of the dominion on the web map.";

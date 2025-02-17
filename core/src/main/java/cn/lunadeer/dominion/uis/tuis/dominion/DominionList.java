@@ -4,7 +4,9 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.commands.DominionOperateCommand;
+import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.managers.MultiServerManager;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.utils.Notification;
@@ -21,11 +23,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
 import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
 import static cn.lunadeer.dominion.misc.Converts.toPlayer;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class DominionList {
 
@@ -35,6 +40,7 @@ public class DominionList {
         public String description = "List all of your dominions.";
         public String deleteButton = "DELETE";
         public String adminSection = "Your admin dominions section.";
+        public String serverSection = "Server {0} dominions section.";
     }
 
     public static SecondaryCommand list = new SecondaryCommand("list", List.of(
@@ -69,7 +75,14 @@ public class DominionList {
             view.navigator(Line.create()
                     .append(MainMenu.button(sender).build())
                     .append(Language.dominionListTuiText.button));
-            view.addLines(BuildTreeLines(sender, DominionNode.BuildNodeTree(-1, Cache.instance.getPlayerDominions(player.getUniqueId())), 0));
+            List<DominionNode> dominionNodes = DominionNode.BuildNodeTree(-1, Cache.instance.getPlayerDominions(player.getUniqueId()));
+            Map<Integer, List<DominionNode>> serverDominions = new HashMap<>();
+            dominionNodes.forEach(node ->
+                    serverDominions.computeIfAbsent(node.getDominion().getServerId(), k -> new ArrayList<>()).add(node)
+            );
+            // Show dominions on current server
+            view.addLines(BuildTreeLines(sender, serverDominions.get(Configuration.multiServer.serverId), 0));
+            // Show admin dominions
             List<DominionDTO> admin_dominions = Cache.instance.getPlayerAdminDominions(player.getUniqueId());
             if (!admin_dominions.isEmpty()) {
                 view.add(Line.create().append(""));
@@ -78,6 +91,15 @@ public class DominionList {
             for (DominionDTO dominion : admin_dominions) {
                 TextComponent manage = DominionManage.button(sender, dominion.getName()).build();
                 view.add(Line.create().append(manage).append(dominion.getName()));
+            }
+            // Show dominions on other servers
+            if (Configuration.multiServer.enable) {
+                for (Map.Entry<Integer, List<DominionNode>> entry : serverDominions.entrySet()) {
+                    if (entry.getKey() == Configuration.multiServer.serverId) continue;
+                    view.add(Line.create().append(""));
+                    view.add(Line.create().append(Component.text(formatString(Language.dominionListTuiText.serverSection, MultiServerManager.instance.getServerName(entry.getKey())), ViewStyles.main_color)));
+                    view.addLines(BuildTreeLines(sender, entry.getValue(), 0));
+                }
             }
             view.showOn(player, page);
         } catch (Exception e) {

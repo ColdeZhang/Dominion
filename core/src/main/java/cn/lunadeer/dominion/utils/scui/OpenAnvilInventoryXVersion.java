@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.utils.scui;
 
-import cn.lunadeer.dominion.utils.XVersionManager;
 import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.XVersionManager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.AnvilInventory;
 

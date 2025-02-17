@@ -33,16 +33,28 @@ public final class Dominion extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
-        XVersionManager.VERSION = XVersionManager.GetVersion(this);
         new Notification(this);
         new XLogger(this);
+        new Scheduler(this);
+
+        // http://patorjk.com/software/taag/#p=display&f=Big&t=Dominion
+        XLogger.info("  _____                  _       _");
+        XLogger.info(" |  __ \\                (_)     (_)");
+        XLogger.info(" | |  | | ___  _ __ ___  _ _ __  _  ___  _ __");
+        XLogger.info(" | |  | |/ _ \\| '_ ` _ \\| | '_ \\| |/ _ \\| '_ \\");
+        XLogger.info(" | |__| | (_) | | | | | | | | | | | (_) | | | |");
+        XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
+        XLogger.info(" ");
+        XLogger.info(Language.dominionText.pluginVersion, this.getDescription().getVersion());
+
         try {
             XLogger.info(Language.dominionText.loadingConfig);
             Configuration.loadConfigurationAndDatabase(instance.getServer().getConsoleSender());
         } catch (Exception e) {
             XLogger.error(e.getMessage());
         }
-        new Scheduler(this);
+        XVersionManager.VERSION = XVersionManager.GetVersion(this);
+
         new MultiServerManager(this);
         new TeleportManager(this);
         new Cache();
@@ -53,7 +65,7 @@ public final class Dominion extends JavaPlugin {
         }
 
         new EventsRegister(this);
-        new CommandManager("/dominion");
+        new CommandManager("dominion");
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> Configuration.database.type));
@@ -65,15 +77,6 @@ public final class Dominion extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CuiManager(this), this);
 
         XLogger.info(Language.dominionText.pluginEnabled);
-        XLogger.info(Language.dominionText.pluginVersion, this.getDescription().getVersion());
-        // http://patorjk.com/software/taag/#p=display&f=Big&t=Dominion
-        XLogger.info("  _____                  _       _");
-        XLogger.info(" |  __ \\                (_)     (_)");
-        XLogger.info(" | |  | | ___  _ __ ___  _ _ __  _  ___  _ __");
-        XLogger.info(" | |  | |/ _ \\| '_ ` _ \\| | '_ \\| |/ _ \\| '_ \\");
-        XLogger.info(" | |__| | (_) | | | | | | | | | | | (_) | | | |");
-        XLogger.info(" |_____/ \\___/|_| |_| |_|_|_| |_|_|\\___/|_| |_|");
-        XLogger.info(" ");
 
         if (Configuration.webMapRenderer.dynmap) new DynmapConnect();  // 注册 Dynmap API
         Scheduler.runTaskLaterAsync(MapRender::render, 40 * 20);
