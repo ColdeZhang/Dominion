@@ -2,12 +2,13 @@ package cn.lunadeer.dominion.utils.command;
 
 import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public abstract class ConditionalArgument extends Argument {
 
-    private Map<Integer, String> conditionArguments;
+    private final Map<Integer, String> conditionArguments = new HashMap<>();
 
     public abstract List<String> handelCondition(CommandSender sender);
 

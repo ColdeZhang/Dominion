@@ -13,9 +13,11 @@ import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
 import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
 import static cn.lunadeer.dominion.misc.Converts.*;
 
@@ -52,8 +54,12 @@ public class SelectMember {
             }.needPermission(defaultPermission).build());
             view.subtitle(sub);
 
-            List<MemberDTO> members = dominion.getMembers();
+            // get data from database directly because cache update may not be in time
+            List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));
             for (MemberDTO member : members) {
+                if (member.getGroupId() != -1) {
+                    continue;
+                }
                 PlayerDTO p = toPlayerDTO(member.getPlayerUUID());
                 view.add(Line.create()
                         .append(new FunctionalButton(p.getLastKnownName()) {

@@ -185,8 +185,8 @@ public class Configuration extends ConfigurationFile {
 
     public static class GroupTitle extends ConfigurationPart {
         public boolean enable = false;
-        public String prefix = "&7[&3";
-        public String suffix = "&7]";
+        public String prefix = "[";
+        public String suffix = "]";
     }
 
     @Comments("The settings of the external link.")

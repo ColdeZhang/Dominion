@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.group;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
@@ -23,9 +22,11 @@ import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
 import static cn.lunadeer.dominion.misc.Converts.*;
 import static cn.lunadeer.dominion.utils.Misc.formatString;
@@ -79,6 +80,8 @@ public class GroupList {
             );
             view.add(new Line().append(CreateGroup.button(sender, dominionName).build()));
 
+            // get data from database directly because cache update may not be in time
+            List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));
             for (GroupDTO group : groups) {
                 Line line = new Line();
                 Button deleteGroup = new FunctionalButton(Language.groupListTuiText.deleteButton) {
@@ -91,9 +94,10 @@ public class GroupList {
                 Button addMember = SelectMember.button(sender, dominionName, group.getNamePlain(), pageStr);
                 line.append(deleteGroup.build()).append(setting.build()).append(group.getNameColoredComponent()).append(addMember.build());
                 view.add(line);
-
-                List<MemberDTO> members = Cache.instance.getMembers(dominion.getId());
                 for (MemberDTO member : members) {
+                    if (!member.getGroupId().equals(group.getId())) {
+                        continue;
+                    }
                     PlayerDTO p = toPlayerDTO(member.getPlayerUUID());
                     Button remove = new FunctionalButton("-") {
                         @Override
