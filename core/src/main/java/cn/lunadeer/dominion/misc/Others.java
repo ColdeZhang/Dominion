@@ -71,7 +71,7 @@ public class Others {
         Location location = player.getLocation();
         Location location1 = new Location(location.getWorld(), location.getX() - size, location.getY() - size, location.getZ() - size);
         Location location2 = new Location(location.getWorld(), location.getX() + size, location.getY() + size, location.getZ() + size);
-        if (Configuration.getPlayerLimitation(player).getWorldSettings(player.getWorld()).automaticIncludeVertical) {
+        if (Configuration.getPlayerLimitation(player).getWorldSettings(player.getWorld()).autoIncludeVertical) {
             location1.setY(Configuration.getPlayerLimitation(player).getWorldSettings(player.getWorld()).noLowerThan);
             location2.setY(Configuration.getPlayerLimitation(player).getWorldSettings(player.getWorld()).noHigherThan - 1);
         }

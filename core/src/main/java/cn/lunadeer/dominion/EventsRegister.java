@@ -3,6 +3,7 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.handler.DominionEventHandler;
 import cn.lunadeer.dominion.handler.GroupEventHandler;
 import cn.lunadeer.dominion.handler.MemberEventHandler;
+import cn.lunadeer.dominion.handler.SelectPointEventsHandler;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.XVersionManager;
 import org.bukkit.Bukkit;
@@ -25,20 +26,17 @@ public class EventsRegister {
                         XLogger.debug("Load Paper special events");
                         registerEvents("cn.lunadeer.dominion.v1_21_paper.events.PlayerEvents");
                         registerEvents("cn.lunadeer.dominion.v1_21_paper.events.EnvironmentEvents");
-                        registerEvents("cn.lunadeer.dominion.v1_21_paper.events.SelectPointEvents");
                         registerEvents("cn.lunadeer.dominion.v1_21_paper.scui.CuiEvents");
                     } else {
                         XLogger.debug("Load Spigot special events");
                         registerEvents("cn.lunadeer.dominion.v1_21_spigot.events.PlayerEvents");
                         registerEvents("cn.lunadeer.dominion.v1_21_spigot.events.EnvironmentEvents");
-                        registerEvents("cn.lunadeer.dominion.v1_21_spigot.events.SelectPointEvents");
                     }
                     break;
                 case v1_20_1:
                     XLogger.debug("Load API version: 1.20.1");
                     registerEvents("cn.lunadeer.dominion.v1_20_1.events.PlayerEvents");
                     registerEvents("cn.lunadeer.dominion.v1_20_1.events.EnvironmentEvents");
-                    registerEvents("cn.lunadeer.dominion.v1_20_1.events.SelectPointEvents");
                     registerEvents("cn.lunadeer.dominion.v1_20_1.scui.CuiEvents");
                     if (isPaper()) {
                         registerEvents("cn.lunadeer.dominion.v1_20_1.events.special.Paper");
@@ -48,13 +46,14 @@ public class EventsRegister {
                     break;
             }
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            XLogger.error("Failed to register events: %s", e.getMessage());
+            XLogger.error("Failed to register events: {0}", e.getMessage());
             plugin.getServer().getPluginManager().disablePlugin(plugin);
         }
 
         new DominionEventHandler(plugin);
         new MemberEventHandler(plugin);
         new GroupEventHandler(plugin);
+        new SelectPointEventsHandler(plugin);
     }
 
     public void registerEvents(String className) throws ClassNotFoundException, IllegalAccessException, InstantiationException {

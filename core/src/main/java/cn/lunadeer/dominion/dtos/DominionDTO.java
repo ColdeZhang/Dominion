@@ -50,6 +50,9 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             }
             Map<PriFlag, Boolean> preFlags = new HashMap<>();
             for (PriFlag f : Flags.getAllPriFlagsEnable()) {
+                if (f.equals(Flags.ADMIN)) {
+                    continue;
+                }
                 preFlags.put(f, rs.getBoolean(f.getFlagName()));
             }
             String color = rs.getString("color");

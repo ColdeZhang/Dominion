@@ -8,7 +8,7 @@ public class XVersionManager {
 
     public static ImplementationVersion GetVersion(JavaPlugin plugin) {
         String version = plugin.getServer().getBukkitVersion();
-        XLogger.debug("API version: %s", version);
+        XLogger.debug("API version: {0}", version);
         if (version.contains("1.21")) {
             return ImplementationVersion.v1_21;
         } else if (version.contains("1.20.1")

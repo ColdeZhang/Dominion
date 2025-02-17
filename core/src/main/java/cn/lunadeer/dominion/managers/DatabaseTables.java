@@ -238,7 +238,6 @@ public class DatabaseTables {
         }
         try {
             assertTableExist("player_privilege");
-        } catch (Exception ignored) {
             // migrate from player_privilege to dominion_member
             String sql = "SELECT * FROM player_privilege;";
             ResultSet rs = DatabaseManager.instance.query(sql);
@@ -259,6 +258,7 @@ public class DatabaseTables {
             }
             sql = "DROP TABLE player_privilege;";
             DatabaseManager.instance.query(sql);
+        } catch (Exception ignored) {
         }
 
         // 2.1.0-beta add group name colored

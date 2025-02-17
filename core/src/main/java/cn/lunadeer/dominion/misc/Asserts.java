@@ -114,6 +114,7 @@ public class Asserts {
             return;
         }
         List<DominionDTO> dominions = Cache.instance.getPlayerDominions(associatedPlayer.getUniqueId());
+        dominions.removeIf(dom -> dom.getServerId() != Configuration.multiServer.serverId); // only count dominions in current server
         int allOverTheWorld = Configuration.getPlayerLimitation(associatedPlayer).amountAllOverTheWorld;
         if (dominions.size() >= allOverTheWorld) {
             throw new DominionException(Language.assertsText.exceedMaxAmount, associatedPlayer.getName(), allOverTheWorld);
