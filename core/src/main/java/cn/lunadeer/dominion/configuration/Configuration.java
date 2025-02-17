@@ -335,7 +335,33 @@ public class Configuration extends ConfigurationFile {
         }
     }
 
+    private static void handleLegacyConfiguration() {
+        File dataFolder = Dominion.instance.getDataFolder();
+        File legacyGroupsFolder = new File(dataFolder, "groups");
+        if (!legacyGroupsFolder.exists()) {
+            return;
+        }
+        File legacyFolder = new File(dataFolder, "legacy");
+        if (!legacyFolder.exists()) {
+            legacyFolder.mkdirs();
+        }
+        moveFilesToFolder(legacyGroupsFolder, new File(legacyFolder, "groups"));
+        new File(dataFolder, "config.yml").renameTo(new File(legacyFolder, "config.yml"));
+        moveFilesToFolder(new File(dataFolder, "languages"), new File(legacyFolder, "languages"));
+    }
+
+    private static void moveFilesToFolder(File sourceFolder, File targetFolder) {
+        if (!targetFolder.exists()) {
+            targetFolder.mkdirs();
+        }
+        for (File file : Objects.requireNonNull(sourceFolder.listFiles())) {
+            file.renameTo(new File(targetFolder, file.getName()));
+        }
+        sourceFolder.delete();
+    }
+
     public static void loadConfigurationAndDatabase(CommandSender sender) throws Exception {
+        handleLegacyConfiguration();
         // configuration
         ConfigurationManager.load(Configuration.class, new File(Dominion.instance.getDataFolder(), "config.yml"), "version");
         Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender()
