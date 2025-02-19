@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.misc.DominionException;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.Scheduler;
 import cn.lunadeer.dominion.utils.command.Option;
@@ -17,6 +18,7 @@ import cn.lunadeer.dominion.utils.stui.components.buttons.PermissionButton;
 import cn.lunadeer.dominion.utils.webMap.MapRender;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -112,6 +114,7 @@ public class AdministratorCommand {
             Cache.instance.loadGroups();
             Notification.info(sender, Language.administratorCommandText.reloadedGroupCache);
         });
+        if (sender instanceof Player) MainMenu.show(sender, "1");
     }
 
     public static PermissionButton reloadConfigButton(CommandSender sender) {
@@ -131,6 +134,7 @@ public class AdministratorCommand {
             } catch (Exception e) {
                 Notification.error(sender, e.getMessage());
             }
+            if (sender instanceof Player) MainMenu.show(sender, "1");
         });
     }
 

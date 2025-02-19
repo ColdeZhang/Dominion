@@ -40,15 +40,19 @@ import cn.lunadeer.dominion.uis.tuis.template.TemplateSetting;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
 import cn.lunadeer.dominion.utils.command.InvalidArgumentException;
 import cn.lunadeer.dominion.utils.command.NoPermissionException;
-import cn.lunadeer.dominion.utils.configuration.ConfigurationFile;
-import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
-import cn.lunadeer.dominion.utils.configuration.PostProcess;
-import cn.lunadeer.dominion.utils.configuration.PreProcess;
+import cn.lunadeer.dominion.utils.configuration.*;
 import cn.lunadeer.dominion.utils.scui.CuiTextInput;
 import cn.lunadeer.dominion.utils.webMap.BlueMapConnect;
 import cn.lunadeer.dominion.utils.webMap.DynmapConnect;
 
 public class Language extends ConfigurationFile {
+
+    // languages file name list here will be saved to plugin data folder
+    @HandleManually
+    public enum LanguageCode {
+        en_us,
+        zh_cn
+    }
 
     public static Dominion.DominionText dominionText = new Dominion.DominionText();
 

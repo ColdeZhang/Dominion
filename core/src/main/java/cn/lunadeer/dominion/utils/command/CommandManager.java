@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.utils.command;
 
+import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Manages the registration and execution of commands.
@@ -29,6 +31,7 @@ public class CommandManager implements TabExecutor, Listener {
 
     private static String rootCommand;
     private final JavaPlugin plugin;
+    private Consumer<CommandSender> rootCommandConsumer = null;
 
     /**
      * Constructs a CommandManager with the specified root command.
@@ -43,12 +46,22 @@ public class CommandManager implements TabExecutor, Listener {
         this.plugin = plugin;
     }
 
+    public CommandManager(JavaPlugin plugin, String rootCommand, Consumer<CommandSender> rootCommandConsumer) {
+        CommandManager.rootCommand = "/" + rootCommand;
+        Objects.requireNonNull(Bukkit.getPluginCommand(rootCommand)).setExecutor(this);
+        XLogger.debug("Registered {0} commands.", commands.size());
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.plugin = plugin;
+        this.rootCommandConsumer = rootCommandConsumer;
+    }
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (plugin.getServer().getOnlinePlayers().isEmpty()) {
             for (String cmd : commands.keySet()) {
                 // Unregister all commands that are hidden
                 if (commands.get(cmd).isHideUsage()) {
+                    XLogger.debug("Due to no one online, Unregistering command: {0}", cmd);
                     unregisterCommand(cmd);
                 }
             }
@@ -113,13 +126,20 @@ public class CommandManager implements TabExecutor, Listener {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length == 0) {
+            if (rootCommandConsumer != null) {
+                rootCommandConsumer.accept(commandSender);
+            }
             return true;
         }
         SecondaryCommand cmd = getCommand(strings[0]);
         if (cmd == null) {
             return true;
         }
-        cmd.run(commandSender, strings);
+        try {
+            cmd.run(commandSender, strings);
+        } catch (Exception e) {
+            Notification.error(commandSender, e.getMessage());
+        }
         return true;
     }
 

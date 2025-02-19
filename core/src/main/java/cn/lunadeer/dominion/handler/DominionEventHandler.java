@@ -3,6 +3,7 @@ package cn.lunadeer.dominion.handler;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.commands.DominionOperateCommand;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
@@ -43,7 +44,7 @@ public class DominionEventHandler implements Listener {
 
         public String deleteSuccess = "Delete dominion {0} success.";
         public String deleteFailed = "Delete dominion {0} failed, reason: {1}";
-        public String deleteConfirm = "Add 'force' at the end of the command to confirm delete the dominion {0} and its subs, this operation cannot be undone.";
+        public String deleteConfirm = "Use command '{0}' to confirm delete the dominion {1} and its subs, this operation cannot be undone.";
         public String listSubDoms = "The dominion {0} has subs: {1}";
 
         public String renameFailed = "Rename dominion {0} failed, reason: {1}";
@@ -52,7 +53,7 @@ public class DominionEventHandler implements Listener {
 
         public String giveSuccess = "Give dominion {0} to {1} success.";
         public String giveFailed = "Give dominion {0} to other failed, reason: {1}";
-        public String giveConfirm = "Add 'force' at the end of the command to confirm give the dominion {0} and its subs to {1}, this operation cannot be undone.";
+        public String giveConfirm = "Use command '{0}' to confirm give the dominion {1} to {2}, this operation cannot be undone.";
         public String alreadyBelong = "The dominion {0} already belongs to {1}.";
         public String cannotGiveSub = "Dominion {0} is a sub-dominion, cannot give it to others.";
 
@@ -107,7 +108,8 @@ public class DominionEventHandler implements Listener {
             // size check
             assertDominionSize(player, world.getUID(), event.getCuboid());
             // parent check
-            assertSubParent(player, toBeCreated, event.getCuboid());
+            assertWithinParent(toBeCreated, event.getCuboid());
+            assertSubDepth(player, toBeCreated);
             // intersect check
             assertDominionIntersect(player, toBeCreated, event.getCuboid());
             // handle economy
@@ -145,7 +147,8 @@ public class DominionEventHandler implements Listener {
             assertDominionOwner(event.getOperator(), dominion);
             Player player = toPlayer(dominion.getOwner());
             assertDominionSize(player, dominion.getWorldUid(), event.getNewCuboid());
-            assertSubParent(player, dominion, event.getNewCuboid());
+            assertWithinParent(dominion, event.getNewCuboid());
+            assertContainSubs(dominion, event.getNewCuboid());
             assertDominionIntersect(player, dominion, event.getNewCuboid());
             if (!event.isSkipEconomy()) {
                 assertEconomy(player, event.getOldCuboid(), event.getNewCuboid());
@@ -190,7 +193,7 @@ public class DominionEventHandler implements Listener {
                 if (!sub_dominions.isEmpty()) {
                     Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), sub_dominions.stream().map(DominionDTO::getName).toArray());
                 }
-                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.deleteConfirm, dominion.getName());
+                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.deleteConfirm, DominionOperateCommand.delete.getUsage(), dominion.getName());
                 return;
             }
             for (DominionDTO sub_dominion : sub_dominions) {
@@ -256,7 +259,7 @@ public class DominionEventHandler implements Listener {
             List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
             if (!event.isForce()) {
                 event.setCancelled(true);
-                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.giveConfirm, dominion.getName(), newOwner.getName());
+                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.giveConfirm, DominionOperateCommand.give.getUsage(), dominion.getName(), newOwner.getName());
                 if (!sub_dominions.isEmpty()) {
                     Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), sub_dominions.stream().map(DominionDTO::getName).toArray());
                 }

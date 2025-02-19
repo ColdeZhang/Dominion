@@ -21,7 +21,7 @@ public class VaultConnect implements Listener {
 
     public static VaultConnect instance;
     private VaultInterface vaultInstance = null;
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public VaultConnect(JavaPlugin plugin) {
         this.plugin = plugin;

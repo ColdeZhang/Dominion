@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion;
+package cn.lunadeer.dominion.events;
 
 import cn.lunadeer.dominion.handler.DominionEventHandler;
 import cn.lunadeer.dominion.handler.GroupEventHandler;

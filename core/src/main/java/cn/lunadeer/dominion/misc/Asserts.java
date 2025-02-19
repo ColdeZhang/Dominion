@@ -245,16 +245,14 @@ public class Asserts {
     }
 
     /**
-     * Asserts that the parent dominion can contain the specified dominion and that the dominion can contain its children.
-     * Also checks if the sub-dominion recursion depth is valid.
+     * Asserts that the parent dominion can contain the specified dominion.
      *
-     * @param associatedPlayer the player associated with the dominion
-     * @param dominion         the dominion to check
-     * @param cuboid           the cuboid representing the dominion's size
+     * @param dominion the dominion to check
+     * @param cuboid   the cuboid representing the dominion's size
      * @throws DominionException if the parent dominion cannot contain the specified dominion,
      *                           if the dominion cannot contain its children, or if the sub-dominion recursion depth is invalid
      */
-    public static void assertSubParent(@NotNull Player associatedPlayer, @NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
+    public static void assertWithinParent(@NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
         // check if parent dominion can contain this dominion
         if (dominion.getParentDomId() != -1) {
             DominionDTO parent = Cache.instance.getDominion(dominion.getParentDomId());
@@ -265,13 +263,18 @@ public class Asserts {
                 throw new DominionException(Language.assertsText.outsideOfParentDom, dominion.getName(), parent.getName());
             }
         }
-        // check if dominion can contain children
-        List<DominionDTO> children = Cache.instance.getDominionsByParentId(dominion.getId());
-        for (DominionDTO child : children) {
-            if (!cuboid.contain(child.getCuboid())) {
-                throw new DominionException(Language.assertsText.cantContainChild, dominion.getName(), child.getName());
-            }
-        }
+    }
+
+    /**
+     * Asserts that the sub-dominion depth is within the allowed limit.
+     * This method checks if the recursion depth of sub-dominions is valid
+     * based on the player's limitations and the configuration settings.
+     *
+     * @param associatedPlayer the player associated with the dominion
+     * @param dominion         the dominion to check
+     * @throws DominionException if the sub-dominion depth exceeds the allowed limit
+     */
+    public static void assertSubDepth(@NotNull Player associatedPlayer, @NotNull DominionDTO dominion) throws DominionException {
         // check if sub recursion is valid
         if (bypassLimit(associatedPlayer)) {
             return;
@@ -291,6 +294,25 @@ public class Asserts {
         }
         if (level >= limitDepth) {
             throw new DominionException(Language.assertsText.subDomTooDeep, associatedPlayer.getName(), limitDepth);
+        }
+    }
+
+    /**
+     * Asserts that the given dominion can contain its child dominions.
+     * This method checks if the cuboid representing the dominion's size
+     * can contain the cuboids of all its child dominions.
+     *
+     * @param dominion the dominion to check
+     * @param cuboid   the cuboid representing the dominion's size
+     * @throws DominionException if the dominion cannot contain its child dominions
+     */
+    public static void assertContainSubs(@NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
+        // check if dominion can contain children
+        List<DominionDTO> children = Cache.instance.getDominionsByParentId(dominion.getId());
+        for (DominionDTO child : children) {
+            if (!cuboid.contain(child.getCuboid())) {
+                throw new DominionException(Language.assertsText.cantContainChild, dominion.getName(), child.getName());
+            }
         }
     }
 
