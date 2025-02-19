@@ -53,7 +53,7 @@ public class TemplateList {
             view.add(Line.create().append(CreateTemplate.button(sender).build()));
 
             for (TemplateDTO template : templates) {
-                Button manage = CreateTemplate.button(sender).green();
+                Button setting = TemplateSetting.button(sender, template.getName()).green();
                 Button delete = new ListViewButton(Language.templateListTuiText.deleteButton) {
                     @Override
                     public void function(String pageStr) {
@@ -62,7 +62,7 @@ public class TemplateList {
                 }.needPermission(defaultPermission).red();
                 Line line = Line.create()
                         .append(delete.build())
-                        .append(manage.build())
+                        .append(setting.build())
                         .append(template.getName());
                 view.add(line);
             }

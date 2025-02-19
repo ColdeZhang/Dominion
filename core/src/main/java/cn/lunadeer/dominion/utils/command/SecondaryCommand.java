@@ -61,7 +61,7 @@ public abstract class SecondaryCommand {
 
     public String getUsage() {
         StringBuilder usage = new StringBuilder();
-        usage.append(command).append(" ").append(command);
+        usage.append(CommandManager.getRootCommand()).append(" ").append(command);
         for (Argument argument : arguments) {
             usage.append(" ");
             usage.append(argument.toString());

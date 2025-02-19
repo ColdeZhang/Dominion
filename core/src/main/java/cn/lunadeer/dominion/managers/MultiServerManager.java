@@ -38,10 +38,14 @@ public class MultiServerManager implements PluginMessageListener {
 
     public MultiServerManager(JavaPlugin plugin) {
         this.plugin = plugin;
+        if (!Configuration.multiServer.enable) {
+            return;
+        }
         this.plugin.getServer().getMessenger().registerOutgoingPluginChannel(this.plugin, "BungeeCord");
         this.plugin.getServer().getMessenger().registerIncomingPluginChannel(this.plugin, "BungeeCord", this);
         instance = this;
         serverMap.put(Configuration.multiServer.serverId, Configuration.multiServer.serverName);
+        XLogger.info(Language.multiServerManagerText.sendingNotice, Configuration.multiServer.serverId, Configuration.multiServer.serverName);
         Scheduler.runTaskRepeatAsync(this::sendNotice, 0, 20 * 60 * 5);   // send notice every 5 minutes
     }
 
@@ -137,7 +141,6 @@ public class MultiServerManager implements PluginMessageListener {
         try {
             String serverId = Configuration.multiServer.serverId + "";
             String serverName = Configuration.multiServer.serverName;
-            XLogger.info(Language.multiServerManagerText.sendingNotice, serverId, serverName);
             sendActionMessageAll("notice",
                     List.of(serverId, serverName)
             );

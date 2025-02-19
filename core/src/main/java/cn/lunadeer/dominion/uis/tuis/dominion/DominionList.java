@@ -81,7 +81,7 @@ public class DominionList {
                     serverDominions.computeIfAbsent(node.getDominion().getServerId(), k -> new ArrayList<>()).add(node)
             );
             // Show dominions on current server
-            view.addLines(BuildTreeLines(sender, serverDominions.get(Configuration.multiServer.serverId), 0));
+            view.addLines(BuildTreeLines(sender, serverDominions.getOrDefault(Configuration.multiServer.serverId, new ArrayList<>()), 0));
             // Show admin dominions
             List<DominionDTO> admin_dominions = Cache.instance.getPlayerAdminDominions(player.getUniqueId());
             if (!admin_dominions.isEmpty()) {

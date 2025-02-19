@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class Configuration extends ConfigurationFile {
@@ -46,11 +47,11 @@ public class Configuration extends ConfigurationFile {
     }
 
     @PreProcess(priority = 1)
-    public static void loadFlagConfiguration() {
+    public static void loadFlagConfiguration() throws IOException {
         XLogger.info(Language.configurationText.loadingFlag);
         File yamlFile = new File(Dominion.instance.getDataFolder(), "flags.yml");
         if (!yamlFile.exists()) {
-            Dominion.instance.saveResource("flags.yml", false);
+            boolean re = yamlFile.createNewFile();
         }
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(yamlFile);
         for (Flag flag : Flags.getAllFlags()) {
@@ -368,6 +369,15 @@ public class Configuration extends ConfigurationFile {
                 , Language.configurationText.loadConfiguration);
         // language
         try {
+            // save default language files to the languages folder
+            File languagesFolder = new File(Dominion.instance.getDataFolder(), "languages");
+            if (!languagesFolder.exists()) {
+                languagesFolder.mkdir();
+            }
+            for (Language.LanguageCode code : Language.LanguageCode.values()) {
+                if (!new File(languagesFolder, code.name() + ".yml").exists())
+                    Dominion.instance.saveResource("languages/" + code.name() + ".yml", false);
+            }
             Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender(), Language.configurationText.loadingLanguage, language);
             ConfigurationManager.load(Language.class, new File(Dominion.instance.getDataFolder(), "languages/" + language + ".yml"));
             Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender(), Language.configurationText.loadLanguageSuccess, language);

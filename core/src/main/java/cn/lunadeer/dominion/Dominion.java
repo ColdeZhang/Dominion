@@ -2,12 +2,15 @@ package cn.lunadeer.dominion;
 
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.events.EventsRegister;
 import cn.lunadeer.dominion.managers.MultiServerManager;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.managers.TeleportManager;
 import cn.lunadeer.dominion.misc.InitCommands;
 import cn.lunadeer.dominion.misc.Others;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
 import cn.lunadeer.dominion.utils.command.CommandManager;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
@@ -56,6 +59,7 @@ public final class Dominion extends JavaPlugin {
         }
         XVersionManager.VERSION = XVersionManager.GetVersion(this);
 
+        new VaultConnect(this);
         new MultiServerManager(this);
         new TeleportManager(this);
         new Cache();
@@ -67,7 +71,9 @@ public final class Dominion extends JavaPlugin {
 
         new EventsRegister(this);
         new InitCommands();
-        new CommandManager(this, "dominion");
+        new CommandManager(this, "dominion", (sender) -> {
+            MainMenu.show(sender, "1");
+        });
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> Configuration.database.type));

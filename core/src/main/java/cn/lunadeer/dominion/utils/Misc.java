@@ -14,6 +14,9 @@ public class Misc {
     public static String formatString(String str, Object... args) {
         String formatStr = str;
         for (int i = 0; i < args.length; i++) {
+            if (args[i] == null) {
+                args[i] = "[null for formatString (args[" + i + "])]";
+            }
             formatStr = formatStr.replace("{" + i + "}", args[i].toString());
         }
         return formatStr;
