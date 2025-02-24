@@ -1,50 +1,58 @@
 package cn.lunadeer.dominion.uis.cuis;
 
-import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.events.dominion.modify.DominionRenameEvent;
-import cn.lunadeer.dominion.managers.Translation;
+import cn.lunadeer.dominion.commands.DominionOperateCommand;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.scui.CuiTextInput;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.PermissionButton;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 
 public class RenameDominion {
+    public static class RenameDominionCuiText extends ConfigurationPart {
+        public String title = "Rename {0}";
+        public String description = "Rename dominion.";
+        public String button = "RENAME";
+    }
 
-    private static class renameDominionCB implements CuiTextInput.InputCallback {
-        private final Player sender;
-        private final String oldName;
+    public static PermissionButton button(CommandSender sender, String dominionName) {
+        return new FunctionalButton(Language.renameDominionCuiText.button) {
+            @Override
+            public void function() {
+                open(sender, dominionName);
+            }
+        }.needPermission(defaultPermission);
+    }
 
-        public renameDominionCB(Player sender, String oldName) {
-            this.sender = sender;
-            this.oldName = oldName;
-        }
-
+    private record renameDominionCB(Player sender, String oldName) implements CuiTextInput.InputCallback {
         @Override
         public void handleData(String input) {
-            XLogger.debug("renameDominionCB.run: %s", input);
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            DominionDTO dominion = DominionDTO.select(oldName);
-            if (dominion == null) {
-                Notification.error(sender, Translation.Messages_DominionNotExist, oldName);
-                return;
-            }
-            if (new DominionRenameEvent(operator, dominion, input).call()) {
-                DominionManage.show(sender, new String[]{"manage", input});
+            try {
+                DominionOperateCommand.rename(sender, oldName, input);
+                DominionManage.show(sender, input, "1");
+            } catch (Exception e) {
+                Notification.error(sender, e.getMessage());
             }
         }
     }
 
-    public static void open(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        CuiTextInput.InputCallback renameDominionCB = new renameDominionCB(player, args[1]);
-        CuiTextInput view = CuiTextInput.create(renameDominionCB).setText(args[1]).title(Translation.CUI_Input_RenameDominion.trans());
-        view.setSuggestCommand(Translation.Commands_Dominion_RenameDominionUsage.trans());
-        view.open(player);
+    public static void open(CommandSender sender, String dominionName) {
+        try {
+            Player player = toPlayer(sender);
+            CuiTextInput.InputCallback renameDominionCB = new renameDominionCB(player, dominionName);
+            CuiTextInput view = CuiTextInput.create(renameDominionCB).setText(dominionName).title(
+                    String.format(Language.renameDominionCuiText.title, dominionName)
+            );
+            view.setSuggestCommand(DominionOperateCommand.rename.getUsage());
+            view.open(player);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
+        }
     }
 }

@@ -1,22 +1,22 @@
 package cn.lunadeer.dominion.dtos;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.minecraftpluginutils.ColorParser;
-import cn.lunadeer.minecraftpluginutils.databse.DatabaseManager;
-import cn.lunadeer.minecraftpluginutils.databse.Field;
-import cn.lunadeer.minecraftpluginutils.databse.FieldType;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.UpdateRow;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.utils.ColorParser;
+import cn.lunadeer.dominion.utils.databse.DatabaseManager;
+import cn.lunadeer.dominion.utils.databse.Field;
+import cn.lunadeer.dominion.utils.databse.FieldType;
+import cn.lunadeer.dominion.utils.databse.syntax.InsertRow;
+import cn.lunadeer.dominion.utils.databse.syntax.UpdateRow;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     Field name_raw = new Field("name", FieldType.STRING);
     Field name_color = new Field("name_colored", FieldType.STRING);
 
-    private final Map<PreFlag, Boolean> flags = new HashMap<>();
+    private final Map<PriFlag, Boolean> flags = new HashMap<>();
 
     @Override
     public @NotNull Integer getId() {
@@ -54,41 +54,36 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     @Override
     public @NotNull Component getNameColoredComponent() {
         String with_pre_suf = "&#ffffff" +
-                Dominion.config.getGroupTitlePrefix() +
+                Configuration.groupTitle.prefix +
                 (String) name_color.value +
                 "&#ffffff" +
-                Dominion.config.getGroupTitleSuffix();
+                Configuration.groupTitle.suffix;
         return ColorParser.getComponentType(with_pre_suf);
     }
 
     @Override
     public @NotNull String getNameColoredBukkit() {
         String with_pre_suf = "&#ffffff" +
-                Dominion.config.getGroupTitlePrefix() +
+                Configuration.groupTitle.prefix +
                 (String) name_color.value +
                 "&#ffffff" +
-                Dominion.config.getGroupTitleSuffix();
+                Configuration.groupTitle.suffix;
         return ColorParser.getBukkitType(with_pre_suf);
     }
 
     @Override
-    public @NotNull Boolean getAdmin() {
-        return getFlagValue(Flags.ADMIN);
-    }
-
-    @Override
-    public @NotNull Boolean getFlagValue(@NotNull PreFlag flag) {
+    public @NotNull Boolean getFlagValue(@NotNull PriFlag flag) {
         if (!flags.containsKey(flag)) return flag.getDefaultValue();
         return flags.get(flag);
     }
 
     @Override
-    public @NotNull Map<PreFlag, Boolean> getFlagsValue() {
+    public @NotNull Map<PriFlag, Boolean> getFlagsValue() {
         return flags;
     }
 
     @Override
-    public @Nullable GroupDTO setName(@NotNull String name) {
+    public @NotNull GroupDTO setName(@NotNull String name) throws SQLException {
         this.name_color.value = name;
         this.name_raw.value = ColorParser.getPlainText(name);
         UpdateRow updateRow = new UpdateRow().field(this.name_raw).field(this.name_color);
@@ -96,12 +91,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     }
 
     @Override
-    public @Nullable GroupDTO setAdmin(@NotNull Boolean admin) {
-        return setFlagValue(Flags.ADMIN, admin);
-    }
-
-    @Override
-    public GroupDTO setFlagValue(@NotNull PreFlag flag, @NotNull Boolean value) {
+    public GroupDTO setFlagValue(@NotNull PriFlag flag, @NotNull Boolean value) throws SQLException {
         flags.put(flag, value);
         Field f = new Field(flag.getFlagName(), value);
         UpdateRow updateRow = new UpdateRow().field(f);
@@ -109,32 +99,30 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     }
 
     @Override
-    public List<MemberDTO> getMembers() {
+    public List<MemberDTO> getMembers() throws SQLException {
         return new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectByDomGroupId(getDomID(), getId()));
     }
 
-    public static GroupDTO create(String name, DominionDTO dominionDTO) {
+    public static GroupDTO create(String name, DominionDTO dominionDTO) throws SQLException {
         GroupDTO group = new GroupDTO(name, dominionDTO.getId());
         InsertRow insertRow = new InsertRow().returningAll().onConflictDoNothing(new Field("id", null));
         insertRow.table("dominion_group")
                 .field(group.domID)
                 .field(group.name_raw)
                 .field(group.name_color);
-        for (Map.Entry<PreFlag, Boolean> f : dominionDTO.getGuestPrivilegeFlagValue().entrySet()) {
+        for (Map.Entry<PriFlag, Boolean> f : dominionDTO.getGuestPrivilegeFlagValue().entrySet()) {
             insertRow.field(new Field(f.getKey().getFlagName(), f.getValue()));
         }
-        try (ResultSet rs = insertRow.execute()) {
-            List<GroupDTO> groups = getDTOFromRS(rs);
-            if (groups.isEmpty()) return null;
-            Cache.instance.loadGroups(groups.get(0).getId());
-            return groups.get(0);
-        } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("GroupDTO.create ", e, "");
-            return null;
+        ResultSet rs = insertRow.execute();
+        List<GroupDTO> groups = getDTOFromRS(rs);
+        if (groups.isEmpty()) {
+            throw new SQLException("Failed to create group.");
         }
+        Cache.instance.loadGroups(groups.get(0).getId());
+        return groups.get(0);
     }
 
-    public static void deleteById(Integer id) {
+    public static void deleteById(Integer id) throws SQLException {
         String sql = "DELETE FROM dominion_group WHERE id = ?;";
         DatabaseManager.instance.query(sql, id);
         Cache.instance.loadGroups(id);
@@ -144,26 +132,26 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         }
     }
 
-    public static GroupDTO select(Integer id) {
+    public static GroupDTO select(Integer id) throws SQLException {
         String sql = "SELECT * FROM dominion_group WHERE id = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, id));
         if (groups.isEmpty()) return null;
         return groups.get(0);
     }
 
-    public static GroupDTO select(Integer domID, String name) {
+    public static GroupDTO select(Integer domID, String name) throws SQLException {
         String sql = "SELECT * FROM dominion_group WHERE dom_id = ? AND name = ?;";
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, domID, name));
         if (groups.isEmpty()) return null;
         return groups.get(0);
     }
 
-    public static List<GroupDTO> selectAll() {
+    public static List<GroupDTO> selectAll() throws SQLException {
         String sql = "SELECT * FROM dominion_group;";
         return getDTOFromRS(DatabaseManager.instance.query(sql));
     }
 
-    public static List<GroupDTO> selectByDominionId(Integer domID) {
+    public static List<GroupDTO> selectByDominionId(Integer domID) throws SQLException {
         String sql = "SELECT * FROM dominion_group WHERE dom_id = ?;";
         return getDTOFromRS(DatabaseManager.instance.query(sql, domID));
     }
@@ -172,12 +160,12 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         this.domID.value = domID;
         this.name_raw.value = ColorParser.getPlainText(name);
         this.name_color.value = name;
-        for (PreFlag f : Flags.getAllPreFlagsEnable()) {
+        for (PriFlag f : Flags.getAllPriFlagsEnable()) {
             flags.put(f, f.getDefaultValue());
         }
     }
 
-    private GroupDTO(Integer id, Integer domID, String name, Map<PreFlag, Boolean> flags, String nameColored) {
+    private GroupDTO(Integer id, Integer domID, String name, Map<PriFlag, Boolean> flags, String nameColored) {
         this.id.value = id;
         this.domID.value = domID;
         this.name_raw.value = name;
@@ -185,43 +173,37 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         this.name_color.value = nameColored;
     }
 
-    private static List<GroupDTO> getDTOFromRS(ResultSet rs) {
+    private static List<GroupDTO> getDTOFromRS(ResultSet rs) throws SQLException {
         List<GroupDTO> list = new ArrayList<>();
         if (rs == null) return list;
-        try {
-            while (rs.next()) {
-                Map<PreFlag, Boolean> flags = new HashMap<>();
-                for (PreFlag f : Flags.getAllPreFlagsEnable()) {
-                    flags.put(f, rs.getBoolean(f.getFlagName()));
-                }
-                GroupDTO group = new GroupDTO(
-                        rs.getInt("id"),
-                        rs.getInt("dom_id"),
-                        rs.getString("name"),
-                        flags,
-                        rs.getString("name_colored")
-                );
-                list.add(group);
+        while (rs.next()) {
+            Map<PriFlag, Boolean> flags = new HashMap<>();
+            for (PriFlag f : Flags.getAllPriFlagsEnable()) {
+                flags.put(f, rs.getBoolean(f.getFlagName()));
             }
-        } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("查询权限组失败: ", e, "");
+            GroupDTO group = new GroupDTO(
+                    rs.getInt("id"),
+                    rs.getInt("dom_id"),
+                    rs.getString("name"),
+                    flags,
+                    rs.getString("name_colored")
+            );
+            list.add(group);
         }
         return list;
     }
 
-    private GroupDTO doUpdate(UpdateRow updateRow) {
+    private GroupDTO doUpdate(UpdateRow updateRow) throws SQLException {
         updateRow.returningAll(id)
                 .table("dominion_group")
                 .where("id = ?", id.value);
-        try (ResultSet rs = updateRow.execute()) {
-            List<GroupDTO> groups = getDTOFromRS(rs);
-            if (groups.isEmpty()) return null;
-            Cache.instance.loadGroups((Integer) id.value);
-            return groups.get(0);
-        } catch (Exception e) {
-            DatabaseManager.handleDatabaseError("更新权限组失败: ", e, "");
-            return null;
+        ResultSet rs = updateRow.execute();
+        List<GroupDTO> groups = getDTOFromRS(rs);
+        if (groups.isEmpty()) {
+            throw new SQLException("Failed to update group.");
         }
+        Cache.instance.loadGroups((Integer) id.value);
+        return groups.get(0);
     }
 
 

@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.utils.VaultConnect;
 
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.i18n.Localization;
+import cn.lunadeer.dominion.utils.XLogger;
 import net.milkbowl.vault2.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -13,7 +12,7 @@ public class Vault2 implements VaultInterface {
 
     private Economy econ = null;
     private String PluginName = null;
-    
+
     @Override
     public boolean init(JavaPlugin plugin) {
         RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
@@ -22,7 +21,7 @@ public class Vault2 implements VaultInterface {
             PluginName = plugin.getName();
             return true;
         }
-        XLogger.err(Localization.Utils_VaultUnlockedNotAvailable);
+        XLogger.error("VaultUnlocked not available.");
         return false;
     }
 

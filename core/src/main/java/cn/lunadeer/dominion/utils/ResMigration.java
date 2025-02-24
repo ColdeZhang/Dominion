@@ -5,7 +5,6 @@ import cn.lunadeer.dominion.utils.Residence.Message;
 import cn.lunadeer.dominion.utils.Residence.Permission;
 import cn.lunadeer.dominion.utils.Residence.Residence;
 import cn.lunadeer.dominion.utils.Residence.SaveFile;
-import cn.lunadeer.minecraftpluginutils.XLogger;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,7 +48,7 @@ public class ResMigration {
             try {
                 dominions.addAll(processWorld(file));
             } catch (Exception e) {
-                XLogger.err("Failed to process file: %s, %s", file.getName(), e.getMessage());
+                XLogger.error("Failed to process file: %s, %s", file.getName(), e.getMessage());
             }
         }
         XLogger.info("Extract %d residences", dominions.size());

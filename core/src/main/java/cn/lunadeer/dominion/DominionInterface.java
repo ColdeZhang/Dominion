@@ -1,21 +1,18 @@
 package cn.lunadeer.dominion;
 
-import cn.lunadeer.dominion.api.AbstractOperator;
 import cn.lunadeer.dominion.api.DominionAPI;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.utils.EventUtils;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.misc.Others;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,13 +40,23 @@ public class DominionInterface extends DominionAPI {
     }
 
     @Override
-    public MemberDTO getMember(@NotNull Player player, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
+    public @Nullable List<GroupDTO> getGroups(@NotNull DominionDTO dominion) {
+        return Cache.instance.getGroups(dominion.getId());
+    }
+
+    @Override
+    public MemberDTO getMember(@NotNull Player player, @NotNull DominionDTO dominion) {
         return Cache.instance.getMember(player.getUniqueId(), dominion);
     }
 
     @Override
-    public MemberDTO getMember(@NotNull UUID player_uuid, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
+    public MemberDTO getMember(@NotNull UUID player_uuid, @NotNull DominionDTO dominion) {
         return Cache.instance.getMember(player_uuid, dominion);
+    }
+
+    @Override
+    public @Nullable List<MemberDTO> getMembers(@NotNull DominionDTO dominion) {
+        return Cache.instance.getMembers(dominion.getId());
     }
 
     @Override
@@ -59,27 +66,17 @@ public class DominionInterface extends DominionAPI {
 
     @Override
     public DominionDTO getDominion(@NotNull String name) {
-        return cn.lunadeer.dominion.dtos.DominionDTO.select(name);
+        return Cache.instance.getDominion(name);
     }
 
     @Override
-    public @NotNull List<cn.lunadeer.dominion.api.dtos.DominionDTO> getAllDominions() {
+    public @NotNull List<DominionDTO> getAllDominions() {
         return Cache.instance.getAllDominions();
     }
 
     @Override
     public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
         return Cache.instance.getPlayerUsingGroupTitle(uuid);
-    }
-
-    @Override
-    public @NotNull AbstractOperator getPlayerOperator(@NotNull Player player) {
-        return BukkitPlayerOperator.create(player);
-    }
-
-    @Override
-    public @NotNull AbstractOperator getPluginOperator() {
-        return null;// todo
     }
 
     @Override
@@ -93,18 +90,23 @@ public class DominionInterface extends DominionAPI {
     }
 
     @Override
-    public List<DominionDTO> getPlayerDominions(@NotNull UUID playerUid) {
-        return new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectByOwner(playerUid));
+    public List<DominionDTO> getDominionsOf(@NotNull UUID playerUid) {
+        return Cache.instance.getPlayerDominions(playerUid);
     }
 
     @Override
-    public boolean checkPrivilegeFlag(DominionDTO dom, PreFlag flag, Player player) {
-        return EventUtils.checkPrivilegeFlag(dom, flag, player, null);
+    public List<DominionDTO> getChildrenDominionsOf(@NotNull DominionDTO parent) {
+        return Cache.instance.getDominionsByParentId(parent.getId());
+    }
+
+    @Override
+    public boolean checkPrivilegeFlag(DominionDTO dom, PriFlag flag, Player player) {
+        return Others.checkPrivilegeFlag(dom, flag, player, null);
     }
 
     @Override
     public boolean checkEnvironmentFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag) {
-        return EventUtils.checkEnvironmentFlag(dom, flag, null);
+        return Others.checkEnvironmentFlag(dom, flag, null);
     }
 
 }

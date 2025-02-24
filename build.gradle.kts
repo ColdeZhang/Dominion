@@ -8,10 +8,13 @@ plugins {
 
 var BuildFull = properties["BuildFull"].toString() == "true"
 var libraries = listOf<String>()
-libraries = libraries + "cn.lunadeer:MinecraftPluginUtils:2.0.7"
+libraries += "org.postgresql:postgresql:42.7.2"
+libraries += "mysql:mysql-connector-java:8.0.33"
+libraries += "net.kyori:adventure-platform-bukkit:4.3.3"
+
 
 group = "cn.lunadeer"
-version = "3.5.1-beta"
+version = "4.0.0-alpha.7"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))

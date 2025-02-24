@@ -5,16 +5,12 @@ import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.events.PlayerCrossDominionBorderEvent;
 import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
 import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
-import cn.lunadeer.dominion.utils.MessageDisplay;
-import cn.lunadeer.dominion.utils.Particle;
-import cn.lunadeer.dominion.utils.ResMigration;
-import cn.lunadeer.dominion.utils.map.MapRender;
-import cn.lunadeer.minecraftpluginutils.AutoTimer;
-import cn.lunadeer.minecraftpluginutils.Scheduler;
-import cn.lunadeer.minecraftpluginutils.XLogger;
+import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.utils.webMap.MapRender;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -25,7 +21,7 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,14 +76,22 @@ public class Cache implements Listener {
             int count = 0;
             if (idToLoad == null) {
                 id_dominions = new ConcurrentHashMap<>();
+                dominion_name_to_id = new ConcurrentHashMap<>();
                 dominion_children = new ConcurrentHashMap<>();
 
-                List<DominionDTO> dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll());
+                List<DominionDTO> dominions;
+                try {
+                    dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll());
+                } catch (SQLException e) {
+                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
+                    return;
+                }
                 CompletableFuture<Void> res = dominion_trees.initAsync(dominions);
                 count = dominions.size();
 
                 for (DominionDTO d : dominions) {
                     id_dominions.put(d.getId(), d);
+                    dominion_name_to_id.put(d.getName(), d.getId());
                     if (!dominion_children.containsKey(d.getParentDomId())) {
                         dominion_children.put(d.getParentDomId(), new ArrayList<>());
                     }
@@ -96,18 +100,34 @@ public class Cache implements Listener {
 
                 res.join(); // 等待树的构建完成
             } else {
-                DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
+                DominionDTO dominion;
+                try {
+                    dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
+                } catch (SQLException e) {
+                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
+                    return;
+                }
                 if (dominion == null && id_dominions.containsKey(idToLoad)) {
                     id_dominions.remove(idToLoad);
                 } else if (dominion != null) {
                     id_dominions.put(idToLoad, dominion);
                     count = 1;
                 }
+                // rebuild dominion_name_to_id and dominion_children
+                dominion_name_to_id = new ConcurrentHashMap<>();
+                dominion_children = new ConcurrentHashMap<>();
+                for (DominionDTO d : id_dominions.values()) {
+                    dominion_name_to_id.put(d.getName(), d.getId());
+                    if (!dominion_children.containsKey(d.getParentDomId())) {
+                        dominion_children.put(d.getParentDomId(), new ArrayList<>());
+                    }
+                    dominion_children.get(d.getParentDomId()).add(d.getId());
+                }
             }
             MapRender.render();
             recheckPlayerState = true;
             _last_update_dominion.set(System.currentTimeMillis());
-            XLogger.debug("loadDominionsExecution cost: %d ms for %d dominions"
+            XLogger.debug("loadDominionsExecution cost: {0} ms for {1} dominions"
                     , System.currentTimeMillis() - start, count);
         });
     }
@@ -144,15 +164,21 @@ public class Cache implements Listener {
         Scheduler.runTaskAsync(() -> {
             long start = System.currentTimeMillis();
             List<MemberDTO> all_privileges;
-            if (player_to_update == null) {
-                all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll());
-                player_uuid_to_member = new ConcurrentHashMap<>();
-            } else {
-                all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player_to_update));
-                if (!player_uuid_to_member.containsKey(player_to_update)) {
-                    player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
+            try {
+                if (player_to_update == null) {
+                    all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll());
+                    player_uuid_to_member = new ConcurrentHashMap<>();
+                } else {
+                    all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player_to_update));
+                    if (!player_uuid_to_member.containsKey(player_to_update)) {
+                        player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
+                    } else {
+                        player_uuid_to_member.get(player_to_update).clear();
+                    }
                 }
-                player_uuid_to_member.get(player_to_update).clear();
+            } catch (SQLException e) {
+                XLogger.error(e.getMessage());
+                return;
             }
             for (MemberDTO privilege : all_privileges) {
                 UUID player_uuid = privilege.getPlayerUUID();
@@ -163,7 +189,7 @@ public class Cache implements Listener {
             }
             recheckPlayerState = true;
             _last_update_member.set(System.currentTimeMillis());
-            XLogger.debug("loadMembersExecution cost: %d ms for %d privileges"
+            XLogger.debug("loadMembersExecution cost: {0} ms for {1} privileges"
                     , System.currentTimeMillis() - start, all_privileges.size());
         });
     }
@@ -195,30 +221,40 @@ public class Cache implements Listener {
             long start = System.currentTimeMillis();
             if (groupId == null) {
                 id_groups = new ConcurrentHashMap<>();
-                List<GroupDTO> groups = new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectAll());
-                List<PlayerDTO> players = new ArrayList<>(cn.lunadeer.dominion.dtos.PlayerDTO.all());
-                for (GroupDTO group : groups) {
-                    id_groups.put(group.getId(), group);
-                }
-                for (PlayerDTO player : players) {
-                    map_player_using_group_title_id.put(player.getUuid(), player.getUsingGroupTitleID());
+                try {
+                    List<GroupDTO> groups = new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectAll());
+                    List<PlayerDTO> players = new ArrayList<>(cn.lunadeer.dominion.dtos.PlayerDTO.all());
+                    for (GroupDTO group : groups) {
+                        id_groups.put(group.getId(), group);
+                    }
+                    for (PlayerDTO player : players) {
+                        map_player_using_group_title_id.put(player.getUuid(), player.getUsingGroupTitleID());
+                    }
+                } catch (SQLException e) {
+                    XLogger.error(e.getMessage());
+                    return;
                 }
             } else {
-                GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.select(groupId);
-                if (group == null && id_groups.containsKey(groupId)) {
-                    id_groups.remove(groupId);
-                } else if (group != null) {
-                    id_groups.put(groupId, group);
+                try {
+                    GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.select(groupId);
+                    if (group == null && id_groups.containsKey(groupId)) {
+                        id_groups.remove(groupId);
+                    } else if (group != null) {
+                        id_groups.put(groupId, group);
+                    }
+                } catch (SQLException e) {
+                    XLogger.error(e.getMessage());
+                    return;
                 }
             }
             recheckPlayerState = true;
             _last_update_group.set(System.currentTimeMillis());
-            XLogger.debug("loadGroupsExecution cost: %d ms", System.currentTimeMillis() - start);
+            XLogger.debug("loadGroupsExecution cost: {0} ms", System.currentTimeMillis() - start);
         });
     }
 
     public DominionDTO getPlayerCurrentDominion(@NotNull Player player) {
-        try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
+        try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
             Integer last_in_dom_id = player_current_dominion_id.get(player.getUniqueId());
             DominionDTO last_dominion = null;
             if (last_in_dom_id != null) {
@@ -312,7 +348,7 @@ public class Cache implements Listener {
     }
 
     private void flyOrNot(Player player, DominionDTO dominion) {
-        for (String flyPN : Dominion.config.getFlyPermissionNodes()) {
+        for (String flyPN : Configuration.flyPermissionNodes) {
             if (player.hasPermission(flyPN)) {
                 return;
             }
@@ -320,7 +356,7 @@ public class Cache implements Listener {
         if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
             return;
         }
-        if (player.isOp() && Dominion.config.getLimitOpBypass()) {
+        if (player.isOp() && Configuration.adminBypass) {
             return;
         }
         if (!Flags.FLY.getEnable()) {
@@ -352,6 +388,16 @@ public class Cache implements Listener {
         return id_groups.get(id);
     }
 
+    public List<GroupDTO> getGroups(@NotNull Integer dominionId) {
+        List<GroupDTO> groups = new ArrayList<>();
+        for (GroupDTO group : id_groups.values()) {
+            if (group.getDomID().equals(dominionId)) {
+                groups.add(group);
+            }
+        }
+        return groups;
+    }
+
     public MemberDTO getMember(@NotNull Player player, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
         if (!player_uuid_to_member.containsKey(player.getUniqueId())) return null;
         return player_uuid_to_member.get(player.getUniqueId()).get(dominion.getId());
@@ -362,10 +408,28 @@ public class Cache implements Listener {
         return player_uuid_to_member.get(player_uuid).get(dominion.getId());
     }
 
-    public List<GroupDTO> getBelongGroupsOf(UUID plauer_uuid) {
+    public List<MemberDTO> getMembers(@NotNull Integer dominionId) {
+        List<MemberDTO> members = new ArrayList<>();
+        for (Map<Integer, MemberDTO> member : player_uuid_to_member.values()) {
+            if (member.containsKey(dominionId)) {
+                members.add(member.get(dominionId));
+            }
+        }
+        return members;
+    }
+
+    /**
+     * Retrieves the list of group titles for a player.
+     * This method collects all group titles associated with the player, including those from the player's memberships
+     * and the dominions they own.
+     *
+     * @param playerUuid The UUID of the player.
+     * @return A list of GroupDTO objects representing the player's group titles.
+     */
+    public List<GroupDTO> getPlayerGroupTitleList(UUID playerUuid) {
         List<GroupDTO> groups = new ArrayList<>();
-        if (!player_uuid_to_member.containsKey(plauer_uuid)) return groups;
-        for (MemberDTO member : player_uuid_to_member.get(plauer_uuid).values()) {
+        if (!player_uuid_to_member.containsKey(playerUuid)) return groups;
+        for (MemberDTO member : player_uuid_to_member.get(playerUuid).values()) {
             if (member.getGroupId() != -1) {
                 GroupDTO group = getGroup(member.getGroupId());
                 if (group != null) {
@@ -373,11 +437,35 @@ public class Cache implements Listener {
                 }
             }
         }
+        for (DominionDTO dominion : getPlayerDominions(playerUuid)) {
+            for (GroupDTO group : getGroups(dominion.getId())) {
+                if (!groups.contains(group)) {
+                    groups.add(group);
+                }
+            }
+        }
         return groups;
     }
 
-    public DominionDTO getDominion(@NotNull Integer id) {
+    public @Nullable DominionDTO getDominion(@NotNull Integer id) {
         return id_dominions.get(id);
+    }
+
+    public @Nullable DominionDTO getDominion(@NotNull String name) {
+        if (dominion_name_to_id.containsKey(name)) {
+            return id_dominions.get(dominion_name_to_id.get(name));
+        }
+        return null;
+    }
+
+    public List<DominionDTO> getDominionsByParentId(@NotNull Integer parent_id) {
+        List<DominionDTO> dominions = new ArrayList<>();
+        if (dominion_children.containsKey(parent_id)) {
+            for (Integer id : dominion_children.get(parent_id)) {
+                dominions.add(id_dominions.get(id));
+            }
+        }
+        return dominions;
     }
 
     public String getPlayerName(UUID uuid) {
@@ -400,6 +488,14 @@ public class Cache implements Listener {
         return count;
     }
 
+    /**
+     * Retrieves a list of dominions owned by a specific player.
+     * <p>
+     * Includes dominions on all servers.
+     *
+     * @param player_uuid The UUID of the player whose dominions are to be retrieved.
+     * @return A list of DominionDTO objects representing the dominions owned by the player.
+     */
     public List<DominionDTO> getPlayerDominions(UUID player_uuid) {
         List<DominionDTO> dominions = new ArrayList<>();
         for (DominionDTO dominion : id_dominions.values()) {
@@ -410,18 +506,29 @@ public class Cache implements Listener {
         return dominions;
     }
 
+    /**
+     * Retrieves a list of dominions where a specific player has admin privileges.
+     * <p>
+     * Only dominions on the current server are included in the list.
+     *
+     * @param player_uuid The UUID of the player whose admin dominions are to be retrieved.
+     * @return A list of DominionDTO objects representing the dominions where the player has admin privileges.
+     */
     public List<DominionDTO> getPlayerAdminDominions(UUID player_uuid) {
         List<DominionDTO> dominions = new ArrayList<>();
         for (DominionDTO dominion : id_dominions.values()) {
+            if (dominion.getServerId() != Configuration.multiServer.serverId) {
+                continue;
+            }
             MemberDTO privilege = getMember(player_uuid, dominion);
-            if (privilege != null && privilege.getAdmin()) {
+            if (privilege != null && privilege.getFlagValue(Flags.ADMIN)) {
                 dominions.add(dominion);
             }
         }
         return dominions;
     }
 
-    private void updateData() {
+    private void updateResidenceData() {
         if (residence_data == null) {
             residence_data = new HashMap<>();
             List<ResMigration.ResidenceNode> residences = ResMigration.extractFromResidence(Dominion.instance);
@@ -430,17 +537,17 @@ public class Cache implements Listener {
                     continue;
                 }
                 if (!residence_data.containsKey(node.owner)) {
-                    XLogger.debug("residence_data put %s", node.owner);
+                    XLogger.debug("residence_data put {0}", node.owner);
                     residence_data.put(node.owner, new ArrayList<>());
                 }
                 residence_data.get(node.owner).add(node);
             }
-            XLogger.debug("residence_data: %d", residence_data.size());
+            XLogger.debug("residence_data: {0}", residence_data.size());
         }
     }
 
     public List<ResMigration.ResidenceNode> getResidenceData() {
-        updateData();
+        updateResidenceData();
         return residence_data.values().stream().reduce(new ArrayList<>(), (a, b) -> {
             a.addAll(b);
             return a;
@@ -448,11 +555,11 @@ public class Cache implements Listener {
     }
 
     public List<ResMigration.ResidenceNode> getResidenceData(UUID player_uuid) {
-        updateData();
+        updateResidenceData();
         return residence_data.get(player_uuid);
     }
 
-    public @NotNull List<cn.lunadeer.dominion.api.dtos.DominionDTO> getAllDominions() {
+    public @NotNull List<DominionDTO> getAllDominions() {
         return new ArrayList<>(id_dominions.values());
     }
 
@@ -474,6 +581,7 @@ public class Cache implements Listener {
 
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;
+    private ConcurrentHashMap<String, Integer> dominion_name_to_id;
     private ConcurrentHashMap<Integer, GroupDTO> id_groups;
     private final WorldDominionTreeSectored dominion_trees = new WorldDominionTreeSectored();
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, MemberDTO>> player_uuid_to_member;   // 玩家所有的特权
@@ -487,7 +595,6 @@ public class Cache implements Listener {
     private final AtomicBoolean _update_group_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
     private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
-    public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
     private final Map<UUID, String> player_name_cache = new HashMap<>();
 
     private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
@@ -509,7 +616,7 @@ public class Cache implements Listener {
         private Integer section_origin_z = 0;
 
         public DominionDTO getLocInDominionDTO(@NotNull Location loc) {
-            try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
+            try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
                 List<DominionNode> nodes = getNodes(loc);
                 if (nodes == null) return null;
                 if (nodes.isEmpty()) return null;
@@ -548,9 +655,8 @@ public class Cache implements Listener {
             return CompletableFuture.runAsync(() -> init(dominions));
         }
 
-
         private void init(List<DominionDTO> dominions) {
-            try (AutoTimer ignored = new AutoTimer(Dominion.config.TimerEnabled())) {
+            try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
                 world_dominion_tree_sector_a = new ConcurrentHashMap<>();
                 world_dominion_tree_sector_b = new ConcurrentHashMap<>();
                 world_dominion_tree_sector_c = new ConcurrentHashMap<>();
@@ -561,19 +667,21 @@ public class Cache implements Listener {
                 Map<UUID, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
                 Map<UUID, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
 
-                // 根据所有领地的最大最小坐标计算象限中心点
-
-                int max_x = dominions.stream().mapToInt(DominionDTO::getX1).max().orElse(0);
-                int min_x = dominions.stream().mapToInt(DominionDTO::getX2).min().orElse(0);
-                int max_z = dominions.stream().mapToInt(DominionDTO::getZ1).max().orElse(0);
-                int min_z = dominions.stream().mapToInt(DominionDTO::getZ2).min().orElse(0);
+                // calculate the section origin point
+                int max_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x2() : 0).max().orElse(0);
+                int min_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x1() : 0).min().orElse(0);
+                int max_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z2() : 0).max().orElse(0);
+                int min_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z1() : 0).min().orElse(0);
                 section_origin_x = (max_x + min_x) / 2;
                 section_origin_z = (max_z + min_z) / 2;
-                XLogger.debug("Cache init section origin: %d, %d", section_origin_x, section_origin_z);
-
+                XLogger.debug("Cache init section origin: {0}, {1}", section_origin_x, section_origin_z);
 
                 for (DominionDTO d : dominions) {
-                    // 对每个世界的领地进行四个象限的划分
+                    if (d.getServerId() != Configuration.multiServer.serverId) {
+                        // skip other server's dominions when building dominion tree
+                        continue;
+                    }
+                    // put dominions into different sectors
                     if (!world_dominions_sector_a.containsKey(d.getWorldUid()) ||
                             !world_dominions_sector_b.containsKey(d.getWorldUid()) ||
                             !world_dominions_sector_c.containsKey(d.getWorldUid()) ||
@@ -583,32 +691,32 @@ public class Cache implements Listener {
                         world_dominions_sector_c.put(d.getWorldUid(), new ArrayList<>());
                         world_dominions_sector_d.put(d.getWorldUid(), new ArrayList<>());
                     }
-                    if (d.getX1() >= section_origin_x && d.getZ1() >= section_origin_z) {
+                    if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
                         world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                    } else if (d.getX1() <= section_origin_x && d.getZ1() >= section_origin_z) {
-                        if (d.getX2() >= section_origin_x) {
+                    } else if (d.getCuboid().x1() <= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
+                        if (d.getCuboid().x2() >= section_origin_x) {
                             world_dominions_sector_a.get(d.getWorldUid()).add(d);
                             world_dominions_sector_b.get(d.getWorldUid()).add(d);
                         } else {
                             world_dominions_sector_b.get(d.getWorldUid()).add(d);
                         }
-                    } else if (d.getX1() >= section_origin_x && d.getZ1() <= section_origin_z) {
-                        if (d.getZ2() >= section_origin_z) {
+                    } else if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() <= section_origin_z) {
+                        if (d.getCuboid().z2() >= section_origin_z) {
                             world_dominions_sector_a.get(d.getWorldUid()).add(d);
                             world_dominions_sector_c.get(d.getWorldUid()).add(d);
                         } else {
                             world_dominions_sector_c.get(d.getWorldUid()).add(d);
                         }
                     } else {
-                        if (d.getX2() >= section_origin_x && d.getZ2() >= section_origin_z) {
+                        if (d.getCuboid().x2() >= section_origin_x && d.getCuboid().z2() >= section_origin_z) {
                             world_dominions_sector_a.get(d.getWorldUid()).add(d);
                             world_dominions_sector_b.get(d.getWorldUid()).add(d);
                             world_dominions_sector_c.get(d.getWorldUid()).add(d);
                             world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                        } else if (d.getX2() >= section_origin_x && d.getZ2() <= section_origin_z) {
+                        } else if (d.getCuboid().x2() >= section_origin_x && d.getCuboid().z2() <= section_origin_z) {
                             world_dominions_sector_c.get(d.getWorldUid()).add(d);
                             world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                        } else if (d.getZ2() >= section_origin_z && d.getX2() <= section_origin_x) {
+                        } else if (d.getCuboid().z2() >= section_origin_z && d.getCuboid().x2() <= section_origin_x) {
                             world_dominions_sector_b.get(d.getWorldUid()).add(d);
                             world_dominions_sector_d.get(d.getWorldUid()).add(d);
                         } else {
@@ -616,24 +724,25 @@ public class Cache implements Listener {
                         }
                     }
                 }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_a.entrySet()) {
-                    world_dominion_tree_sector_a.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_b.entrySet()) {
-                    world_dominion_tree_sector_b.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_c.entrySet()) {
-                    world_dominion_tree_sector_c.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
-                for (Map.Entry<UUID, List<DominionDTO>> entry : world_dominions_sector_d.entrySet()) {
-                    world_dominion_tree_sector_d.put(entry.getKey(), DominionNode.BuildNodeTree(-1, entry.getValue()));
-                }
+                // build dominion tree for each sector
+                world_dominions_sector_a.forEach((key, value) ->
+                        world_dominion_tree_sector_a.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
+                world_dominions_sector_b.forEach((key, value) ->
+                        world_dominion_tree_sector_b.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
+                world_dominions_sector_c.forEach((key, value) ->
+                        world_dominion_tree_sector_c.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
+                world_dominions_sector_d.forEach((key, value) ->
+                        world_dominion_tree_sector_d.put(key, DominionNode.BuildNodeTree(-1, value))
+                );
             }
         }
     }
 
     public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
-        if (!Dominion.config.getGroupTitleEnable()) {
+        if (!Configuration.groupTitle.enable) {
             return null;
         }
         if (map_player_using_group_title_id.containsKey(uuid)) {
@@ -654,28 +763,28 @@ public class Cache implements Listener {
     @EventHandler
     public void onPlayerMoveInDominion(PlayerMoveInDominionEvent event) {
         XLogger.debug("PlayerMoveInDominionEvent called.");
-        MessageDisplay.show(event.getPlayer(), Dominion.config.getMessageDisplayJoinLeave(),
+        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace),
                 event.getDominion().getJoinMessage()
                         .replace("{DOM}", event.getDominion().getName())
                         .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
         );
         // show border
         if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
-            Particle.showBorder(event.getPlayer(), event.getDominion());
+            ParticleUtil.showBorder(event.getPlayer(), event.getDominion());
         }
     }
 
     @EventHandler
     public void onPlayerMoveOutDominion(PlayerMoveOutDominionEvent event) {
         XLogger.debug("PlayerMoveOutDominionEvent called.");
-        MessageDisplay.show(event.getPlayer(), Dominion.config.getMessageDisplayJoinLeave(),
+        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace),
                 event.getDominion().getLeaveMessage()
                         .replace("{DOM}", event.getDominion().getName())
                         .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
         );
         // show border
         if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
-            Particle.showBorder(event.getPlayer(), event.getDominion());
+            ParticleUtil.showBorder(event.getPlayer(), event.getDominion());
         }
     }
 

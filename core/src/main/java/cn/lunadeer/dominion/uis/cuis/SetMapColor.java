@@ -1,57 +1,62 @@
 package cn.lunadeer.dominion.uis.cuis;
 
-import cn.lunadeer.dominion.controllers.BukkitPlayerOperator;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.events.dominion.modify.DominionSetMapColorEvent;
-import cn.lunadeer.dominion.managers.Translation;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.commands.DominionOperateCommand;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.scui.CuiTextInput;
-import org.bukkit.Color;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.scui.CuiTextInput;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.PermissionButton;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 
 public class SetMapColor {
 
-    private static class setMapColorCB implements CuiTextInput.InputCallback {
-        private final Player sender;
-        private final String dominionName;
+    public static class SetMapColorCuiText extends ConfigurationPart {
+        public String title = "Set {0} Map Color";
+        public String button = "COLOR";
+        public String description = "Color of the dominion on the web map.";
+    }
 
-        public setMapColorCB(Player sender, String dominionName) {
-            this.sender = sender;
-            this.dominionName = dominionName;
-        }
+    public static PermissionButton button(CommandSender sender, String dominionName) {
+        return new FunctionalButton(Language.setMapColorCuiText.button) {
+            @Override
+            public void function() {
+                open(sender, dominionName);
+            }
+        }.needPermission(defaultPermission);
+    }
 
+    private record setMapColorCB(Player sender, String dominionName) implements CuiTextInput.InputCallback {
         @Override
         public void handleData(String input) {
-            XLogger.debug("editLeaveMessageCB.run: %s", input);
-            BukkitPlayerOperator operator = BukkitPlayerOperator.create(sender);
-            DominionDTO dominion = DominionDTO.select(dominionName);
-            if (dominion == null) {
-                Notification.error(sender, Translation.Messages_DominionNotExist, dominionName);
-                return;
+            try {
+                DominionOperateCommand.setMapColor(sender, dominionName, input);
+                DominionManage.show(sender, dominionName, "1");
+            } catch (Exception e) {
+                Notification.error(sender, e.getMessage());
             }
-            Color color = Color.fromRGB(Integer.parseInt(input, 16));
-            new DominionSetMapColorEvent(operator, dominion, color).call();
-            DominionManage.show(sender, new String[]{"manage", dominionName});
         }
     }
 
-    public static void open(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[1]);
-        if (dominion == null) {
-            Notification.error(sender, Translation.Messages_DominionNotExist, args[1]);
-            return;
+    public static void open(CommandSender sender, String dominionName) {
+        try {
+            Player player = toPlayer(sender);
+            DominionDTO dominion = toDominionDTO(dominionName);
+            CuiTextInput.InputCallback setMapColorCB = new SetMapColor.setMapColorCB(player, dominionName);
+            CuiTextInput view = CuiTextInput.create(setMapColorCB).setText(dominion.getColor())
+                    .title(Language.setMapColorCuiText.title);
+            view.setSuggestCommand(DominionOperateCommand.setMapColor.getUsage());
+            view.open(player);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-        CuiTextInput.InputCallback setMapColorCB = new SetMapColor.setMapColorCB(player, dominion.getName());
-        CuiTextInput view = CuiTextInput.create(setMapColorCB).setText(dominion.getColor()).title(Translation.CUI_Input_SetMapColor.trans());
-        view.setSuggestCommand(Translation.Commands_Dominion_SetMapColorUsage.trans());
-        view.open(player);
     }
 
 }

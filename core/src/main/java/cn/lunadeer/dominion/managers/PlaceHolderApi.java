@@ -3,7 +3,6 @@ package cn.lunadeer.dominion.managers;
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
-import cn.lunadeer.minecraftpluginutils.XLogger;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,7 +18,6 @@ public class PlaceHolderApi extends PlaceholderExpansion {
         this.plugin = plugin;
         this.register();
         instance = this;
-        XLogger.info(Translation.Messages_PlaceholderAPIRegisterSuccess);
     }
 
     @Override
