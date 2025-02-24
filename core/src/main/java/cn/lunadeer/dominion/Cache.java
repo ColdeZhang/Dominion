@@ -763,7 +763,7 @@ public class Cache implements Listener {
     @EventHandler
     public void onPlayerMoveInDominion(PlayerMoveInDominionEvent event) {
         XLogger.debug("PlayerMoveInDominionEvent called.");
-        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace),
+        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
                 event.getDominion().getJoinMessage()
                         .replace("{DOM}", event.getDominion().getName())
                         .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
@@ -777,7 +777,7 @@ public class Cache implements Listener {
     @EventHandler
     public void onPlayerMoveOutDominion(PlayerMoveOutDominionEvent event) {
         XLogger.debug("PlayerMoveOutDominionEvent called.");
-        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace),
+        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
                 event.getDominion().getLeaveMessage()
                         .replace("{DOM}", event.getDominion().getName())
                         .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))

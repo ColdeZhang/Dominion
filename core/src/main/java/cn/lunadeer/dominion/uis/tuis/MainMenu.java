@@ -102,8 +102,8 @@ public class MainMenu {
         view.add(list);
         if (Configuration.groupTitle.enable) view.add(title);
         view.add(template);
-        view.add(help);
-        view.add(link);
+        if (!Configuration.externalLinks.commandHelp.isEmpty()) view.add(help);
+        if (!Configuration.externalLinks.documentation.isEmpty()) view.add(link);
         if (Configuration.residenceMigration) {
             view.add(migrate);
         }
