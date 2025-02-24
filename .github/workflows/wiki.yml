@@ -32,15 +32,15 @@ jobs:
       # 安装依赖
       # Install dependencies
       - name: Install Dependencies
-        run: npm ci
+        run: npm ci --prefix docs
 
       # 运行构建脚本
       # Run the build script
       - name: Build VuePress site
-        run: npm run docs:build
+        run: npm run docs:build --prefix docs
 
       - name: Copy resources
-        run: mv docs/.vuepress/dist _site
+        run: mv docs/src/.vuepress/dist _site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
