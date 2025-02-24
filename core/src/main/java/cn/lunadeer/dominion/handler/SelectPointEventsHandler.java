@@ -51,7 +51,7 @@ public class SelectPointEventsHandler implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (item.getType() != Material.valueOf(Configuration.selectTool)) {
+        if (item.getType() != Material.matchMaterial(Configuration.selectTool)) {
             return;
         }
         Block block = event.getClickedBlock();
@@ -130,7 +130,7 @@ public class SelectPointEventsHandler implements Listener {
         Player player = event.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if (item.getType() != Material.valueOf(Configuration.infoTool)) {
+        if (item.getType() != Material.matchMaterial(Configuration.infoTool)) {
             return;
         }
         if (event.getAction() != Action.LEFT_CLICK_BLOCK) {
