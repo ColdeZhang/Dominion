@@ -1,4 +1,4 @@
-name: Deploy GitBook with GitHub Pages dependencies preinstalled
+name: Deploy VuePress with GitHub Pages dependencies preinstalled
 
 on:
   push:
@@ -15,30 +15,33 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.3
+      - uses: actions/checkout@v4
         with:
-          node-version: '10.21.0'
-      - name: Install gitbook-cli
-        run: |
-          npm install -g gitbook-cli
-      - name: Build with gitbook
-        run: |
-          gitbook install docs
-          gitbook build docs
-          mv docs/_book _site
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # 选择要使用的 node 版本
+          node-version: 20
+
+      # 安装依赖
+      # Install dependencies
+      - name: Install Dependencies
+        run: npm ci
+
+      # 运行构建脚本
+      # Run the build script
+      - name: Build VuePress site
+        run: npm run docs:build
+
+      - name: Copy resources
+        run: mv docs/.vuepress/dist _site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 

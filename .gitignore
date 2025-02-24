@@ -112,3 +112,10 @@ buildNumber.properties
 # Common working directory
 run/
 /docs/_book/
+
+# docs
+**/node_modules
+docs/src/.vuepress/.cache
+docs/src/.vuepress/.temp
+docs/src/.vuepress/dist
+

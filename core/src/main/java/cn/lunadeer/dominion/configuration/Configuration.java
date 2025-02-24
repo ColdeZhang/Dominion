@@ -65,8 +65,9 @@ public class Configuration extends ConfigurationFile {
             } else {
                 yaml.set(flag.getConfigurationEnableKey(), flag.getEnable());
             }
-            yaml.setInlineComments(flag.getConfigurationDescKey(), Collections.singletonList(flag.getDisplayName() + "-" + flag.getDescription()));
+            yaml.setInlineComments(flag.getConfigurationNameKey(), Collections.singletonList(flag.getDisplayName() + "-" + flag.getDescription()));
         }
+        yaml.save(yamlFile);
         XLogger.info(Language.configurationText.loadFlagSuccess);
     }
 
