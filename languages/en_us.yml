@@ -441,127 +441,127 @@ flags:
     description: Whether can place blocks (normal blocks, item frame, lava, water).
   fly:
     display-name: Fly
-    description: Not elytra fly, it's like creative mode fly.
+    description: NOT elytra fly, it's like creative mode fly.
   honey:
     display-name: Honey
     description: Whether can interact with hive (to get honey).
   monster_damage:
-    display-name: 怪物对玩家造成伤害
-    description: 是否可以对玩家造成伤害
+    display-name: Monster Kill Player
+    description: Whether monster can do harm to player.
   monster_spawn:
-    display-name: 怪物生成
-    description: 是否可以生成怪物
+    display-name: Monster Spawn
+    description: Whether monster can spawn (including spawn egg).
   monster_move:
-    display-name: 怪物移动
-    description: 是否可以在（向）领地内移动
+    display-name: Monster Move
+    description: Whether monster can move in dominion.
   admin:
     display-name: Administrator
     description: Member with this flag can manage normal members and groups.
   crafter:
-    display-name: 合成器
-    description: 是否可以修改自动合成器
+    display-name: Crafter
+    description: Whether can interact with crafter (1.21).
   piston_outside:
-    display-name: 活塞是否可以跨领地推动方块
-    description: 活塞是否可以往领地内推东西或推东西到领地外
+    display-name: Piston
+    description: False to prevent piston from pushing/pulling blocks across dominion.
   fire_spread:
-    display-name: 火焰蔓延
-    description: 是否可以火焰蔓延
+    display-name: Fire Spread
+    description: Prevent fire spread in dominion.
   shear:
-    display-name: 剪羊毛
-    description: 是否可以剪羊毛
+    display-name: Shear
+    description: Whether can cut wool from sheep.
   teleport:
-    display-name: 领地传送
-    description: 是否开启领地传送
+    display-name: Teleportation
+    description: False means can't teleport to this dominion.
   hopper_outside:
-    display-name: 领地外漏斗对领地内箱子是否生效
-    description: 领地外的漏斗是否可以对领地内的箱子生效
+    display-name: Hopper (Outside)
+    description: False to prevent outside hopper from sucking container in dominion.
   door:
-    display-name: 门交互
-    description: 是否可以使用各种材质的门（包括活板门）
+    display-name: Door
+    description: Whether can interact with door (including trapdoor, fence gate).
   dragon_break_block:
-    display-name: 末影龙破坏方块
-    description: 末影龙冲撞是否可以破坏方块
+    display-name: Ender Dragon Break Block
+    description: Whether ender dragon can break blocks.
   ender_man:
-    display-name: 末影人行为
-    description: 包含：末影人是否可以生成、瞬移
+    display-name: Ender Man
+    description: False to prevent ender-man from picking up blocks, spawning, teleporting.
   break:
-    display-name: 破坏方块
-    description: 是否可以破坏方块（包括：一般方块、展示框、盔甲架）
+    display-name: Break Block
+    description: Whether can break blocks (including item frame, armor stand).
   vehicle_destroy:
-    display-name: 破坏载具
-    description: 是否可以破坏载具（主要是矿车）
+    display-name: Vehicle Destroy
+    description: Whether can destroy vehicle (boat, minecart).
   riding:
-    display-name: 骑乘载具
-    description: 是否可以骑乘各种载具
+    display-name: Riding
+    description: Whether can ride vehicle (boat, minecart, horse etc.).
   dye:
-    display-name: 染色
-    description: 是否可以使用染料（对羊、狗项圈、猫项圈）染色
+    display-name: Dye
+    description: What can dye (sheep, dog collar, cat collar).
   egg:
-    display-name: 扔鸡蛋
-    description: 是否可以扔鸡蛋
+    display-name: Throw Egg
+    description: Whether can throw egg.
   vehicle_spawn:
-    display-name: 生成载具
-    description: 是否可以生成载具（主要是矿车）
+    display-name: Vehicle Spawn
+    description: Whether can spawn vehicle (boat, minecart).
   trig_pressure_mob:
-    display-name: 生物触发压力板
-    description: 生物（不包含玩家）是否可以触发压力板
+    display-name: Pressure Plate (Mob)
+    description: Whether mob (player not included) can trigger pressure plate.
   creeper_explode:
-    display-name: 生物破坏/非TNT爆炸
-    description: 包含：苦力怕/凋零头颅/末影水晶/火球/床/重生锚爆炸等
+    display-name: Entity Explode
+    description: Creeper/Wither Skull/Ender Crystal/Fireball/Bed/Respawn Anchor.
   mob_drop_item:
-    display-name: 生物战利品掉落
-    description: 生物死亡时是否产生掉落物
+    display-name: Mob Drop Item
+    description: Whether mob drop item when killed.
   button:
-    display-name: 使用按钮
-    description: 是否可以使用各种材质的按钮
+    display-name: Button
+    description: Whether can click button.
   hook:
-    display-name: 使用钓钩
-    description: 是否可以使用钓钩
+    display-name: Hook
+    description: Whether can use fishing rod.
   enchant:
-    display-name: 使用附魔台
-    description: 是否可以使用附魔台
+    display-name: Enchant Table
+    description: Whether can use enchant table.
   craft:
-    display-name: 使用工作台
-    description: 是否可以使用工作台
+    display-name: Crafting Table
+    description: Whether can use crafting table.
   lever:
-    display-name: 使用拉杆
-    description: 是否可以使用拉杆
+    display-name: Lever
+    description: Whether can switch lever.
   brew:
-    display-name: 使用酿造台
-    description: 是否可以使用酿造台
+    display-name: Brewing Stand
+    description: Whether can use brewing stand.
   anvil:
-    display-name: 使用铁砧
-    description: 是否允许使用铁砧
+    display-name: Anvil
+    description: Whether can use anvil.
   harvest:
-    display-name: 收获
-    description: 收获庄稼、作物
+    display-name: Harvest
+    description: Whether player can harvest crops.
   hopper:
-    display-name: 特殊容器
-    description: 包含：漏斗/熔炉/发射器/投掷器/高炉/烟熏炉
+    display-name: Special Container
+    description: Such as hopper, furnace, dropper, dispenser, blast furnace, smoker.
   ender_pearl:
-    display-name: 投掷末影珍珠
-    description: 是否可以使用末影珍珠
+    display-name: End Pearl
+    description: Whether can throw ender pearl.
   trig_pressure_proj:
-    display-name: 投掷物触发压力板
-    description: 投掷物（箭/风弹/雪球）是否可以触发压力板
+    display-name: Pressure Plate (Projectile)
+    description: When projectile (arrow/snowball) can trigger pressure plate.
   item_frame_proj_damage:
-    display-name: 投掷物是否可以破坏展示框/画
-    description: 非玩家发出的投掷物是否可以破坏展示框/画等悬挂物
+    display-name: Projectile Damage Item Frame
+    description: Whether projectile (arrow/snowball) can break item frame.
   shoot:
-    display-name: 投掷型武器
-    description: 包括：射箭/雪球/三叉戟/风弹
+    display-name: Shooting
+    description: Include arrow/snowball/trident/fireball/wind-charge(1.21).
   flow_in_protection:
-    display-name: 外部流体是否可以进入
-    description: 包含：岩浆、水（不会阻止领地内部的流体蔓延）
+    display-name: Flow In
+    description: Prevent external water/lava flow into dominion.
   player_damage:
-    display-name: 玩家对玩家造成伤害
-    description: 玩家之间是否可以造成伤害（仅能控制直接伤害不等同于禁止PVP）
+    display-name: Player Kill Player
+    description: Weather player can do (directly) harm to other player.
   glow:
-    display-name: 玩家发光
-    description: 类似光灵箭的高亮效果
+    display-name: Glow
+    description: Like glowing arrow effect.
   feed:
-    display-name: 喂养动物
-    description: 是否可以喂养动物
+    display-name: Feed Animal
+    description: Whether can feed animals.
   show_border:
     display-name: Show Border
     description: Show dominion border to player when walking in.
