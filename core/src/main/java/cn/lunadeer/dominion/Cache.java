@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -596,7 +595,6 @@ public class Cache implements Listener {
     private final AtomicBoolean _update_group_is_scheduled = new AtomicBoolean(false);
     private static final long UPDATE_INTERVAL = 1000 * 4;
     private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
-    public final Map<UUID, LocalDateTime> NextTimeAllowTeleport = new java.util.HashMap<>();
     private final Map<UUID, String> player_name_cache = new HashMap<>();
 
     private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
