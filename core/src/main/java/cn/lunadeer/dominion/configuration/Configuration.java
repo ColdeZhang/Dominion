@@ -103,7 +103,7 @@ public class Configuration extends ConfigurationFile {
             "Player can manage/teleport across multi-servers.",
             "Database with type sqlite is not supported in multi-server mode.",
             "For migration of existing data, please refer to the documentation.",
-            "" // todo: docs link
+            "https://dominion.lunadeer.cn/notes/doc/owner/other/multi-server/"
     })
     public static MultiServer multiServer = new MultiServer();
 
@@ -196,7 +196,7 @@ public class Configuration extends ConfigurationFile {
 
     public static class ExternalLinks extends ConfigurationPart {
         public String commandHelp = "";
-        public String documentation = "";
+        public String documentation = "https://dominion.lunadeer.cn/notes/doc/player/";
     }
 
     @Comments("Player with these permission nodes won't be affected by dominion's fly limitation.")
@@ -242,7 +242,7 @@ public class Configuration extends ConfigurationFile {
         }
 
         try {
-            MessageDisplay.Place.valueOf(pluginMessage.noPermissionDisplayPlace);
+            MessageDisplay.Place.valueOf(pluginMessage.noPermissionDisplayPlace.toUpperCase());
         } catch (IllegalArgumentException e) {
             XLogger.warn("Invalid no permission display place: {0}", pluginMessage.noPermissionDisplayPlace);
             pluginMessage.noPermissionDisplayPlace = "ACTION_BAR";
