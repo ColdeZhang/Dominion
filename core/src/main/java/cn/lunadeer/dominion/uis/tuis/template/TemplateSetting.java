@@ -1,64 +1,85 @@
 package cn.lunadeer.dominion.uis.tuis.template;
 
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.commands.TemplateCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 
 public class TemplateSetting {
 
-    // /dominion template setting <模板名称> [页码]
-    public static void show(CommandSender sender, String templateName, int page) {
-        show(sender, new String[]{"", "", templateName, String.valueOf(page)});
+    public static class TemplateSettingText extends ConfigurationPart {
+        public String title = "Template Setting";
+        public String button = "SETTING";
+        public String notFound = "Template {0} not found.";
     }
 
-    public static void show(CommandSender sender, String templateName) {
-        show(sender, new String[]{"", "", templateName});
+    public static ListViewButton button(CommandSender sender, String templateName) {
+        return (ListViewButton) new ListViewButton(Language.templateSettingText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, templateName, pageStr);
+            }
+        }.needPermission(defaultPermission);
     }
 
-    public static void show(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        int page = getPage(args, 3);
-        PrivilegeTemplateDTO template = PrivilegeTemplateDTO.select(player.getUniqueId(), args[2]);
-        if (template == null) {
-            Notification.error(sender, Translation.Messages_TemplateNotExist, args[2]);
-            return;
+    public static void show(CommandSender sender, String templateName, String pageStr) {
+        try {
+            Player player = toPlayer(sender);
+            TemplateDTO template = TemplateDTO.select(player.getUniqueId(), templateName);
+            if (template == null) {
+                Notification.error(sender, Language.templateSettingText.notFound, templateName);
+                return;
+            }
+            ListView view = ListView.create(10, button(sender, templateName));
+            view.title(Language.templateSettingText.title);
+            view.navigator(Line.create()
+                    .append(MainMenu.button(sender).build())
+                    .append(TemplateList.button(sender).build())
+                    .append(Language.templateSettingText.button)
+            );
+            // /dominion template_set_flag <模板名称> <权限名称> <true/false> [页码]
+            for (PriFlag flag : Flags.getAllPriFlagsEnable()) {
+                view.add(createOption(sender, flag, template.getFlagValue(flag), template.getName(), pageStr));
+            }
+            view.showOn(player, toIntegrity(pageStr));
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-
-        ListView view = ListView.create(10, "/dominion template setting " + template.getName());
-        view.title(String.format(Translation.TUI_TemplateSetting_Title.trans(), args[1]));
-        view.navigator(Line.create()
-                .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
-                .append(Button.create(Translation.TUI_Navigation_TemplateList).setExecuteCommand("/dominion template list").build())
-                .append(Translation.TUI_Navigation_TemplateSetting)
-        );
-
-        // /dominion template_set_flag <模板名称> <权限名称> <true/false> [页码]
-        for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
-            view.add(createOption(flag, template.getFlagValue(flag), template.getName(), page));
-        }
-        view.showOn(player, page);
     }
 
-    private static Line createOption(PreFlag flag, boolean value, String templateName, int page) {
+    private static Line createOption(CommandSender sender, PriFlag flag, boolean value, String templateName, String pageStr) {
         if (value) {
             return Line.create()
-                    .append(Button.createGreen("☑").setExecuteCommand("/dominion template set_flag " + templateName + " " + flag.getFlagName() + " false " + page).build())
+                    .append(new FunctionalButton("☑") {
+                        @Override
+                        public void function() {
+                            TemplateCommand.setTemplateFlag(sender, templateName, flag.getFlagName(), "false", pageStr);
+                        }
+                    }.needPermission(defaultPermission).green().build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         } else {
             return Line.create()
-                    .append(Button.createRed("☐").setExecuteCommand("/dominion template set_flag " + templateName + " " + flag.getFlagName() + " true " + page).build())
+                    .append(new FunctionalButton("☐") {
+                        @Override
+                        public void function() {
+                            TemplateCommand.setTemplateFlag(sender, templateName, flag.getFlagName(), "true", pageStr);
+                        }
+                    }.needPermission(defaultPermission).red().build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
     }

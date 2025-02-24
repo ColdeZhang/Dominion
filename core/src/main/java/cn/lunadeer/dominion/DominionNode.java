@@ -65,11 +65,6 @@ public class DominionNode {
     public static boolean isInDominion(@Nullable DominionDTO dominion, @NotNull Location location) {
         if (dominion == null) return false;
         if (!Objects.equals(dominion.getWorldUid(), location.getWorld().getUID())) return false;
-        double x = location.getX();
-        double y = location.getY();
-        double z = location.getZ();
-        return x >= dominion.getX1() && x < dominion.getX2() &&
-                y >= dominion.getY1() && y < dominion.getY2() &&
-                z >= dominion.getZ1() && z < dominion.getZ2();
+        return dominion.getCuboid().contain(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 }

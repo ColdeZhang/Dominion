@@ -1,7 +1,8 @@
 package cn.lunadeer.dominion.utils.VaultConnect;
 
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.i18n.Localization;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,9 +13,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class VaultConnect implements Listener {
 
+    public static class VaultConnectText extends ConfigurationPart {
+        public String vaultUnavailable = "Vault not available, please install Vault or VaultUnlock to use economy features.";
+        public String economyUnavailable = "Economy plugin not found, you need to install one Economy plugin to use economy features.";
+        public String insufficientFunds = "Insufficient money, need {0} {1}, but only have {2} {1}.";
+    }
+
     public static VaultConnect instance;
     private VaultInterface vaultInstance = null;
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public VaultConnect(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -26,12 +33,11 @@ public class VaultConnect implements Listener {
     public void onEnable(ServiceRegisterEvent event) {
     }
 
-    public boolean economyAvailable() {
+    private void assertEconomy() throws Exception {
         if (vaultInstance == null) {
             Plugin vaultPlugin = this.plugin.getServer().getPluginManager().getPlugin("Vault");
             if (vaultPlugin == null) {
-                XLogger.err(Localization.Utils_VaultNotAvailable);
-                return false;
+                throw new Exception(Language.vaultConnectText.vaultUnavailable);
             }
             if (vaultPlugin.getDescription().getAuthors().contains("creatorfromhell")) {
                 vaultInstance = new Vault2();
@@ -40,52 +46,39 @@ public class VaultConnect implements Listener {
             }
             if (!vaultInstance.init(plugin)) {
                 vaultInstance = null;
-                XLogger.err(Localization.Utils_NoEconomyPlugin);
-                return false;
+                throw new Exception(Language.vaultConnectText.economyUnavailable);
             }
         }
         XLogger.debug("Vault connected.");
-        return true;
     }
 
-    public String currencyNamePlural() {
-        if (economyAvailable()) {
-            return vaultInstance.currencyNamePlural();
-        }
-        XLogger.warn(Localization.Utils_NoEconomyPlugin);
-        return "";
+    public String currencyNamePlural() throws Exception {
+        assertEconomy();
+        return vaultInstance.currencyNamePlural();
     }
 
-    public String currencyNameSingular() {
-        if (economyAvailable()) {
-            return vaultInstance.currencyNameSingular();
-        }
-        XLogger.warn(Localization.Utils_NoEconomyPlugin);
-        return "";
+    public String currencyNameSingular() throws Exception {
+        assertEconomy();
+        return vaultInstance.currencyNameSingular();
     }
 
-    public void withdrawPlayer(Player player, double amount) {
-        if (economyAvailable()) {
-            vaultInstance.withdrawPlayer(player, amount);
-            return;
+    public void withdrawPlayer(Player player, double amount) throws Exception {
+        assertEconomy();
+        if (amount > getBalance(player)) {
+            String str = String.format(Language.vaultConnectText.insufficientFunds, amount, currencyNamePlural(), getBalance(player));
+            throw new Exception(str);
         }
-        XLogger.warn(Localization.Utils_NoEconomyPlugin);
+        vaultInstance.withdrawPlayer(player, amount);
     }
 
-    public void depositPlayer(Player player, double amount) {
-        if (economyAvailable()) {
-            vaultInstance.depositPlayer(player, amount);
-            return;
-        }
-        XLogger.warn(Localization.Utils_NoEconomyPlugin);
+    public void depositPlayer(Player player, double amount) throws Exception {
+        assertEconomy();
+        vaultInstance.depositPlayer(player, amount);
     }
 
-    public double getBalance(Player player) {
-        if (economyAvailable()) {
-            return vaultInstance.getBalance(player);
-        }
-        XLogger.warn(Localization.Utils_NoEconomyPlugin);
-        return 0;
+    public double getBalance(Player player) throws Exception {
+        assertEconomy();
+        return vaultInstance.getBalance(player);
     }
 
     private static boolean foundClass(String className) {

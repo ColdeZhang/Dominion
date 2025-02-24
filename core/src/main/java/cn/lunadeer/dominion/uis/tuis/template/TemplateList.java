@@ -1,54 +1,76 @@
 package cn.lunadeer.dominion.uis.tuis.template;
 
-import cn.lunadeer.dominion.dtos.PrivilegeTemplateDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.uis.cuis.CreateTemplate;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.Button;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.commands.TemplateCommand.deleteTemplate;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 
 public class TemplateList {
 
-    public static void show(CommandSender sender) {
-        show(sender, 1);
+    public static class TemplateListTuiText extends ConfigurationPart {
+        public String title = "Template List";
+        public String button = "TEMPLATES";
+        public String description = "Templates can be used to quickly setup privileges of member.";
+        public String deleteButton = "DELETE";
     }
 
-    public static void show(CommandSender sender, int page) {
-        show(sender, new String[]{"", "", String.valueOf(page)});
+    public static ListViewButton button(CommandSender sender) {
+        return (ListViewButton) new ListViewButton(Language.templateListTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, pageStr);
+            }
+        }.needPermission(defaultPermission);
     }
 
-    public static void show(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        int page = getPage(args, 2);
-        ListView view = ListView.create(10, "/dominion template list");
+    public static void show(CommandSender sender, String pageStr) {
+        try {
+            Player player = toPlayer(sender);
+            int page = toIntegrity(pageStr, 1);
+            List<TemplateDTO> templates = TemplateDTO.selectAll(player.getUniqueId());
 
-        List<PrivilegeTemplateDTO> templates = PrivilegeTemplateDTO.selectAll(player.getUniqueId());
-        view.title(Translation.TUI_TemplateList_Title);
-        view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append(Translation.TUI_Navigation_TemplateList));
+            ListView view = ListView.create(10, button(sender));
+            view.title(Language.templateListTuiText.title);
+            view.navigator(Line.create()
+                    .append(MainMenu.button(sender).build())
+                    .append(Language.templateListTuiText.button));
 
-        Button create = Button.create(Translation.TUI_TemplateList_CreateButton).setExecuteCommand("/dominion cui_template_create")
-                .setHoverText(Translation.TUI_TemplateList_CreateDescription);
+            view.add(Line.create().append(CreateTemplate.button(sender).build()));
 
-        view.add(Line.create().append(create.build()));
+            for (TemplateDTO template : templates) {
+                Button setting = TemplateSetting.button(sender, template.getName()).green();
+                Button delete = new ListViewButton(Language.templateListTuiText.deleteButton) {
+                    @Override
+                    public void function(String pageStr) {
+                        deleteTemplate(sender, template.getName(), pageStr);
+                    }
+                }.needPermission(defaultPermission).red();
+                Line line = Line.create()
+                        .append(delete.build())
+                        .append(setting.build())
+                        .append(template.getName());
+                view.add(line);
+            }
 
-        for (PrivilegeTemplateDTO template : templates) {
-            Button manage = Button.createGreen(Translation.TUI_EditButton).setExecuteCommand("/dominion template setting " + template.getName());
-            Button delete = Button.createRed(Translation.TUI_DeleteButton).setExecuteCommand("/dominion template delete " + template.getName());
-            Line line = Line.create()
-                    .append(delete.build())
-                    .append(manage.build())
-                    .append(template.getName());
-            view.add(line);
+            view.showOn(player, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-
-        view.showOn(player, page);
     }
 
 }

@@ -3,29 +3,38 @@ package cn.lunadeer.dominion.managers;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.commands.Operator;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.Scheduler;
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.databse.*;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.AddColumn;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.CreateTable;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.InsertRow;
-import cn.lunadeer.minecraftpluginutils.databse.syntax.RemoveColumn;
+import cn.lunadeer.dominion.commands.AdministratorCommand;
+import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.databse.DatabaseManager;
+import cn.lunadeer.dominion.utils.databse.Field;
+import cn.lunadeer.dominion.utils.databse.FieldType;
+import cn.lunadeer.dominion.utils.databse.TableColumn;
+import cn.lunadeer.dominion.utils.databse.syntax.AddColumn;
+import cn.lunadeer.dominion.utils.databse.syntax.CreateTable;
+import cn.lunadeer.dominion.utils.databse.syntax.InsertRow;
+import cn.lunadeer.dominion.utils.databse.syntax.RemoveColumn;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.lunadeer.dominion.utils.databse.Common.assertFieldExist;
+import static cn.lunadeer.dominion.utils.databse.Common.assertTableExist;
+import static cn.lunadeer.dominion.utils.databse.DatabaseManager.exportCSV;
+import static cn.lunadeer.dominion.utils.databse.DatabaseManager.importCSV;
+
 public class DatabaseTables {
-    public static void migrate() {
+    public static void migrate() throws Exception {
         // player name
         TableColumn player_name_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
         TableColumn player_name_uuid = new TableColumn("uuid", FieldType.STRING, false, false, true, true, "''");
@@ -80,7 +89,9 @@ public class DatabaseTables {
         }
 
         // player privilege
-        if (!Common.IsTableExist("dominion_member")) {
+        try {
+            assertTableExist("dominion_member");
+        } catch (Exception e) {
             TableColumn player_privilege_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
             TableColumn player_privilege_player_uuid = new TableColumn("player_uuid", FieldType.STRING, false, false, true, false, "''");
             TableColumn player_privilege_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
@@ -98,7 +109,7 @@ public class DatabaseTables {
                     .unique(player_privilege_player_uuid, player_privilege_dom_id);
             player_privilege.execute();
 
-            for (Flag flag : Flags.getAllPreFlags()) {
+            for (Flag flag : Flags.getAllPriFlags()) {
                 TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
                 new AddColumn(column).table("player_privilege").ifNotExists().execute();
             }
@@ -165,7 +176,7 @@ public class DatabaseTables {
         privilege_template.execute();
 
 
-        for (Flag flag : Flags.getAllPreFlags()) {
+        for (Flag flag : Flags.getAllPriFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("privilege_template").ifNotExists().execute();
         }
@@ -175,10 +186,13 @@ public class DatabaseTables {
         new AddColumn(dominion_color).table("dominion").ifNotExists().execute();
 
         // 1.34.0   add dominion_group
-        if (!Common.IsTableExist("dominion_member")) {
+        try {
+            assertTableExist("dominion_member");
+        } catch (Exception e) {
             TableColumn player_privilege_group_id = new TableColumn("group_id", FieldType.INT, false, false, true, false, -1);
             new AddColumn(player_privilege_group_id).table("player_privilege").ifNotExists().execute();
         }
+
 
         TableColumn dominion_group_id = new TableColumn("id", FieldType.INT, true, true, true, true, 0);
         TableColumn dominion_group_dom_id = new TableColumn("dom_id", FieldType.INT, false, false, true, false, -1);
@@ -194,7 +208,7 @@ public class DatabaseTables {
                 .foreignKey(group_dom_id_fk)
                 .unique(dominion_group_dom_id, dominion_group_name);
         group.execute();
-        for (Flag flag : Flags.getAllPreFlags()) {
+        for (Flag flag : Flags.getAllPriFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("dominion_group").ifNotExists().execute();
         }
@@ -218,38 +232,39 @@ public class DatabaseTables {
                 .foreignKey(dominion_member_dom_id_fk)
                 .unique(dominion_member_player_uuid, dominion_member_dom_id);
         dominion_member.execute();
-        for (Flag flag : Flags.getAllPreFlags()) {
+        for (Flag flag : Flags.getAllPriFlags()) {
             TableColumn column = new TableColumn(flag.getFlagName(), FieldType.BOOLEAN, false, false, true, false, flag.getDefaultValue());
             new AddColumn(column).table("dominion_member").ifNotExists().execute();
         }
-        if (Common.IsTableExist("player_privilege")) {
+        try {
+            assertTableExist("player_privilege");
             // migrate from player_privilege to dominion_member
             String sql = "SELECT * FROM player_privilege;";
-            try (ResultSet rs = DatabaseManager.instance.query(sql)) {
-                while (rs.next()) {
-                    String player_uuid = rs.getString("player_uuid");
-                    int dom_id = rs.getInt("dom_id");
-                    boolean admin = rs.getBoolean("admin");
-                    int group_id = rs.getInt("group_id");
-                    InsertRow insert = new InsertRow().table("dominion_member")
-                            .field(new Field("player_uuid", player_uuid))
-                            .field(new Field("dom_id", dom_id))
-                            .field(new Field("group_id", group_id))
-                            .field(new Field("admin", admin));
-                    for (Flag flag : Flags.getAllPreFlags()) {
-                        insert.field(new Field(flag.getFlagName(), rs.getBoolean(flag.getFlagName())));
-                    }
-                    insert.execute();
+            ResultSet rs = DatabaseManager.instance.query(sql);
+            while (rs.next()) {
+                String player_uuid = rs.getString("player_uuid");
+                int dom_id = rs.getInt("dom_id");
+                boolean admin = rs.getBoolean("admin");
+                int group_id = rs.getInt("group_id");
+                InsertRow insert = new InsertRow().table("dominion_member")
+                        .field(new Field("player_uuid", player_uuid))
+                        .field(new Field("dom_id", dom_id))
+                        .field(new Field("group_id", group_id))
+                        .field(new Field("admin", admin));
+                for (Flag flag : Flags.getAllPriFlags()) {
+                    insert.field(new Field(flag.getFlagName(), rs.getBoolean(flag.getFlagName())));
                 }
-                sql = "DROP TABLE player_privilege;";
-                DatabaseManager.instance.query(sql);
-            } catch (Exception e) {
-                DatabaseManager.handleDatabaseError("迁移 player_privilege 到 dominion_member 失败", e, sql);
+                insert.execute();
             }
+            sql = "DROP TABLE player_privilege;";
+            DatabaseManager.instance.query(sql);
+        } catch (Exception ignored) {
         }
 
         // 2.1.0-beta add group name colored
-        if (!Common.IsFieldExist("dominion_group", "name_colored")) {
+        try {
+            assertFieldExist("dominion_group", "name_colored");
+        } catch (Exception ignored) {
             TableColumn dominion_group_name_colored = new TableColumn("name_colored", FieldType.STRING, false, false, true, false, "'未命名'");
             new AddColumn(dominion_group_name_colored).table("dominion_group").ifNotExists().execute();
             String copy_sql = "UPDATE dominion_group SET name_colored = name;";
@@ -260,7 +275,9 @@ public class DatabaseTables {
         }
 
         // 2.3.0 change world name to world uid
-        if (!Common.IsFieldExist("dominion", "world_uid")) {
+        try {
+            assertFieldExist("dominion", "world_uid");
+        } catch (Exception e) {
             TableColumn dominion_world_uid = new TableColumn("world_uid", FieldType.STRING, false, false, true, false, "'00000000-0000-0000-0000-000000000000'");
             new AddColumn(dominion_world_uid).table("dominion").ifNotExists().execute();
             List<World> worlds = Dominion.instance.getServer().getWorlds();
@@ -271,44 +288,71 @@ public class DatabaseTables {
             DatabaseManager.instance.query("UPDATE dominion SET world_uid = '00000000-0000-0000-0000-000000000000' WHERE world = 'all';");
             new RemoveColumn("world").table("dominion").IfExists().execute();
         }
+
+        // 4.0.0-alpha add serverId to dominion
+        try {
+            assertFieldExist("dominion", "server_id");
+        } catch (Exception e) {
+            TableColumn dominion_server_id = new TableColumn("server_id", FieldType.INT, false, false, true, false, Configuration.multiServer.serverId);
+            new AddColumn(dominion_server_id).table("dominion").ifNotExists().execute();
+            String sql = "UPDATE dominion SET server_id = -1 WHERE id = -1;";   // server root dominion's server id is -1
+            DatabaseManager.instance.query(sql);
+        }
+    }
+
+    public static class DatabaseManagerText extends ConfigurationPart {
+        public String exportingDatabaseTables = "Exporting database tables...";
+        public String exportTableFail = "Export table failed, reason: {0}";
+        public String exportWorldMappingFail = "Export world uid mapping failed, reason: {0}";
+        public String exportDatabaseSuccess = "Export database to {0} successfully.";
+
+        public String fileNotFound = "Database table file path {0} not found.";
+        public String importingDatabase = "Importing database...";
+        public String fileCorrupted = "Some database table file is missing, please re-export the database tables.";
+        public String importDatabaseFail = "Import database failed, reason: {0}";
+        public String importDatabaseSuccess = "Import database successfully.";
     }
 
     private static final File export_path = new File(Dominion.instance.getDataFolder(), "ExportedDatabaseTables");
 
     public static void Export(CommandSender sender) {
         Scheduler.runTaskAsync(() -> {
-            Notification.info(sender, Translation.Commands_Operator_ExportDBBegin);
+            Notification.info(sender, Language.databaseManagerText.exportingDatabaseTables);
             if (!export_path.exists()) {
-                export_path.mkdirs();
-            }
-            Common.ExportCSV("player_name", new File(export_path, "player_name.csv"));
-            Common.ExportCSV("privilege_template", new File(export_path, "privilege_template.csv"));
-            Common.ExportCSV("dominion", new File(export_path, "dominion.csv"));
-            Common.ExportCSV("dominion_group", new File(export_path, "dominion_group.csv"));
-            Common.ExportCSV("dominion_member", new File(export_path, "dominion_member.csv"));
-            Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
-            YamlConfiguration world_uid = new YamlConfiguration();
-            for (Map.Entry<String, String> entry : world_uid_map.entrySet()) {
-                world_uid.set(entry.getKey(), entry.getValue());
+                boolean re = export_path.mkdirs();
             }
             try {
-                world_uid.save(new File(export_path, "world_uid_mapping.yml"));
+                exportCSV("player_name", new File(export_path, "player_name.csv"));
+                exportCSV("privilege_template", new File(export_path, "privilege_template.csv"));
+                exportCSV("dominion", new File(export_path, "dominion.csv"));
+                exportCSV("dominion_group", new File(export_path, "dominion_group.csv"));
+                exportCSV("dominion_member", new File(export_path, "dominion_member.csv"));
             } catch (Exception e) {
-                XLogger.err("Save world_uid_mapping.yml failed: %s", e.getMessage());
+                Notification.error(sender, Language.databaseManagerText.exportTableFail, e.getMessage());
                 return;
             }
-            Notification.info(sender, Translation.Commands_Operator_ExportDBSuccess);
-            Notification.info(sender, "Path: %s", export_path.getAbsolutePath());
+            try {
+                Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
+                YamlConfiguration world_uid = new YamlConfiguration();
+                for (Map.Entry<String, String> entry : world_uid_map.entrySet()) {
+                    world_uid.set(entry.getKey(), entry.getValue());
+                }
+                world_uid.save(new File(export_path, "world_uid_mapping.yml"));
+            } catch (Exception e) {
+                Notification.error(sender, Language.databaseManagerText.exportWorldMappingFail, e.getMessage());
+                return;
+            }
+            Notification.info(sender, Language.databaseManagerText.exportDatabaseSuccess, export_path.getAbsolutePath());
         });
     }
 
     public static void Import(CommandSender sender) {
         Scheduler.runTaskAsync(() -> {
             if (!export_path.exists()) {
-                Notification.error(sender, Translation.Commands_Operator_ImportDBFail);
+                Notification.error(sender, Language.databaseManagerText.fileNotFound, export_path.getAbsolutePath());
                 return;
             }
-            Notification.info(sender, Translation.Commands_Operator_ImportDBBegin);
+            Notification.info(sender, Language.databaseManagerText.importingDatabase);
             Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
             File player_name_csv = new File(export_path, "player_name.csv");
             File privilege_template_csv = new File(export_path, "privilege_template.csv");
@@ -317,7 +361,7 @@ public class DatabaseTables {
             File dominion_group_csv = new File(export_path, "dominion_group.csv");
             File dominion_member_csv = new File(export_path, "dominion_member.csv");
             if (!player_name_csv.exists() || !privilege_template_csv.exists() || !dominion_csv.exists() || !world_uid_mapping.exists() || !dominion_group_csv.exists() || !dominion_member_csv.exists()) {
-                Notification.error(sender, Translation.Commands_Operator_ImportDBIncompleteFail);
+                Notification.error(sender, Language.databaseManagerText.fileCorrupted);
                 return;
             }
             try {
@@ -334,17 +378,18 @@ public class DatabaseTables {
                     }
                 }
                 Files.writeString(dominion_csv.toPath(), dominion_file_str);
-            } catch (IOException e) {
-                XLogger.err("Import world_uid_mapping.yml failed: %s", e.getMessage());
+
+                importCSV("player_name", "id", player_name_csv);
+                importCSV("privilege_template", "id", privilege_template_csv);
+                importCSV("dominion", "id", dominion_csv);
+                importCSV("dominion_group", "id", dominion_group_csv);
+                importCSV("dominion_member", "id", dominion_member_csv);
+            } catch (Exception e) {
+                Notification.error(sender, Language.databaseManagerText.importDatabaseFail, e.getMessage());
                 return;
             }
-            Common.ImportCSV("player_name", "id", player_name_csv);
-            Common.ImportCSV("privilege_template", "id", privilege_template_csv);
-            Common.ImportCSV("dominion", "id", dominion_csv);
-            Common.ImportCSV("dominion_group", "id", dominion_group_csv);
-            Common.ImportCSV("dominion_member", "id", dominion_member_csv);
-            Notification.info(sender, Translation.Commands_Operator_ImportDBSuccess);
-            Operator.reloadCache(sender, new String[0]);
+            Notification.info(sender, Language.databaseManagerText.importDatabaseSuccess);
+            AdministratorCommand.reloadCache(sender);
         });
     }
 }

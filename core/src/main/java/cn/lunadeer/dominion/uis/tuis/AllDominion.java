@@ -2,35 +2,64 @@ package cn.lunadeer.dominion.uis.tuis;
 
 import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.DominionNode;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.misc.CommandArguments;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.command.SecondaryCommand;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
+import static cn.lunadeer.dominion.Dominion.adminPermission;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
 import static cn.lunadeer.dominion.uis.tuis.dominion.DominionList.BuildTreeLines;
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
-import static cn.lunadeer.dominion.utils.TuiUtils.notOp;
 
 public class AllDominion {
 
-    public static void show(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        if (notOp(player)) return;
-        int page = getPage(args, 1);
+    public static class AllDominionTuiText extends ConfigurationPart {
+        public String title = "All Dominions";
+        public String description = "List all dominions.";
+        public String button = "LIST ALL";
+    }
 
-        List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, Cache.instance.getAllDominions());
+    public static SecondaryCommand listAll = new SecondaryCommand("list_all", List.of(
+            new CommandArguments.OptionalPageArgument()
+    )) {
+        @Override
+        public void executeHandler(CommandSender sender) {
+            show(sender, getArgumentValue(0));
+        }
+    }.needPermission(adminPermission).register();
 
-        ListView view = ListView.create(10, "/dominion all_dominion");
+    public static ListViewButton button(CommandSender sender) {
+        return (ListViewButton) new ListViewButton(Language.allDominionTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, pageStr);
+            }
+        }.needPermission(adminPermission);
+    }
 
-        view.title(Translation.TUI_Navigation_AllDominion);
-        view.navigator(Line.create().append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build()).append((Translation.TUI_Navigation_AllDominion)));
-        view.addLines(BuildTreeLines(allDominions, 0));
-        view.showOn(player, page);
+    public static void show(CommandSender sender, String pageStr) {
+        try {
+            int page = toIntegrity(pageStr);
+            List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, Cache.instance.getAllDominions());
+            ListView view = ListView.create(10, button(sender));
+
+            view.title(Language.allDominionTuiText.title);
+            view.navigator(Line.create()
+                    .append(MainMenu.button(sender).build())
+                    .append(Language.allDominionTuiText.button));
+            view.addLines(BuildTreeLines(sender, allDominions, 0));
+            view.showOn(sender, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
+        }
+
+
     }
 }

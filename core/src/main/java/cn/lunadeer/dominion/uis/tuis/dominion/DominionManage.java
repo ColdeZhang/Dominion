@@ -1,81 +1,132 @@
 package cn.lunadeer.dominion.uis.tuis.dominion;
 
-import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.commands.DominionOperateCommand;
+import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.misc.CommandArguments;
+import cn.lunadeer.dominion.uis.cuis.EditEnterMessage;
+import cn.lunadeer.dominion.uis.cuis.EditLeaveMessage;
+import cn.lunadeer.dominion.uis.cuis.RenameDominion;
+import cn.lunadeer.dominion.uis.cuis.SetMapColor;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.Info;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberList;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.command.SecondaryCommand;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.*;
+import java.util.List;
+
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
+import static cn.lunadeer.dominion.misc.Converts.*;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class DominionManage {
-    public static void show(CommandSender sender, String[] args) {
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = getDominionNameArg_1(player, args);
-        if (dominion == null) {
-            Notification.error(sender, Translation.TUI_DominionManage_NotInDominion);
-            return;
+
+    public static class DominionManageTuiText extends ConfigurationPart {
+        public String title = "Manage {0}";
+        public String button = "MANAGE";
+        public String setTpButton = "SET TP";
+        public String setTpDescription = "Set your current location as tp location.";
+    }
+
+    public static SecondaryCommand manage = new SecondaryCommand("manage", List.of(
+            new CommandArguments.RequiredDominionArgument(),
+            new CommandArguments.OptionalPageArgument()
+    )) {
+        @Override
+        public void executeHandler(CommandSender sender) {
+            show(sender, getArgumentValue(0), getArgumentValue(1));
         }
-        if (noAuthToManage(player, dominion)) return;
-        int page = getPage(args, 2);
-        Line size_info = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_InfoButton).setExecuteCommand("/dominion info " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_InfoDescription);
-        Line env_info = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_EnvSettingButton).setExecuteCommand("/dominion env_setting " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_EnvSettingDescription);
-        Line flag_info = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_GuestSettingButton).setExecuteCommand("/dominion guest_setting " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_GuestSettingDescription);
-        Line privilege_list = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_MemberListButton).setExecuteCommand("/dominion member list " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_MemberListDescription);
-        Line group_list = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_GroupListButton).setExecuteCommand("/dominion group list " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_GroupListDescription);
-        Line set_tp = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_SetTpLocationButton).setExecuteCommand("/dominion set_tp_location " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_SetTpLocationDescription);
-        Line rename = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_RenameButton).setExecuteCommand("/dominion cui_rename " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_RenameDescription);
-        Line join_msg = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_EditJoinMessageButton).setExecuteCommand("/dominion cui_edit_join_message " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_EditJoinMessageDescription);
-        Line leave_msg = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_EditLeaveMessageButton).setExecuteCommand("/dominion cui_edit_leave_message " + dominion.getName()).build())
-                .append(Translation.TUI_DominionManage_EditLeaveMessageDescription);
-        Line map_color = Line.create()
-                .append(Button.create(Translation.TUI_DominionManage_SetMapColorButton).setExecuteCommand("/dominion cui_set_map_color " + dominion.getName()).build())
-                .append(Component.text(Translation.TUI_DominionManage_SetMapColorDescription.trans())
-                        .append(Component.text(dominion.getColor(),
-                                TextColor.color(dominion.getColorR(), dominion.getColorG(), dominion.getColorB()))));
-        ListView view = ListView.create(10, "/dominion manage " + dominion.getName());
-        view.title(String.format(Translation.TUI_DominionManage_Title.trans(), dominion.getName()))
-                .navigator(Line.create()
-                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
-                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
-                        .append(dominion.getName()))
-                .add(size_info)
-                .add(env_info)
-                .add(flag_info)
-                .add(privilege_list)
-                .add(group_list)
-                .add(set_tp)
-                .add(rename)
-                .add(join_msg)
-                .add(leave_msg);
-        if (Dominion.config.getBlueMap() || Dominion.config.getDynmap()) {
-            view.add(map_color);
+    }.needPermission(defaultPermission).register();
+
+    public static ListViewButton button(CommandSender sender, String dominionName) {
+        return (ListViewButton) new ListViewButton(Language.dominionManageTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, dominionName, pageStr);
+            }
+        }.needPermission(defaultPermission);
+    }
+
+    public static void show(CommandSender sender, String dominionName, String pageStr) {
+        try {
+            Player player = toPlayer(sender);
+            DominionDTO dominion = toDominionDTO(dominionName);
+            assertDominionAdmin(player, dominion);
+            int page = toIntegrity(pageStr);
+
+            Line size_info = Line.create()
+                    .append(Info.button(sender, dominionName).build())
+                    .append(Language.sizeInfoTuiText.description);
+            Line env_info = Line.create()
+                    .append(EnvSetting.button(sender, dominionName).build())
+                    .append(Language.envSettingTuiText.description);
+            Line flag_info = Line.create()
+                    .append(GuestSetting.button(sender, dominionName).build())
+                    .append(Language.guestSettingTuiText.description);
+            Line member_list = Line.create()
+                    .append(MemberList.button(sender, dominionName).build())
+                    .append(Language.memberListTuiText.description);
+            Line group_list = Line.create()
+                    .append(GroupList.button(sender, dominionName).build())
+                    .append(Language.groupListTuiText.description);
+            Line set_tp = Line.create()
+                    .append(new FunctionalButton(Language.dominionManageTuiText.setTpButton) {
+                        @Override
+                        public void function() {
+                            DominionOperateCommand.setTp(sender, dominionName);
+                        }
+                    }.build())
+                    .append(Language.dominionManageTuiText.setTpDescription);
+            Line rename = Line.create()
+                    .append(RenameDominion.button(sender, dominionName).build())
+                    .append(Language.renameDominionCuiText.description);
+            Line enter_msg = Line.create()
+                    .append(EditEnterMessage.button(sender, dominionName).build())
+                    .append(Language.editEnterMessageCuiText.description);
+            Line leave_msg = Line.create()
+                    .append(EditLeaveMessage.button(sender, dominionName).build())
+                    .append(Language.editLeaveMessageCuiText.description);
+            Line map_color = Line.create()
+                    .append(SetMapColor.button(sender, dominionName).build())
+                    .append(Component.text(Language.setMapColorCuiText.description)
+                            .append(Component.text(dominion.getColor(),
+                                    TextColor.color(dominion.getColorR(), dominion.getColorG(), dominion.getColorB()))));
+            ListView view = ListView.create(10, button(sender, dominion.getName()));
+            view.title(formatString(Language.dominionManageTuiText.title, dominion.getName()))
+                    .navigator(Line.create()
+                            .append(MainMenu.button(sender).build())
+                            .append(DominionList.button(sender).build())
+                            .append(dominion.getName()))
+                    .add(size_info)
+                    .add(env_info)
+                    .add(flag_info)
+                    .add(member_list)
+                    .add(group_list)
+                    .add(set_tp)
+                    .add(rename)
+                    .add(enter_msg)
+                    .add(leave_msg);
+            if (Configuration.webMapRenderer.blueMap || Configuration.webMapRenderer.dynmap) {
+                view.add(map_color);
+            }
+            view.showOn(player, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-        view.showOn(player, page);
     }
 }

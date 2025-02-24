@@ -6,119 +6,152 @@ import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.commands.MemberCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.misc.CommandArguments;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.command.SecondaryCommand;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.Button;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.CommandParser;
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.getPage;
-import static cn.lunadeer.dominion.utils.TuiUtils.noAuthToManage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionOwner;
+import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
+import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class MemberList {
 
-    public static void show(CommandSender sender, String dominionName, Integer page) {
-        show(sender, new String[]{"", "", dominionName, page.toString()});
+    public static class MemberListTuiText extends ConfigurationPart {
+        public String title = "{0} Member List";
+        public String description = "List of members of this dominion.";
+        public String button = "MEMBERS";
+        public String remove = "REMOVE";
+        public String removeDescription = "Remove this member from this dominion.";
+
+        public String ownerOnly = "Only owner can manage admin member.";
+        public String groupOnly = "This member belong to group {0} so you can't manage it separately.";
+
+        public String tagAdmin = "Admin can manage members and groups of this dominion.";
+        public String tagNormal = "Normal members.";
+        public String tagBan = "Who don't have MOVE privilege.";
+        public String tagGroup = "This player belong to a group, you can't manage it separately.";
     }
 
-    public static void show(CommandSender sender, String dominionName) {
-        show(sender, new String[]{"", "", dominionName});
-    }
-
-    public static void show(CommandSender sender, String[] args) {
-        if (args.length < 3) {
-            Notification.error(sender, Translation.TUI_MemberList_Usage);
-            return;
+    public static SecondaryCommand list = new SecondaryCommand("member_list", List.of(
+            new CommandArguments.RequiredDominionArgument(),
+            new CommandArguments.OptionalPageArgument()
+    )) {
+        @Override
+        public void executeHandler(CommandSender sender) {
+            show(sender, getArgumentValue(0), getArgumentValue(1));
         }
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(args[2]);
-        if (dominion == null) {
-            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
-            return;
-        }
-        int page = getPage(args, 3);
-        ListView view = ListView.create(10, "/dominion member list " + dominion.getName());
-        if (noAuthToManage(player, dominion)) return;
-        List<MemberDTO> privileges = dominion.getMembers();
-        view.title(String.format(Translation.TUI_MemberList_Title.trans(), dominion.getName()));
-        view.navigator(
-                Line.create()
-                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
-                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
-                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Translation.TUI_Navigation_MemberList)
-        );
-        view.add(Line.create().append(Button.create(Translation.TUI_MemberList_AddButton)
-                .setExecuteCommand(CommandParser("/dominion member select_player %s", dominion.getName())).build()));
-        for (MemberDTO privilege : privileges) {
-            PlayerDTO p_player = cn.lunadeer.dominion.dtos.PlayerDTO.select(privilege.getPlayerUUID());
-            if (p_player == null) continue;
-            GroupDTO group = Cache.instance.getGroup(privilege.getGroupId());
-            Line line = Line.create();
+    }.needPermission(defaultPermission).register();
 
-            if (group != null) {
-                line.append(groupTag);
-            } else if (privilege.getAdmin()) {
-                line.append(adminTag);
-            } else {
-                if (!privilege.getFlagValue(Flags.MOVE)) {
-                    line.append(banTag);
-                } else {
-                    line.append(normalTag);
-                }
+    public static ListViewButton button(CommandSender sender, String dominionName) {
+        return (ListViewButton) new ListViewButton(Language.memberListTuiText.button) {
+            @Override
+            public void function(String pageStr) {
+                show(sender, dominionName, pageStr);
             }
+        }.needPermission(defaultPermission);
+    }
 
-            Button prev = Button.createGreen(Translation.TUI_MemberList_FlagButton)
-                    .setHoverText(Translation.TUI_MemberList_FlagDescription)
-                    .setExecuteCommand(CommandParser("/dominion member setting %s %s", dominion.getName(), p_player.getLastKnownName()));
-            Button remove = Button.createRed(Translation.TUI_MemberList_RemoveButton)
-                    .setHoverText(Translation.TUI_MemberList_RemoveDescription)
-                    .setExecuteCommand(CommandParser("/dominion member remove %s %s", dominion.getName(), p_player.getLastKnownName()));
+    public static void show(CommandSender sender, String dominionName, String pageStr) {
+        try {
+            DominionDTO dominion = toDominionDTO(dominionName);
+            assertDominionAdmin(sender, dominion);
+            int page = toIntegrity(pageStr);
 
-            if (!player.getUniqueId().equals(dominion.getOwner()) && !player.hasPermission("dominion.admin")) {
-                boolean disable = false;
-                if (group == null) {
-                    if (privilege.getAdmin()) {
-                        disable = true;
-                    }
+            ListView view = ListView.create(10, button(sender, dominionName));
+            view.title(formatString(Language.memberListTuiText.title, dominion.getName()));
+            view.navigator(
+                    Line.create()
+                            .append(MainMenu.button(sender).build())
+                            .append(DominionList.button(sender).build())
+                            .append(DominionManage.button(sender, dominionName).build())
+                            .append(Language.memberListTuiText.button)
+            );
+            view.add(Line.create().append(SelectPlayer.button(sender, dominionName).build()));
+
+            // get data from database directly because cache update may not be in time
+            List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));
+            for (MemberDTO member : members) {
+                PlayerDTO p_player = member.getPlayer();
+                GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+                Line line = Line.create();
+                // Tag
+                if (group != null) {
+                    line.append(groupTag);
+                } else if (member.getFlagValue(Flags.ADMIN)) {
+                    line.append(adminTag);
                 } else {
-                    if (group.getAdmin()) {
-                        disable = true;
+                    if (!member.getFlagValue(Flags.MOVE)) {
+                        line.append(banTag);
+                    } else {
+                        line.append(normalTag);
                     }
+                }
+
+                Button prev = MemberSetting.button(sender, dominionName, p_player.getLastKnownName()).green();
+                Button remove = new FunctionalButton(Language.memberListTuiText.remove) {
+                    @Override
+                    public void function() {
+                        MemberCommand.removeMember(sender, dominionName, p_player.getLastKnownName(), pageStr);
+                    }
+                }.setHoverText(Language.memberListTuiText.removeDescription).red();
+
+                boolean disable = false;
+                try {
+                    assertDominionOwner(sender, dominion);
+                } catch (Exception e) {
+                    // not owner then the sender is admin so he should not remove other admin
+                    disable = member.getFlagValue(Flags.ADMIN);
                 }
                 if (disable) {
-                    prev.setDisabled(Translation.TUI_MemberList_NoPermissionSet);
-                    remove.setDisabled(Translation.TUI_MemberList_NoPermissionRemove);
+                    prev.setDisabled(Language.memberListTuiText.ownerOnly);
+                    remove.setDisabled(Language.memberListTuiText.ownerOnly);
                 }
+                if (group != null) {
+                    prev.setDisabled(formatString(Language.memberListTuiText.groupOnly, group.getNamePlain()));
+                }
+
+                line.append(remove.build());
+                line.append(prev.build());
+                line.append(p_player.getLastKnownName());
+                view.add(line);
             }
-            if (group != null) {
-                prev.setDisabled(String.format(Translation.TUI_MemberList_BelongToGroup.trans(), group.getNamePlain()));
-            }
-            line.append(remove.build());
-            line.append(prev.build());
-            line.append(p_player.getLastKnownName());
-            view.add(line);
+            view.showOn(sender, page);
+
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-        view.showOn(player, page);
+
     }
 
     private static final TextComponent adminTag = Component.text("[A]", Style.style(TextColor.color(97, 97, 210)))
-            .hoverEvent(Component.text(Translation.TUI_MemberList_AdminTag.trans()));
+            .hoverEvent(Component.text(Language.memberListTuiText.tagAdmin));
     private static final TextComponent normalTag = Component.text("[N]", Style.style(TextColor.color(255, 255, 255)))
-            .hoverEvent(Component.text(Translation.TUI_MemberList_NormalTag.trans()));
+            .hoverEvent(Component.text(Language.memberListTuiText.tagNormal));
     private static final TextComponent banTag = Component.text("[B]", Style.style(TextColor.color(255, 67, 0)))
-            .hoverEvent(Component.text(Translation.TUI_MemberList_BlacklistTag.trans()));
+            .hoverEvent(Component.text(Language.memberListTuiText.tagBan));
     private static final TextComponent groupTag = Component.text("[G]", Style.style(TextColor.color(0, 185, 153)))
-            .hoverEvent(Component.text(Translation.TUI_MemberList_GroupTag.trans()));
+            .hoverEvent(Component.text(Language.memberListTuiText.tagGroup));
 }

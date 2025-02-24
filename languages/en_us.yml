@@ -1,0 +1,594 @@
+dominion-text:
+  loading-config: Loading Configurations...
+  plugin-enabled: Plugin Enabled!
+  plugin-version: 'Plugin Version: {0}'
+multi-server-manager-text:
+  sending-notice: Sending notice to all servers... ({0}:{1})
+  received-notice: Received notice from server {0}:{1}, responding... ({2}:{3})
+  receive-resp-notice: Received response notice from server {0}:{1}
+asserts-text:
+  dom-name-should-not-empty: Dominion name should not be empty.
+  dom-name-invalid: Dominion name should not contain space or dot.
+  dom-name-exist: 'Dominion name: {0} already exists.'
+  group-name-should-not-empty: Group name should not be empty.
+  group-name-invalid: Group name should not contain space or dot.
+  group-name-exist: 'Group name: {0} already exists.'
+  not-allow-dom-in-world: Player {0} is not allowed to create dominions in world {1}.
+  exceed-max-amount: 'Player {0} can not create more dominions (max: {1}).'
+  exceed-max-amount-of-world: 'Player {0} can not create more dominions in world {1} (max: {2}).'
+  x-length-too-short: West-East(X) length {0} should more than {1}.
+  y-length-too-short: Down-Up(Y) length {0} should more than {1}.
+  z-length-too-short: South-North(Z) length {0} should more than {1}.
+  x-length-too-long: West-East(X) length {0} should less than {1}.
+  y-length-too-long: Down-Up(Y) length {0} should less than {1}.
+  z-length-too-long: South-North(Z) length {0} should less than {1}.
+  y-too-high: The highest point of the dominion {0} should less than {1}.
+  y-too-low: The lowest point of the dominion {0} should more than {1}.
+  not-owner: Only {0}'s owner can perform this command/operation.
+  not-admin: Only {0}'s admin can perform this command/operation.
+  intersect-with-dom: Dominion {0} intersects with dominion {1}.
+  intersect-with-spawn: Dominion {0} intersects with the spawn protection area.
+  outside-of-parent-dom: Dominion {0} is outside of it's parent dominion {1}.
+  cant-contain-child: Dominion {0} can not contain it's child dominion {1}.
+  missing-parent-dom: Parent dominion of {0} is missing.
+  sub-dom-too-deep: Player {0} can't create sub-dominion of depth more than {1}.
+  with-draw-money: Successfully paid {0} for dominion.
+  deposit-money: Successfully refunded {0} from dominion.
+  group-not-belong-dominion: Group {0} does not belong to dominion {1}.
+converts-text:
+  must-be-player: Must be a player for this command/operation.
+  must-be-online: The player ({0}) must be online.
+  world-not-exist: The world ({0}) does not exist.
+  unknown-env-flag: 'Unknown environment flag: {0}.'
+  unknown-pre-flag: 'Unknown privilege flag: {0}.'
+  unknown-dominion: 'Unknown dominion: {0}.'
+  invalid-number-format: 'Invalid number of arguments: {0}.'
+  invalid-boolean-format: 'Invalid boolean value of arguments: {0}, should be true or false.'
+  invalid-points: You need to select two points in the same world to create a dominion.
+  unknown-block-face: 'Unknown direction: {0}.'
+  unknown-resize-type: 'Unknown resize type: {0}.'
+  unknown-message-type: 'Unknown message type: {0}.'
+  invalid-color-format: 'Invalid color value of arguments: {0}, should be a hex color value (0xRRGGBB).'
+  unknown-player: Player {0} have not been recorded (after the plugin is installed).
+  not-member: Player {0} is not a member of dominion {1}.
+  no-group-found: No group found with the name {0} in dominion {1}.
+others-text:
+  auto-clean-start: Start auto clean players who have not logged in for {0} days.
+  auto-cleaning-player: Cleaned {0}'s data.
+  auto-clean-end: Auto clean finished.
+  no-permission-for-flag: You do not have {0}({1}) permission.
+vault-connect-text:
+  vault-unavailable: Vault not available, please install Vault or VaultUnlock to use economy features.
+  economy-unavailable: Economy plugin not found, you need to install one Economy plugin to use economy features.
+  insufficient-funds: Insufficient money, need {0} {1}, but only have {2} {1}.
+dominion-event-handler-text:
+  create-success: Create dominion {0} success.
+  create-failed: 'Create dominion {0} failed, reason: {1}'
+  expand-success: Expand dominion {0} success.
+  expand-failed: 'Expand dominion {0} failed, reason: {1}'
+  contract-success: Contract dominion {0} success.
+  contract-failed: 'Contract dominion {0} failed, reason: {1}'
+  delete-success: Delete dominion {0} success.
+  delete-failed: 'Delete dominion {0} failed, reason: {1}'
+  delete-confirm: Use command '{0}' to confirm delete the dominion {1} and its subs, this operation cannot be undone.
+  list-sub-doms: 'The dominion {0} has subs: {1}'
+  rename-failed: 'Rename dominion {0} failed, reason: {1}'
+  rename-success: Rename dominion {0} to {1} success.
+  same-name: The new name is the same as the old name.
+  give-success: Give dominion {0} to {1} success.
+  give-failed: 'Give dominion {0} to other failed, reason: {1}'
+  give-confirm: Use command '{0}' to confirm give the dominion {1} to {2}, this operation cannot be undone.
+  already-belong: The dominion {0} already belongs to {1}.
+  cannot-give-sub: Dominion {0} is a sub-dominion, cannot give it to others.
+  tp-location-not-in-dominion: The teleportation location is not in the dominion {0}.
+  tp-location-set-success: Set teleportation location for dominion {0} success.
+  tp-location-set-failed: 'Set teleportation location for dominion {0} failed, reason: {1}'
+  set-enter-message-success: Set enter message for dominion {0} success.
+  set-enter-message-failed: 'Set enter message for dominion {0} failed, reason: {1}'
+  set-leave-message-success: Set leave message for dominion {0} success.
+  set-leave-message-failed: 'Set leave message for dominion {0} failed, reason: {1}'
+  set-map-color-success: Set map color for dominion {0} success.
+  set-map-color-failed: 'Set map color for dominion {0} failed, reason: {1}'
+  set-env-flag-success: Set env flag {0} to {1} success.
+  set-env-flag-failed: 'Set env flag {0} to {1} failed, reason: {2}'
+  set-guest-flag-success: Set guest flag {0} to {1} success.
+  set-guest-flag-failed: 'Set guest flag {0} to {1} failed, reason: {2}'
+member-event-handler-text:
+  set-flag-success: Successfully set flag {0} for {1} in {2}.
+  owner-only: Only owner can manage admin member.
+  group-already: This member belong to group {0} so you can't manage it separately.
+  set-flag-failed: 'Failed to set flag, reason: {0}'
+  add-member-success: Successfully added {0} to {1}.
+  already-member: '{0} is already a member of {1}.'
+  cant-be-owner: You can't add dominion owner as a member.
+  add-member-failed: 'Failed to add member, reason: {0}'
+  remove-member-success: Successfully removed {0} from {1}.
+  remove-member-failed: 'Failed to remove member, reason: {0}'
+group-event-handler-text:
+  owner-only: Only the owner can manage admin group.
+  set-flag-success: Set group {0} flag {1} to {2} successfully.
+  set-flag-failed: 'Failed to set group flag, reason: {3}'
+  create-group-success: Group {0} created successfully.
+  create-group-failed: 'Failed to create group, reason: {0}'
+  delete-group-success: Group {0} deleted successfully.
+  delete-group-failed: 'Failed to delete group, reason: {0}'
+  rename-group-success: Group {0} renamed to {1} successfully.
+  rename-group-failed: 'Failed to rename group, reason: {0}'
+  add-member-success: Member {0} added to group {1} successfully.
+  add-member-failed: 'Failed to add member to group, reason: {0}'
+  remove-member-success: Member {0} removed from group {1} successfully.
+  remove-member-failed: 'Failed to remove member from group, reason: {0}'
+select-point-events-handler-text:
+  first-point: First point selected at {0}, {1}, {2}.
+  second-point: Second point selected at {0}, {1}, {2}.
+  not-same-world: The two points are not in the same world.
+  price: The price of the dominion is {0} {1}.
+  size: 'Size: {0}x{1}x{2}'
+  square: 'Square: {0}'
+  volume: 'Volume: {0}'
+  no-dominion: No dominion found at the location {0}, {1}, {2}.
+  found-dominion: Location {0}, {1}, {2} is in dominion {3}.
+menu-tui-text:
+  title: Dominion Menu
+  button: MENU
+  admin-only-section: Only admin can see this section
+  document-button: DOCUMENT
+  document-description: Open the documentation external link.
+  command-help-button: COMMAND HELP
+  command-help-description: Open the command help external link.
+dominion-list-tui-text:
+  title: Your Dominions
+  button: DOMINIONS
+  description: List all of your dominions.
+  delete-button: DELETE
+  admin-section: Your admin dominions section.
+  server-section: Server {0} dominions section.
+dominion-manage-tui-text:
+  title: Manage {0}
+  button: MANAGE
+  set-tp-button: SET TP
+  set-tp-description: Set your current location as tp location.
+set-size-tui-text:
+  title: Resize {0}
+  button: RESIZE
+  north: North(z-)
+  south: South(z+)
+  west: West(x-)
+  east: East(x+)
+  up: Up(y+)
+  down: Down(y-)
+  expand: EXPAND
+  contract: CONTRACT
+env-setting-tui-text:
+  title: '{0} Env Setting'
+  button: ENV SET
+  description: Set environment of dominion.
+guest-setting-tui-text:
+  title: '{0} Guest Setting'
+  button: GUEST SET
+  description: Set guest behavior of dominion.
+size-info-tui-text:
+  title: '{0} Size Info'
+  button: SIZE INFO
+  description: Show dominion size information
+  owner-name: This dominion is owned by {0}.
+  info-lwh: 'Size: {0} x {1} x {2}'
+  info-height: 'Height: {0} ~ {1}'
+  square: 'Square: {0}'
+  volume: 'Volume: {0}'
+migrate-list-text:
+  title: Migrate From Residence
+  description: Migrate residence data to dominion.
+  button: MIGRATE
+  not-enabled: Residence migration is not enabled.
+  no-data: No data to migrate.
+  cant-migrate: Sub-residence will be migrated with the parent.
+member-list-tui-text:
+  title: '{0} Member List'
+  description: List of members of this dominion.
+  button: MEMBERS
+  remove: REMOVE
+  remove-description: Remove this member from this dominion.
+  owner-only: Only owner can manage admin member.
+  group-only: This member belong to group {0} so you can't manage it separately.
+  tag-admin: Admin can manage members and groups of this dominion.
+  tag-normal: Normal members.
+  tag-ban: Who don't have MOVE privilege.
+  tag-group: This player belong to a group, you can't manage it separately.
+select-player-tui-text:
+  title: Select Player
+  button: ADD PLAYER
+  description: Add a player as a member of this dominion.
+  back: BACK
+member-setting-tui-text:
+  title: '{0} Member Setting'
+  description: Set member's privilege of dominion.
+  button: SETTING
+template-list-tui-text:
+  title: Template List
+  button: TEMPLATES
+  description: Templates can be used to quickly setup privileges of member.
+  delete-button: DELETE
+select-template-tui-text:
+  title: Select Template
+  description: Select a template to apply to this member.
+  button: SELECT TEMPLATE
+  back: BACK
+  apply: APPLY
+group-list-tui-text:
+  title: '{0} Group List'
+  description: List of groups of this dominion.
+  button: GROUPS
+  delete-button: DELETE
+  delete-description: Delete this group, all members will be move out of this group.
+  remove-member-description: Remove {0} from group {1} to default group.
+group-setting-tui-text:
+  title: Group {0} Settings
+  description: Manage the settings of group {0}.
+  button: SETTING
+select-member-tui-text:
+  title: Select Member
+  description: Select a member to add to the group.
+  back: BACK
+title-list-tui-text:
+  title: Group Title List
+  description: List of group titles you can use.
+  button: TITLES
+  use-button: USE
+  disuse-button: DISUSE
+  from-dominion: From dominion {0}
+all-dominion-tui-text:
+  title: All Dominions
+  description: List all dominions.
+  button: LIST ALL
+template-setting-text:
+  title: Template Setting
+  button: SETTING
+  not-found: Template {0} not found.
+resize-dominion-cui-text:
+  title: '{0} {1} with dir {2}'
+  placeholder: input size
+edit-enter-message-cui-text:
+  title: Edit {0} Enter Message
+  button: ENTER MSG
+  description: Message shown when entering dominion.
+edit-leave-message-cui-text:
+  title: Edit {0} Leave Message
+  button: LEAVE MSG
+  description: Message shown when player leaves dominion.
+rename-dominion-cui-text:
+  title: Rename {0}
+  description: Rename dominion.
+  button: RENAME
+create-dominion-cui-text:
+  title: Create Dominion
+  input: New Dominion Name
+  description: Auto Create Dominion around you.
+  button: CREATE
+set-map-color-cui-text:
+  title: Set {0} Map Color
+  button: COLOR
+  description: Color of the dominion on the web map.
+search-player-cui-text:
+  title: Search Player
+  input: Exact player name
+  button: SEARCH
+create-template-cui-text:
+  title: Create Template
+  input: Enter new template name
+  button: CREATE
+create-group-cui-text:
+  title: Create New Group
+  input: New Group Name
+  description: Create a new permission group.
+  button: CREATE
+rename-group-cui-text:
+  title: Rename Group
+  button: RENAME
+  description: Rename this group.
+administrator-command-text:
+  reload-cache-button: RELOAD CACHE
+  reload-cache-description: Reload the cache (dont do this frequently).
+  reload-config-button: RELOAD CONFIG
+  reload-config-description: Reload the configuration.
+  reloading-dominion-cache: Reloading dominion cache...
+  reloaded-dominion-cache: Reload dominion cache success!
+  reloading-member-cache: Reloading member privilege cache...
+  reloaded-member-cache: Reload member privilege cache success!
+  reloading-group-cache: Reloading group cache...
+  reloaded-group-cache: Reload group cache success!
+  reloading-config: Reloading configuration...
+  exporting-mca-list: Exporting MCA list...
+  create-mca-folder-failed: Failed to create mca list folder.
+  writing-mca-list: Writing list of world {0}...
+  create-mca-file-failed: Failed to create mca list file {0}.
+  export-mcalist-failed: 'Failed to export MCA list of world {0}, reason: {1}.'
+  exported-mcalist: Exported MCA list to {0} successfully.
+  import-hint: Import database is only for migration or restore-backup, don't use it to merge two databases.
+  import-info: If current database is not empty, it will throw some errors and may cause data loss or corruption.
+  import-confirm: Please confirm the import operation by adding 'confirm' at the end of the command.
+migration-command-text:
+  create-player-failed: Failed to create player cache for {0}.
+  migrate-success: Migrated residence {0} to dominion successfully.
+  migrate-failed: 'Failed to migrate residence. Reason: {1}'
+  missing-residence: Residence {0} not found.
+  not-your-residence: Residence {0} is not yours.
+template-command-text:
+  name-not-valid: Template name cannot contain space
+  template-name-exist: Template {0} already exists
+  create-template-fail: 'Failed to create template, reason: {0}'
+  create-template-success: Successfully created template {0}
+  template-not-exist: Template {0} does not exist
+  delete-template-success: Successfully deleted template {0}
+  delete-template-fail: 'Failed to delete template, reason: {0}'
+  apply-template-success: Successfully applied template {0} to {1}
+  apply-template-fail: 'Failed to apply template, reason: {0}'
+  set-flag-success: Successfully set {0} flag of template {1} to {2}
+  set-flag-fail: 'Failed to set flag, reason: {0}'
+group-title-command-text:
+  group-not-belonging: Don't belong to group {0}.
+  using-title-success: Using title {0} successfully.
+  using-title-fail: 'Failed to use title, reason: {0}'
+configuration-text:
+  loading-language: Loading language {0}...
+  load-language-fail: 'Failed to load language {0} reason: {1}, using default en_us.'
+  load-language-success: Successfully loaded language {0}.
+  loading-flag: Loading flag configuration...
+  load-flag-success: Successfully loaded flag configuration.
+  loading-limitations: Loading limitation configuration...
+  saving-default-limitation: Because no limitation file found, saving default limitation file.
+  save-limitation-fail: 'Failed to save limitation file: {0}'
+  loading-limitation: 'Loading limitation file: {0}...'
+  load-limitation-fail: 'Failed to load limitation file: {0} reason: {1}'
+  load-limitations: 'Successfully loaded {0} limitations: {1}.'
+  load-configuration: Successfully loaded configuration.
+  debug-enabled: Debug mode enabled.
+  prepare-database: Preparing database...
+  database-connected: Database connected successfully.
+  multi-server-sqlite: Database with type sqlite is not supported in multi-server mode, disabled multi-server mode.
+  server-id-invalid: Server id must be positive integer (> 0), disabled multi-server mode.
+limitation-text:
+  loading-world-settings: Loading world-settings...
+  loading-world-setting: Loading world-settings of {0}...
+  load-world-setting-failed: 'Failed to world-settings of {0} reason: {1}'
+  load-world-settings-success: 'Successfully loaded {0} world-settings: {1}.'
+database-manager-text:
+  exporting-database-tables: Exporting database tables...
+  export-table-fail: 'Export table failed, reason: {0}'
+  export-world-mapping-fail: 'Export world uid mapping failed, reason: {0}'
+  export-database-success: Export database to {0} successfully.
+  file-not-found: Database table file path {0} not found.
+  importing-database: Importing database...
+  file-corrupted: Some database table file is missing, please re-export the database tables.
+  import-database-fail: 'Import database failed, reason: {0}'
+  import-database-success: Import database successfully.
+teleport-manager-text:
+  cooling-down: Please wait for {0} seconds before teleporting again.
+  disabled: Teleportation is disabled for your permission group.
+  delay: Will teleport in {0} seconds...
+  unfinished-cancelled: Cancelled previous unfinished teleportation.
+  do-not-move: Do not move while teleporting...
+  cancel-move: Cancelled teleportation due to movement.
+blue-map-connect-text:
+  register-fail: Failed to register BlueMap API.
+  info-label: '<div>{0}</div><div>Owner: {1}</div>'
+dynmap-connect-text:
+  register-success: Register to dynmap success!
+  register-fail: Register to dynmap failed!
+  info-label: '<div>{0}</div><div>Owner: {1}</div>'
+command-exception-text:
+  no-permission: You do not have permission {0} to do this.
+  invalid-arguments: Invalid arguments, usage e.g. {0}.
+cui-input-text:
+  cui-not-available: CUI is not available on no-paper (fork) core server.
+  cui-suggest-command: You can use command {0} instead.
+  cui-button: 'Left Click: Confirm | Right Click: Cancel'
+  cui-input-invalid: Input can not contain space.
+flags:
+  tnt_explode:
+    display-name: TNT Explode
+    description: Whether TNT can explode.
+  comparer:
+    display-name: Comparer
+    description: Whether can interact with comparer.
+  edit_sign:
+    display-name: Edit Sign
+    description: Whether can edit sign.
+  cake:
+    display-name: Cake
+    description: Whether can eat cake.
+  dragon_egg:
+    display-name: Dragon Egg
+    description: Whether can interact with dragon egg.
+  bed:
+    display-name: Bed
+    description: Weather can sleep in bed (set spawn point).
+  villager_spawn:
+    display-name: Villager Breed
+    description: Whether villager can breeding (including spawn egg).
+  trade:
+    display-name: Villager Trade
+    description: Whether can trade with villager.
+  note_block:
+    display-name: Note Block
+    description: Whether can interact with note block.
+  ignite:
+    display-name: Ignite
+    description: Whether can ignite fire.
+  wither_spawn:
+    display-name: Wither Spawn
+    description: Whether can spawn wither, and wither' explode.
+  trig_pressure_drop:
+    display-name: Pressure Plate (Dropping)
+    description: Whether dropping items can trigger pressure plate.
+  animal_spawn:
+    display-name: Animal Spawn (Breeding)
+    description: Whether animals can spawn (including spawn egg & breeding).
+  animal_move:
+    display-name: Animal Move
+    description: Whether animals can move in dominion.
+  villager_killing:
+    display-name: Villager Killing
+    description: Whether can do harm to villager.
+  animal_killing:
+    display-name: Animal Killing
+    description: Whether can do harm to animals.
+  monster_killing:
+    display-name: Monster Killing
+    description: Whether can do harm to monsters.
+  place:
+    display-name: Place Block
+    description: Whether can place blocks (normal blocks, item frame, lava, water).
+  fly:
+    display-name: Fly
+    description: NOT elytra fly, it's like creative mode fly.
+  honey:
+    display-name: Honey
+    description: Whether can interact with hive (to get honey).
+  monster_damage:
+    display-name: Monster Kill Player
+    description: Whether monster can do harm to player.
+  monster_spawn:
+    display-name: Monster Spawn
+    description: Whether monster can spawn (including spawn egg).
+  monster_move:
+    display-name: Monster Move
+    description: Whether monster can move in dominion.
+  admin:
+    display-name: Administrator
+    description: Member with this flag can manage normal members and groups.
+  crafter:
+    display-name: Crafter
+    description: Whether can interact with crafter (1.21).
+  piston_outside:
+    display-name: Piston
+    description: False to prevent piston from pushing/pulling blocks across dominion.
+  fire_spread:
+    display-name: Fire Spread
+    description: Prevent fire spread in dominion.
+  shear:
+    display-name: Shear
+    description: Whether can cut wool from sheep.
+  teleport:
+    display-name: Teleportation
+    description: False means can't teleport to this dominion.
+  hopper_outside:
+    display-name: Hopper (Outside)
+    description: False to prevent outside hopper from sucking container in dominion.
+  door:
+    display-name: Door
+    description: Whether can interact with door (including trapdoor, fence gate).
+  dragon_break_block:
+    display-name: Ender Dragon Break Block
+    description: Whether ender dragon can break blocks.
+  ender_man:
+    display-name: Ender Man
+    description: False to prevent ender-man from picking up blocks, spawning, teleporting.
+  break:
+    display-name: Break Block
+    description: Whether can break blocks (including item frame, armor stand).
+  vehicle_destroy:
+    display-name: Vehicle Destroy
+    description: Whether can destroy vehicle (boat, minecart).
+  riding:
+    display-name: Riding
+    description: Whether can ride vehicle (boat, minecart, horse etc.).
+  dye:
+    display-name: Dye
+    description: What can dye (sheep, dog collar, cat collar).
+  egg:
+    display-name: Throw Egg
+    description: Whether can throw egg.
+  vehicle_spawn:
+    display-name: Vehicle Spawn
+    description: Whether can spawn vehicle (boat, minecart).
+  trig_pressure_mob:
+    display-name: Pressure Plate (Mob)
+    description: Whether mob (player not included) can trigger pressure plate.
+  creeper_explode:
+    display-name: Entity Explode
+    description: Creeper/Wither Skull/Ender Crystal/Fireball/Bed/Respawn Anchor.
+  mob_drop_item:
+    display-name: Mob Drop Item
+    description: Whether mob drop item when killed.
+  button:
+    display-name: Button
+    description: Whether can click button.
+  hook:
+    display-name: Hook
+    description: Whether can use fishing rod.
+  enchant:
+    display-name: Enchant Table
+    description: Whether can use enchant table.
+  craft:
+    display-name: Crafting Table
+    description: Whether can use crafting table.
+  lever:
+    display-name: Lever
+    description: Whether can switch lever.
+  brew:
+    display-name: Brewing Stand
+    description: Whether can use brewing stand.
+  anvil:
+    display-name: Anvil
+    description: Whether can use anvil.
+  harvest:
+    display-name: Harvest
+    description: Whether player can harvest crops.
+  hopper:
+    display-name: Special Container
+    description: Such as hopper, furnace, dropper, dispenser, blast furnace, smoker.
+  ender_pearl:
+    display-name: End Pearl
+    description: Whether can throw ender pearl.
+  trig_pressure_proj:
+    display-name: Pressure Plate (Projectile)
+    description: When projectile (arrow/snowball) can trigger pressure plate.
+  item_frame_proj_damage:
+    display-name: Projectile Damage Item Frame
+    description: Whether projectile (arrow/snowball) can break item frame.
+  shoot:
+    display-name: Shooting
+    description: Include arrow/snowball/trident/fireball/wind-charge(1.21).
+  flow_in_protection:
+    display-name: Flow In
+    description: Prevent external water/lava flow into dominion.
+  player_damage:
+    display-name: Player Kill Player
+    description: Weather player can do (directly) harm to other player.
+  glow:
+    display-name: Glow
+    description: Like glowing arrow effect.
+  feed:
+    display-name: Feed Animal
+    description: Whether can feed animals.
+  show_border:
+    display-name: Show Border
+    description: Show dominion border to player when walking in.
+  beacon:
+    display-name: Beacon
+    description: Whether can interact with beacon.
+  pressure:
+    display-name: Pressure Plate (Player)
+    description: Whether player can trigger pressure plate.
+  container:
+    display-name: Container
+    description: Chest / Barrel/ ShulkerBox / ArmorStand / Item Frame
+  move:
+    display-name: Player Move
+    description: Whether player can move in dominion.
+  gravity_block:
+    display-name: Falling Block
+    description: Whether gravity block can fall in dominion (false will make them to item).
+  item_frame_interactive:
+    display-name: Item Frame Interactive
+    description: Whether can interact with item frame (rotate item).
+  repeater:
+    display-name: Repeater
+    description: Whether can change (interact with) repeater.
+  anchor:
+    display-name: Respawn Anchor
+    description: Weather can set/use respawn anchor.
+  trample:
+    display-name: Trample Farmland
+    description: Whether farmland can be trampled (false means protect farmland).

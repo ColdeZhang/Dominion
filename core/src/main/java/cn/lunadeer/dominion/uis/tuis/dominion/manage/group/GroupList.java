@@ -1,96 +1,122 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.group;
 
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.dtos.MemberDTO;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.utils.TuiUtils;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.commands.GroupCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.misc.CommandArguments;
+import cn.lunadeer.dominion.uis.cuis.CreateGroup;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.command.SecondaryCommand;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.Button;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.noAuthToManage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
+import static cn.lunadeer.dominion.misc.Converts.*;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class GroupList {
 
-    public static void show(CommandSender sender, String dominionName) {
-        show(sender, new String[]{"", "", dominionName});
+    public static class GroupListTuiText extends ConfigurationPart {
+        public String title = "{0} Group List";
+        public String description = "List of groups of this dominion.";
+        public String button = "GROUPS";
+        public String deleteButton = "DELETE";
+        public String deleteDescription = "Delete this group, all members will be move out of this group.";
+        public String removeMemberDescription = "Remove {0} from group {1} to default group.";
     }
 
-    public static void show(CommandSender sender, String dominionName, int page) {
-        show(sender, new String[]{"", "", dominionName, String.valueOf(page)});
-    }
-
-    public static void show(CommandSender sender, String[] args) {
-        if (args.length < 3) {
-            Notification.error(sender, Translation.TUI_GroupList_Usage);
-            return;
+    public static SecondaryCommand list = new SecondaryCommand("group_list", List.of(
+            new CommandArguments.RequiredDominionArgument(),
+            new CommandArguments.OptionalPageArgument()
+    )) {
+        @Override
+        public void executeHandler(CommandSender sender) {
+            show(sender, getArgumentValue(0), getArgumentValue(1));
         }
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[2]);
-        if (dominion == null) {
-            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
-            return;
-        }
-        if (noAuthToManage(player, dominion)) return;
-        int page = TuiUtils.getPage(args, 3);
-        List<GroupDTO> groups = GroupDTO.selectByDominionId(dominion.getId());
-        ListView view = ListView.create(10, "/dominion group list " + dominion.getName());
-        view.title(String.format(Translation.TUI_GroupList_Title.trans(), dominion.getName()));
-        view.navigator(
-                Line.create()
-                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
-                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
-                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Translation.TUI_Navigation_GroupList)
-        );
+    }.needPermission(defaultPermission).register();
 
-        Button create_btn = Button.createGreen(Translation.TUI_GroupList_CreateButton)
-                .setHoverText(Translation.TUI_GroupList_CreateDescription)
-                .setExecuteCommand("/dominion cui_create_group " + dominion.getName());
-        view.add(new Line().append(create_btn.build()));
-
-        for (GroupDTO group : groups) {
-            Line line = new Line();
-            Button del = Button.createRed(Translation.TUI_DeleteButton)
-                    .setHoverText(String.format(Translation.TUI_GroupList_DeleteDescription.trans(), group.getNamePlain()))
-                    .setExecuteCommand("/dominion group delete " + dominion.getName() + " " + group.getNamePlain());
-            Button edit = Button.create(Translation.TUI_EditButton)
-                    .setHoverText(String.format(Translation.TUI_GroupList_EditDescription.trans(), group.getNamePlain()))
-                    .setExecuteCommand("/dominion group setting " + dominion.getName() + " " + group.getNamePlain());
-            Button add = Button.createGreen("+")
-                    .setHoverText(String.format(Translation.TUI_GroupList_AddMemberDescription.trans(), group.getNamePlain()))
-                    .setExecuteCommand("/dominion group select_member " + dominion.getName() + " " + group.getNamePlain() + " " + page);
-            line.append(del.build()).append(edit.build()).append(group.getNameColoredComponent()).append(add.build());
-            view.add(line);
-            List<MemberDTO> players = MemberDTO.selectByGroupId(group.getId());
-            XLogger.debug("players: " + players.size());
-            for (MemberDTO playerPrivilege : players) {
-                PlayerDTO p = PlayerDTO.select(playerPrivilege.getPlayerUUID());
-                if (p == null) continue;
-                Button remove = Button.createRed("-")
-                        .setHoverText(
-                                String.format(Translation.TUI_GroupList_RemoveMemberDescription.trans(), p.getLastKnownName(), group.getNamePlain())
-                        )
-                        .setExecuteCommand("/dominion group remove_member " + dominion.getName() + " " + group.getNamePlain() + " " + p.getLastKnownName() + " " + page);
-                Line playerLine = new Line().setDivider("");
-                playerLine.append(Component.text("        "));
-                playerLine.append(remove.build()).append(" |  " + p.getLastKnownName());
-                view.add(playerLine);
+    public static ListViewButton button(CommandSender sender, String dominionName) {
+        return (ListViewButton) new ListViewButton(Language.groupListTuiText.button) {
+            @Override
+            public void function(String page) {
+                show(sender, dominionName, page);
             }
-            view.add(new Line().append(""));
+        }.needPermission(defaultPermission);
+    }
+
+    public static void show(CommandSender sender, String dominionName, String pageStr) {
+        try {
+            DominionDTO dominion = toDominionDTO(dominionName);
+            assertDominionAdmin(sender, dominion);
+            int page = toIntegrity(pageStr);
+
+            List<GroupDTO> groups = dominion.getGroups();
+
+            ListView view = ListView.create(10, button(sender, dominionName));
+            view.title(formatString(Language.groupListTuiText.title, dominion.getName()));
+            view.navigator(
+                    Line.create()
+                            .append(MainMenu.button(sender).build())
+                            .append(DominionList.button(sender).build())
+                            .append(DominionManage.button(sender, dominionName).build())
+                            .append(Language.groupListTuiText.button)
+            );
+            view.add(new Line().append(CreateGroup.button(sender, dominionName).build()));
+
+            // get data from database directly because cache update may not be in time
+            List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));
+            for (GroupDTO group : groups) {
+                Line line = new Line();
+                Button deleteGroup = new FunctionalButton(Language.groupListTuiText.deleteButton) {
+                    @Override
+                    public void function() {
+                        GroupCommand.deleteGroup(sender, dominionName, group.getNamePlain(), pageStr);
+                    }
+                }.needPermission(defaultPermission).red().setHoverText(Language.groupListTuiText.deleteDescription);
+                Button setting = GroupSetting.button(sender, dominionName, group.getNamePlain());
+                Button addMember = SelectMember.button(sender, dominionName, group.getNamePlain(), pageStr);
+                line.append(deleteGroup.build()).append(setting.build()).append(group.getNameColoredComponent()).append(addMember.build());
+                view.add(line);
+                for (MemberDTO member : members) {
+                    if (!member.getGroupId().equals(group.getId())) {
+                        continue;
+                    }
+                    PlayerDTO p = toPlayerDTO(member.getPlayerUUID());
+                    Button remove = new FunctionalButton("-") {
+                        @Override
+                        public void function() {
+                            GroupCommand.removeMember(sender, dominionName, group.getNamePlain(), p.getLastKnownName(), pageStr);
+                        }
+                    }.needPermission(defaultPermission).red().setHoverText(Language.groupListTuiText.removeMemberDescription);
+                    Line playerLine = new Line().setDivider("");
+                    playerLine.append(Component.text("        "));
+                    playerLine.append(remove.build()).append(" |  " + p.getLastKnownName());
+                    view.add(playerLine);
+                }
+                view.add(new Line().append(""));
+            }
+
+            view.showOn(sender, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
         }
-        view.showOn(player, page);
     }
 
 }

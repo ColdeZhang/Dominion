@@ -1,96 +1,98 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.group;
 
+import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.api.dtos.flag.PreFlag;
-import cn.lunadeer.dominion.dtos.DominionDTO;
-import cn.lunadeer.dominion.dtos.GroupDTO;
-import cn.lunadeer.dominion.managers.Translation;
-import cn.lunadeer.dominion.utils.TuiUtils;
-import cn.lunadeer.minecraftpluginutils.Notification;
-import cn.lunadeer.minecraftpluginutils.stui.ListView;
-import cn.lunadeer.minecraftpluginutils.stui.components.Button;
-import cn.lunadeer.minecraftpluginutils.stui.components.Line;
+import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.commands.GroupCommand;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.uis.cuis.RenameGroup;
+import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
+import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
+import cn.lunadeer.dominion.utils.Notification;
+import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.stui.ListView;
+import cn.lunadeer.dominion.utils.stui.components.Line;
+import cn.lunadeer.dominion.utils.stui.components.buttons.FunctionalButton;
+import cn.lunadeer.dominion.utils.stui.components.buttons.ListViewButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-import static cn.lunadeer.dominion.utils.CommandUtils.playerOnly;
-import static cn.lunadeer.dominion.utils.TuiUtils.noAuthToManage;
+import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
+import static cn.lunadeer.dominion.misc.Converts.*;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class GroupSetting {
-    public static void show(CommandSender sender, String dominionName, String groupName) {
-        show(sender, new String[]{"", "", dominionName, groupName});
+
+    public static class GroupSettingTuiText extends ConfigurationPart {
+        public String title = "Group {0} Settings";
+        public String description = "Manage the settings of group {0}.";
+        public String button = "SETTING";
     }
 
-    public static void show(CommandSender sender, String dominionName, String groupName, Integer page) {
-        show(sender, new String[]{"", "", dominionName, groupName, page.toString()});
-    }
-
-    public static void show(CommandSender sender, String[] args) {
-        if (args.length < 4) {
-            Notification.error(sender, Translation.TUI_GroupSetting_Usage);
-            return;
-        }
-        Player player = playerOnly(sender);
-        if (player == null) return;
-        DominionDTO dominion = DominionDTO.select(args[2]);
-        if (dominion == null) {
-            Notification.error(sender, Translation.Messages_DominionNotExist, args[2]);
-            return;
-        }
-        if (noAuthToManage(player, dominion)) return;
-        int page = TuiUtils.getPage(args, 4);
-        GroupDTO group = GroupDTO.select(dominion.getId(), args[3]);
-        if (group == null) {
-            Notification.error(sender, Translation.Messages_GroupNotExist, args[2], args[3]);
-            return;
-        }
-
-        ListView view = ListView.create(10, "/dominion group setting " + dominion.getName() + " " + group.getNamePlain());
-        view.title(Component.text(Translation.TUI_GroupSetting_TitleL.trans())
-                .append(group.getNameColoredComponent())
-                .append(Component.text(Translation.TUI_GroupSetting_TitleR.trans())));
-        view.navigator(
-                Line.create()
-                        .append(Button.create(Translation.TUI_Navigation_Menu).setExecuteCommand("/dominion menu").build())
-                        .append(Button.create(Translation.TUI_Navigation_DominionList).setExecuteCommand("/dominion list").build())
-                        .append(Button.create(Translation.TUI_Navigation_Manage).setExecuteCommand("/dominion manage " + dominion.getName()).build())
-                        .append(Button.create(Translation.TUI_Navigation_GroupList).setExecuteCommand("/dominion group list " + dominion.getName()).build())
-                        .append(Translation.TUI_Navigation_GroupSetting)
-        );
-        Button rename_btn = Button.create(Translation.TUI_GroupSetting_RenameButton)
-                .setHoverText(String.format(Translation.TUI_GroupSetting_RenameDescription.trans(), group.getNamePlain()))
-                .setExecuteCommand("/dominion cui_rename_group " + dominion.getName() + " " + group.getNamePlain());
-        view.add(Line.create().append(rename_btn.build()));
-
-        if (group.getAdmin()) {
-            view.add(createOption(Flags.ADMIN, true, dominion.getName(), group.getNamePlain(), page));
-            view.add(createOption(Flags.GLOW, group.getFlagValue(Flags.GLOW), dominion.getName(), group.getNamePlain(), page));
-        } else {
-            for (PreFlag flag : Flags.getAllPreFlagsEnable()) {
-                view.add(createOption(flag, group.getFlagValue(flag), dominion.getName(), group.getNamePlain(), page));
+    public static ListViewButton button(CommandSender sender, String dominionName, String groupName) {
+        return (ListViewButton) new ListViewButton(Language.groupSettingTuiText.button) {
+            @Override
+            public void function(String page) {
+                show(sender, dominionName, groupName, page);
             }
-        }
-        view.showOn(player, page);
+        }.needPermission(defaultPermission).setHoverText(Language.groupSettingTuiText.description);
     }
 
-    private static Line createOption(PreFlag flag, boolean value, String DominionName, String groupName, int page) {
+    public static void show(CommandSender sender, String dominionName, String groupName, String pageStr) {
+        try {
+            DominionDTO dominion = toDominionDTO(dominionName);
+            assertDominionAdmin(sender, dominion);
+            GroupDTO group = toGroupDTO(dominion, groupName);
+            int page = toIntegrity(pageStr);
+
+            ListView view = ListView.create(10, button(sender, dominionName, groupName));
+            view.title(formatString(Language.groupSettingTuiText.title, groupName));
+            view.navigator(
+                    Line.create()
+                            .append(MainMenu.button(sender).build())
+                            .append(DominionList.button(sender).build())
+                            .append(DominionManage.button(sender, dominionName).build())
+                            .append(GroupList.button(sender, dominionName).build())
+                            .append(Language.groupSettingTuiText.button)
+            );
+            view.add(Line.create().append(RenameGroup.button(sender, dominionName, groupName).build()));
+
+            if (group.getFlagValue(Flags.ADMIN)) {
+                view.add(createOption(sender, Flags.ADMIN, true, dominion.getName(), group.getNamePlain(), pageStr));
+                view.add(createOption(sender, Flags.GLOW, group.getFlagValue(Flags.GLOW), dominion.getName(), group.getNamePlain(), pageStr));
+            } else {
+                for (PriFlag flag : Flags.getAllPriFlagsEnable()) {
+                    view.add(createOption(sender, flag, group.getFlagValue(flag), dominion.getName(), group.getNamePlain(), pageStr));
+                }
+            }
+            view.showOn(sender, page);
+        } catch (Exception e) {
+            Notification.error(sender, e.getMessage());
+        }
+    }
+
+    private static Line createOption(CommandSender sender, PriFlag flag, boolean value, String DominionName, String groupName, String pageStr) {
         if (value) {
             return Line.create()
-                    .append(Button.createGreen("☑")
-                            .setExecuteCommand(parseCommand(DominionName, groupName, flag.getFlagName(), false, page))
-                            .build())
+                    .append(new FunctionalButton("☑") {
+                        @Override
+                        public void function() {
+                            GroupCommand.setGroupFlag(sender, DominionName, groupName, flag.getFlagName(), "false", pageStr);
+                        }
+                    }.needPermission(defaultPermission).green().build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         } else {
             return Line.create()
-                    .append(Button.createRed("☐")
-                            .setExecuteCommand(parseCommand(DominionName, groupName, flag.getFlagName(), true, page))
-                            .build())
+                    .append(new FunctionalButton("☐") {
+                        @Override
+                        public void function() {
+                            GroupCommand.setGroupFlag(sender, DominionName, groupName, flag.getFlagName(), "true", pageStr);
+                        }
+                    }.needPermission(defaultPermission).red().build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())));
         }
-    }
-
-    private static String parseCommand(String dominionName, String groupName, String flagName, boolean value, int page) {
-        return String.format("/dominion group set_flag %s %s %s %s %d", dominionName, groupName, flagName, value, page);
     }
 }

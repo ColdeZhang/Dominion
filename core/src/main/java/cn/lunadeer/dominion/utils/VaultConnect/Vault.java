@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.utils.VaultConnect;
 
-import cn.lunadeer.minecraftpluginutils.XLogger;
-import cn.lunadeer.minecraftpluginutils.i18n.Localization;
+import cn.lunadeer.dominion.utils.XLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -18,7 +17,7 @@ public class Vault implements VaultInterface {
             econ = rsp.getProvider();
             return true;
         }
-        XLogger.err(Localization.Utils_VaultNotAvailable);
+        XLogger.error("Vault not available.");
         return false;
     }
 
