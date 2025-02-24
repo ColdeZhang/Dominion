@@ -81,42 +81,42 @@ public class Limitation extends ConfigurationFile {
         public int maxSubDominionDepth = 3;
         @Comments({
                 "Dominion's top no higher than this value.",
-                "Should be larger than noLowerThan."
+                "Should be larger than no-lower-than."
         })
         public int noHigherThan = 320;
         @Comments({
                 "Dominion's bottom no lower than this value.",
-                "Should be smaller than noHigherThan."
+                "Should be smaller than no-higher-than."
         })
         public int noLowerThan = -64;
         @Comments({
                 "The maximum size of dominion in X axis (East-West).",
-                "Set -1 means no limitation. Should be larger than sizeMinX and 0."
+                "Set -1 means no limitation. Should be larger than size-min-x and 0."
         })
         public int sizeMaxX = 128;
         @Comments({
                 "The maximum size of dominion in Y axis (Height).",
-                "Set -1 means no limitation. Should be larger than sizeMinY and 0."
+                "Set -1 means no limitation. Should be larger than size-min-y and 0."
         })
         public int sizeMaxY = 64;
         @Comments({
                 "The maximum size of dominion in Z axis (North-South).",
-                "Set -1 means no limitation. Should be larger than sizeMinZ and 0."
+                "Set -1 means no limitation. Should be larger than size-min-z and 0."
         })
         public int sizeMaxZ = 128;
         @Comments({
                 "The minimum size of dominion in X axis (East-West).",
-                "Should be smaller than sizeMaxX and larger than 0."
+                "Should be smaller than size-max-x and larger than 0."
         })
         public int sizeMinX = 4;
         @Comments({
                 "The minimum size of dominion in Y axis (Height).",
-                "Should be smaller than sizeMaxY and larger than 0."
+                "Should be smaller than size-max-y and larger than 0."
         })
         public int sizeMinY = 4;
         @Comments({
                 "The minimum size of dominion in Z axis (North-South).",
-                "Should be smaller than sizeMaxZ and larger than 0."
+                "Should be smaller than size-max-z and larger than 0."
         })
         public int sizeMinZ = 4;
         @Comments("Weather to include all vertical blocks when calculating the size.")
