@@ -22,15 +22,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.material.Colorable;
 
 import static cn.lunadeer.dominion.misc.Others.checkPrivilegeFlag;
-import static cn.lunadeer.dominion.misc.Others.getInventoryDominion;
 
 public class PlayerEvents implements Listener {
     @EventHandler
@@ -94,31 +90,33 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // anvil
-    public void onAnvilUse(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.ANVIL) {
+    public void onAnvilUse(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        checkPrivilegeFlag(dom, Flags.ANVIL, bukkitPlayer, event);
+        if (event.getClickedBlock().getType() != Material.ANVIL) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.ANVIL, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // beacon
-    public void onBeaconUse(InventoryOpenEvent event) {
-        Inventory inv = event.getInventory();
-        if (inv.getType() != InventoryType.BEACON) {
+    public void onBeaconUse(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        if (inv.getLocation() == null) {
+        if (event.getClickedBlock().getType() != Material.BEACON) {
             return;
         }
-        DominionDTO dom = Cache.instance.getDominionByLoc(inv.getLocation());
-        checkPrivilegeFlag(dom, Flags.BEACON, bukkitPlayer, event);
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.BEACON, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // bed
@@ -139,15 +137,18 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // brew
-    public void onBrewUse(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.BREWING) {
+    public void onBrewUse(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        DominionDTO dom = Cache.instance.getPlayerCurrentDominion(bukkitPlayer);
-        checkPrivilegeFlag(dom, Flags.BREW, bukkitPlayer, event);
+        if (event.getClickedBlock().getType() != Material.BREWING_STAND) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.BREW, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // break
@@ -249,16 +250,19 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // container
-    public void openContainer(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.CHEST &&
-                event.getInventory().getType() != InventoryType.BARREL &&
-                event.getInventory().getType() != InventoryType.SHULKER_BOX) {
+    public void openContainer(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        if (hasContainerPermission(bukkitPlayer, event.getInventory().getLocation())) {
+        if (event.getClickedBlock().getType() != Material.CHEST &&
+                event.getClickedBlock().getType() != Material.BARREL &&
+                event.getClickedBlock().getType() != Material.SHULKER_BOX) {
+            return;
+        }
+        if (hasContainerPermission(event.getPlayer(), event.getClickedBlock().getLocation())) {
             return;
         }
         event.setCancelled(true);
@@ -329,30 +333,33 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // craft
-    public void onCraft(InventoryOpenEvent event) {
-        Inventory inv = event.getInventory();
-        if (inv.getType() != InventoryType.WORKBENCH) {
+    public void onCraft(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        DominionDTO dom = getInventoryDominion(bukkitPlayer, inv);
-        checkPrivilegeFlag(dom, Flags.CRAFT, bukkitPlayer, event);
+        if (event.getClickedBlock().getType() != Material.CRAFTING_TABLE) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.CRAFT, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // crafter
-    public void onCrafterOpen(InventoryOpenEvent event) {
-        Inventory inv = event.getInventory();
-        // InventoryType.CRAFTER;
-        if (!inv.getType().name().contains("CRAFTER")) {
+    public void onCrafterOpen(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        DominionDTO dom = getInventoryDominion(bukkitPlayer, inv);
-        checkPrivilegeFlag(dom, Flags.CRAFTER, bukkitPlayer, event);
+        if (event.getClickedBlock().getType() != Material.CRAFTER) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.CRAFTER, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // comparer
@@ -454,15 +461,18 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // enchant
-    public void onEnchant(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.ENCHANTING) {
+    public void onEnchant(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
+        if (event.getClickedBlock() == null) {
             return;
         }
-        DominionDTO dom = getInventoryDominion(bukkitPlayer, event.getInventory());
-        checkPrivilegeFlag(dom, Flags.ENCHANT, bukkitPlayer, event);
+        if (event.getClickedBlock().getType() != Material.ENCHANTING_TABLE) {
+            return;
+        }
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.ENCHANT, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // ender_pearl
@@ -548,21 +558,24 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // hopper
-    public void openHopper(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.HOPPER &&
-                event.getInventory().getType() != InventoryType.DROPPER &&
-                event.getInventory().getType() != InventoryType.DISPENSER &&
-                event.getInventory().getType() != InventoryType.FURNACE &&
-                event.getInventory().getType() != InventoryType.BLAST_FURNACE &&
-                event.getInventory().getType() != InventoryType.SMOKER
+    public void openHopper(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        if (event.getClickedBlock() == null) {
+            return;
+        }
+        if (event.getClickedBlock().getType() != Material.HOPPER &&
+                event.getClickedBlock().getType() != Material.DROPPER &&
+                event.getClickedBlock().getType() != Material.DISPENSER &&
+                event.getClickedBlock().getType() != Material.FURNACE &&
+                event.getClickedBlock().getType() != Material.BLAST_FURNACE &&
+                event.getClickedBlock().getType() != Material.SMOKER
         ) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
-            return;
-        }
-        DominionDTO dom = getInventoryDominion(bukkitPlayer, event.getInventory());
-        checkPrivilegeFlag(dom, Flags.HOPPER, bukkitPlayer, event);
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getClickedBlock().getLocation());
+        checkPrivilegeFlag(dom, Flags.HOPPER, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // ignite
@@ -792,15 +805,13 @@ public class PlayerEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // trade
-    public void onTrade(InventoryOpenEvent event) {
-        if (event.getInventory().getType() != InventoryType.MERCHANT) {
+    public void onTrade(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked().getType() != EntityType.VILLAGER &&
+                event.getRightClicked().getType() != EntityType.WANDERING_TRADER) {
             return;
         }
-        if (!(event.getPlayer() instanceof Player bukkitPlayer)) {
-            return;
-        }
-        DominionDTO dom = getInventoryDominion(bukkitPlayer, event.getInventory());
-        checkPrivilegeFlag(dom, Flags.TRADE, bukkitPlayer, event);
+        DominionDTO dom = Cache.instance.getDominionByLoc(event.getRightClicked().getLocation());
+        checkPrivilegeFlag(dom, Flags.TRADE, event.getPlayer(), event);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // vehicle_destroy
