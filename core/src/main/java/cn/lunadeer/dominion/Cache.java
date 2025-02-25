@@ -261,6 +261,7 @@ public class Cache implements Listener {
             if (last_in_dom_id != null) {
                 last_dominion = id_dominions.get(last_in_dom_id);
             }
+
             // 如果玩家仍在上次一记录的领地内，且领地没有子领地，则直接返回
             if (isInDominion(last_dominion, player.getLocation())
                     && (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).isEmpty())) {
@@ -270,18 +271,25 @@ public class Cache implements Listener {
                     recheckPlayerState = false;
                 }
                 return last_dominion;
-
             }
+
             // 否则获取玩家当前所在领地，然后对比上次记录的领地
             DominionDTO current_dominion = dominion_trees.getLocInDominionDTO(player.getLocation());
             int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
             int current_dom_id = current_dominion == null ? -1 : current_dominion.getId();
+
+            // 如果玩家上次所在领地和当前所在领地相同，则直接返回
             if (last_dom_id == current_dom_id) {
+                if (recheckPlayerState) {
+                    checkPlayerStates(player, last_dominion);
+                    recheckPlayerState = false;
+                }
                 return last_dominion;
             }
 
             // 如果玩家上次所在领地和当前所在领地不同，则触发玩家跨领地边界事件
             new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).call();
+            checkPlayerStates(player, last_dominion);   // 检查玩家状态
 
             // 如果上次记录的领地不为空，则触发玩家离开领地事件
             if (last_dom_id != -1) {
