@@ -9,6 +9,7 @@ import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.events.PlayerCrossDominionBorderEvent;
 import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
 import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
+import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.utils.*;
 import cn.lunadeer.dominion.utils.webMap.MapRender;
 import org.bukkit.Bukkit;
@@ -764,9 +765,12 @@ public class Cache implements Listener {
     public void onPlayerMoveInDominion(PlayerMoveInDominionEvent event) {
         XLogger.debug("PlayerMoveInDominionEvent called.");
         MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
-                event.getDominion().getJoinMessage()
-                        .replace("{DOM}", event.getDominion().getName())
-                        .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
+                PlaceHolderApi.setPlaceholders(
+                        event.getPlayer(),
+                        event.getDominion().getJoinMessage()
+                                .replace("{DOM}", event.getDominion().getName())
+                                .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
+                )
         );
         // show border
         if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
@@ -778,9 +782,12 @@ public class Cache implements Listener {
     public void onPlayerMoveOutDominion(PlayerMoveOutDominionEvent event) {
         XLogger.debug("PlayerMoveOutDominionEvent called.");
         MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
-                event.getDominion().getLeaveMessage()
-                        .replace("{DOM}", event.getDominion().getName())
-                        .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
+                PlaceHolderApi.setPlaceholders(
+                        event.getPlayer(),
+                        event.getDominion().getLeaveMessage()
+                                .replace("{DOM}", event.getDominion().getName())
+                                .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
+                )
         );
         // show border
         if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
