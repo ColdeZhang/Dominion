@@ -46,7 +46,7 @@ public class Configuration extends ConfigurationFile {
         public String serverIdInvalid = "Server id must be positive integer (> 0), disabled multi-server mode.";
     }
 
-    @PreProcess(priority = 1)
+    @HandleManually
     public static void loadFlagConfiguration() throws IOException {
         XLogger.info(Language.configurationText.loadingFlag);
         File yamlFile = new File(Dominion.instance.getDataFolder(), "flags.yml");
@@ -385,6 +385,8 @@ public class Configuration extends ConfigurationFile {
         } catch (Exception e) {
             Notification.error(sender != null ? sender : Dominion.instance.getServer().getConsoleSender(), Language.configurationText.loadLanguageFail, language, e.getMessage());
         }
+        // flag
+        loadFlagConfiguration();
         // database
         Notification.info(sender != null ? sender : Dominion.instance.getServer().getConsoleSender()
                 , Language.configurationText.prepareDatabase);
