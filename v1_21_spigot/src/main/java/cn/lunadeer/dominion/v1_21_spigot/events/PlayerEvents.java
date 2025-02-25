@@ -566,7 +566,8 @@ public class PlayerEvents implements Listener {
                 event.getClickedBlock().getType() != Material.DISPENSER &&
                 event.getClickedBlock().getType() != Material.FURNACE &&
                 event.getClickedBlock().getType() != Material.BLAST_FURNACE &&
-                event.getClickedBlock().getType() != Material.SMOKER
+                event.getClickedBlock().getType() != Material.SMOKER &&
+                event.getClickedBlock().getType() != Material.FLOWER_POT
         ) {
             return;
         }
