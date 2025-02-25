@@ -27,7 +27,7 @@ public class Limitation extends ConfigurationFile {
             "The priority of group when player has multiple groups.",
             "The group with lower number will be used first."
     })
-    public int priority = 0;
+    public int priority = 99;
 
     @Comments({
             "The settings of the economy support.",
