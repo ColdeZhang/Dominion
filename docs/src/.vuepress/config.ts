@@ -16,6 +16,11 @@ export default defineUserConfig({
             lang: 'en-US',
             description: 'Documentation of Dominion.',
         },
+        '/jp/': {
+            title: 'DominionDocs',
+            lang: 'ja-JP',
+            description: 'Documentation of Dominion.',
+        },
     },
 
     bundler: viteBundler(),

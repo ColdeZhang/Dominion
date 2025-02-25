@@ -24,13 +24,13 @@ asserts-text:
   z-length-too-long: 南-北(Z) の長さ {0} は {1} より短くする必要があります。
   y-too-high: ドミニオンの最高点 {0} は {1} より低くする必要があります。
   y-too-low: ドミニオンの最低点 {0} は {1} より高くする必要があります。
-  not-owner: { 0 } の所有者のみがこのコマンド/操作を実行できます。
-  not-admin: { 0 } の管理者のみがこのコマンド/操作を実行できます。
+  not-owner: '{0} の所有者のみがこのコマンド/操作を実行できます。'
+  not-admin: '{0} の管理者のみがこのコマンド/操作を実行できます。'
   intersect-with-dom: ドミニオン {0} はドミニオン {1} と交差しています。
   intersect-with-spawn: ドミニオン {0} はスポーン保護エリアと交差しています。
   outside-of-parent-dom: ドミニオン {0} は親ドミニオン {1} の外にあります。
   cant-contain-child: ドミニオン {0} は子ドミニオン {1} を含むことができません。
-  missing-parent-dom: { 0 } の親ドミニオンが見つかりません。
+  missing-parent-dom: '{0} の親ドミニオンが見つかりません。'
   sub-dom-too-deep: プレイヤー {0} は深さ {1} を超えるサブドミニオンを作成できません。
   with-draw-money: ドミニオンのために {0} を支払いました。
   deposit-money: ドミニオンから {0} を返金しました。
@@ -53,8 +53,8 @@ converts-text:
   not-member: プレイヤー {0} はドミニオン {1} のメンバーではありません。
   no-group-found: ドミニオン {1} に名前 {0} のグループが見つかりません。
 others-text:
-  auto-clean-start: { 0 } 日間ログインしていないプレイヤーの自動クリーンを開始します。
-  auto-cleaning-player: { 0 } のデータをクリーンしました。
+  auto-clean-start: '{0} 日間ログインしていないプレイヤーの自動クリーンを開始します。'
+  auto-cleaning-player: '{0} のデータをクリーンしました。'
   auto-clean-end: 自動クリーンが終了しました。
   no-permission-for-flag: あなたには {0}({1}) の権限がありません。
 vault-connect-text:
@@ -221,7 +221,7 @@ group-list-tui-text:
   button: グループ
   delete-button: 削除
   delete-description: このグループを削除すると、すべてのメンバーがこのグループから移動されます。
-  remove-member-description: { 0 } をグループ {1} からデフォルトグループに移動します。
+  remove-member-description: '{0} をグループ {1} からデフォルトグループに移動します。'
 group-setting-tui-text:
   title: グループ {0} 設定
   description: グループ {0} の設定を管理します。
@@ -249,15 +249,15 @@ resize-dominion-cui-text:
   title: '{0} {1} のサイズ変更 {2}'
   placeholder: サイズを入力
 edit-enter-message-cui-text:
-  title: { 0 } の入場メッセージを編集
+  title: '{0} の入場メッセージを編集'
   button: 入場メッセージ
   description: ドミニオンに入るときに表示されるメッセージ。
 edit-leave-message-cui-text:
-  title: { 0 } の退場メッセージを編集
+  title: '{0} の退場メッセージを編集'
   button: 退場メッセージ
   description: ドミニオンを出るときに表示されるメッセージ。
 rename-dominion-cui-text:
-  title: { 0 } の名前を変更
+  title: '{0} の名前を変更'
   description: ドミニオンの名前を変更します。
   button: 名前を変更
 create-dominion-cui-text:
@@ -266,7 +266,7 @@ create-dominion-cui-text:
   description: あなたの周りに自動でドミニオンを作成します。
   button: 作成
 set-map-color-cui-text:
-  title: { 0 } の地図の色を設定
+  title: '{0} の地図の色を設定'
   button: 色
   description: ウェブマップ上のドミニオンの色。
 search-player-cui-text:
@@ -349,7 +349,7 @@ configuration-text:
   server-id-invalid: サーバーIDは正の整数 (> 0) である必要があるため、マルチサーバーモードを無効にしました。
 limitation-text:
   loading-world-settings: ワールド設定を読み込んでいます...
-  loading-world-setting: { 0 } のワールド設定を読み込んでいます...
+  loading-world-setting: '{0} のワールド設定を読み込んでいます...'
   load-world-setting-failed: '{0} のワールド設定の読み込みに失敗しました。理由: {1}'
   load-world-settings-success: '正常に {0} のワールド設定を読み込みました: {1}。'
 database-manager-text:
@@ -365,7 +365,7 @@ database-manager-text:
 teleport-manager-text:
   cooling-down: テレポートする前に {0} 秒待ってください。
   disabled: あなたの権限グループではテレポートが無効です。
-  delay: { 0 } 秒後にテレポートします...
+  delay: '{0} 秒後にテレポートします...'
   unfinished-cancelled: 前の未完了のテレポートがキャンセルされました。
   do-not-move: テレポート中は動かないでください...
   cancel-move: 移動によりテレポートがキャンセルされました。

@@ -43,3 +43,11 @@ export const enNotes = defineNotesConfig({
     notes: nodeList,
 })
 
+/* =================== locale: ja-JP ======================= */
+
+export const jpNotes = defineNotesConfig({
+    dir: 'jp/notes',
+    link: '/jp/',
+    notes: nodeList,
+})
+

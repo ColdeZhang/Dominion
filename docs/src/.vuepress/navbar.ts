@@ -24,3 +24,14 @@ export const enNavbar = defineNavbarConfig([
     {text: 'API Reference', link: '/en/notes/api/README.md'},
 ])
 
+export const jpNavbar = defineNavbarConfig([
+    {text: 'ホーム', link: '/jp/'},
+    {
+        text: 'ドキュメント',
+        items: [
+            {text: 'プレイヤー', link: '/jp/notes/doc/player/README.md'},
+            {text: 'サーバーオーナー', link: '/jp/notes/doc/owner/README.md'},
+        ]
+    },
+    {text: 'APIリファレンス', link: '/jp/notes/api/README.md'},
+])
