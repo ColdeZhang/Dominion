@@ -11,7 +11,7 @@ export default defineThemeConfig({
     appearance: true,
 
     social: [
-        {icon: 'github', link: '/'},
+        {icon: 'github', link: 'https://github.com/ColdeZhang/Dominion'},
     ],
 
     locales: {
