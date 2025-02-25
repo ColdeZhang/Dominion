@@ -8,7 +8,7 @@ config:
     background: tint-plate
     tintPlate:  63,164,240
     hero:
-      name: Dominion
+      name: Dominion 4
       text: 完全开源、免费、面向未来的全新领地插件。
       actions:
         -

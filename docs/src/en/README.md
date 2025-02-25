@@ -8,7 +8,7 @@ config:
     background: tint-plate
     tintPlate:  63,164,240
     hero:
-      name: Dominion
+      name: Dominion 4
       text: Completely open-source, free, future-proof, territory anti-grief plugin developed specifically for high-versions minecraft server.
       actions:
         -
