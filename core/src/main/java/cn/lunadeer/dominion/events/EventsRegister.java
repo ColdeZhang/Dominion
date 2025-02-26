@@ -26,6 +26,7 @@ public class EventsRegister {
                         XLogger.debug("Load Paper special events");
                         registerEvents("cn.lunadeer.dominion.v1_21_paper.events.PlayerEvents");
                         registerEvents("cn.lunadeer.dominion.v1_21_paper.events.EnvironmentEvents");
+                        registerEvents("cn.lunadeer.dominion.v1_21_paper.events.PlayerPVPEvents");
                         registerEvents("cn.lunadeer.dominion.v1_21_paper.scui.CuiEvents");
                     } else {
                         XLogger.debug("Load Spigot special events");
