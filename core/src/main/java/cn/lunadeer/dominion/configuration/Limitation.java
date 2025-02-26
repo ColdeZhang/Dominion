@@ -243,12 +243,9 @@ public class Limitation extends ConfigurationFile {
 
     public @NotNull WorldLimitationSettings getWorldSettings(@Nullable String worldName) {
         if (worldName == null) {
-            return worldLimitations.get("default");
+            worldName = "default";
         }
         WorldLimitationSettings settings = worldLimitations.get(worldName);
-        if (settings == null) {
-            settings = worldLimitations.get("default");
-        }
-        return settings;
+        return Objects.requireNonNullElseGet(settings, WorldLimitationSettings::new);
     }
 }
