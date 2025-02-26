@@ -100,44 +100,19 @@ public class Others {
     }
 
     public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player, @Nullable Cancellable event) {
-        if (!flag.getEnable()) {
+        if (checkSimplePriFlag(dom, flag, player)) {
             return true;
         }
-        if (dom == null) {
-            return true;
+        String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
+        msg = "&#FF0000" + "&l" + msg;
+        MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
+        if (event != null) {
+            event.setCancelled(true);
         }
-        MemberDTO member = Cache.instance.getMember(player, dom);
-        try {
-            assertDominionAdmin(player, dom);
-            return true;
-        } catch (Exception e) {
-            if (member != null) {
-                GroupDTO group = Cache.instance.getGroup(member.getGroupId());
-                if (member.getGroupId() != -1 && group != null) {
-                    if (group.getFlagValue(flag)) {
-                        return true;
-                    }
-                } else {
-                    if (member.getFlagValue(flag)) {
-                        return true;
-                    }
-                }
-            } else {
-                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
-                    return true;
-                }
-            }
-            String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
-            msg = "&#FF0000" + "&l" + msg;
-            MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
-            if (event != null) {
-                event.setCancelled(true);
-            }
-            return false;
-        }
+        return false;
     }
 
-    public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
+    public static boolean checkSimplePriFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -152,20 +127,13 @@ public class Others {
             if (member != null) {
                 GroupDTO group = Cache.instance.getGroup(member.getGroupId());
                 if (member.getGroupId() != -1 && group != null) {
-                    if (group.getFlagValue(flag)) {
-                        return true;
-                    }
+                    return group.getFlagValue(flag);
                 } else {
-                    if (member.getFlagValue(flag)) {
-                        return true;
-                    }
+                    return member.getFlagValue(flag);
                 }
             } else {
-                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
-                    return true;
-                }
+                return dom.getGuestPrivilegeFlagValue().get(flag);
             }
-            return false;
         }
     }
 
