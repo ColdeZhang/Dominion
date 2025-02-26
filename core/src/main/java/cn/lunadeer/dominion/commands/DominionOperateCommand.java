@@ -24,9 +24,9 @@ public class DominionOperateCommand {
 
     public static SecondaryCommand resize = new SecondaryCommand("resize", List.of(
             new CommandArguments.RequiredDominionArgument(),
-            new Option(Arrays.stream(DominionReSizeEvent.TYPE.values()).map(Enum::name).toList()),
+            new Option(Arrays.stream(DominionReSizeEvent.TYPE.values()).map(Enum::name).map(String::toLowerCase).toList()),
             new Argument("size", true),
-            new Option(Arrays.stream(DominionReSizeEvent.DIRECTION.values()).map(Enum::name).toList(), "")
+            new Option(Arrays.stream(DominionReSizeEvent.DIRECTION.values()).map(Enum::name).map(String::toLowerCase).toList(), "")
     )) {
         @Override
         public void executeHandler(CommandSender sender) {
@@ -46,7 +46,7 @@ public class DominionOperateCommand {
 
     public static SecondaryCommand setMessage = new SecondaryCommand("set_msg", List.of(
             new CommandArguments.RequiredDominionArgument(),
-            new Option(Arrays.stream(DominionSetMessageEvent.TYPE.values()).map(Enum::name).toList()),
+            new Option(Arrays.stream(DominionSetMessageEvent.TYPE.values()).map(Enum::name).map(String::toLowerCase).toList()),
             new Argument("message", true)
     )) {
         @Override
