@@ -64,7 +64,7 @@ public class AdministratorCommand {
     }
 
     public static SecondaryCommand reloadCache = new SecondaryCommand("reload", List.of(
-            new Option(Arrays.stream(RELOAD_TYPE.values()).map(Enum::name).toList(), "all")
+            new Option(Arrays.stream(RELOAD_TYPE.values()).map(Enum::name).map(String::toLowerCase).toList(), "all")
     )) {
         @Override
         public void executeHandler(CommandSender sender) {
