@@ -137,6 +137,38 @@ public class Others {
         }
     }
 
+    public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
+        if (!flag.getEnable()) {
+            return true;
+        }
+        if (dom == null) {
+            return true;
+        }
+        MemberDTO member = Cache.instance.getMember(player, dom);
+        try {
+            assertDominionAdmin(player, dom);
+            return true;
+        } catch (Exception e) {
+            if (member != null) {
+                GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+                if (member.getGroupId() != -1 && group != null) {
+                    if (group.getFlagValue(flag)) {
+                        return true;
+                    }
+                } else {
+                    if (member.getFlagValue(flag)) {
+                        return true;
+                    }
+                }
+            } else {
+                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public static boolean checkEnvironmentFlag(@Nullable DominionDTO dom, @NotNull EnvFlag flag, @Nullable Cancellable event) {
         if (!flag.getEnable()) {
             return true;
