@@ -41,7 +41,7 @@ public class PlayerPVPEvents implements Listener {
             return;
         }
 
-        DominionDTO dom = Cache.instance.getDominionByLoc(damager.getLocation());
+        DominionDTO dom = Cache.instance.getDominionByLoc(damaged.getLocation());
         if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkPrivilegeFlag(dom, Flags.PVP, damaged)) {
             event.setCancelled(true);
         }
