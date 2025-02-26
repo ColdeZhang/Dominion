@@ -289,7 +289,6 @@ public class Cache implements Listener {
 
             // 如果玩家上次所在领地和当前所在领地不同，则触发玩家跨领地边界事件
             new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).call();
-            checkPlayerStates(player, last_dominion);   // 检查玩家状态
 
             // 如果上次记录的领地不为空，则触发玩家离开领地事件
             if (last_dom_id != -1) {
@@ -773,7 +772,7 @@ public class Cache implements Listener {
     public void onPlayerMoveInDominion(PlayerMoveInDominionEvent event) {
         XLogger.debug("PlayerMoveInDominionEvent called.");
         MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
-                PlaceHolderApi.setPlaceholders(
+                setPlaceholder(
                         event.getPlayer(),
                         event.getDominion().getJoinMessage()
                                 .replace("{DOM}", event.getDominion().getName())
@@ -790,7 +789,7 @@ public class Cache implements Listener {
     public void onPlayerMoveOutDominion(PlayerMoveOutDominionEvent event) {
         XLogger.debug("PlayerMoveOutDominionEvent called.");
         MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
-                PlaceHolderApi.setPlaceholders(
+                setPlaceholder(
                         event.getPlayer(),
                         event.getDominion().getLeaveMessage()
                                 .replace("{DOM}", event.getDominion().getName())
@@ -807,5 +806,13 @@ public class Cache implements Listener {
     public void onPlayerCrossDominionBorderEvent(PlayerCrossDominionBorderEvent event) {
         XLogger.debug("PlayerCrossDominionBorderEvent called.");
         checkPlayerStates(event.getPlayer(), event.getTo());
+    }
+
+    private static String setPlaceholder(Player player, String message) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            return PlaceHolderApi.setPlaceholders(player, message);
+        } else {
+            return message;
+        }
     }
 }
