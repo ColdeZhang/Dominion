@@ -1,6 +1,6 @@
 import {defineThemeConfig} from 'vuepress-theme-plume'
-import {enNavbar, jpNavbar, zhNavbar} from './navbar'
-import {enNotes, jpNotes, zhNotes} from './notes'
+import {enNavbar, jpNavbar, ruNavbar, zhNavbar} from './navbar'
+import {enNotes, jpNotes, ruNotes, zhNotes} from './notes'
 
 /**
  * @see https://theme-plume.vuejs.press/config/basic/
@@ -32,9 +32,6 @@ export default defineThemeConfig({
                 avatar: '/logo.png',
                 name: 'DominionDocumentation',
                 description: 'Documentation of Dominion.',
-                // circle: true,
-                // location: '',
-                // organization: '',
             },
             navbar: enNavbar,
             notes: enNotes,
@@ -44,12 +41,18 @@ export default defineThemeConfig({
                 avatar: '/logo.png',
                 name: 'DominionDocumentation',
                 description: 'Documentation of Dominion.',
-                // circle: true,
-                // location: '',
-                // organization: '',
             },
             navbar: jpNavbar,
             notes: jpNotes,
+        },
+        '/ru/': {
+            profile: {
+                avatar: '/logo.png',
+                name: 'DominionDocumentation',
+                description: 'Documentation of Dominion.',
+            },
+            navbar: ruNavbar,
+            notes: ruNotes,
         },
     },
 })

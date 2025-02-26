@@ -53,6 +53,7 @@ public class Language extends ConfigurationFile {
         en_us,
         zh_cn,
         ja_jp,
+        ru_ru,
     }
 
     public static Dominion.DominionText dominionText = new Dominion.DominionText();

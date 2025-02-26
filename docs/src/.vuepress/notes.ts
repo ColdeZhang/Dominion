@@ -51,3 +51,11 @@ export const jpNotes = defineNotesConfig({
     notes: nodeList,
 })
 
+/* =================== locale: ru-RU ======================= */
+
+export const ruNotes = defineNotesConfig({
+    dir: 'ru/notes',
+    link: '/ru/',
+    notes: nodeList,
+})
+

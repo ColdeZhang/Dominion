@@ -35,3 +35,15 @@ export const jpNavbar = defineNavbarConfig([
     },
     {text: 'APIリファレンス', link: '/jp/notes/api/README.md'},
 ])
+
+export const ruNavbar = defineNavbarConfig([
+    {text: 'Главная', link: '/ru/'},
+    {
+        text: 'Документация',
+        items: [
+            {text: 'Игрок', link: '/ru/notes/doc/player/README.md'},
+            {text: 'Владелец сервера', link: '/ru/notes/doc/owner/README.md'},
+        ]
+    },
+    {text: 'API Справочник', link: '/ru/notes/api/README.md'},
+])

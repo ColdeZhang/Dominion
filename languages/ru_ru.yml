@@ -1,0 +1,594 @@
+dominion-text:
+  loading-config: Загрузка конфигураций...
+  plugin-enabled: Плагин включен!
+  plugin-version: 'Версия плагина: {0}'
+multi-server-manager-text:
+  sending-notice: Отправка уведомления на все серверы... ({0}:{1})
+  received-notice: Получено уведомление от сервера {0}:{1}, ответ... ({2}:{3})
+  receive-resp-notice: Получено ответное уведомление от сервера {0}:{1}
+asserts-text:
+  dom-name-should-not-empty: Название доминиона не должно быть пустым.
+  dom-name-invalid: Название доминиона не должно содержать пробелы или точки.
+  dom-name-exist: 'Название доминиона: {0} уже существует.'
+  group-name-should-not-empty: Название группы не должно быть пустым.
+  group-name-invalid: Название группы не должно содержать пробелы или точки.
+  group-name-exist: 'Название группы: {0} уже существует.'
+  not-allow-dom-in-world: Игрок {0} не может создавать доминионы в мире {1}.
+  exceed-max-amount: 'Игрок {0} не может создать больше доминионов (макс: {1}).'
+  exceed-max-amount-of-world: 'Игрок {0} не может создать больше доминионов в мире {1} (макс: {2}).'
+  x-length-too-short: Длина Запад-Восток (X) {0} должна быть больше {1}.
+  y-length-too-short: Длина Вниз-Вверх (Y) {0} должна быть больше {1}.
+  z-length-too-short: Длина Юг-Север (Z) {0} должна быть больше {1}.
+  x-length-too-long: Длин�� Запад-Восток (X) {0} должна быть меньше {1}.
+  y-length-too-long: Длина Вниз-Вверх (Y) {0} должна быть меньше {1}.
+  z-length-too-long: Длина Юг-Север (Z) {0} должна быть меньше {1}.
+  y-too-high: Самая высокая точка доминиона {0} должна быть меньше {1}.
+  y-too-low: Самая низкая точка доминиона {0} должна быть больше {1}.
+  not-owner: Только владелец {0} может выполнить эту команду/операцию.
+  not-admin: Только администратор {0} может выполнить эту команду/операцию.
+  intersect-with-dom: Доминион {0} пересекается с доминионом {1}.
+  intersect-with-spawn: Доминион {0} пересекается с зоной защиты спавна.
+  outside-of-parent-dom: Доминион {0} находится за пределами родительского доминиона {1}.
+  cant-contain-child: Доминион {0} не может содержать дочерний доминион {1}.
+  missing-parent-dom: Родительский доминион {0} отсутствует.
+  sub-dom-too-deep: Игрок {0} не может создать дочерний доминион глубже {1}.
+  with-draw-money: Успешно оплачено {0} за доминион.
+  deposit-money: Успешно возвращено {0} из доминиона.
+  group-not-belong-dominion: Группа {0} не принадлежит доминиону {1}.
+converts-text:
+  must-be-player: Для этой команды/операции необходимо быть игроком.
+  must-be-online: Игрок ({0}) должен быть в сети.
+  world-not-exist: Мир ({0}) не существует.
+  unknown-env-flag: 'Неизвестный флаг окружения: {0}.'
+  unknown-pre-flag: 'Неизвестный флаг привилегий: {0}.'
+  unknown-dominion: 'Неизвестный доминион: {0}.'
+  invalid-number-format: 'Неверное количество аргументов: {0}.'
+  invalid-boolean-format: 'Неверное булево значение аргументов: {0}, должно быть true или false.'
+  invalid-points: Необходимо выбрать две точки в одном мире для создания доминиона.
+  unknown-block-face: 'Неизвестное направление: {0}.'
+  unknown-resize-type: 'Неизвестный тип изменения размера: {0}.'
+  unknown-message-type: 'Неизвестный тип сообщения: {0}.'
+  invalid-color-format: 'Неверное значение цвета аргументов: {0}, должно быть в формате hex (0xRRGGBB).'
+  unknown-player: Игрок {0} не был зарегистрирован (после установки плагина).
+  not-member: Игрок {0} не является членом доминиона {1}.
+  no-group-found: Группа с именем {0} не найдена в доминионе {1}.
+others-text:
+  auto-clean-start: Начало автоматической очистки игроков, которые не заходили {0} дней.
+  auto-cleaning-player: Данные игрока {0} очищены.
+  auto-clean-end: Автоматическая очистка завершена.
+  no-permission-for-flag: У вас нет разрешения {0}({1}).
+vault-connect-text:
+  vault-unavailable: Vault недоступен, пожалуйста, установите Vault или VaultUnlock для использования функций экономики.
+  economy-unavailable: П��агин экономики не найден, вам нужно установить один из плагинов экономики для использования функций экономики.
+  insufficient-funds: Недостаточно денег, нужно {0} {1}, но есть только {2} {1}.
+dominion-event-handler-text:
+  create-success: Создание доминиона {0} успешно.
+  create-failed: 'Создание доминиона {0} не удалось, причина: {1}'
+  expand-success: Расширение доминиона {0} успешно.
+  expand-failed: 'Расширение доминиона {0} не удалось, причина: {1}'
+  contract-success: Сжатие доминиона {0} успешно.
+  contract-failed: 'Сжатие доминиона {0} не удалось, причина: {1}'
+  delete-success: Удаление доминиона {0} успешно.
+  delete-failed: 'Удаление доминиона {0} не удалось, причина: {1}'
+  delete-confirm: Используйте команду '{0}', чтобы подтвердить удаление доминиона {1} �� его поддоминионов, это действие нельзя отменить.
+  list-sub-doms: 'Доминион {0} имеет поддоминионы: {1}'
+  rename-failed: 'Переименование доминиона {0} не удалось, причина: {1}'
+  rename-success: Переименование доминиона {0} в {1} успешно.
+  same-name: Новое имя совпадает со старым именем.
+  give-success: Передача доминиона {0} к {1} успешна.
+  give-failed: 'Передача доминиона {0} другому не удалась, причина: {1}'
+  give-confirm: Используйте команду '{0}', чтобы подтвердить передачу доминиона {1} к {2}, это действие нельзя отменить.
+  already-belong: Доминион {0} уже принадлежит {1}.
+  cannot-give-sub: Доминион {0} является поддоминионом, его нельзя передать другим.
+  tp-location-not-in-dominion: Место телепортации не находится в доминионе {0}.
+  tp-location-set-success: Установка места телепортации для доминиона {0} успешна.
+  tp-location-set-failed: 'Установка места телепортации для доминиона {0} не удалась, причина: {1}'
+  set-enter-message-success: Установка сообщения при входе для доминиона {0} успешна.
+  set-enter-message-failed: 'Установка сообщения при входе для доминиона {0} не удалась, причина: {1}'
+  set-leave-message-success: Установка сообщения при выходе для доминиона {0} успешна.
+  set-leave-message-failed: 'Установка сообщения при выходе для доминиона {0} не удалась, причина: {1}'
+  set-map-color-success: Установка цвета карты для доминиона {0} успешна.
+  set-map-color-failed: 'Установка цвета карты для доминиона {0} не удалась, причина: {1}'
+  set-env-flag-success: Установка флага окружения {0} на {1} успешна.
+  set-env-flag-failed: 'Установка флага окружения {0} на {1} не удалась, причина: {2}'
+  set-guest-flag-success: Установка флага гостя {0} на {1} успешна.
+  set-guest-flag-failed: 'Установка флага гостя {0} на {1} не удалась, причина: {2}'
+member-event-handler-text:
+  set-flag-success: Флаг {0} успешно установлен для {1} в {2}.
+  owner-only: Только владелец может управлять администратором.
+  group-already: Этот участник принадлежит группе {0}, поэтому вы не можете управлять им отдельно.
+  set-flag-failed: 'Не удалось установить флаг, причина: {0}'
+  add-member-success: Участник {0} успешно добавлен в {1}.
+  already-member: '{0} уже является участником {1}.'
+  cant-be-owner: Вы не можете добавить владельца доминиона в качестве участника.
+  add-member-failed: 'Не удалось добавить участника, причина: {0}'
+  remove-member-success: Участник {0} успешно удален из {1}.
+  remove-member-failed: 'Не удалось удалить участника, причина: {0}'
+group-event-handler-text:
+  owner-only: Только владелец может управлять администратором группы.
+  set-flag-success: Флаг группы {0} {1} успешно установлен на {2}.
+  set-flag-failed: 'Не удалось установить флаг группы, причина: {3}'
+  create-group-success: Группа {0} успешно создана.
+  create-group-failed: 'Не удалось создать группу, причина: {0}'
+  delete-group-success: Группа {0} успешно удалена.
+  delete-group-failed: 'Не удалось удалить группу, причина: {0}'
+  rename-group-success: Группа {0} успешно переименована в {1}.
+  rename-group-failed: 'Не удалось переименовать группу, причина: {0}'
+  add-member-success: Участник {0} успешно добавлен в группу {1}.
+  add-member-failed: 'Не удалось добавить участника в группу, причина: {0}'
+  remove-member-success: Участник {0} успешно удален из группы {1}.
+  remove-member-failed: 'Не удалось удалить участника из группы, причина: {0}'
+select-point-events-handler-text:
+  first-point: Первая точка выбрана в {0}, {1}, {2}.
+  second-point: Вторая точка выбрана в {0}, {1}, {2}.
+  not-same-world: Эти две точки не находятся в одном мире.
+  price: Цена доминиона {0} {1}.
+  size: 'Размер: {0}x{1}x{2}'
+  square: 'Площадь: {0}'
+  volume: 'Объем: {0}'
+  no-dominion: Доминион не найден в местоположении {0}, {1}, {2}.
+  found-dominion: Местоположение {0}, {1}, {2} находится в доминионе {3}.
+menu-tui-text:
+  title: Меню Доминиона
+  button: МЕНЮ
+  admin-only-section: Этот раздел виден только администратору
+  document-button: ДОКУМЕНТ
+  document-description: Открыть внешнюю ссылку на документацию.
+  command-help-button: ПОМОЩЬ ПО КОМАНДАМ
+  command-help-description: Открыть внешнюю ссылку на помощь по командам.
+dominion-list-tui-text:
+  title: Ваши Доминионы
+  button: ДОМИНИОНЫ
+  description: Список всех ваших доминионов.
+  delete-button: УДАЛИТЬ
+  admin-section: Раздел доминионов вашего администратора.
+  server-section: Раздел доминионов сервера {0}.
+dominion-manage-tui-text:
+  title: Управление {0}
+  button: УПРАВЛЕНИЕ
+  set-tp-button: УСТАНОВИТЬ ТП
+  set-tp-description: Установить ваше текущее местоположение как место телепортации.
+set-size-tui-text:
+  title: Изменить размер {0}
+  button: ИЗМЕНИТЬ РАЗМЕР
+  north: Север(z-)
+  south: Юг(z+)
+  west: Запад(x-)
+  east: Восток(x+)
+  up: Вверх(y+)
+  down: Вниз(y-)
+  expand: РАСШИРИТЬ
+  contract: СОКРАТИТЬ
+env-setting-tui-text:
+  title: 'Настройки окружения {0}'
+  button: НАСТРОЙКИ ОКРУЖЕНИЯ
+  description: Установить окружение доминиона.
+guest-setting-tui-text:
+  title: 'Настройки гостя {0}'
+  button: НАСТРОЙКИ ГОСТЯ
+  description: Установить поведение гостя в доминионе.
+size-info-tui-text:
+  title: 'Информация о размере {0}'
+  button: ИНФОРМАЦИЯ О РАЗМЕРЕ
+  description: Показать информацию о размере доминиона
+  owner-name: Этот доминион принадлежит {0}.
+  info-lwh: 'Размер: {0} x {1} x {2}'
+  info-height: 'Высота: {0} ~ {1}'
+  square: 'Площадь: {0}'
+  volume: 'Объем: {0}'
+migrate-list-text:
+  title: Миграция из Residence
+  description: Миграция данных из Residence в доминион.
+  button: МИГРАЦИЯ
+  not-enabled: Миграция из Residence не включена.
+  no-data: Нет данных для миграции.
+  cant-migrate: Под-Residence будет мигрирован вместе с родительским.
+member-list-tui-text:
+  title: 'Список участников {0}'
+  description: Список участников этого доминиона.
+  button: УЧАСТНИКИ
+  remove: УДАЛИТЬ
+  remove-description: Удалить этого участника из доминиона.
+  owner-only: Только владелец может управлять администратором.
+  group-only: Этот участник принадлежит группе {0}, поэтому вы не можете управлять им отдельно.
+  tag-admin: Администратор может управлять участниками и группами этого доминиона.
+  tag-normal: Обычные участники.
+  tag-ban: Те, у кого нет привилегии MOVE.
+  tag-group: Этот игрок принадлежит группе, вы не можете управлять им отдельно.
+select-player-tui-text:
+  title: Выбрать игрока
+  button: ДОБАВИТЬ ИГРОКА
+  description: Добавить игрока в качестве участника этого доминиона.
+  back: НАЗАД
+member-setting-tui-text:
+  title: 'Настройки участника {0}'
+  description: Установить привилегии участника доминиона.
+  button: НАСТРОЙКИ
+template-list-tui-text:
+  title: Список шаблонов
+  button: ШАБЛОНЫ
+  description: Шаблоны можно использовать для быстрой настройки привилегий участника.
+  delete-button: УДАЛИТЬ
+select-template-tui-text:
+  title: Выбрать шаблон
+  description: Выберите шаблон для применения к этому участнику.
+  button: ВЫБРАТЬ ШАБЛОН
+  back: Н��ЗАД
+  apply: ПРИМЕНИТЬ
+group-list-tui-text:
+  title: 'Список групп {0}'
+  description: Список групп этого доминиона.
+  button: ГРУППЫ
+  delete-button: УДАЛИТЬ
+  delete-description: Удалить эту группу, все участники будут перемещены из этой группы.
+  remove-member-description: Удалить {0} из группы {1} в группу по умолчанию.
+group-setting-tui-text:
+  title: Настройки группы {0}
+  description: Управление настройками группы {0}.
+  button: НАСТРОЙКИ
+select-member-tui-text:
+  title: Выбрать участника
+  description: Выберите участника для добавления в группу.
+  back: НАЗАД
+title-list-tui-text:
+  title: Список названий групп
+  description: Список названий групп, которые вы можете использовать.
+  button: НАЗВАНИЯ
+  use-button: ИСПОЛЬЗОВАТЬ
+  disuse-button: НЕ ИСПОЛЬЗОВАТЬ
+  from-dominion: Из доминиона {0}
+all-dominion-tui-text:
+  title: Все доминионы
+  description: Список всех доминионов.
+  button: СПИСОК ВСЕХ
+template-setting-text:
+  title: Настройка шаблона
+  button: НАСТРОЙКА
+  not-found: Шаблон {0} не найден.
+resize-dominion-cui-text:
+  title: '{0} {1} с направлением {2}'
+  placeholder: введите размер
+edit-enter-message-cui-text:
+  title: Редактировать сообщение при входе {0}
+  button: ВХОД СООБЩЕНИЕ
+  description: Сообщение, отображаемое при входе в доминион.
+edit-leave-message-cui-text:
+  title: Редактировать сообщение при выходе {0}
+  button: ВЫХОД СООБЩЕНИЕ
+  description: Сообщение, отображаемое при выходе из доминиона.
+rename-dominion-cui-text:
+  title: Переименовать {0}
+  description: Переименовать доминион.
+  button: ПЕРЕИМЕНОВАТЬ
+create-dominion-cui-text:
+  title: Создать доминион
+  input: Новое имя доминиона
+  description: Автоматически создать доминион вокруг вас.
+  button: СОЗДАТЬ
+set-map-color-cui-text:
+  title: Установить цвет карты {0}
+  button: ЦВЕТ
+  description: Цвет доминиона на веб-карте.
+search-player-cui-text:
+  title: Поиск игрока
+  input: Точное имя игрока
+  button: ПОИСК
+create-template-cui-text:
+  title: Создать шаблон
+  input: Введите новое имя шаблона
+  button: СОЗДАТЬ
+create-group-cui-text:
+  title: Создать новую группу
+  input: Новое имя группы
+  description: Создать новую группу разрешений.
+  button: СОЗДАТЬ
+rename-group-cui-text:
+  title: Переименовать группу
+  button: ПЕРЕИМЕНОВАТЬ
+  description: Переименовать эту группу.
+administrator-command-text:
+  reload-cache-button: ПЕРЕЗАГРУЗИТЬ КЭШ
+  reload-cache-description: Перезагрузить кэш (не делайте это часто).
+  reload-config-button: ПЕРЕЗАГРУЗИТЬ КОНФИГУРАЦИЮ
+  reload-config-description: Перезагрузить конфигурацию.
+  reloading-dominion-cache: Перезагрузка кэша доминиона...
+  reloaded-dominion-cache: Кэш доминиона успешно перезагружен!
+  reloading-member-cache: Перезагрузка кэша привилегий участников...
+  reloaded-member-cache: Кэш привилегий участников успешно перезагружен!
+  reloading-group-cache: Перезагрузка кэша групп...
+  reloaded-group-cache: Кэш групп успешно перезагружен!
+  reloading-config: Перезагрузка конфигурации...
+  exporting-mca-list: Экспорт списка MCA...
+  create-mca-folder-failed: Не удалось создать папку списка MCA.
+  writing-mca-list: Запись списка мира {0}...
+  create-mca-file-failed: Не удалось создать файл списка MCA {0}.
+  export-mcalist-failed: 'Не удалось экспортировать список MCA мира {0}, причина: {1}.'
+  exported-mcalist: Список MCA успешно экспортирован в {0}.
+  import-hint: Импорт базы данных предназначен только для миграции или восстановления резервной копии, не используйте его для объединения двух баз данных.
+  import-info: Если текущая база данных не пуста, это вызовет ошибки и может привести к потере или повреждению данных.
+  import-confirm: Пожалуйста, подтвердите операцию импорта, добавив 'confirm' в конец команды.
+migration-command-text:
+  create-player-failed: Не удалось создать кэш игрока для {0}.
+  migrate-success: Резиденция {0} успешно мигрирована в доминион.
+  migrate-failed: 'Не удалось мигрировать резиденцию. Причина: {1}'
+  missing-residence: Резиденция {0} не найдена.
+  not-your-residence: Резиденция {0} не принадлежит вам.
+template-command-text:
+  name-not-valid: Имя шаблона не должно содержать пробелы.
+  template-name-exist: Шаблон {0} уже существует.
+  create-template-fail: 'Не удалось создать шаблон, причина: {0}'
+  create-template-success: Шаблон {0} успешно создан.
+  template-not-exist: Шаблон {0} не существует.
+  delete-template-success: Шаблон {0} успешно удален.
+  delete-template-fail: 'Не удалось удалить шаблон, причина: {0}'
+  apply-template-success: Шаблон {0} успешно применен к {1}.
+  apply-template-fail: 'Не удалось применить шаблон, причина: {0}'
+  set-flag-success: Флаг {0} шаблона {1} успешно установлен на {2}.
+  set-flag-fail: 'Не удалось установить флаг, причина: {0}'
+group-title-command-text:
+  group-not-belonging: Вы не принадлежите к группе {0}.
+  using-title-success: Название {0} успешно использовано.
+  using-title-fail: 'Не удалось использовать название, причина: {0}'
+configuration-text:
+  loading-language: Загрузка языка {0}...
+  load-language-fail: 'Не удалось загрузить язык {0}, причина: {1}, используется язык по умолчанию en_us.'
+  load-language-success: Язык {0} успешно загружен.
+  loading-flag: Загрузка конфигурации флагов...
+  load-flag-success: Конфигурация флагов успешно загружена.
+  loading-limitations: Загрузка конфигурации ограничений...
+  saving-default-limitation: Поскольку файл ограничений не найден, сохраняется файл ограничений по умолчанию.
+  save-limitation-fail: 'Не удалось сохранить файл ограничений: {0}'
+  loading-limitation: 'Загрузка файла ограничений: {0}...'
+  load-limitation-fail: 'Не удалось загрузить файл ограничений: {0}, причина: {1}'
+  load-limitations: 'Успешно загружено {0} ограничений: {1}.'
+  load-configuration: Конфигурация успешно загружена.
+  debug-enabled: Режим отладки включен.
+  prepare-database: Подготовка базы данных...
+  database-connected: Подключение к базе данных успешно.
+  multi-server-sqlite: База данных типа sqlite не поддерживается в режиме мульти-сервера, режим мульти-сервера отключен.
+  server-id-invalid: Идентификатор сервера должен быть положительным целым числом (> 0), режим мульти-сервера отключен.
+limitation-text:
+  loading-world-settings: Загрузка настроек мира...
+  loading-world-setting: Загрузка настроек мира {0}...
+  load-world-setting-failed: 'Не удалось загрузить настройки мира {0}, причина: {1}'
+  load-world-settings-success: 'Настройки мира {0} успешно загружены: {1}.'
+database-manager-text:
+  exporting-database-tables: Экспорт таблиц базы данных...
+  export-table-fail: 'Не удалось экспортировать таблицу, причина: {0}'
+  export-world-mapping-fail: 'Не удалось экспортировать сопоставление uid мира, причина: {0}'
+  export-database-success: Экспорт базы данн��х в {0} успешно.
+  file-not-found: Путь к файлу таблицы базы данных {0} не найден.
+  importing-database: Импорт базы данных...
+  file-corrupted: Отсутствует файл таблицы базы данных, пожалуйста, повторно экспортируйте таблицы базы данных.
+  import-database-fail: 'Не удалось импортировать базу данных, причина: {0}'
+  import-database-success: Импорт базы данных успешно.
+teleport-manager-text:
+  cooling-down: Пожалуйста, подождите {0} секунд пере�� повторной телепортацией.
+  disabled: Телепортация отключена для вашей группы разрешений.
+  delay: Телепортация через {0} секунд...
+  unfinished-cancelled: Предыдущая незавершенная телепортация отменена.
+  do-not-move: Не двигайтесь во время телепортации...
+  cancel-move: Телепортация отменена из-за движения.
+blue-map-connect-text:
+  register-fail: Не удалось зарегистрировать BlueMap API.
+  info-label: '<div>{0}</div><div>Владелец: {1}</div>'
+dynmap-connect-text:
+  register-success: Регистрация в dynmap успешна!
+  register-fail: Регистрация в dynmap не удалась!
+  info-label: '<div>{0}</div><div>Владелец: {1}</div>'
+command-exception-text:
+  no-permission: У вас нет разрешения {0} для выполнения этого действия.
+  invalid-arguments: 'Неверные аргументы, использование например: {0}.'
+cui-input-text:
+  cui-not-available: CUI недоступен на сервере без ядра paper (fork).
+  cui-suggest-command: Вы можете использовать команду {0} вместо этого.
+  cui-button: 'Левый клик: Подтвердить | Правый клик: Отменить'
+  cui-input-invalid: Ввод не может содержать пробел.
+flags:
+  tnt_explode:
+    display-name: Взрыв TNT
+    description: Может ли TNT взорваться.
+  comparer:
+    display-name: Сравнитель
+    description: Можно ли взаимодействовать с сравнителем.
+  edit_sign:
+    display-name: Редактировать знак
+    description: Можно ли редактировать знак.
+  cake:
+    display-name: Торт
+    description: Можно ли съесть торт.
+  dragon_egg:
+    display-name: Яйцо дракона
+    description: Можно ли взаимодействовать с яйцом дракона.
+  bed:
+    display-name: Кровать
+    description: Можно ли спать в кровати (установить точку возрождения).
+  villager_spawn:
+    display-name: Размножение жителей
+    description: Могут ли жители размножаться (включая яйцо спавна).
+  trade:
+    display-name: Торговля с жителями
+    description: Можно ли торговать с жителями.
+  note_block:
+    display-name: Нотный блок
+    description: Можно ли взаимодействовать с нотным блоком.
+  ignite:
+    display-name: Поджечь
+    description: Можно ли поджечь огонь.
+  wither_spawn:
+    display-name: Спавн визера
+    description: Можно ли спавнить визера и взрыв визера.
+  trig_pressure_drop:
+    display-name: Нажимная плита (падение)
+    description: Могут ли падающие предметы активировать нажимную плиту.
+  animal_spawn:
+    display-name: Спавн животных (размножение)
+    description: Могут ли животные спавниться (включая яйцо спавна и размножение).
+  animal_move:
+    display-name: Движение животных
+    description: Могут ли животные двигаться в доминионе.
+  villager_killing:
+    display-name: Убийство жителей
+    description: Можно ли причинять вред жителям.
+  animal_killing:
+    display-name: Убийство животных
+    description: Можно ли причинять вред животным.
+  monster_killing:
+    display-name: Убийство монстров
+    description: Можно ли причинять вред монстрам.
+  place:
+    display-name: Установка блока
+    description: Можно ли устанавливать блоки (обычные блоки, рамки предметов, лаву, воду).
+  fly:
+    display-name: Полет
+    description: НЕ полет с элитрой, это как полет в креативном режиме.
+  honey:
+    display-name: Мед
+    description: Можно ли взаимодействовать с ульем (собирать мед).
+  monster_damage:
+    display-name: Монстр убивает игрока
+    description: Могут ли монстры причинять вред игроку.
+  monster_spawn:
+    display-name: Спавн монстров
+    description: Могут ли монстры спавниться (включая яйцо спавна).
+  monster_move:
+    display-name: Движение монстров
+    description: Могут ли монстры двигаться в доминионе.
+  admin:
+    display-name: Администратор
+    description: Участник с этим флагом может управлять обычными участниками и группами.
+  crafter:
+    display-name: Крафтер
+    description: Можно ли взаимодействовать с крафтером (1.21).
+  piston_outside:
+    display-name: Поршень
+    description: Ложь, чтобы предотвратить толкание/тянение блоков поршнем через доминион.
+  fire_spread:
+    display-name: Распространение огня
+    description: Предотвращение распространения огня в доминионе.
+  shear:
+    display-name: Стричь
+    description: Можно ли стричь овец.
+  teleport:
+    display-name: Телепортация
+    description: Ложь означает, что нельзя телепортироваться в этот доминион.
+  hopper_outside:
+    display-name: Воронка (снаружи)
+    description: Ложь, чтобы предотвратить всасывание контейнера воронкой снаружи доминиона.
+  door:
+    display-name: Дверь
+    description: Можно ли взаимодействовать с дверью (включая люк, калитку).
+  dragon_break_block:
+    display-name: Дракон разрушает блок
+    description: Может ли эндер-дракон разрушать блоки.
+  ender_man:
+    display-name: Эндермен
+    description: Ложь, чтобы предотвратить подбирание блоков, спавн, телепортацию эндермена.
+  break:
+    display-name: Разрушение блока
+    description: Можно ли разрушать блоки (включая рамку предметов, стойку для брони).
+  vehicle_destroy:
+    display-name: Разрушение транспорта
+    description: Можно ли разрушать транспорт (лодка, вагонетка).
+  riding:
+    display-name: Езда
+    description: Можно ли ездить на транспорте (лодка, вагонетка, лошадь и т.д.).
+  dye:
+    display-name: Красить
+    description: Что можно красить (овца, ошейник собаки, ошейник кошки).
+  egg:
+    display-name: Бросать яйцо
+    description: Можно ли бросать яйцо.
+  vehicle_spawn:
+    display-name: Спавн транспорта
+    description: Можно ли спавнить транспорт (лодка, вагонетка).
+  trig_pressure_mob:
+    display-name: Нажимная плита (моб)
+    description: Могут ли мобы (игрок не включен) активировать нажимную плиту.
+  creeper_explode:
+    display-name: Взрыв существа
+    description: Крипер/Череп визера/Эндер-кристалл/Огненный шар/Кровать/Якорь возрождения.
+  mob_drop_item:
+    display-name: Дроп предметов мобом
+    description: Будет ли моб дропать предметы при убийстве.
+  button:
+    display-name: Кнопка
+    description: Можно ли нажимать кнопку.
+  hook:
+    display-name: Крючок
+    description: Можно ли использовать удочку.
+  enchant:
+    display-name: Стол зачарований
+    description: Можно ли использовать стол зачарований.
+  craft:
+    display-name: Верстак
+    description: Можно ли использовать верстак.
+  lever:
+    display-name: Рычаг
+    description: Можно ли переключать рычаг.
+  brew:
+    display-name: Зельеварка
+    description: Можно ли использовать зельеварку.
+  anvil:
+    display-name: Наковальня
+    description: Можно ли использовать наковальню.
+  harvest:
+    display-name: Сбор урожая
+    description: Может ли игрок собирать урожай.
+  hopper:
+    display-name: Специальный контейнер
+    description: Например, воронка, печь, выбрасыватель, раздатчик, доменная печь, коптильня.
+  ender_pearl:
+    display-name: Эндер-жемчуг
+    description: Можно ли бросать эндер-жемчуг.
+  trig_pressure_proj:
+    display-name: Нажимная плита (снаряд)
+    description: Могут ли снаряды (стрела/снежок) активировать нажимную плиту.
+  item_frame_proj_damage:
+    display-name: Снаряд повреждает рамку предметов
+    description: Могут ли снаряды (стрела/снежок) разрушать рамку предметов.
+  shoot:
+    display-name: Стрельба
+    description: Включает стрелу/снежок/трезубец/огненный шар/заряд ветра (1.21).
+  flow_in_protection:
+    display-name: Защита от потока
+    description: Предотвращение внешнего потока воды/лавы в доминион.
+  player_damage:
+    display-name: Игрок убивает игрока
+    description: Может ли игрок причинять (непосредственно) вред другому игроку.
+  glow:
+    display-name: Свечение
+    description: Как эффект светящейся стрелы.
+  feed:
+    display-name: Кормить животных
+    description: Можно ли кормить животных.
+  show_border:
+    display-name: Показать границу
+    description: Показать границу доминиона игроку при входе.
+  beacon:
+    display-name: Маяк
+    description: Можно ли взаимодействовать с маяком.
+  pressure:
+    display-name: Нажимная плита (игрок)
+    description: Может ли игрок активировать нажимную плиту.
+  container:
+    display-name: Контейнер
+    description: Сундук / Бочка / Шалкер / Стойка для брони / Рамка предметов
+  move:
+    display-name: Движение игрока
+    description: Может ли игрок двигаться в доминионе.
+  gravity_block:
+    display-name: Падающий блок
+    description: Могут ли гравитационные блоки падать в доминионе (ложь превратит их в предметы).
+  item_frame_interactive:
+    display-name: Взаимодействие с рамкой предметов
+    description: Можно ли взаимодействовать с рамкой предметов (вращать предмет).
+  repeater:
+    display-name: Повторитель
+    description: Можно ли изменять (взаимодействовать с) повторителем.
+  anchor:
+    display-name: Якорь возрождения
+    description: Можно ли установить/использовать якорь возрожд��ния.
+  trample:
+    display-name: Топтать посевы
+    description: Можно ли топтать посевы (ложь означает защиту посевов).
