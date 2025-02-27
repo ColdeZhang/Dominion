@@ -115,7 +115,7 @@ public class Asserts {
         List<DominionDTO> dominions = Cache.instance.getPlayerDominions(associatedPlayer.getUniqueId());
         dominions.removeIf(dom -> dom.getServerId() != Configuration.multiServer.serverId); // only count dominions in current server
         int allOverTheWorld = Configuration.getPlayerLimitation(associatedPlayer).amountAllOverTheWorld;
-        if (dominions.size() >= allOverTheWorld) {
+        if (dominions.size() >= allOverTheWorld && allOverTheWorld >= 0) {
             throw new DominionException(Language.assertsText.exceedMaxAmount, associatedPlayer.getName(), allOverTheWorld);
         }
         World associatedWorld = toWorld(associatedWorldUid);
@@ -123,7 +123,8 @@ public class Asserts {
         if (amountOfWorld == 0) {
             throw new DominionException(Language.assertsText.notAllowDomInWorld, associatedPlayer.getName(), associatedWorld.getName());
         }
-        if (dominions.stream().filter(dom -> dom.getWorldUid().equals(associatedWorld.getUID())).count() >= amountOfWorld) {
+        if (dominions.stream().filter(dom -> dom.getWorldUid().equals(associatedWorld.getUID())).count() >= amountOfWorld
+                && amountOfWorld >= 0) {
             throw new DominionException(Language.assertsText.exceedMaxAmountOfWorld, associatedPlayer.getName(), associatedWorld.getName(), amountOfWorld);
         }
     }
