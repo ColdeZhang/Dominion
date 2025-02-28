@@ -12,8 +12,6 @@ import java.util.Set;
 
 public class SafeLocationFinder {
     public static Location findNearestSafeLocation(Location originalLocation) {
-        originalLocation.getWorld().getChunkAtAsyncUrgently(originalLocation).thenAccept((chunk) -> {
-        });
         World world = originalLocation.getWorld();
         if (world == null) return originalLocation.clone();
 

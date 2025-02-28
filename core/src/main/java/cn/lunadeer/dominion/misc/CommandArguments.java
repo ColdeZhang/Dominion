@@ -40,7 +40,7 @@ public class CommandArguments {
         public RequiredDominionArgument() {
             super("dominion_name", true, (commandSender) -> {
                 if (commandSender instanceof Player player) {
-                    return Cache.instance.getPlayerAdminDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
+                    return Cache.instance.getPlayerDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
                 } else {
                     return Cache.instance.getAllDominions().stream().map(DominionDTO::getName).toList();
                 }
