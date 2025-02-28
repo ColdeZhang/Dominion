@@ -11,6 +11,7 @@ import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
 import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import cn.lunadeer.dominion.utils.webMap.MapRender;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -507,6 +508,9 @@ public class Cache implements Listener {
     public List<DominionDTO> getPlayerDominions(UUID player_uuid) {
         List<DominionDTO> dominions = new ArrayList<>();
         for (DominionDTO dominion : id_dominions.values()) {
+            if (dominion.getServerId() != Configuration.multiServer.serverId) {
+                continue;
+            }
             if (dominion.getOwner().equals(player_uuid)) {
                 dominions.add(dominion);
             }

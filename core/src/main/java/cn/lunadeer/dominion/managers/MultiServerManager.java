@@ -2,9 +2,9 @@ package cn.lunadeer.dominion.managers;
 
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.utils.Scheduler;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

@@ -127,7 +127,11 @@ public class CommandManager implements TabExecutor, Listener {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (strings.length == 0) {
             if (rootCommandConsumer != null) {
-                rootCommandConsumer.accept(commandSender);
+                try {
+                    rootCommandConsumer.accept(commandSender);
+                } catch (Exception e) {
+                    Notification.error(commandSender, e.getMessage());
+                }
             }
             return true;
         }

@@ -9,11 +9,15 @@ import cn.lunadeer.dominion.managers.TeleportManager;
 import cn.lunadeer.dominion.misc.InitCommands;
 import cn.lunadeer.dominion.misc.Others;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
-import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
+import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.XVersionManager;
+import cn.lunadeer.dominion.utils.bStatsMetrics;
 import cn.lunadeer.dominion.utils.command.CommandManager;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import cn.lunadeer.dominion.utils.scui.CuiManager;
 import cn.lunadeer.dominion.utils.webMap.DynmapConnect;
 import cn.lunadeer.dominion.utils.webMap.MapRender;
@@ -94,7 +98,9 @@ public final class Dominion extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        DatabaseManager.instance.close();
+        if (DatabaseManager.instance != null)
+            DatabaseManager.instance.close();
+        Scheduler.cancelAll();
     }
 
     public static Dominion instance;

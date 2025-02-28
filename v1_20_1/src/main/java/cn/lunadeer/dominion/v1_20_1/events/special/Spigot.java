@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.utils.Scheduler;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
