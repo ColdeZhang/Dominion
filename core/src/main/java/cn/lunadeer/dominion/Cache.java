@@ -12,11 +12,9 @@ import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
 import cn.lunadeer.dominion.managers.PlaceHolderApi;
 import cn.lunadeer.dominion.utils.*;
 import cn.lunadeer.dominion.utils.scheduler.Scheduler;
-import cn.lunadeer.dominion.utils.webMap.MapRender;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,13 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static cn.lunadeer.dominion.DominionNode.getLocInDominionNode;
-import static cn.lunadeer.dominion.DominionNode.isInDominion;
+import static cn.lunadeer.dominion.misc.Others.isInDominion;
 
 public class Cache implements Listener {
 
@@ -44,95 +40,6 @@ public class Cache implements Listener {
         Bukkit.getPluginManager().registerEvents(this, Dominion.instance);
     }
 
-    /**
-     * 从数据库加载所有领地
-     * 如果idToLoad为null，则加载所有领地
-     *
-     * @param idToLoad 领地ID
-     */
-    public void loadDominions(Integer idToLoad) {
-        if (_last_update_dominion.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            XLogger.debug("run loadDominionsExecution directly");
-            loadDominionsExecution(idToLoad);
-        } else {
-            if (_update_dominion_is_scheduled.get()) return;
-            XLogger.debug("schedule loadDominionsExecution");
-            _update_dominion_is_scheduled.set(true);
-            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_dominion.get())) / 1000 * 20L;
-            Scheduler.runTaskLaterAsync(() -> {
-                        XLogger.debug("run loadDominionsExecution scheduled");
-                        loadDominionsExecution(idToLoad);
-                        _update_dominion_is_scheduled.set(false);
-                    },
-                    delay_tick);
-        }
-    }
-
-    public void loadDominions() {
-        loadDominions(null);
-    }
-
-    private void loadDominionsExecution(Integer idToLoad) {
-        Scheduler.runTaskAsync(() -> {
-            long start = System.currentTimeMillis();
-            int count = 0;
-            if (idToLoad == null) {
-                id_dominions = new ConcurrentHashMap<>();
-                dominion_name_to_id = new ConcurrentHashMap<>();
-                dominion_children = new ConcurrentHashMap<>();
-
-                List<DominionDTO> dominions;
-                try {
-                    dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll());
-                } catch (SQLException e) {
-                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
-                    return;
-                }
-                CompletableFuture<Void> res = dominion_trees.initAsync(dominions);
-                count = dominions.size();
-
-                for (DominionDTO d : dominions) {
-                    id_dominions.put(d.getId(), d);
-                    dominion_name_to_id.put(d.getName(), d.getId());
-                    if (!dominion_children.containsKey(d.getParentDomId())) {
-                        dominion_children.put(d.getParentDomId(), new ArrayList<>());
-                    }
-                    dominion_children.get(d.getParentDomId()).add(d.getId());
-                }
-
-                res.join(); // 等待树的构建完成
-            } else {
-                DominionDTO dominion;
-                try {
-                    dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
-                } catch (SQLException e) {
-                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
-                    return;
-                }
-                if (dominion == null && id_dominions.containsKey(idToLoad)) {
-                    id_dominions.remove(idToLoad);
-                } else if (dominion != null) {
-                    id_dominions.put(idToLoad, dominion);
-                    count = 1;
-                }
-                // rebuild dominion_name_to_id and dominion_children
-                dominion_name_to_id = new ConcurrentHashMap<>();
-                dominion_children = new ConcurrentHashMap<>();
-                for (DominionDTO d : id_dominions.values()) {
-                    dominion_name_to_id.put(d.getName(), d.getId());
-                    if (!dominion_children.containsKey(d.getParentDomId())) {
-                        dominion_children.put(d.getParentDomId(), new ArrayList<>());
-                    }
-                    dominion_children.get(d.getParentDomId()).add(d.getId());
-                }
-            }
-            MapRender.render();
-            recheckPlayerState = true;
-            _last_update_dominion.set(System.currentTimeMillis());
-            XLogger.debug("loadDominionsExecution cost: {0} ms for {1} dominions"
-                    , System.currentTimeMillis() - start, count);
-        });
-    }
 
     /**
      * 从数据库加载所有玩家特权
@@ -613,145 +520,6 @@ public class Cache implements Listener {
 
     private final Map<UUID, Integer> map_player_using_group_title_id = new HashMap<>();
 
-    private static class WorldDominionTreeSectored {
-    /*
-        D | C
-        --+--
-        B | A
-     */
-
-        private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_a; // x >= 0, z >= 0
-        private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_b; // x <= 0, z >= 0
-        private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_c; // x >= 0, z <= 0
-        private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_d; // x <= 0, z <= 0
-        private Integer section_origin_x = 0;
-        private Integer section_origin_z = 0;
-
-        public DominionDTO getLocInDominionDTO(@NotNull Location loc) {
-            try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
-                List<DominionNode> nodes = getNodes(loc);
-                if (nodes == null) return null;
-                if (nodes.isEmpty()) return null;
-                DominionNode dominionNode = getLocInDominionNode(nodes, loc);
-                return dominionNode == null ? null : dominionNode.getDominion();
-            }
-        }
-
-
-        public List<DominionNode> getNodes(@NotNull Location loc) {
-            return getNodes(loc.getWorld().getUID(), loc.getBlockX(), loc.getBlockZ());
-        }
-
-        public List<DominionNode> getNodes(World world, int x, int z) {
-            return getNodes(world.getUID(), x, z);
-        }
-
-        public List<DominionNode> getNodes(UUID world, int x, int z) {
-            if (x >= section_origin_x && z >= section_origin_z) {
-                if (world_dominion_tree_sector_a == null) return null;
-                return world_dominion_tree_sector_a.get(world);
-            }
-            if (x <= section_origin_x && z >= section_origin_z) {
-                if (world_dominion_tree_sector_b == null) return null;
-                return world_dominion_tree_sector_b.get(world);
-            }
-            if (x >= section_origin_x) {
-                if (world_dominion_tree_sector_c == null) return null;
-                return world_dominion_tree_sector_c.get(world);
-            }
-            if (world_dominion_tree_sector_d == null) return null;
-            return world_dominion_tree_sector_d.get(world);
-        }
-
-        public CompletableFuture<Void> initAsync(List<DominionDTO> dominions) {
-            return CompletableFuture.runAsync(() -> init(dominions));
-        }
-
-        private void init(List<DominionDTO> dominions) {
-            try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
-                world_dominion_tree_sector_a = new ConcurrentHashMap<>();
-                world_dominion_tree_sector_b = new ConcurrentHashMap<>();
-                world_dominion_tree_sector_c = new ConcurrentHashMap<>();
-                world_dominion_tree_sector_d = new ConcurrentHashMap<>();
-
-                Map<UUID, List<DominionDTO>> world_dominions_sector_a = new HashMap<>();
-                Map<UUID, List<DominionDTO>> world_dominions_sector_b = new HashMap<>();
-                Map<UUID, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
-                Map<UUID, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
-
-                // calculate the section origin point
-                int max_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x2() : 0).max().orElse(0);
-                int min_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x1() : 0).min().orElse(0);
-                int max_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z2() : 0).max().orElse(0);
-                int min_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z1() : 0).min().orElse(0);
-                section_origin_x = (max_x + min_x) / 2;
-                section_origin_z = (max_z + min_z) / 2;
-                XLogger.debug("Cache init section origin: {0}, {1}", section_origin_x, section_origin_z);
-
-                for (DominionDTO d : dominions) {
-                    if (d.getServerId() != Configuration.multiServer.serverId) {
-                        // skip other server's dominions when building dominion tree
-                        continue;
-                    }
-                    // put dominions into different sectors
-                    if (!world_dominions_sector_a.containsKey(d.getWorldUid()) ||
-                            !world_dominions_sector_b.containsKey(d.getWorldUid()) ||
-                            !world_dominions_sector_c.containsKey(d.getWorldUid()) ||
-                            !world_dominions_sector_d.containsKey(d.getWorldUid())) {
-                        world_dominions_sector_a.put(d.getWorldUid(), new ArrayList<>());
-                        world_dominions_sector_b.put(d.getWorldUid(), new ArrayList<>());
-                        world_dominions_sector_c.put(d.getWorldUid(), new ArrayList<>());
-                        world_dominions_sector_d.put(d.getWorldUid(), new ArrayList<>());
-                    }
-                    if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                    } else if (d.getCuboid().x1() <= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
-                        if (d.getCuboid().x2() >= section_origin_x) {
-                            world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                        } else {
-                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                        }
-                    } else if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() <= section_origin_z) {
-                        if (d.getCuboid().z2() >= section_origin_z) {
-                            world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                        } else {
-                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                        }
-                    } else {
-                        if (d.getCuboid().x2() >= section_origin_x && d.getCuboid().z2() >= section_origin_z) {
-                            world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                        } else if (d.getCuboid().x2() >= section_origin_x && d.getCuboid().z2() <= section_origin_z) {
-                            world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                        } else if (d.getCuboid().z2() >= section_origin_z && d.getCuboid().x2() <= section_origin_x) {
-                            world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                        } else {
-                            world_dominions_sector_d.get(d.getWorldUid()).add(d);
-                        }
-                    }
-                }
-                // build dominion tree for each sector
-                world_dominions_sector_a.forEach((key, value) ->
-                        world_dominion_tree_sector_a.put(key, DominionNode.BuildNodeTree(-1, value))
-                );
-                world_dominions_sector_b.forEach((key, value) ->
-                        world_dominion_tree_sector_b.put(key, DominionNode.BuildNodeTree(-1, value))
-                );
-                world_dominions_sector_c.forEach((key, value) ->
-                        world_dominion_tree_sector_c.put(key, DominionNode.BuildNodeTree(-1, value))
-                );
-                world_dominions_sector_d.forEach((key, value) ->
-                        world_dominion_tree_sector_d.put(key, DominionNode.BuildNodeTree(-1, value))
-                );
-            }
-        }
-    }
 
     public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
         if (!Configuration.groupTitle.enable) {

@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis.dominion;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.DominionNode;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.cache.DominionNode;
 import cn.lunadeer.dominion.commands.DominionOperateCommand;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
