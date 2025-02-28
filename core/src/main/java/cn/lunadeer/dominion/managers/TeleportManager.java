@@ -37,9 +37,8 @@ public class TeleportManager implements Listener {
     public static class TeleportManagerText extends ConfigurationPart {
         public String coolingDown = "Please wait for {0} seconds before teleporting again.";
         public String disabled = "Teleportation is disabled for your permission group.";
-        public String delay = "Will teleport in {0} seconds...";
+        public String delay = "Will teleport in {0} seconds, don't move...";
         public String unfinishedCancelled = "Cancelled previous unfinished teleportation.";
-        public String doNotMove = "Do not move while teleporting...";
         public String cancelMove = "Cancelled teleportation due to movement.";
     }
 
@@ -121,7 +120,6 @@ public class TeleportManager implements Listener {
         }
         if (Configuration.getPlayerLimitation(player).teleportation.cooldown > 0) {
             Notification.info(player, Language.teleportManagerText.delay, Configuration.getPlayerLimitation(player).teleportation.delay);
-            Notification.info(player, Language.teleportManagerText.doNotMove);
         }
         // teleport
         CancellableTask task = Scheduler.runTaskLaterAsync(() -> {
