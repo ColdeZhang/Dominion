@@ -15,12 +15,12 @@ import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static cn.lunadeer.dominion.Dominion.adminPermission;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
@@ -153,11 +153,9 @@ public class Others {
         return false;
     }
 
-    public static DominionDTO getInventoryDominion(Player bukkitPlayer, Inventory inv) {
-        if (inv.getLocation() == null) {
-            return null;
-        } else {
-            return Cache.instance.getDominionByLoc(inv.getLocation());
-        }
+    public static boolean isInDominion(@Nullable DominionDTO dominion, @NotNull Location location) {
+        if (dominion == null) return false;
+        if (!Objects.equals(dominion.getWorldUid(), location.getWorld().getUID())) return false;
+        return dominion.getCuboid().contain(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 }

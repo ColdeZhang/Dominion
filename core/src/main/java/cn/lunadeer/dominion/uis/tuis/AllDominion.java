@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis;
 
 import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.DominionNode;
+import cn.lunadeer.dominion.cache.DominionNode;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.utils.Notification;
