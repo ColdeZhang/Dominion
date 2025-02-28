@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
+import static cn.lunadeer.dominion.managers.TeleportManager.teleportToDominion;
 import static cn.lunadeer.dominion.misc.Converts.toIntegrity;
 import static cn.lunadeer.dominion.misc.Converts.toPlayer;
 import static cn.lunadeer.dominion.utils.Misc.formatString;
@@ -119,7 +120,14 @@ public class DominionList {
                     DominionOperateCommand.delete(sender, node.getDominion().getName(), "");
                 }
             }.red().build();
-            Line line = Line.create().append(delete).append(manage).append(prefix + node.getDominion().getName());
+            TextComponent tp = new FunctionalButton("TP") {
+                @Override
+                public void function() {
+                    if (sender instanceof Player player)
+                        teleportToDominion(player, node.getDominion());
+                }
+            }.build();
+            Line line = Line.create().append(delete).append(manage).append(tp).append(prefix + node.getDominion().getName());
             lines.add(line);
             lines.addAll(BuildTreeLines(sender, node.getChildren(), depth + 1));
         }

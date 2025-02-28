@@ -365,9 +365,8 @@ database-manager-text:
 teleport-manager-text:
   cooling-down: テレポートする前に {0} 秒待ってください。
   disabled: あなたの権限グループではテレポートが無効です。
-  delay: '{0} 秒後にテレポートします...'
+  delay: '{0} 秒後にテレポートします テレポート中は動かないでください...'
   unfinished-cancelled: 前の未完了のテレポートがキャンセルされました。
-  do-not-move: テレポート中は動かないでください...
   cancel-move: 移動によりテレポートがキャンセルされました。
 blue-map-connect-text:
   register-fail: BlueMap APIの登録に失敗しました。
