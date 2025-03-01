@@ -14,10 +14,13 @@ public class CacheManager {
     private final Cache thisServerCache;
     private final Map<Integer, Cache> otherServerCaches;
 
+    public static CacheManager instance;
+
     public CacheManager() {
         this.thisServerCache = new Cache(Configuration.multiServer.serverId);
         this.otherServerCaches = new HashMap<>();
         Bukkit.getPluginManager().registerEvents(this.thisServerCache, Dominion.instance);
+        instance = this;
     }
 
     public enum ReLoadType {
