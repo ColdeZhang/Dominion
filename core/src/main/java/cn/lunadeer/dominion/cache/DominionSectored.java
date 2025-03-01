@@ -8,7 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -100,93 +102,76 @@ public class DominionSectored {
      * @param dominions the list of DominionDTOs to initialize
      * @return a CompletableFuture representing the initialization task
      */
-    public CompletableFuture<Void> initAsync(List<DominionDTO> dominions) {
+    public CompletableFuture<Void> initAsync(List<DominionNode> dominions) {
         return CompletableFuture.runAsync(() -> init(dominions));
     }
 
     /**
      * Initializes the dominion nodes.
      *
-     * @param dominions the list of DominionDTOs to initialize
+     * @param nodes the list of DominionDTOs to initialize
      */
-    private void init(List<DominionDTO> dominions) {
+    private void init(List<DominionNode> nodes) {
         try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
             world_dominion_tree_sector_a = new ConcurrentHashMap<>();
             world_dominion_tree_sector_b = new ConcurrentHashMap<>();
             world_dominion_tree_sector_c = new ConcurrentHashMap<>();
             world_dominion_tree_sector_d = new ConcurrentHashMap<>();
 
-            Map<UUID, List<DominionDTO>> world_dominions_sector_a = new HashMap<>();
-            Map<UUID, List<DominionDTO>> world_dominions_sector_b = new HashMap<>();
-            Map<UUID, List<DominionDTO>> world_dominions_sector_c = new HashMap<>();
-            Map<UUID, List<DominionDTO>> world_dominions_sector_d = new HashMap<>();
-
             // calculate the section origin point
-            int max_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x2() : 0).max().orElse(0);
-            int min_x = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().x1() : 0).min().orElse(0);
-            int max_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z2() : 0).max().orElse(0);
-            int min_z = dominions.stream().mapToInt(d -> d.getServerId() == Configuration.multiServer.serverId ? d.getCuboid().z1() : 0).min().orElse(0);
+            int max_x = nodes.stream().mapToInt(n -> n.getDominion().getCuboid().x2()).max().orElse(0);
+            int min_x = nodes.stream().mapToInt(n -> n.getDominion().getCuboid().x1()).min().orElse(0);
+            int max_z = nodes.stream().mapToInt(n -> n.getDominion().getCuboid().z2()).max().orElse(0);
+            int min_z = nodes.stream().mapToInt(n -> n.getDominion().getCuboid().z1()).min().orElse(0);
             section_origin_x = (max_x + min_x) / 2;
             section_origin_z = (max_z + min_z) / 2;
             XLogger.debug("Cache init section origin: {0}, {1}", section_origin_x, section_origin_z);
 
-            for (DominionDTO d : dominions) {
+            for (DominionNode n : nodes) {
+                DominionDTO d = n.getDominion();
                 // put dominions into different sectors
-                if (!world_dominions_sector_a.containsKey(d.getWorldUid()) ||
-                        !world_dominions_sector_b.containsKey(d.getWorldUid()) ||
-                        !world_dominions_sector_c.containsKey(d.getWorldUid()) ||
-                        !world_dominions_sector_d.containsKey(d.getWorldUid())) {
-                    world_dominions_sector_a.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominions_sector_b.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominions_sector_c.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominions_sector_d.put(d.getWorldUid(), new ArrayList<>());
+                if (!world_dominion_tree_sector_a.containsKey(d.getWorldUid()) ||
+                        !world_dominion_tree_sector_b.containsKey(d.getWorldUid()) ||
+                        !world_dominion_tree_sector_c.containsKey(d.getWorldUid()) ||
+                        !world_dominion_tree_sector_d.containsKey(d.getWorldUid())) {
+                    world_dominion_tree_sector_a.put(d.getWorldUid(), new ArrayList<>());
+                    world_dominion_tree_sector_b.put(d.getWorldUid(), new ArrayList<>());
+                    world_dominion_tree_sector_c.put(d.getWorldUid(), new ArrayList<>());
+                    world_dominion_tree_sector_d.put(d.getWorldUid(), new ArrayList<>());
                 }
                 if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
-                    world_dominions_sector_a.get(d.getWorldUid()).add(d);
+                    world_dominion_tree_sector_a.get(d.getWorldUid()).add(n);
                 } else if (d.getCuboid().x1() <= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
                     if (d.getCuboid().x2() >= section_origin_x) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_a.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_b.get(d.getWorldUid()).add(n);
                     } else {
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_b.get(d.getWorldUid()).add(n);
                     }
                 } else if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() <= section_origin_z) {
                     if (d.getCuboid().z2() >= section_origin_z) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_a.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_c.get(d.getWorldUid()).add(n);
                     } else {
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_c.get(d.getWorldUid()).add(n);
                     }
                 } else {
                     if (d.getCuboid().x2() >= section_origin_x && d.getCuboid().z2() >= section_origin_z) {
-                        world_dominions_sector_a.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_a.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_b.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_c.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_d.get(d.getWorldUid()).add(n);
                     } else if (d.getCuboid().x2() >= section_origin_x && d.getCuboid().z2() <= section_origin_z) {
-                        world_dominions_sector_c.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_c.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_d.get(d.getWorldUid()).add(n);
                     } else if (d.getCuboid().z2() >= section_origin_z && d.getCuboid().x2() <= section_origin_x) {
-                        world_dominions_sector_b.get(d.getWorldUid()).add(d);
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_b.get(d.getWorldUid()).add(n);
+                        world_dominion_tree_sector_d.get(d.getWorldUid()).add(n);
                     } else {
-                        world_dominions_sector_d.get(d.getWorldUid()).add(d);
+                        world_dominion_tree_sector_d.get(d.getWorldUid()).add(n);
                     }
                 }
             }
-            // build dominion tree for each sector
-            world_dominions_sector_a.forEach((key, value) ->
-                    world_dominion_tree_sector_a.put(key, DominionNode.BuildNodeTree(-1, value))
-            );
-            world_dominions_sector_b.forEach((key, value) ->
-                    world_dominion_tree_sector_b.put(key, DominionNode.BuildNodeTree(-1, value))
-            );
-            world_dominions_sector_c.forEach((key, value) ->
-                    world_dominion_tree_sector_c.put(key, DominionNode.BuildNodeTree(-1, value))
-            );
-            world_dominions_sector_d.forEach((key, value) ->
-                    world_dominion_tree_sector_d.put(key, DominionNode.BuildNodeTree(-1, value))
-            );
         }
     }
 }
