@@ -20,8 +20,9 @@ public class Cache implements Listener {
 
     private ConcurrentHashMap<Integer, DominionDTO> idDominions;    // Dominion ID -> DominionDTO
     private ConcurrentHashMap<String, Integer> dominionNameToId;    // Dominion name -> Dominion ID
-    private ConcurrentHashMap<Integer, GroupDTO> idGroups;  // Group ID -> GroupDTO
     private ConcurrentHashMap<Integer, List<Integer>> dominionToChildrenMap;    // Dominion ID -> List of child Dominion IDs
+
+    private ConcurrentHashMap<Integer, GroupDTO> idGroups;  // Group ID -> GroupDTO
     private ConcurrentHashMap<UUID, ConcurrentHashMap<Integer, MemberDTO>> playerToMembersMap;    // Player UUID -> Map of Dominion ID -> MemberDTO
 
     private final DominionSectored dominionSectored = new DominionSectored();
@@ -87,7 +88,7 @@ public class Cache implements Listener {
                     XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
                     return;
                 }
-                CompletableFuture<Void> res = dominionSectored.initAsync(dominions);
+                CompletableFuture<Void> res = dominionSectored.initAsync(DominionNode.BuildNodeTree(-1, dominions));
                 count = dominions.size();
 
                 for (DominionDTO d : dominions) {
