@@ -1,9 +1,10 @@
 package cn.lunadeer.dominion.cache;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.configuration.Configuration;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -11,18 +12,32 @@ import static cn.lunadeer.dominion.misc.Others.isInDominion;
 
 /**
  * The DominionNode class represents a node in the dominion tree structure.
+ * <p>
+ * DominionNode not store the dominion data, only the id of the dominion.
  */
 public class DominionNode {
-    private Integer dominion_id;
+    private final Integer serverId;
+    private final Integer dominionId;
     private List<DominionNode> children = new ArrayList<>();
+
+    public DominionNode(Integer serverId, Integer dominionId) {
+        this.serverId = serverId;
+        this.dominionId = dominionId;
+    }
 
     /**
      * Gets the DominionDTO associated with this node.
+     * <p>
+     * This method will fetch the DominionDTO from the cache.
      *
      * @return the DominionDTO associated with this node
      */
-    public DominionDTO getDominion() {
-        return Cache.instance.getDominion(dominion_id);
+    public @Nullable DominionDTO getDominion() {
+        if (Configuration.multiServer.serverId == serverId) {
+            return CacheManager.instance.getCache().getDominionCache().getDominion(dominionId);
+        } else {
+            return CacheManager.instance.getOtherServerCaches().get(serverId).getDominionCache().getDominion(dominionId);
+        }
     }
 
     /**
@@ -37,7 +52,7 @@ public class DominionNode {
     /**
      * Builds a dominion node tree from a list of DominionDTOs.
      *
-     * @param rootId the root ID of the tree
+     * @param rootId    the root ID of the tree
      * @param dominions the list of DominionDTOs to build the tree from
      * @return the list of root DominionNodes
      */
@@ -57,7 +72,7 @@ public class DominionNode {
     /**
      * Recursively builds a dominion node tree.
      *
-     * @param rootId the root ID of the tree
+     * @param rootId              the root ID of the tree
      * @param parentToChildrenMap the map of parent node IDs to their child nodes
      * @return the list of root DominionNodes
      */
@@ -67,8 +82,7 @@ public class DominionNode {
 
         if (children != null) {
             for (DominionDTO dominion : children) {
-                DominionNode node = new DominionNode();
-                node.dominion_id = dominion.getId();
+                DominionNode node = new DominionNode(dominion.getServerId(), dominion.getId());
                 node.children = buildTree(dominion.getId(), parentToChildrenMap);
                 dominionTree.add(node);
             }
@@ -81,7 +95,7 @@ public class DominionNode {
      * Gets the DominionNode that contains the specified location.
      *
      * @param nodes the list of DominionNodes to search
-     * @param loc the location to check
+     * @param loc   the location to check
      * @return the DominionNode that contains the location, or null if not found
      */
     public static DominionNode getDominionNodeByLocation(@NotNull List<DominionNode> nodes, @NotNull Location loc) {

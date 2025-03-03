@@ -6,17 +6,11 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.configuration.Configuration;
-import cn.lunadeer.dominion.events.PlayerCrossDominionBorderEvent;
-import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
-import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
-import cn.lunadeer.dominion.managers.PlaceHolderApi;
-import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.utils.ResMigration;
+import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +20,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static cn.lunadeer.dominion.misc.Others.isInDominion;
 
 public class Cache implements Listener {
 
@@ -162,65 +154,6 @@ public class Cache implements Listener {
         });
     }
 
-    public DominionDTO getPlayerCurrentDominion(@NotNull Player player) {
-        try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
-            Integer last_in_dom_id = player_current_dominion_id.get(player.getUniqueId());
-            DominionDTO last_dominion = null;
-            if (last_in_dom_id != null) {
-                last_dominion = id_dominions.get(last_in_dom_id);
-            }
-
-            // 如果玩家仍在上次一记录的领地内，且领地没有子领地，则直接返回
-            if (isInDominion(last_dominion, player.getLocation())
-                    && (dominion_children.get(last_in_dom_id) == null || dominion_children.get(last_in_dom_id).isEmpty())) {
-                // 如果缓存更新则需要重新检查玩家状态
-                if (recheckPlayerState) {
-                    checkPlayerStates(player, last_dominion);
-                    recheckPlayerState = false;
-                }
-                return last_dominion;
-            }
-
-            // 否则获取玩家当前所在领地，然后对比上次记录的领地
-            DominionDTO current_dominion = dominion_trees.getLocInDominionDTO(player.getLocation());
-            int last_dom_id = last_dominion == null ? -1 : last_dominion.getId();
-            int current_dom_id = current_dominion == null ? -1 : current_dominion.getId();
-
-            // 如果玩家上次所在领地和当前所在领地相同，则直接返回
-            if (last_dom_id == current_dom_id) {
-                if (recheckPlayerState) {
-                    checkPlayerStates(player, last_dominion);
-                    recheckPlayerState = false;
-                }
-                return last_dominion;
-            }
-
-            // 如果玩家上次所在领地和当前所在领地不同，则触发玩家跨领地边界事件
-            new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).call();
-
-            // 如果上次记录的领地不为空，则触发玩家离开领地事件
-            if (last_dom_id != -1) {
-                new PlayerMoveOutDominionEvent(player, last_dominion).call();
-            }
-            // 如果当前领地不为空，则触发玩家进入领地事件
-            if (current_dom_id != -1) {
-                new PlayerMoveInDominionEvent(player, current_dominion).call();
-            }
-            // 更新玩家当前所在领地缓存
-            if (current_dominion == null) {
-                player_current_dominion_id.put(player.getUniqueId(), null);
-                return null;
-            } else {
-                player_current_dominion_id.put(player.getUniqueId(), current_dominion.getId());
-                return current_dominion;
-            }
-        }
-    }
-
-    public DominionDTO getDominionByLoc(@NotNull Location loc) {
-        return dominion_trees.getLocInDominionDTO(loc);
-    }
-
     /**
      * 玩家退出时调用 用于清除玩家当前所在领地
      * 会将玩家当前所在领地设置为null
@@ -232,73 +165,6 @@ public class Cache implements Listener {
         player_current_dominion_id.put(player.getUniqueId(), null);
     }
 
-    /**
-     * 检查玩家是否需要设置为发光
-     *
-     * @param player   玩家
-     * @param dominion 领地
-     */
-    private void lightOrNot(Player player, DominionDTO dominion) {
-        if (!Flags.GLOW.getEnable()) {
-            return;
-        }
-        if (dominion == null) {
-            player.setGlowing(false);
-            return;
-        }
-        MemberDTO privilege = getMember(player, dominion);
-        if (privilege != null) {
-            if (privilege.getGroupId() == -1) {
-                player.setGlowing(privilege.getFlagValue(Flags.GLOW));
-            } else {
-                GroupDTO group = getGroup(privilege.getGroupId());
-                if (group != null) {
-                    player.setGlowing(group.getFlagValue(Flags.GLOW));
-                } else {
-                    player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(Flags.GLOW));
-                }
-            }
-        } else {
-            player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(Flags.GLOW));
-        }
-    }
-
-    private void flyOrNot(Player player, DominionDTO dominion) {
-        for (String flyPN : Configuration.flyPermissionNodes) {
-            if (player.hasPermission(flyPN)) {
-                return;
-            }
-        }
-        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
-            return;
-        }
-        if (player.isOp() && Configuration.adminBypass) {
-            return;
-        }
-        if (!Flags.FLY.getEnable()) {
-            player.setAllowFlight(false);
-            return;
-        }
-        if (dominion == null) {
-            player.setAllowFlight(false);
-            return;
-        }
-        MemberDTO privilege = getMember(player, dominion);
-        if (privilege != null) {
-            if (privilege.getGroupId() == -1) {
-                player.setAllowFlight(privilege.getFlagValue(Flags.FLY));
-            } else {
-                GroupDTO group = getGroup(privilege.getGroupId());
-                if (group != null) {
-                    player.setAllowFlight(group.getFlagValue(Flags.FLY));
-                } else {
-                    player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
-                }
-            }
-        } else {
-            player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
-        }
-    }
 
     public GroupDTO getGroup(@NotNull Integer id) {
         return id_groups.get(id);
@@ -312,16 +178,6 @@ public class Cache implements Listener {
             }
         }
         return groups;
-    }
-
-    public MemberDTO getMember(@NotNull Player player, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
-        if (!player_uuid_to_member.containsKey(player.getUniqueId())) return null;
-        return player_uuid_to_member.get(player.getUniqueId()).get(dominion.getId());
-    }
-
-    public MemberDTO getMember(@NotNull UUID player_uuid, cn.lunadeer.dominion.api.dtos.@NotNull DominionDTO dominion) {
-        if (!player_uuid_to_member.containsKey(player_uuid)) return null;
-        return player_uuid_to_member.get(player_uuid).get(dominion.getId());
     }
 
     public List<MemberDTO> getMembers(@NotNull Integer dominionId) {
@@ -533,58 +389,5 @@ public class Cache implements Listener {
 
     public void updatePlayerUsingGroupTitle(UUID uuid, Integer groupId) {
         map_player_using_group_title_id.put(uuid, groupId);
-    }
-
-    private void checkPlayerStates(Player player, DominionDTO dominion) {
-        flyOrNot(player, dominion);
-        lightOrNot(player, dominion);
-    }
-
-    @EventHandler
-    public void onPlayerMoveInDominion(PlayerMoveInDominionEvent event) {
-        XLogger.debug("PlayerMoveInDominionEvent called.");
-        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
-                setPlaceholder(
-                        event.getPlayer(),
-                        event.getDominion().getJoinMessage()
-                                .replace("{DOM}", event.getDominion().getName())
-                                .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
-                )
-        );
-        // show border
-        if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
-            ParticleUtil.showBorder(event.getPlayer(), event.getDominion());
-        }
-    }
-
-    @EventHandler
-    public void onPlayerMoveOutDominion(PlayerMoveOutDominionEvent event) {
-        XLogger.debug("PlayerMoveOutDominionEvent called.");
-        MessageDisplay.show(event.getPlayer(), MessageDisplay.Place.valueOf(Configuration.pluginMessage.enterLeaveDisplayPlace.toUpperCase()),
-                setPlaceholder(
-                        event.getPlayer(),
-                        event.getDominion().getLeaveMessage()
-                                .replace("{DOM}", event.getDominion().getName())
-                                .replace("{OWNER}", getPlayerName(event.getDominion().getOwner()))
-                )
-        );
-        // show border
-        if (event.getDominion().getEnvironmentFlagValue().get(Flags.SHOW_BORDER)) {
-            ParticleUtil.showBorder(event.getPlayer(), event.getDominion());
-        }
-    }
-
-    @EventHandler
-    public void onPlayerCrossDominionBorderEvent(PlayerCrossDominionBorderEvent event) {
-        XLogger.debug("PlayerCrossDominionBorderEvent called.");
-        checkPlayerStates(event.getPlayer(), event.getTo());
-    }
-
-    private static String setPlaceholder(Player player, String message) {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            return PlaceHolderApi.setPlaceholders(player, message);
-        } else {
-            return message;
-        }
     }
 }
