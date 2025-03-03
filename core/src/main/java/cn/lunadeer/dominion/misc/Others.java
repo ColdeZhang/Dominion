@@ -100,6 +100,19 @@ public class Others {
     }
 
     public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player, @Nullable Cancellable event) {
+        if (checkSimplePriFlag(dom, flag, player)) {
+            return true;
+        }
+        String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
+        msg = "&#FF0000" + "&l" + msg;
+        MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
+        if (event != null) {
+            event.setCancelled(true);
+        }
+        return false;
+    }
+
+    public static boolean checkSimplePriFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -114,26 +127,13 @@ public class Others {
             if (member != null) {
                 GroupDTO group = Cache.instance.getGroup(member.getGroupId());
                 if (member.getGroupId() != -1 && group != null) {
-                    if (group.getFlagValue(flag)) {
-                        return true;
-                    }
+                    return group.getFlagValue(flag);
                 } else {
-                    if (member.getFlagValue(flag)) {
-                        return true;
-                    }
+                    return member.getFlagValue(flag);
                 }
             } else {
-                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
-                    return true;
-                }
+                return dom.getGuestPrivilegeFlagValue().get(flag);
             }
-            String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
-            msg = "&#FF0000" + "&l" + msg;
-            MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
-            if (event != null) {
-                event.setCancelled(true);
-            }
-            return false;
         }
     }
 
