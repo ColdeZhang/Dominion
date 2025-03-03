@@ -19,7 +19,7 @@ import static cn.lunadeer.dominion.cache.DominionNode.getDominionNodeByLocation;
 /**
  * The WorldSectored class manages the dominion nodes in different sectors of the world.
  */
-public class DominionSectored {
+public class DominionNodeSectored {
     /*
         D | C
         --+--
@@ -63,8 +63,8 @@ public class DominionSectored {
      * Gets the list of DominionNodes for a given world and coordinates.
      *
      * @param world the world to check
-     * @param x the x-coordinate
-     * @param z the z-coordinate
+     * @param x     the x-coordinate
+     * @param z     the z-coordinate
      * @return the list of DominionNodes
      */
     public List<DominionNode> getNodes(World world, int x, int z) {
@@ -75,8 +75,8 @@ public class DominionSectored {
      * Gets the list of DominionNodes for a given world UUID and coordinates.
      *
      * @param world the world UUID to check
-     * @param x the x-coordinate
-     * @param z the z-coordinate
+     * @param x     the x-coordinate
+     * @param z     the z-coordinate
      * @return the list of DominionNodes
      */
     public List<DominionNode> getNodes(UUID world, int x, int z) {
@@ -102,8 +102,8 @@ public class DominionSectored {
      * @param dominions the list of DominionDTOs to initialize
      * @return a CompletableFuture representing the initialization task
      */
-    public CompletableFuture<Void> initAsync(List<DominionNode> dominions) {
-        return CompletableFuture.runAsync(() -> init(dominions));
+    public CompletableFuture<Void> buildAsync(List<DominionNode> dominions) {
+        return CompletableFuture.runAsync(() -> build(dominions));
     }
 
     /**
@@ -111,7 +111,7 @@ public class DominionSectored {
      *
      * @param nodes the list of DominionDTOs to initialize
      */
-    private void init(List<DominionNode> nodes) {
+    private void build(List<DominionNode> nodes) {
         try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
             world_dominion_tree_sector_a = new ConcurrentHashMap<>();
             world_dominion_tree_sector_b = new ConcurrentHashMap<>();

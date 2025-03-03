@@ -5,13 +5,16 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -157,5 +160,67 @@ public class Others {
         if (dominion == null) return false;
         if (!Objects.equals(dominion.getWorldUid(), location.getWorld().getUID())) return false;
         return dominion.getCuboid().contain(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public static void lightOrNot(@NotNull Player player, @Nullable DominionDTO dominion) {
+        if (!Flags.GLOW.getEnable()) {
+            return;
+        }
+        if (dominion == null) {
+            player.setGlowing(false);
+            return;
+        }
+        MemberDTO member = CacheManager.instance.getCache().getMemberCache().getMember(dominion, player);
+        if (member != null) {
+            if (member.getGroupId() == -1) {
+                player.setGlowing(member.getFlagValue(Flags.GLOW));
+            } else {
+                GroupDTO group = CacheManager.instance.getCache().getGroupCache().getGroup(member.getGroupId());
+                if (group != null) {
+                    player.setGlowing(group.getFlagValue(Flags.GLOW));
+                } else {
+                    player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(Flags.GLOW));
+                }
+            }
+        } else {
+            player.setGlowing(dominion.getGuestPrivilegeFlagValue().get(Flags.GLOW));
+        }
+    }
+
+    public static void flyOrNot(@NotNull Player player, @Nullable DominionDTO dominion) {
+        for (String flyPN : Configuration.flyPermissionNodes) {
+            if (player.hasPermission(flyPN)) {
+                return;
+            }
+        }
+        if (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+            return;
+        }
+        if (player.isOp() && Configuration.adminBypass) {
+            return;
+        }
+        if (!Flags.FLY.getEnable()) {
+            player.setAllowFlight(false);
+            return;
+        }
+        if (dominion == null) {
+            player.setAllowFlight(false);
+            return;
+        }
+        MemberDTO member = CacheManager.instance.getCache().getMemberCache().getMember(dominion, player);
+        if (member != null) {
+            if (member.getGroupId() == -1) {
+                player.setAllowFlight(member.getFlagValue(Flags.FLY));
+            } else {
+                GroupDTO group = CacheManager.instance.getCache().getGroupCache().getGroup(member.getGroupId());
+                if (group != null) {
+                    player.setAllowFlight(group.getFlagValue(Flags.FLY));
+                } else {
+                    player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
+                }
+            }
+        } else {
+            player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
+        }
     }
 }

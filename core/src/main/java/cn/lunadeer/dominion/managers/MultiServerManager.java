@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.managers;
 
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.utils.XLogger;
@@ -186,6 +187,9 @@ public class MultiServerManager implements PluginMessageListener {
             XLogger.info(Language.multiServerManagerText.receiveRespNotice, rcvServerId, rcvServerName);
             int receivedServerId = toIntegrity(rcvServerId);
             serverMap.put(receivedServerId, rcvServerName);
+            // prepare cache for the received server
+            CacheManager.instance.addServerCache(receivedServerId);
+            CacheManager.instance.reloadServerCache(receivedServerId);
         } catch (Exception e) {
             XLogger.error(e.getMessage());
         }
