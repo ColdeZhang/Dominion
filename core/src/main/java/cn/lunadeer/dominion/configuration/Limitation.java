@@ -202,19 +202,19 @@ public class Limitation extends ConfigurationFile {
             if (settings.sizeMinX <= 0) {
                 settings.sizeMinX = 1;
             }
-            if (settings.sizeMaxX < settings.sizeMinX) {
+            if (settings.sizeMaxX < settings.sizeMinX && settings.sizeMaxX != -1) {
                 settings.sizeMaxX = settings.sizeMinX + 1;
             }
             if (settings.sizeMinY <= 0) {
                 settings.sizeMinY = 1;
             }
-            if (settings.sizeMaxY < settings.sizeMinY) {
+            if (settings.sizeMaxY < settings.sizeMinY && settings.sizeMaxY != -1) {
                 settings.sizeMaxY = settings.sizeMinY + 1;
             }
             if (settings.sizeMinZ <= 0) {
                 settings.sizeMinZ = 1;
             }
-            if (settings.sizeMaxZ < settings.sizeMinZ) {
+            if (settings.sizeMaxZ < settings.sizeMinZ && settings.sizeMaxZ != -1) {
                 settings.sizeMaxZ = settings.sizeMinZ + 1;
             }
 
@@ -242,10 +242,6 @@ public class Limitation extends ConfigurationFile {
     }
 
     public @NotNull WorldLimitationSettings getWorldSettings(@Nullable String worldName) {
-        if (worldName == null) {
-            worldName = "default";
-        }
-        WorldLimitationSettings settings = worldLimitations.get(worldName);
-        return Objects.requireNonNullElseGet(settings, WorldLimitationSettings::new);
+        return Objects.requireNonNullElse(worldLimitations.get(worldName), worldLimitations.get("default"));
     }
 }
