@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.utils.VaultConnect;
 
 import cn.lunadeer.dominion.utils.XLogger;
 import net.milkbowl.vault2.economy.Economy;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,17 +36,17 @@ public class Vault2 implements VaultInterface {
     }
 
     @Override
-    public void withdrawPlayer(Player player, double amount) {
+    public void withdrawPlayer(OfflinePlayer player, double amount) {
         econ.withdraw(PluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 
     @Override
-    public void depositPlayer(Player player, double amount) {
+    public void depositPlayer(OfflinePlayer player, double amount) {
         econ.deposit(PluginName, player.getUniqueId(), BigDecimal.valueOf(amount));
     }
 
     @Override
-    public double getBalance(Player player) {
+    public double getBalance(OfflinePlayer player) {
         return econ.getBalance(PluginName, player.getUniqueId()).doubleValue();
     }
 }
