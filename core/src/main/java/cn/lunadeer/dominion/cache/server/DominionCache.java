@@ -18,26 +18,6 @@ public class DominionCache extends Cache {
     // dominion nodes sectored by location, for fast location-based dominion lookup
     private final DominionNodeSectored dominionNodeSectored = new DominionNodeSectored();
 
-    @Override
-    public void update(Integer idToUpdate) {
-
-    }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void delete(Integer idToDelete) {
-
-    }
-
-    @Override
-    public void load(Integer idToLoad) {
-
-    }
-
     public @Nullable DominionDTO getDominion(Integer id) {
         return idDominions.get(id);
     }
@@ -52,6 +32,26 @@ public class DominionCache extends Cache {
 
     public @Nullable DominionDTO getDominion(@NotNull Location location) {
         return dominionNodeSectored.getDominionByLocation(location);
+    }
+
+    @Override
+    void loadExecution() {
+
+    }
+
+    @Override
+    void loadExecution(Integer idToLoad) {
+
+    }
+
+    @Override
+    void updateExecution(Integer idToUpdate) {
+
+    }
+
+    @Override
+    void deleteExecution(Integer idToDelete) {
+
     }
 
 

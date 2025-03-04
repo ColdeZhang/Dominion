@@ -17,26 +17,6 @@ public class MemberCache extends Cache {
     private ConcurrentHashMap<Integer, List<Integer>> dominionMembersMap;  // Dominion ID -> Members ID
     private ConcurrentHashMap<UUID, Map<Integer, Integer>> playerDominionMemberMap;  // Player UUID -> (Dominion ID -> Member ID)
 
-    @Override
-    public void update(Integer idToUpdate) {
-
-    }
-
-    @Override
-    public void load() {
-
-    }
-
-    @Override
-    public void delete(Integer idToDelete) {
-
-    }
-
-    @Override
-    public void load(Integer idToLoad) {
-
-    }
-
     public @Nullable MemberDTO getMember(@Nullable DominionDTO dominion, @NotNull Player player) {
         return getMember(dominion, player.getUniqueId());
     }
@@ -47,5 +27,25 @@ public class MemberCache extends Cache {
         Integer member_id = playerDominionMemberMap.get(player_uuid).get(dominion.getId());
         if (member_id == null) return null;
         return idMembers.get(member_id);
+    }
+
+    @Override
+    void loadExecution() {
+
+    }
+
+    @Override
+    void loadExecution(Integer idToLoad) {
+
+    }
+
+    @Override
+    void updateExecution(Integer idToUpdate) {
+
+    }
+
+    @Override
+    void deleteExecution(Integer idToDelete) {
+
     }
 }

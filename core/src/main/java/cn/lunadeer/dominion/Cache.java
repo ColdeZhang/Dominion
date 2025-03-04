@@ -368,7 +368,6 @@ public class Cache implements Listener {
     private final AtomicBoolean _update_member_is_scheduled = new AtomicBoolean(false);
     private final AtomicLong _last_update_group = new AtomicLong(0);
     private final AtomicBoolean _update_group_is_scheduled = new AtomicBoolean(false);
-    private static final long UPDATE_INTERVAL = 1000 * 4;
     private boolean recheckPlayerState = false;     // 是否需要重新检查玩家状态（发光、飞行）
     private final Map<UUID, String> player_name_cache = new HashMap<>();
 
