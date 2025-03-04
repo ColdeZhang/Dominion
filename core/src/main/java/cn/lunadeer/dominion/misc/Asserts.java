@@ -293,7 +293,7 @@ public class Asserts {
             }
             level++;
         }
-        if (level >= limitDepth) {
+        if (level > limitDepth) {
             throw new DominionException(Language.assertsText.subDomTooDeep, associatedPlayer.getName(), limitDepth);
         }
     }
