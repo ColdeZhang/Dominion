@@ -36,6 +36,8 @@ public class CacheManager {
 
     public static CacheManager instance;
 
+    public static final Long UPDATE_INTERVAL = 1000 * 4L;
+
     /**
      * Constructs a CacheManager and initializes the server cache.
      */

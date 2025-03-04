@@ -1,53 +1,135 @@
 package cn.lunadeer.dominion.cache.server;
 
+import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static cn.lunadeer.dominion.cache.CacheManager.UPDATE_INTERVAL;
+
 public abstract class Cache {
 
-    /**
-     * Updates the cache with the given ID.
-     *
-     * @param idToUpdate the ID of the item to update in the cache
-     */
-    public abstract void update(Integer idToUpdate);
+    public void update(Integer idToUpdate) {
+        if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            Scheduler.runTaskAsync(() -> {
+                resetLastTaskTimeStamp();
+                updateExecution(idToUpdate);
+            });
+        } else {
+            if (isTaskScheduled()) return;
+            setTaskScheduled();
+            Scheduler.runTaskLaterAsync(() -> {
+                        try {
+                            resetLastTaskTimeStamp();
+                            loadExecution();
+                        } catch (Exception e) {
+                            XLogger.error(e);
+                        } finally {
+                            unsetTaskScheduled();
+                        }
+                    },
+                    getTaskScheduledDelayTick());
+        }
+    }
 
-    /**
-     * Loads the entire cache.
-     */
-    public abstract void load();
+    public void load() {
+        if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            resetLastTaskTimeStamp();
+            loadExecution();
+        } else {
+            if (isTaskScheduled()) return;
+            setTaskScheduled();
+            Scheduler.runTaskLaterAsync(() -> {
+                        try {
+                            resetLastTaskTimeStamp();
+                            loadExecution();
+                        } catch (Exception e) {
+                            XLogger.error(e);
+                        } finally {
+                            unsetTaskScheduled();
+                        }
+                    },
+                    getTaskScheduledDelayTick());
+        }
+    }
 
-    /**
-     * Deletes the cache entry with the given ID.
-     *
-     * @param idToDelete the ID of the item to delete from the cache
-     */
-    public abstract void delete(Integer idToDelete);
+    public void delete(Integer idToDelete) {
+        if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            resetLastTaskTimeStamp();
+            deleteExecution(idToDelete);
+        } else {
+            if (isTaskScheduled()) return;
+            setTaskScheduled();
+            Scheduler.runTaskLaterAsync(() -> {
+                        try {
+                            resetLastTaskTimeStamp();
+                            loadExecution();
+                        } catch (Exception e) {
+                            XLogger.error(e);
+                        } finally {
+                            unsetTaskScheduled();
+                        }
+                    },
+                    getTaskScheduledDelayTick());
+        }
+    }
 
-    /**
-     * Loads the cache entry with the given ID.
-     *
-     * @param idToLoad the ID of the item to load into the cache
-     */
-    public abstract void load(Integer idToLoad);
+    public void load(Integer idToLoad) {
+        if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            resetLastTaskTimeStamp();
+            loadExecution(idToLoad);
+        } else {
+            if (isTaskScheduled()) return;
+            setTaskScheduled();
+            Scheduler.runTaskLaterAsync(() -> {
+                        try {
+                            resetLastTaskTimeStamp();
+                            loadExecution();
+                        } catch (Exception e) {
+                            XLogger.error(e);
+                        } finally {
+                            unsetTaskScheduled();
+                        }
+                    },
+                    getTaskScheduledDelayTick());
+        }
+    }
+
+    abstract void loadExecution();
+
+    abstract void loadExecution(Integer idToLoad);
+
+    abstract void updateExecution(Integer idToUpdate);
+
+    abstract void deleteExecution(Integer idToDelete);
+
 
     private final AtomicLong lastTask = new AtomicLong(0);
     private final AtomicBoolean taskScheduled = new AtomicBoolean(false);
 
-    protected Long getLastTaskTimeStamp() {
+    private Long getLastTaskTimeStamp() {
         return lastTask.get();
     }
 
-    protected void setLastTaskTimeStamp(Long timeStamp) {
-        lastTask.set(timeStamp);
+    private void resetLastTaskTimeStamp() {
+        lastTask.set(System.currentTimeMillis());
     }
 
-    protected Boolean isTaskScheduled() {
+    private Boolean isTaskScheduled() {
         return taskScheduled.get();
     }
 
-    protected void setTaskScheduled(Boolean isScheduled) {
-        taskScheduled.set(isScheduled);
+    private void setTaskScheduled() {
+        taskScheduled.set(true);
+    }
+
+    private void unsetTaskScheduled() {
+        taskScheduled.set(false);
+    }
+
+    private long getTaskScheduledDelayTick() {
+        return (UPDATE_INTERVAL - (System.currentTimeMillis() - getLastTaskTimeStamp())) / 1000 * 20L;
     }
 
 }
