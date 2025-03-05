@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Annotation for adding comments to configuration fields.
+ * Annotation for adding comments to configuration fields in lines
  * <p>
  * Single line: {@code @Comments("This is a comment")}
  * <br>
