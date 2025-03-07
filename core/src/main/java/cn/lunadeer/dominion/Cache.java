@@ -40,30 +40,6 @@ public class Cache implements Listener {
     }
 
 
-    public GroupDTO getGroup(@NotNull Integer id) {
-        return id_groups.get(id);
-    }
-
-    public List<GroupDTO> getGroups(@NotNull Integer dominionId) {
-        List<GroupDTO> groups = new ArrayList<>();
-        for (GroupDTO group : id_groups.values()) {
-            if (group.getDomID().equals(dominionId)) {
-                groups.add(group);
-            }
-        }
-        return groups;
-    }
-
-    public List<MemberDTO> getMembers(@NotNull Integer dominionId) {
-        List<MemberDTO> members = new ArrayList<>();
-        for (Map<Integer, MemberDTO> member : player_uuid_to_member.values()) {
-            if (member.containsKey(dominionId)) {
-                members.add(member.get(dominionId));
-            }
-        }
-        return members;
-    }
-
     /**
      * Retrieves the list of group titles for a player.
      * This method collects all group titles associated with the player, including those from the player's memberships

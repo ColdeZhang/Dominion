@@ -27,6 +27,11 @@ public class GroupCache extends Cache {
         return idGroups.get(id);
     }
 
+    public @NotNull List<GroupDTO> getDominionGroups(DominionDTO dominion) {
+        if (dominion == null) return new ArrayList<>();
+        return getDominionGroups(dominion.getId());
+    }
+
     public @NotNull List<GroupDTO> getDominionGroups(Integer dominionId) {
         if (!dominionGroupsMap.containsKey(dominionId)) return List.of();
         List<GroupDTO> groups = new ArrayList<>();
