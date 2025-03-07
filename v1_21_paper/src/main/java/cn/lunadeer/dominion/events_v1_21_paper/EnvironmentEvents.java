@@ -340,6 +340,9 @@ public class EnvironmentEvents implements Listener {
     public void onHopper(InventoryMoveItemEvent event) {    // hopper_outside
         Inventory hopper = event.getDestination();
         Inventory inventory = event.getSource();
+        if (hopper.getLocation() == null || inventory.getLocation() == null) {
+            return;
+        }
         DominionDTO hopperDom = Cache.instance.getDominionByLoc(hopper.getLocation());
         DominionDTO inventoryDom = Cache.instance.getDominionByLoc(inventory.getLocation());
         if (hopperDom == null && inventoryDom != null) {
