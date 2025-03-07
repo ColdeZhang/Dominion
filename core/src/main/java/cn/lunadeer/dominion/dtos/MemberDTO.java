@@ -1,10 +1,10 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
 import cn.lunadeer.dominion.utils.databse.Field;
 import cn.lunadeer.dominion.utils.databse.FieldType;
@@ -52,7 +52,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         if (players.isEmpty()) {
             throw new SQLException("Update member failed");
         }
-        Cache.instance.loadMembers(getPlayerUUID());
+        CacheManager.instance.getCache().getMemberCache().load(getId());
         return players.get(0);
     }
 
@@ -65,11 +65,11 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
             insertRow.field(new Field(f.getFlagName(), player.getFlagValue(f)));
         }
         ResultSet rs = insertRow.execute();
-        Cache.instance.loadMembers(player.getPlayerUUID());
         List<MemberDTO> players = getDTOFromRS(rs);
         if (players.isEmpty()) {
             throw new SQLException("Insert member failed");
         }
+        CacheManager.instance.getCache().getMemberCache().load(players.get(0).getId());
         return players.get(0);
     }
 
@@ -85,10 +85,10 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return query(sql, dom_id);
     }
 
-    public static void delete(UUID player, Integer domID) throws SQLException {
-        String sql = "DELETE FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
-        query(sql, player.toString(), domID);
-        Cache.instance.loadMembers(player);
+    public static void deleteById(Integer id) throws SQLException {
+        String sql = "DELETE FROM dominion_member WHERE id = ?;";
+        query(sql, id);
+        CacheManager.instance.getCache().getMemberCache().delete(id);
     }
 
     public static List<MemberDTO> selectByGroupId(Integer groupId) throws SQLException {

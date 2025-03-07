@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.handler;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.utils.Notification;
@@ -141,7 +141,7 @@ public class SelectPointEventsHandler implements Listener {
         if (block == null) {
             return;
         }
-        DominionDTO dominion = Cache.instance.getDominionByLoc(block.getLocation());
+        DominionDTO dominion = CacheManager.instance.getDominion(block.getLocation());
         if (dominion == null) {
             Notification.info(player, Language.selectPointEventsHandlerText.noDominion, block.getX(), block.getY(), block.getZ());
         } else {

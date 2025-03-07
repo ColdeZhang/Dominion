@@ -17,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
 
@@ -101,7 +98,14 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     @Override
     public List<MemberDTO> getMembers() {
         DominionDTO dominion = CacheManager.instance.getDominion(getDomID());
-
+        List<MemberDTO> members = dominion.getMembers();
+        List<MemberDTO> result = new ArrayList<>();
+        for (MemberDTO member : members) {
+            if (Objects.equals(member.getGroupId(), getId())) {
+                result.add(member);
+            }
+        }
+        return result;
     }
 
     public static GroupDTO create(String name, DominionDTO dominionDTO) throws SQLException {
@@ -191,7 +195,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         if (groups.isEmpty()) {
             throw new SQLException("Failed to update group.");
         }
-        CacheManager.instance.getCache().getGroupCache().load((Integer) id.value);
+        CacheManager.instance.getCache().getGroupCache().load(getId());
         return groups.get(0);
     }
 

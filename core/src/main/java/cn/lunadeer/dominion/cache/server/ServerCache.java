@@ -14,7 +14,7 @@ public class ServerCache {
         this.serverId = serverId;
         this.dominionCache = new DominionCache(serverId);
         this.memberCache = new MemberCache(serverId);
-        this.groupCache = new GroupCache();
+        this.groupCache = new GroupCache(serverId);
         this.dominionCache.load();
         this.memberCache.load();
         this.groupCache.load();

@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
@@ -264,7 +263,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         if (dominions.isEmpty()) {
             throw new SQLException("Failed to update dominion.");
         }
-        CacheManager.instance.getCache().getDominionCache().load((Integer) id.value);
+        CacheManager.instance.getCache().getDominionCache().load(getId());
         return dominions.get(0);
     }
 
@@ -429,12 +428,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
     @Override
     public List<GroupDTO> getGroups() {
-        return Cache.instance.getGroups(getId());
+        return Objects.requireNonNull(CacheManager.instance.getCache(getServerId())).getGroupCache().getDominionGroups(this);
     }
 
     @Override
     public List<MemberDTO> getMembers() {
-        return Cache.instance.getMembers(getId());
+        return Objects.requireNonNull(CacheManager.instance.getCache(getServerId())).getMemberCache().getDominionMembers(this);
     }
 
     @Override
