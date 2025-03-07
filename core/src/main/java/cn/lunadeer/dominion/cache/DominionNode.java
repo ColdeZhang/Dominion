@@ -1,10 +1,8 @@
 package cn.lunadeer.dominion.cache;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
-import cn.lunadeer.dominion.configuration.Configuration;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -16,12 +14,10 @@ import static cn.lunadeer.dominion.misc.Others.isInDominion;
  * DominionNode not store the dominion data, only the id of the dominion.
  */
 public class DominionNode {
-    private final Integer serverId;
     private final Integer dominionId;
     private List<DominionNode> children = new ArrayList<>();
 
-    public DominionNode(Integer serverId, Integer dominionId) {
-        this.serverId = serverId;
+    public DominionNode(Integer dominionId) {
         this.dominionId = dominionId;
     }
 
@@ -32,12 +28,8 @@ public class DominionNode {
      *
      * @return the DominionDTO associated with this node
      */
-    public @Nullable DominionDTO getDominion() {
-        if (Configuration.multiServer.serverId == serverId) {
-            return CacheManager.instance.getCache().getDominionCache().getDominion(dominionId);
-        } else {
-            return CacheManager.instance.getOtherServerCaches().get(serverId).getDominionCache().getDominion(dominionId);
-        }
+    public @NotNull DominionDTO getDominion() {
+        return CacheManager.instance.getDominion(dominionId);
     }
 
     /**
@@ -82,7 +74,7 @@ public class DominionNode {
 
         if (children != null) {
             for (DominionDTO dominion : children) {
-                DominionNode node = new DominionNode(dominion.getServerId(), dominion.getId());
+                DominionNode node = new DominionNode(dominion.getId());
                 node.children = buildTree(dominion.getId(), parentToChildrenMap);
                 dominionTree.add(node);
             }

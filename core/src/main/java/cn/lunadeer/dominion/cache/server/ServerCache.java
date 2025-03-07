@@ -6,12 +6,15 @@ public class ServerCache {
 
     private final int serverId;
 
-    private final DominionCache dominionCache = new DominionCache();
-    private final MemberCache memberCache = new MemberCache();
-    private final GroupCache groupCache = new GroupCache();
+    private final DominionCache dominionCache;
+    private final MemberCache memberCache;
+    private final GroupCache groupCache;
 
     public ServerCache(int serverId) {
         this.serverId = serverId;
+        this.dominionCache = new DominionCache(serverId);
+        this.memberCache = new MemberCache(serverId);
+        this.groupCache = new GroupCache();
         this.dominionCache.load();
         this.memberCache.load();
         this.groupCache.load();

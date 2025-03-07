@@ -20,22 +20,17 @@ public class PlayerCache extends Cache {
     }
 
     @Override
-    void loadExecution() {
+    void loadExecution() throws Exception {
 
     }
 
     @Override
-    void loadExecution(Integer idToLoad) {
+    void loadExecution(Integer idToLoad) throws Exception {
 
     }
 
     @Override
-    void updateExecution(Integer idToUpdate) {
-
-    }
-
-    @Override
-    void deleteExecution(Integer idToDelete) {
+    void deleteExecution(Integer idToDelete) throws Exception {
 
     }
 

@@ -146,7 +146,7 @@ public class MultiServerManager implements PluginMessageListener {
                     List.of(serverId, serverName)
             );
         } catch (IOException e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
     }
 
@@ -169,7 +169,7 @@ public class MultiServerManager implements PluginMessageListener {
                     List.of(thisServerId, thisServerName)
             );
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
     }
 
@@ -191,7 +191,7 @@ public class MultiServerManager implements PluginMessageListener {
             CacheManager.instance.addServerCache(receivedServerId);
             CacheManager.instance.reloadServerCache(receivedServerId);
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
     }
 

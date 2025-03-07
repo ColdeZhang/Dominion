@@ -9,6 +9,7 @@ import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.dominion.modify.DominionReSizeEvent;
 import cn.lunadeer.dominion.events.dominion.modify.DominionSetMessageEvent;
@@ -171,21 +172,11 @@ public class Converts {
      * @throws DominionException If the dominion is unknown.
      */
     public static @NotNull DominionDTO toDominionDTO(@NotNull String name) throws DominionException {
-        DominionDTO dom = Cache.instance.getDominion(name);
-        if (dom == null) {
-            throw new DominionException(Language.convertsText.unknownDominion, name);
-        } else {
-            return dom;
-        }
+        return CacheManager.instance.getDominion(name);
     }
 
     public static @NotNull DominionDTO toDominionDTO(@NotNull Integer id) throws DominionException {
-        DominionDTO dom = Cache.instance.getDominion(id);
-        if (dom == null) {
-            throw new DominionException(Language.convertsText.unknownDominion, id.toString());
-        } else {
-            return dom;
-        }
+        return CacheManager.instance.getDominion(id);
     }
 
     /**

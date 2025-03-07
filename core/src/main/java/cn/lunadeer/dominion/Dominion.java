@@ -59,7 +59,7 @@ public final class Dominion extends JavaPlugin {
             XLogger.info(Language.dominionText.loadingConfig);
             Configuration.loadConfigurationAndDatabase(instance.getServer().getConsoleSender());
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
         XVersionManager.VERSION = XVersionManager.GetVersion(this);
 

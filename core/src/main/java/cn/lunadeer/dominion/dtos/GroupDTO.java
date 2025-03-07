@@ -1,10 +1,10 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.utils.ColorParser;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
@@ -99,8 +99,9 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     }
 
     @Override
-    public List<MemberDTO> getMembers() throws SQLException {
-        return new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectByDomGroupId(getDomID(), getId()));
+    public List<MemberDTO> getMembers() {
+        DominionDTO dominion = CacheManager.instance.getDominion(getDomID());
+
     }
 
     public static GroupDTO create(String name, DominionDTO dominionDTO) throws SQLException {
@@ -118,14 +119,14 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         if (groups.isEmpty()) {
             throw new SQLException("Failed to create group.");
         }
-        Cache.instance.loadGroups(groups.get(0).getId());
+        CacheManager.instance.getCache().getGroupCache().load(groups.get(0).getId());
         return groups.get(0);
     }
 
     public static void deleteById(Integer id) throws SQLException {
         String sql = "DELETE FROM dominion_group WHERE id = ?;";
         DatabaseManager.instance.query(sql, id);
-        Cache.instance.loadGroups(id);
+        CacheManager.instance.getCache().getGroupCache().delete(id);
         List<cn.lunadeer.dominion.dtos.MemberDTO> players = cn.lunadeer.dominion.dtos.MemberDTO.selectByGroupId(id);
         for (cn.lunadeer.dominion.dtos.MemberDTO player : players) {
             player.setGroupId(-1);
@@ -137,18 +138,6 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, id));
         if (groups.isEmpty()) return null;
         return groups.get(0);
-    }
-
-    public static GroupDTO select(Integer domID, String name) throws SQLException {
-        String sql = "SELECT * FROM dominion_group WHERE dom_id = ? AND name = ?;";
-        List<GroupDTO> groups = getDTOFromRS(DatabaseManager.instance.query(sql, domID, name));
-        if (groups.isEmpty()) return null;
-        return groups.get(0);
-    }
-
-    public static List<GroupDTO> selectAll() throws SQLException {
-        String sql = "SELECT * FROM dominion_group;";
-        return getDTOFromRS(DatabaseManager.instance.query(sql));
     }
 
     public static List<GroupDTO> selectByDominionId(Integer domID) throws SQLException {
@@ -202,7 +191,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
         if (groups.isEmpty()) {
             throw new SQLException("Failed to update group.");
         }
-        Cache.instance.loadGroups((Integer) id.value);
+        CacheManager.instance.getCache().getGroupCache().load((Integer) id.value);
         return groups.get(0);
     }
 

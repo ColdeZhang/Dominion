@@ -73,9 +73,9 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         return players.get(0);
     }
 
-    public static MemberDTO select(UUID playerUUID, Integer dom_id) throws SQLException {
-        String sql = "SELECT * FROM dominion_member WHERE player_uuid = ? AND dom_id = ?;";
-        List<MemberDTO> p = query(sql, playerUUID.toString(), dom_id);
+    public static MemberDTO select(Integer id) throws SQLException {
+        String sql = "SELECT * FROM dominion_member WHERE id = ?;";
+        List<MemberDTO> p = query(sql, id);
         if (p.isEmpty()) return null;
         return p.get(0);
     }
@@ -91,24 +91,9 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
         Cache.instance.loadMembers(player);
     }
 
-    public static List<MemberDTO> selectAll() throws SQLException {
-        String sql = "SELECT * FROM dominion_member;";
-        return query(sql);
-    }
-
-    public static List<MemberDTO> selectAll(UUID player) throws SQLException {
-        String sql = "SELECT * FROM dominion_member WHERE player_uuid = ?;";
-        return query(sql, player.toString());
-    }
-
     public static List<MemberDTO> selectByGroupId(Integer groupId) throws SQLException {
         String sql = "SELECT * FROM dominion_member WHERE group_id = ?;";
         return query(sql, groupId);
-    }
-
-    public static List<MemberDTO> selectByDomGroupId(Integer domId, Integer groupId) throws SQLException {
-        String sql = "SELECT * FROM dominion_member WHERE group_id = ? AND dom_id = ?;";
-        return query(sql, groupId, domId);
     }
 
     Field id = new Field("id", FieldType.INT);

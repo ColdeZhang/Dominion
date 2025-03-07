@@ -10,33 +10,14 @@ import static cn.lunadeer.dominion.cache.CacheManager.UPDATE_INTERVAL;
 
 public abstract class Cache {
 
-    public void update(Integer idToUpdate) {
-        if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            Scheduler.runTaskAsync(() -> {
-                resetLastTaskTimeStamp();
-                updateExecution(idToUpdate);
-            });
-        } else {
-            if (isTaskScheduled()) return;
-            setTaskScheduled();
-            Scheduler.runTaskLaterAsync(() -> {
-                        try {
-                            resetLastTaskTimeStamp();
-                            loadExecution();
-                        } catch (Exception e) {
-                            XLogger.error(e);
-                        } finally {
-                            unsetTaskScheduled();
-                        }
-                    },
-                    getTaskScheduledDelayTick());
-        }
-    }
-
     public void load() {
         if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
             resetLastTaskTimeStamp();
-            loadExecution();
+            try {
+                loadExecution();
+            } catch (Exception e) {
+                XLogger.error(e);
+            }
         } else {
             if (isTaskScheduled()) return;
             setTaskScheduled();
@@ -57,7 +38,11 @@ public abstract class Cache {
     public void delete(Integer idToDelete) {
         if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
             resetLastTaskTimeStamp();
-            deleteExecution(idToDelete);
+            try {
+                deleteExecution(idToDelete);
+            } catch (Exception e) {
+                XLogger.error(e);
+            }
         } else {
             if (isTaskScheduled()) return;
             setTaskScheduled();
@@ -78,7 +63,11 @@ public abstract class Cache {
     public void load(Integer idToLoad) {
         if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
             resetLastTaskTimeStamp();
-            loadExecution(idToLoad);
+            try {
+                loadExecution(idToLoad);
+            } catch (Exception e) {
+                XLogger.error(e);
+            }
         } else {
             if (isTaskScheduled()) return;
             setTaskScheduled();
@@ -96,13 +85,11 @@ public abstract class Cache {
         }
     }
 
-    abstract void loadExecution();
+    abstract void loadExecution() throws Exception;
 
-    abstract void loadExecution(Integer idToLoad);
+    abstract void loadExecution(Integer idToLoad) throws Exception;
 
-    abstract void updateExecution(Integer idToUpdate);
-
-    abstract void deleteExecution(Integer idToDelete);
+    abstract void deleteExecution(Integer idToDelete) throws Exception;
 
 
     private final AtomicLong lastTask = new AtomicLong(0);

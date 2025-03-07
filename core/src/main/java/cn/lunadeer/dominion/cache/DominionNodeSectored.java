@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.lunadeer.dominion.cache.DominionNode.getDominionNodeByLocation;
@@ -97,21 +96,11 @@ public class DominionNodeSectored {
     }
 
     /**
-     * Initializes the dominion nodes asynchronously.
-     *
-     * @param dominions the list of DominionDTOs to initialize
-     * @return a CompletableFuture representing the initialization task
-     */
-    public CompletableFuture<Void> buildAsync(List<DominionNode> dominions) {
-        return CompletableFuture.runAsync(() -> build(dominions));
-    }
-
-    /**
      * Initializes the dominion nodes.
      *
      * @param nodes the list of DominionDTOs to initialize
      */
-    private void build(List<DominionNode> nodes) {
+    public void build(List<DominionNode> nodes) {
         try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
             world_dominion_tree_sector_a = new ConcurrentHashMap<>();
             world_dominion_tree_sector_b = new ConcurrentHashMap<>();
