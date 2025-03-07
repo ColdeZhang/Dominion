@@ -162,7 +162,7 @@ public class TeleportManager implements Listener {
             Integer id = toIntegrity(dominionId);
             teleportRequestOtherServer.put(uuid, id);
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
     }
 

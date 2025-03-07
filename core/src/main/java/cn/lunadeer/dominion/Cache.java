@@ -3,19 +3,15 @@ package cn.lunadeer.dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
-import cn.lunadeer.dominion.api.dtos.PlayerDTO;
-import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.dominion.utils.XLogger;
-import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,128 +26,6 @@ public class Cache implements Listener {
         loadMembers();
         loadGroups();
         Bukkit.getPluginManager().registerEvents(this, Dominion.instance);
-    }
-
-
-    /**
-     * 从数据库加载所有玩家特权
-     * 如果player_uuid为null，则加载所有玩家的特权
-     *
-     * @param player_uuid 玩家UUID
-     */
-    public void loadMembers(UUID player_uuid) {
-        if (_last_update_member.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            XLogger.debug("run loadMembersExecution directly");
-            loadMembersExecution(player_uuid);
-        } else {
-            if (_update_member_is_scheduled.get()) return;
-            XLogger.debug("schedule loadMembersExecution");
-            _update_member_is_scheduled.set(true);
-            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_member.get())) / 1000 * 20L;
-            Scheduler.runTaskLaterAsync(() -> {
-                        XLogger.debug("run loadMembersExecution scheduled");
-                        loadMembersExecution(player_uuid);
-                        _update_member_is_scheduled.set(false);
-                    },
-                    delay_tick);
-        }
-    }
-
-    public void loadMembers() {
-        loadMembers(null);
-    }
-
-    private void loadMembersExecution(UUID player_to_update) {
-        Scheduler.runTaskAsync(() -> {
-            long start = System.currentTimeMillis();
-            List<MemberDTO> all_privileges;
-            try {
-                if (player_to_update == null) {
-                    all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll());
-                    player_uuid_to_member = new ConcurrentHashMap<>();
-                } else {
-                    all_privileges = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectAll(player_to_update));
-                    if (!player_uuid_to_member.containsKey(player_to_update)) {
-                        player_uuid_to_member.put(player_to_update, new ConcurrentHashMap<>());
-                    } else {
-                        player_uuid_to_member.get(player_to_update).clear();
-                    }
-                }
-            } catch (SQLException e) {
-                XLogger.error(e.getMessage());
-                return;
-            }
-            for (MemberDTO privilege : all_privileges) {
-                UUID player_uuid = privilege.getPlayerUUID();
-                if (!player_uuid_to_member.containsKey(player_uuid)) {
-                    player_uuid_to_member.put(player_uuid, new ConcurrentHashMap<>());
-                }
-                player_uuid_to_member.get(player_uuid).put(privilege.getDomID(), privilege);
-            }
-            recheckPlayerState = true;
-            _last_update_member.set(System.currentTimeMillis());
-            XLogger.debug("loadMembersExecution cost: {0} ms for {1} privileges"
-                    , System.currentTimeMillis() - start, all_privileges.size());
-        });
-    }
-
-    public void loadGroups() {
-        loadGroups(null);
-    }
-
-    public void loadGroups(Integer groupId) {
-        if (_last_update_group.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-            XLogger.debug("run loadGroupsExecution directly");
-            loadGroupExecution(groupId);
-        } else {
-            if (_update_group_is_scheduled.get()) return;
-            XLogger.debug("schedule loadGroupsExecution");
-            _update_group_is_scheduled.set(true);
-            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - _last_update_group.get())) / 1000 * 20L;
-            Scheduler.runTaskLaterAsync(() -> {
-                        XLogger.debug("run loadGroupsExecution scheduled");
-                        loadGroupExecution(groupId);
-                        _update_group_is_scheduled.set(false);
-                    },
-                    delay_tick);
-        }
-    }
-
-    private void loadGroupExecution(Integer groupId) {
-        Scheduler.runTaskAsync(() -> {
-            long start = System.currentTimeMillis();
-            if (groupId == null) {
-                id_groups = new ConcurrentHashMap<>();
-                try {
-                    List<GroupDTO> groups = new ArrayList<>(cn.lunadeer.dominion.dtos.GroupDTO.selectAll());
-                    List<PlayerDTO> players = new ArrayList<>(cn.lunadeer.dominion.dtos.PlayerDTO.all());
-                    for (GroupDTO group : groups) {
-                        id_groups.put(group.getId(), group);
-                    }
-                    for (PlayerDTO player : players) {
-                        map_player_using_group_title_id.put(player.getUuid(), player.getUsingGroupTitleID());
-                    }
-                } catch (SQLException e) {
-                    XLogger.error(e.getMessage());
-                    return;
-                }
-            } else {
-                try {
-                    GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.select(groupId);
-                    if (group == null && id_groups.containsKey(groupId)) {
-                        id_groups.remove(groupId);
-                    } else if (group != null) {
-                        id_groups.put(groupId, group);
-                    }
-                } catch (SQLException e) {
-                    XLogger.error(e.getMessage());
-                    return;
-                }
-            }
-            recheckPlayerState = true;
-            _last_update_group.set(System.currentTimeMillis());
-            XLogger.debug("loadGroupsExecution cost: {0} ms", System.currentTimeMillis() - start);
-        });
     }
 
     /**
@@ -219,90 +93,6 @@ public class Cache implements Listener {
         return groups;
     }
 
-    public @Nullable DominionDTO getDominion(@NotNull Integer id) {
-        return id_dominions.get(id);
-    }
-
-    public @Nullable DominionDTO getDominion(@NotNull String name) {
-        if (dominion_name_to_id.containsKey(name)) {
-            return id_dominions.get(dominion_name_to_id.get(name));
-        }
-        return null;
-    }
-
-    public List<DominionDTO> getDominionsByParentId(@NotNull Integer parent_id) {
-        List<DominionDTO> dominions = new ArrayList<>();
-        if (dominion_children.containsKey(parent_id)) {
-            for (Integer id : dominion_children.get(parent_id)) {
-                dominions.add(id_dominions.get(id));
-            }
-        }
-        return dominions;
-    }
-
-    public String getPlayerName(UUID uuid) {
-        if (!player_name_cache.containsKey(uuid)) {
-            PlayerDTO playerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.select(uuid);
-            if (playerDTO != null) {
-                player_name_cache.put(uuid, playerDTO.getLastKnownName());
-            }
-        }
-        return player_name_cache.getOrDefault(uuid, "Unknown");
-    }
-
-    public int getPlayerDominionCount(UUID player_uuid) {
-        int count = 0;
-        for (DominionDTO dominion : id_dominions.values()) {
-            if (dominion.getOwner().equals(player_uuid)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Retrieves a list of dominions owned by a specific player.
-     * <p>
-     * Includes dominions on all servers.
-     *
-     * @param player_uuid The UUID of the player whose dominions are to be retrieved.
-     * @return A list of DominionDTO objects representing the dominions owned by the player.
-     */
-    public List<DominionDTO> getPlayerDominions(UUID player_uuid) {
-        List<DominionDTO> dominions = new ArrayList<>();
-        for (DominionDTO dominion : id_dominions.values()) {
-            if (dominion.getServerId() != Configuration.multiServer.serverId) {
-                continue;
-            }
-            if (dominion.getOwner().equals(player_uuid)) {
-                dominions.add(dominion);
-            }
-        }
-        return dominions;
-    }
-
-    /**
-     * Retrieves a list of dominions where a specific player has admin privileges.
-     * <p>
-     * Only dominions on the current server are included in the list.
-     *
-     * @param player_uuid The UUID of the player whose admin dominions are to be retrieved.
-     * @return A list of DominionDTO objects representing the dominions where the player has admin privileges.
-     */
-    public List<DominionDTO> getPlayerAdminDominions(UUID player_uuid) {
-        List<DominionDTO> dominions = new ArrayList<>();
-        for (DominionDTO dominion : id_dominions.values()) {
-            if (dominion.getServerId() != Configuration.multiServer.serverId) {
-                continue;
-            }
-            MemberDTO privilege = getMember(player_uuid, dominion);
-            if (privilege != null && privilege.getFlagValue(Flags.ADMIN)) {
-                dominions.add(dominion);
-            }
-        }
-        return dominions;
-    }
-
     private void updateResidenceData() {
         if (residence_data == null) {
             residence_data = new HashMap<>();
@@ -334,25 +124,6 @@ public class Cache implements Listener {
         return residence_data.get(player_uuid);
     }
 
-    public @NotNull List<DominionDTO> getAllDominions() {
-        return new ArrayList<>(id_dominions.values());
-    }
-
-    public int getDominionCounts() {
-        return id_dominions.size();
-    }
-
-    public int getMemberCounts() {
-        int count = 0;
-        for (Map<Integer, MemberDTO> member : player_uuid_to_member.values()) {
-            count += member.size();
-        }
-        return count;
-    }
-
-    public int getGroupCounts() {
-        return id_groups.size();
-    }
 
     public static Cache instance;
     private ConcurrentHashMap<Integer, DominionDTO> id_dominions;

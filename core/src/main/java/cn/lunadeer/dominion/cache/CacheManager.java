@@ -6,20 +6,22 @@ import cn.lunadeer.dominion.cache.server.DominionCache;
 import cn.lunadeer.dominion.cache.server.PlayerCache;
 import cn.lunadeer.dominion.cache.server.ServerCache;
 import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.PlayerCrossDominionBorderEvent;
 import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
 import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
 import cn.lunadeer.dominion.handler.CacheEventHandler;
+import cn.lunadeer.dominion.misc.DominionException;
 import cn.lunadeer.dominion.utils.AutoTimer;
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static cn.lunadeer.dominion.misc.Others.*;
 
@@ -67,6 +69,13 @@ public class CacheManager {
         return otherServerCaches;
     }
 
+    public @Nullable ServerCache getCache(Integer id) {
+        if (thisServerCache.getServerId().equals(id)) {
+            return thisServerCache;
+        }
+        return otherServerCaches.get(id);
+    }
+
     public void addServerCache(@NotNull Integer serverId) {
         ServerCache serverCache = new ServerCache(serverId);
         otherServerCaches.put(serverId, serverCache);
@@ -83,17 +92,21 @@ public class CacheManager {
 
     /**
      * Reloads the cache for a specific server.
+     * <p>
+     * This is an asynchronous operation.
      *
      * @param serverId the ID of the server whose cache should be reloaded
      */
     public void reloadServerCache(@NotNull Integer serverId) {
-        if (!otherServerCaches.containsKey(serverId)) {
-            XLogger.debug("Server cache not found for serverId: {0}", serverId);
-            return;
-        }
-        otherServerCaches.get(serverId).getDominionCache().load();
-        otherServerCaches.get(serverId).getMemberCache().load();
-        otherServerCaches.get(serverId).getGroupCache().load();
+        CompletableFuture.runAsync(() -> {
+            if (!otherServerCaches.containsKey(serverId)) {
+                XLogger.debug("Server cache not found for serverId: {0}", serverId);
+                return;
+            }
+            otherServerCaches.get(serverId).getDominionCache().load();
+            otherServerCaches.get(serverId).getMemberCache().load();
+            otherServerCaches.get(serverId).getGroupCache().load();
+        });
     }
 
     /**
@@ -128,7 +141,7 @@ public class CacheManager {
             // if player still in the same dominion, and the dominion has no children
             // we don't need to check again and return the last dominion directly
             if (isInDominion(last_dominion, player.getLocation())
-                    && cache.getChildrenId(last_in_dom_id).isEmpty()) {
+                    && cache.getChildrenOf(last_in_dom_id).isEmpty()) {
                 checkPlayerStates(player, last_dominion);   // check player states
                 return last_dominion;
             }
@@ -176,4 +189,104 @@ public class CacheManager {
     public String getPlayerName(@NotNull UUID uuid) {
         return playerCache.getPlayerName(uuid);
     }
+
+    /**
+     * Retrieves the names of the dominions managed by a player.
+     * <p>
+     * This method retrieves the names of dominions managed by the player, including dominions where the player is an
+     * admin member or admin group.
+     * <p>
+     * If multi-server-mode is enabled, this method will also retrieve the names of dominions managed by the player on
+     * other servers.
+     *
+     * @param player the UUID of the player
+     * @return a list of dominion names managed by the player
+     */
+    public List<String> getPlayerManageDominionNames(@NotNull UUID player) {
+        List<String> names = new ArrayList<>(thisServerCache.getDominionCache().getPlayerDominionNames(player));
+        // todo add names player is admin member or admin group
+
+        // add names from other servers
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                names.addAll(serverCache.getDominionCache().getPlayerDominionNames(player));
+                // todo add names player is admin member or admin group on other servers
+            }
+        }
+        return names;
+    }
+
+    /**
+     * Retrieves the names of all dominions.
+     * <p>
+     * This method retrieves the names of all dominions, including dominions on other servers if multi-server-mode is
+     * enabled.
+     *
+     * @return a list of all dominion names
+     */
+    public List<String> getAllDominionNames() {
+        List<String> names = new ArrayList<>(thisServerCache.getDominionCache().getAllDominionNames());
+        // add names from other servers
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                names.addAll(serverCache.getDominionCache().getAllDominionNames());
+            }
+        }
+        return names;
+    }
+
+    /**
+     * Retrieves a DominionDTO by its ID.
+     * <p>
+     * This method will first attempt to retrieve the DominionDTO from the cache of this server. If the DominionDTO
+     * is not found, it will then attempt to retrieve the DominionDTO from the caches of other servers.
+     *
+     * @param id the ID of the dominion to retrieve
+     * @return the DominionDTO associated with the given ID
+     * @throws DominionException if the dominion ID is not found
+     */
+    public @NotNull DominionDTO getDominion(Integer id) {
+        DominionDTO dominion = thisServerCache.getDominionCache().getDominion(id);
+        if (dominion != null) {
+            return dominion;
+        } else if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                dominion = serverCache.getDominionCache().getDominion(id);
+                if (dominion != null) {
+                    return dominion;
+                }
+            }
+        }
+        throw new DominionException(Language.convertsText.unknownDominion, id);
+    }
+
+    /**
+     * Retrieves a DominionDTO by its name.
+     * <p>
+     * This method will first attempt to retrieve the DominionDTO from the cache of this server. If the DominionDTO
+     * is not found, it will then attempt to retrieve the DominionDTO from the caches of other servers.
+     *
+     * @param name the name of the dominion to retrieve
+     * @return the DominionDTO associated with the given name
+     * @throws DominionException if the dominion name is not found
+     */
+    public @NotNull DominionDTO getDominion(String name) {
+        DominionDTO dominion = thisServerCache.getDominionCache().getDominion(name);
+        if (dominion != null) {
+            return dominion;
+        } else if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                dominion = serverCache.getDominionCache().getDominion(name);
+                if (dominion != null) {
+                    return dominion;
+                }
+            }
+        }
+        throw new DominionException(Language.convertsText.unknownDominion, name);
+    }
+
+    public @Nullable DominionDTO getDominion(Location location) {
+        return thisServerCache.getDominionCache().getDominion(location);
+    }
+
 }

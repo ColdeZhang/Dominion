@@ -10,6 +10,7 @@ import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
@@ -71,9 +72,9 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return dominions;
     }
 
-    public static List<DominionDTO> selectAll() throws SQLException {
-        String sql = "SELECT * FROM dominion WHERE id > 0;";
-        return query(sql);
+    public static List<DominionDTO> selectAll(Integer serverId) throws SQLException {
+        String sql = "SELECT * FROM dominion WHERE id > 0 AND server_id = ?;";
+        return query(sql, serverId);
     }
 
     public static DominionDTO rootDominion() {
@@ -118,18 +119,18 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
         ResultSet rs = insert.execute();
-        Cache.instance.loadDominions();
         List<DominionDTO> dominions = getDTOFromRS(rs);
         if (dominions.isEmpty()) {
             throw new SQLException("Failed to insert dominion.");
         }
+        CacheManager.instance.getCache().getDominionCache().load(dominions.get(0).getId());
         return dominions.get(0);
     }
 
     public static void deleteById(Integer dominion) throws SQLException {
         String sql = "DELETE FROM dominion WHERE id = ?;";
         query(sql, dominion);
-        Cache.instance.loadDominions();
+        CacheManager.instance.getCache().getDominionCache().delete(dominion);
     }
 
     // full constructor
@@ -263,7 +264,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         if (dominions.isEmpty()) {
             throw new SQLException("Failed to update dominion.");
         }
-        Cache.instance.loadDominions((Integer) id.value);
+        CacheManager.instance.getCache().getDominionCache().load((Integer) id.value);
         return dominions.get(0);
     }
 

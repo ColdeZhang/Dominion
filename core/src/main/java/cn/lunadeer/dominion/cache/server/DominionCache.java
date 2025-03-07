@@ -1,136 +1,204 @@
 package cn.lunadeer.dominion.cache.server;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.cache.DominionNode;
 import cn.lunadeer.dominion.cache.DominionNodeSectored;
+import cn.lunadeer.dominion.misc.DominionException;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DominionCache extends Cache {
+    private final Integer serverId;
+
     private ConcurrentHashMap<Integer, DominionDTO> idDominions;            // Dominion ID -> DominionDTO
     private ConcurrentHashMap<Integer, List<Integer>> dominionChildrenMap;  // Dominion ID -> Children Dominion ID
     private ConcurrentHashMap<String, Integer> dominionNameToId;            // Dominion name -> Dominion ID
+    private ConcurrentHashMap<UUID, List<String>> playerOwnDominionNames;          // Player UUID -> Dominion Name
+    private ConcurrentHashMap<UUID, List<DominionNode>> playerDominionNodes;  // Player UUID -> DominionNode
+    private ConcurrentHashMap<Integer, DominionNode> dominionNodeMap;        // Dominion ID -> DominionNode
 
     // dominion nodes sectored by location, for fast location-based dominion lookup
     private final DominionNodeSectored dominionNodeSectored = new DominionNodeSectored();
 
+    public DominionCache(Integer serverId) {
+        this.serverId = serverId;
+    }
+
+    /**
+     * Retrieves a DominionDTO by its ID.
+     *
+     * @param id the ID of the dominion to retrieve
+     * @return the DominionDTO associated with the given ID
+     * @throws DominionException if the dominion ID is not found
+     */
     public @Nullable DominionDTO getDominion(Integer id) {
         return idDominions.get(id);
     }
 
-    public @NotNull List<Integer> getChildrenId(Integer id) {
+    /**
+     * Retrieves a DominionDTO by its name.
+     *
+     * @param name the name of the dominion to retrieve
+     * @return the DominionDTO associated with the given name
+     * @throws DominionException if the dominion name is not found
+     */
+    public @Nullable DominionDTO getDominion(String name) {
+        return getDominion(dominionNameToId.get(name));
+    }
+
+    /**
+     * Retrieves a DominionDTO by its location.
+     *
+     * @param location the location of the dominion to retrieve
+     * @return the DominionDTO associated with the given location, or null if not found
+     */
+    public @Nullable DominionDTO getDominion(@NotNull Location location) {
+        return dominionNodeSectored.getDominionByLocation(location);
+    }
+
+    /**
+     * Retrieves the dominion nodes managed by a player.
+     *
+     * @param player the UUID of the player
+     * @return a list of DominionNode objects managed by the player
+     */
+    public @NotNull List<DominionNode> getPlayerDominionNodes(UUID player) {
+        return playerDominionNodes.getOrDefault(player, new ArrayList<>());
+    }
+
+    /**
+     * Retrieves all dominion nodes.
+     *
+     * @return a list of all DominionNode objects
+     */
+    public @NotNull List<DominionNode> getAllDominionNodes() {
+        return new ArrayList<>(dominionNodeMap.values());
+    }
+
+    /**
+     * Retrieves the children dominions of a given dominion.
+     *
+     * @param id the ID of the parent dominion
+     * @return a list of DominionDTO objects representing the children of the given dominion
+     */
+    public @NotNull List<DominionDTO> getChildrenOf(Integer id) {
         if (dominionChildrenMap.containsKey(id)) {
-            return dominionChildrenMap.get(id);
+            return dominionChildrenMap.get(id).stream().map(this::getDominion).toList();
         } else {
             return new ArrayList<>();
         }
     }
 
-    public @Nullable DominionDTO getDominion(@NotNull Location location) {
-        return dominionNodeSectored.getDominionByLocation(location);
+    /**
+     * Retrieves the names of all dominions.
+     *
+     * @return a list of all dominion names
+     */
+    public List<String> getAllDominionNames() {
+        return new ArrayList<>(dominionNameToId.keySet());
+    }
+
+    /**
+     * Retrieves the names of the dominions owned by a player.
+     *
+     * @param player the UUID of the player
+     * @return a list of dominion names owned by the player
+     */
+    public List<String> getPlayerDominionNames(UUID player) {
+        return playerOwnDominionNames.getOrDefault(player, new ArrayList<>());
+    }
+
+    public @NotNull List<DominionDTO> getAllDominions() {
+        return new ArrayList<>(idDominions.values());
     }
 
     @Override
-    void loadExecution() {
+    void loadExecution() throws Exception {
+        idDominions = new ConcurrentHashMap<>();
+        dominionChildrenMap = new ConcurrentHashMap<>();
+        dominionNameToId = new ConcurrentHashMap<>();
+        playerDominionNodes = new ConcurrentHashMap<>();
+        playerOwnDominionNames = new ConcurrentHashMap<>();
+        dominionNodeMap = new ConcurrentHashMap<>();
+        List<DominionDTO> dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll(serverId));
 
+        for (DominionDTO dominion : dominions) {
+            idDominions.put(dominion.getId(), dominion);
+        }
+
+        // build tree
+        CompletableFuture<Void> buildTreeFuture = CompletableFuture.runAsync(() -> {
+            List<DominionNode> nodeTree = DominionNode.BuildNodeTree(-1, dominions);
+            for (DominionNode node : nodeTree) {
+                dominionNodeMap.put(node.getDominion().getId(), node);
+                playerDominionNodes.computeIfAbsent(node.getDominion().getOwner(), k -> new ArrayList<>()).add(node);
+            }
+            dominionNodeSectored.build(nodeTree);
+        });
+
+        // build other caches
+        CompletableFuture<Void> buildCachesFuture = CompletableFuture.runAsync(() -> {
+            for (DominionDTO dominion : dominions) {
+                dominionNameToId.put(dominion.getName(), dominion.getId());
+                playerOwnDominionNames.computeIfAbsent(dominion.getOwner(), k -> new ArrayList<>()).add(dominion.getName());
+                if (dominion.getParentDomId() != -1) {
+                    dominionChildrenMap.computeIfAbsent(dominion.getParentDomId(), k -> new ArrayList<>()).add(dominion.getId());
+                }
+            }
+        });
+
+        CompletableFuture.allOf(buildTreeFuture, buildCachesFuture).join();
     }
 
     @Override
-    void loadExecution(Integer idToLoad) {
-
+    void loadExecution(Integer idToLoad) throws Exception {
+        DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
+        if (dominion == null) {
+            return;
+        }
+        DominionDTO oldData = idDominions.putIfAbsent(dominion.getId(), dominion);
+        // remove old data
+        if (oldData != null) {
+            dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(oldData.getId()));
+            playerOwnDominionNames.computeIfAbsent(oldData.getOwner(), k -> new ArrayList<>()).remove(oldData.getName());
+        }
+        // update data
+        dominionNameToId.put(dominion.getName(), dominion.getId());
+        playerOwnDominionNames.computeIfAbsent(dominion.getOwner(), k -> new ArrayList<>()).add(dominion.getName());
+        // update node tree
+        rebuildTreeAsync();
     }
 
     @Override
-    void updateExecution(Integer idToUpdate) {
-
+    void deleteExecution(Integer idToDelete) throws Exception {
+        DominionDTO dominionToDelete = idDominions.remove(idToDelete);
+        // remove children map
+        dominionChildrenMap.remove(idToDelete);
+        if (dominionChildrenMap.containsKey(dominionToDelete.getParentDomId())) {
+            dominionChildrenMap.get(dominionToDelete.getParentDomId()).remove(idToDelete);
+        }
+        // remove name map
+        dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(idToDelete));
+        playerOwnDominionNames.entrySet().removeIf(entry -> entry.getValue().contains(dominionToDelete.getName()));
+        // update node tree
+        rebuildTreeAsync();
     }
 
-    @Override
-    void deleteExecution(Integer idToDelete) {
-
+    private void rebuildTreeAsync() {
+        CompletableFuture.runAsync(() -> {
+            List<DominionNode> nodeTree = DominionNode.BuildNodeTree(-1, new ArrayList<>(idDominions.values()));
+            for (DominionNode node : nodeTree) {
+                dominionNodeMap.put(node.getDominion().getId(), node);
+                playerDominionNodes.computeIfAbsent(node.getDominion().getOwner(), k -> new ArrayList<>()).add(node);
+            }
+            dominionNodeSectored.build(nodeTree);
+        });
     }
-
-
-//    public void load() {
-//        load(null);
-//    }
-//
-//    public void load(Integer idToLoad) {
-//        if (lastUpdate.get() + UPDATE_INTERVAL < System.currentTimeMillis()) {
-//            XLogger.debug("run loadDominionsExecution directly");
-//            loadDominionsExecution(idToLoad);
-//        } else {
-//            if (updateScheduled.get()) return;
-//            XLogger.debug("schedule loadDominionsExecution");
-//            updateScheduled.set(true);
-//            long delay_tick = (UPDATE_INTERVAL - (System.currentTimeMillis() - lastUpdate.get())) / 1000 * 20L;
-//            Scheduler.runTaskLaterAsync(() -> {
-//                        XLogger.debug("run loadDominionsExecution scheduled");
-//                        loadDominionsExecution(idToLoad);
-//                        updateScheduled.set(false);
-//                    },
-//                    delay_tick);
-//        }
-//    }
-//
-//    private void loadDominionsExecution(Integer idToLoad) {
-//        Scheduler.runTaskAsync(() -> {
-//            long start = System.currentTimeMillis();
-//            int count = 0;
-//            if (idToLoad == null) {
-//                idDominions = new ConcurrentHashMap<>();
-//                dominionNameToId = new ConcurrentHashMap<>();
-//                idDominionNodes = new ConcurrentHashMap<>();
-//
-//                List<DominionDTO> dominions;
-//                try {
-//                    dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll());
-//                } catch (SQLException e) {
-//                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
-//                    return;
-//                }
-//                List<DominionNode> tree = DominionNode.BuildNodeTree(-1, dominions);
-//                CompletableFuture<Void> res = dominionSectored.initAsync(tree);
-//                count = dominions.size();
-//                for (DominionDTO d : dominions) {
-//                    idDominions.put(d.getId(), d);
-//                    dominionNameToId.put(d.getName(), d.getId());
-//                }
-//                for (DominionNode n : tree) {
-//                    idDominionNodes.put(n.getDominion().getId(), n);
-//                }
-//                res.join(); // 等待树的构建完成
-//
-//            } else {
-//                DominionDTO dominion;
-//                try {
-//                    dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
-//                } catch (SQLException e) {
-//                    XLogger.error("loadDominionsExecution error: {0}", e.getMessage());
-//                    return;
-//                }
-//                if (dominion == null && idDominions.containsKey(idToLoad)) {
-//                    idDominions.remove(idToLoad);
-//                } else if (dominion != null) {
-//                    idDominions.put(idToLoad, dominion);
-//                    count = 1;
-//                }
-//                // rebuild dominionNameToId and dominionToChildrenMap
-//                dominionNameToId = new ConcurrentHashMap<>();
-//                idDominionNodes = new ConcurrentHashMap<>();
-//                for (DominionDTO d : idDominions.values()) {
-//                    dominionNameToId.put(d.getName(), d.getId());
-//                }
-//            }
-//            MapRender.render();
-//            recheckPlayerState = true;
-//            lastUpdate.set(System.currentTimeMillis());
-//            XLogger.debug("loadDominionsExecution cost: {0} ms for {1} dominions"
-//                    , System.currentTimeMillis() - start, count);
-//        });
-//    }
 }

@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.dtos.TemplateDTO;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.command.Argument;
@@ -40,9 +41,9 @@ public class CommandArguments {
         public RequiredDominionArgument() {
             super("dominion_name", true, (commandSender) -> {
                 if (commandSender instanceof Player player) {
-                    return Cache.instance.getPlayerDominions(player.getUniqueId()).stream().map(DominionDTO::getName).toList();
+                    return CacheManager.instance.getPlayerManageDominionNames(player.getUniqueId());
                 } else {
-                    return Cache.instance.getAllDominions().stream().map(DominionDTO::getName).toList();
+                    return CacheManager.instance.getAllDominionNames();
                 }
             });
         }
@@ -108,7 +109,7 @@ public class CommandArguments {
                     try {
                         return TemplateDTO.selectAll(player.getUniqueId()).stream().map(TemplateDTO::getName).toList();
                     } catch (Exception e) {
-                        XLogger.error(e.getMessage());
+                        XLogger.error(e);
                         return List.of();
                     }
                 } else {

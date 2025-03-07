@@ -52,7 +52,7 @@ public class Others {
      */
     public static List<DominionDTO> getSubDominionsRecursive(DominionDTO dominion) {
         List<DominionDTO> res = new ArrayList<>();
-        List<DominionDTO> sub_dominions = Cache.instance.getDominionsByParentId(dominion.getId());
+        List<DominionDTO> sub_dominions = CacheManager.instance.getCache().getDominionCache().getChildrenOf(dominion.getId());
         for (DominionDTO sub_dominion : sub_dominions) {
             res.add(sub_dominion);
             res.addAll(getSubDominionsRecursive(sub_dominion));

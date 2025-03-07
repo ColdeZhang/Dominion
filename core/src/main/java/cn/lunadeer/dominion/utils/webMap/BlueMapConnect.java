@@ -88,7 +88,7 @@ public class BlueMapConnect {
                 });
             } catch (NoClassDefFoundError e) {
                 XLogger.warn(Language.blueMapConnectText.registerFail);
-                XLogger.error(e.getMessage());
+                XLogger.error(e);
             }
         });
     }
@@ -141,7 +141,7 @@ public class BlueMapConnect {
                 });
             } catch (NoClassDefFoundError e) {
                 XLogger.warn(Language.blueMapConnectText.registerFail);
-                XLogger.error(e.getMessage());
+                XLogger.error(e);
             }
         });
     }
