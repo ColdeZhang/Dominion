@@ -1,7 +1,6 @@
 package cn.lunadeer.dominion.uis.tuis;
 
-import cn.lunadeer.dominion.Cache;
-import cn.lunadeer.dominion.DominionNode;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.utils.Notification;
@@ -47,14 +46,13 @@ public class AllDominion {
     public static void show(CommandSender sender, String pageStr) {
         try {
             int page = toIntegrity(pageStr);
-            List<DominionNode> allDominions = DominionNode.BuildNodeTree(-1, Cache.instance.getAllDominions());
             ListView view = ListView.create(10, button(sender));
 
             view.title(Language.allDominionTuiText.title);
             view.navigator(Line.create()
                     .append(MainMenu.button(sender).build())
                     .append(Language.allDominionTuiText.button));
-            view.addLines(BuildTreeLines(sender, allDominions, 0));
+            view.addLines(BuildTreeLines(sender, CacheManager.instance.getCache().getDominionCache().getAllDominionNodes(), 0));
             view.showOn(sender, page);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

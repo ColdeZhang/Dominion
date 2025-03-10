@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.EventsRegister;
@@ -59,14 +60,14 @@ public final class Dominion extends JavaPlugin {
             XLogger.info(Language.dominionText.loadingConfig);
             Configuration.loadConfigurationAndDatabase(instance.getServer().getConsoleSender());
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
         XVersionManager.VERSION = XVersionManager.GetVersion(this);
 
         new VaultConnect(this);
         new MultiServerManager(this);
         new TeleportManager(this);
-        new Cache();
+        new CacheManager();
         new DominionInterface();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -81,9 +82,9 @@ public final class Dominion extends JavaPlugin {
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> Configuration.database.type));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> Cache.instance.getDominionCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> Cache.instance.getGroupCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> Cache.instance.getMemberCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> CacheManager.instance.dominionCount()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> CacheManager.instance.groupCount()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> CacheManager.instance.memberCount()));
 
         // SCUI 初始化
         Bukkit.getPluginManager().registerEvents(new CuiManager(this), this);

@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.utils.webMap;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.scheduler.Scheduler;
@@ -31,7 +31,7 @@ public class BlueMapConnect {
             try {
                 BlueMapAPI.getInstance().ifPresent(api -> {
                     Map<String, List<DominionDTO>> world_dominions = new HashMap<>();
-                    for (DominionDTO dominion : Cache.instance.getAllDominions()) {
+                    for (DominionDTO dominion : CacheManager.instance.getCache().getDominionCache().getAllDominions()) {
                         if (dominion.getWorld() == null) {
                             continue;
                         }
@@ -47,7 +47,7 @@ public class BlueMapConnect {
                                     .build();
 
                             for (DominionDTO dominion : d.getValue()) {
-                                PlayerDTO p = (PlayerDTO) PlayerDTO.select(dominion.getOwner());
+                                PlayerDTO p = CacheManager.instance.getPlayer(dominion.getOwner());
                                 if (p == null) {
                                     continue;
                                 }
@@ -88,7 +88,7 @@ public class BlueMapConnect {
                 });
             } catch (NoClassDefFoundError e) {
                 XLogger.warn(Language.blueMapConnectText.registerFail);
-                XLogger.error(e.getMessage());
+                XLogger.error(e);
             }
         });
     }
@@ -141,7 +141,7 @@ public class BlueMapConnect {
                 });
             } catch (NoClassDefFoundError e) {
                 XLogger.warn(Language.blueMapConnectText.registerFail);
-                XLogger.error(e.getMessage());
+                XLogger.error(e);
             }
         });
     }
