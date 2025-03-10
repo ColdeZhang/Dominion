@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.misc.Others;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -26,77 +27,68 @@ public class DominionInterface extends DominionAPI {
 
     @Override
     public DominionDTO getPlayerCurrentDominion(@NotNull Player player) {
-        return Cache.instance.getPlayerCurrentDominion(player);
+        return CacheManager.instance.getPlayerCurrentDominion(player);
     }
 
     @Override
     public DominionDTO getDominionByLoc(@NotNull Location loc) {
-        return Cache.instance.getDominionByLoc(loc);
+        return CacheManager.instance.getDominion(loc);
     }
 
     @Override
     public GroupDTO getGroup(@NotNull Integer id) {
-        return Cache.instance.getGroup(id);
-    }
-
-    @Override
-    public @Nullable List<GroupDTO> getGroups(@NotNull DominionDTO dominion) {
-        return Cache.instance.getGroups(dominion.getId());
+        return CacheManager.instance.getGroup(id);
     }
 
     @Override
     public MemberDTO getMember(@NotNull Player player, @NotNull DominionDTO dominion) {
-        return Cache.instance.getMember(player.getUniqueId(), dominion);
+        return getMember(player.getUniqueId(), dominion);
     }
 
     @Override
     public MemberDTO getMember(@NotNull UUID player_uuid, @NotNull DominionDTO dominion) {
-        return Cache.instance.getMember(player_uuid, dominion);
-    }
-
-    @Override
-    public @Nullable List<MemberDTO> getMembers(@NotNull DominionDTO dominion) {
-        return Cache.instance.getMembers(dominion.getId());
+        return CacheManager.instance.getMember(dominion, player_uuid);
     }
 
     @Override
     public DominionDTO getDominion(@NotNull Integer id) {
-        return Cache.instance.getDominion(id);
+        return CacheManager.instance.getDominion(id);
     }
 
     @Override
     public DominionDTO getDominion(@NotNull String name) {
-        return Cache.instance.getDominion(name);
+        return CacheManager.instance.getDominion(name);
     }
 
     @Override
     public @NotNull List<DominionDTO> getAllDominions() {
-        return Cache.instance.getAllDominions();
+        return CacheManager.instance.getAllDominions();
     }
 
     @Override
     public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
-        return Cache.instance.getPlayerUsingGroupTitle(uuid);
+        Integer usingId = CacheManager.instance.getPlayerCache().getPlayerUsingTitleId(uuid);
+        return CacheManager.instance.getGroup(usingId);
     }
 
     @Override
     public @Nullable PlayerDTO getPlayerDTO(UUID uuid) {
-        return cn.lunadeer.dominion.dtos.PlayerDTO.select(uuid);
+        return CacheManager.instance.getPlayer(uuid);
     }
 
     @Override
     public @Nullable PlayerDTO getPlayerDTO(String name) {
-        return cn.lunadeer.dominion.dtos.PlayerDTO.select(name);
+        return CacheManager.instance.getPlayer(name);
     }
 
     @Override
     public List<DominionDTO> getDominionsOf(@NotNull UUID playerUid) {
-        return Cache.instance.getPlayerDominions(playerUid);
+        return CacheManager.instance.getPlayerAdminDominionDTOs(playerUid);
     }
 
     @Override
     public List<DominionDTO> getChildrenDominionsOf(@NotNull DominionDTO parent) {
-        return Cache.instance.getDominionsByParentId(parent.getId());
+        return CacheManager.instance.getChildrenDominionOf(parent);
     }
 
     @Override

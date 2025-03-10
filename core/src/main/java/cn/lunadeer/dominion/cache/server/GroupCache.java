@@ -80,4 +80,8 @@ public class GroupCache extends Cache {
         if (group == null) return;
         dominionGroupsMap.get(group.getDomID()).remove(group.getId());
     }
+
+    public Integer count() {
+        return idGroups.size();
+    }
 }

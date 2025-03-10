@@ -37,6 +37,16 @@ public class MemberCache extends Cache {
         return idMembers.get(member_id);
     }
 
+    public List<MemberDTO> getMemberBelongedDominions(@NotNull UUID player) {
+        if (!playerDominionMemberMap.containsKey(player)) return new ArrayList<>();
+        Collection<Integer> member_ids = playerDominionMemberMap.get(player).values();
+        List<MemberDTO> members = new ArrayList<>();
+        for (Integer member_id : member_ids) {
+            members.add(idMembers.get(member_id));
+        }
+        return members;
+    }
+
     public @NotNull List<MemberDTO> getDominionMembers(@NotNull DominionDTO dominion) {
         if (!dominionMembersMap.containsKey(dominion.getId())) return new ArrayList<>();
         List<MemberDTO> members = new ArrayList<>();
@@ -111,5 +121,9 @@ public class MemberCache extends Cache {
         playerDominionMemberMap.get(member.getPlayerUUID()).remove(member.getDomID());
         if (member.getGroupId() != -1)
             groupMembersMap.get(member.getGroupId()).remove(member.getId());
+    }
+
+    public Integer count() {
+        return idMembers.size();
     }
 }

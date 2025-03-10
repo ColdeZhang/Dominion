@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.misc;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
@@ -148,7 +147,7 @@ public class CommandArguments {
         public PlayerTitleIdArgument() {
             super("title_id", true, (commandSender) -> {
                 if (commandSender instanceof Player player) {
-                    return Cache.instance.getPlayerGroupTitleList(player.getUniqueId()).stream().map(title -> title.getId().toString()).toList();
+                    return CacheManager.instance.getPlayerCache().getPlayerGroupTitleList(player.getUniqueId()).stream().map(title -> title.getId().toString()).toList();
                 } else {
                     return List.of();
                 }

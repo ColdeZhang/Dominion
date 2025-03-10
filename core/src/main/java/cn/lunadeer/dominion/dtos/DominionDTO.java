@@ -11,7 +11,6 @@ import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
-import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
 import cn.lunadeer.dominion.utils.databse.Field;
 import cn.lunadeer.dominion.utils.databse.FieldType;
@@ -251,7 +250,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
     @Override
     public @NotNull PlayerDTO getOwnerDTO() {
-        return Objects.requireNonNull(cn.lunadeer.dominion.dtos.PlayerDTO.select(getOwner()));
+        return Objects.requireNonNull(CacheManager.instance.getPlayer(getOwner()));
     }
 
     private @NotNull DominionDTO doUpdate(UpdateRow updateRow) throws SQLException {
@@ -408,9 +407,10 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             if (loc.length == 3 && w != null) {
                 return new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
             } else {
-                XLogger.warn("领地传送点数据异常: %s", tp_location);
-                XLogger.debug("world: %s, loc.length: %d", getWorld(), loc.length);
-                return null;
+                return new Location(getWorld(),
+                        (double) (cuboid.x1() + cuboid.x2()) / 2,
+                        (double) (cuboid.y1() + cuboid.y2()) / 2,
+                        (double) (cuboid.z1() + cuboid.z2()) / 2);
             }
         }
     }

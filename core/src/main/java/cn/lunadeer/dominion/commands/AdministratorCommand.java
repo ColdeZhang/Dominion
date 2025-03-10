@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.managers.DatabaseTables;
@@ -101,17 +101,15 @@ public class AdministratorCommand {
     public static void reloadCache(CommandSender sender) {
         Scheduler.runTaskAsync(() -> {
             Notification.info(sender, Language.administratorCommandText.reloadingDominionCache);
-            Cache.instance.loadDominions();
+            CacheManager.instance.getCache().getDominionCache().load();
             Notification.info(sender, Language.administratorCommandText.reloadedDominionCache);
-        });
-        Scheduler.runTaskAsync(() -> {
+
             Notification.info(sender, Language.administratorCommandText.reloadingMemberCache);
-            Cache.instance.loadMembers();
+            CacheManager.instance.getCache().getMemberCache().load();
             Notification.info(sender, Language.administratorCommandText.reloadedMemberCache);
-        });
-        Scheduler.runTaskAsync(() -> {
+
             Notification.info(sender, Language.administratorCommandText.reloadingGroupCache);
-            Cache.instance.loadGroups();
+            CacheManager.instance.getCache().getGroupCache().load();
             Notification.info(sender, Language.administratorCommandText.reloadedGroupCache);
         });
         if (sender instanceof Player) MainMenu.show(sender, "1");
@@ -156,7 +154,7 @@ public class AdministratorCommand {
             Scheduler.runTaskAsync(() -> {
                 Notification.info(sender, Language.administratorCommandText.exportingMcaList);
                 Map<String, List<String>> mca_cords = new HashMap<>();
-                List<DominionDTO> doms = Cache.instance.getAllDominions();
+                List<DominionDTO> doms = CacheManager.instance.getAllDominions();
                 for (DominionDTO dom : doms) {
                     World world = toWorld(dom.getWorldUid());
                     if (!mca_cords.containsKey(world.getName())) {

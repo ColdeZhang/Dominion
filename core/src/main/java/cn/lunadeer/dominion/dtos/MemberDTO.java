@@ -149,11 +149,7 @@ public class MemberDTO implements cn.lunadeer.dominion.api.dtos.MemberDTO {
      */
     @Override
     public @NotNull PlayerDTO getPlayer() {
-        PlayerDTO player = cn.lunadeer.dominion.dtos.PlayerDTO.select(getPlayerUUID());
-        if (player == null) {
-            throw new RuntimeException("Player not found");
-        }
-        return player;
+        return Objects.requireNonNull(CacheManager.instance.getPlayer(getPlayerUUID()));
     }
 
     public MemberDTO setGroupId(Integer groupId) throws SQLException {
