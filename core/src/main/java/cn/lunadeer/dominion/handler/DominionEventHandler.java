@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.handler;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.commands.DominionOperateCommand;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
@@ -290,7 +290,7 @@ public class DominionEventHandler implements Listener {
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
-            DominionDTO d = Cache.instance.getDominionByLoc(event.getNewTpLocation());
+            DominionDTO d = CacheManager.instance.getCache().getDominionCache().getDominion(event.getNewTpLocation());
             if (d == null) {
                 throw new DominionException(Language.dominionEventHandlerText.tpLocationNotInDominion, dominion.getName());
             }

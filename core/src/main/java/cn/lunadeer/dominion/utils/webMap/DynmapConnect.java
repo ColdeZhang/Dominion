@@ -1,8 +1,9 @@
 package cn.lunadeer.dominion.utils.webMap;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.scheduler.Scheduler;
@@ -50,7 +51,7 @@ public class DynmapConnect extends DynmapCommonAPIListener {
     }
 
     private void setDominionMarker(DominionDTO dominion) {
-        PlayerDTO p = (PlayerDTO) PlayerDTO.select(dominion.getOwner());
+        PlayerDTO p = CacheManager.instance.getPlayer(dominion.getOwner());
         if (p == null) {
             return;
         }

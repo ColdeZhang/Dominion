@@ -1,11 +1,11 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage.member;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.commands.MemberCommand;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.misc.CommandArguments;
@@ -95,7 +95,7 @@ public class MemberList {
             List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));
             for (MemberDTO member : members) {
                 PlayerDTO p_player = member.getPlayer();
-                GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+                GroupDTO group = CacheManager.instance.getGroup(member.getGroupId());
                 Line line = Line.create();
                 // Tag
                 if (group != null) {

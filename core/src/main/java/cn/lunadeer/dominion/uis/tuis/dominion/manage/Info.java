@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis.dominion.manage;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
@@ -45,7 +45,7 @@ public class Info {
     public static void show(CommandSender sender, String dominionName) {
         try {
             DominionDTO dominion = toDominionDTO(dominionName);
-            String ownerName = Cache.instance.getPlayerName(dominion.getOwner());
+            String ownerName = CacheManager.instance.getPlayerName(dominion.getOwner());
             ListView view = ListView.create(10, button(sender, dominionName));
             view.title(formatString(Language.sizeInfoTuiText.title, dominion.getName()));
 

@@ -56,6 +56,15 @@ public class XLogger {
         instance._logger.severe(" E | " + formatString(message, args));
     }
 
+    public static void error(Throwable e) {
+        instance._logger.severe(" E | " + e.getMessage());
+        if (isDebug()) {
+            for (StackTraceElement element : e.getStackTrace()) {
+                instance._logger.severe("StackTrace | " + element.toString());
+            }
+        }
+    }
+
     public static void debug(String message) {
         if (!instance._debug) return;
         instance._logger.info(" D | " + message);

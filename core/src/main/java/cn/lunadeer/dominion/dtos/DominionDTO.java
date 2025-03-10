@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.dtos;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
@@ -10,8 +9,8 @@ import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
-import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
 import cn.lunadeer.dominion.utils.databse.Field;
 import cn.lunadeer.dominion.utils.databse.FieldType;
@@ -71,9 +70,9 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         return dominions;
     }
 
-    public static List<DominionDTO> selectAll() throws SQLException {
-        String sql = "SELECT * FROM dominion WHERE id > 0;";
-        return query(sql);
+    public static List<DominionDTO> selectAll(Integer serverId) throws SQLException {
+        String sql = "SELECT * FROM dominion WHERE id > 0 AND server_id = ?;";
+        return query(sql, serverId);
     }
 
     public static DominionDTO rootDominion() {
@@ -118,18 +117,18 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             insert.field(new Field(f.getFlagName(), f.getDefaultValue()));
         }
         ResultSet rs = insert.execute();
-        Cache.instance.loadDominions();
         List<DominionDTO> dominions = getDTOFromRS(rs);
         if (dominions.isEmpty()) {
             throw new SQLException("Failed to insert dominion.");
         }
+        CacheManager.instance.getCache().getDominionCache().load(dominions.get(0).getId());
         return dominions.get(0);
     }
 
     public static void deleteById(Integer dominion) throws SQLException {
         String sql = "DELETE FROM dominion WHERE id = ?;";
         query(sql, dominion);
-        Cache.instance.loadDominions();
+        CacheManager.instance.getCache().getDominionCache().delete(dominion);
     }
 
     // full constructor
@@ -251,7 +250,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
     @Override
     public @NotNull PlayerDTO getOwnerDTO() {
-        return Objects.requireNonNull(cn.lunadeer.dominion.dtos.PlayerDTO.select(getOwner()));
+        return Objects.requireNonNull(CacheManager.instance.getPlayer(getOwner()));
     }
 
     private @NotNull DominionDTO doUpdate(UpdateRow updateRow) throws SQLException {
@@ -263,7 +262,7 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
         if (dominions.isEmpty()) {
             throw new SQLException("Failed to update dominion.");
         }
-        Cache.instance.loadDominions((Integer) id.value);
+        CacheManager.instance.getCache().getDominionCache().load(getId());
         return dominions.get(0);
     }
 
@@ -408,9 +407,10 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
             if (loc.length == 3 && w != null) {
                 return new Location(w, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
             } else {
-                XLogger.warn("领地传送点数据异常: %s", tp_location);
-                XLogger.debug("world: %s, loc.length: %d", getWorld(), loc.length);
-                return null;
+                return new Location(getWorld(),
+                        (double) (cuboid.x1() + cuboid.x2()) / 2,
+                        (double) (cuboid.y1() + cuboid.y2()) / 2,
+                        (double) (cuboid.z1() + cuboid.z2()) / 2);
             }
         }
     }
@@ -428,12 +428,12 @@ public class DominionDTO implements cn.lunadeer.dominion.api.dtos.DominionDTO {
 
     @Override
     public List<GroupDTO> getGroups() {
-        return Cache.instance.getGroups(getId());
+        return Objects.requireNonNull(CacheManager.instance.getCache(getServerId())).getGroupCache().getDominionGroups(this);
     }
 
     @Override
     public List<MemberDTO> getMembers() {
-        return Cache.instance.getMembers(getId());
+        return Objects.requireNonNull(CacheManager.instance.getCache(getServerId())).getMemberCache().getDominionMembers(this);
     }
 
     @Override

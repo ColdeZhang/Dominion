@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.managers;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.utils.Notification;
@@ -57,8 +57,9 @@ public class TeleportManager implements Listener {
         }
         Integer dominionId = teleportRequestOtherServer.get(event.getPlayer().getUniqueId());
         teleportRequestOtherServer.remove(event.getPlayer().getUniqueId());
-        DominionDTO dominion = Cache.instance.getDominion(dominionId);
+        DominionDTO dominion = CacheManager.instance.getDominion(dominionId);
         if (dominion == null) {
+            Notification.error(event.getPlayer(), Language.convertsText.unknownDominion, dominionId);
             return;
         }
         if (dominion.getServerId() != Configuration.multiServer.serverId) {
@@ -162,7 +163,7 @@ public class TeleportManager implements Listener {
             Integer id = toIntegrity(dominionId);
             teleportRequestOtherServer.put(uuid, id);
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
     }
 
