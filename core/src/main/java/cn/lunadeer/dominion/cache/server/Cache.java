@@ -12,6 +12,7 @@ public abstract class Cache {
 
     public void load() {
         if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            XLogger.debug("run loadExecution immediately");
             resetLastTaskTimeStamp();
             try {
                 loadExecution();
@@ -20,8 +21,10 @@ public abstract class Cache {
             }
         } else {
             if (isTaskScheduled()) return;
+            XLogger.debug("schedule loadExecution");
             setTaskScheduled();
             Scheduler.runTaskLaterAsync(() -> {
+                        XLogger.debug("scheduled loadExecution run");
                         try {
                             resetLastTaskTimeStamp();
                             loadExecution();
@@ -37,6 +40,7 @@ public abstract class Cache {
 
     public void delete(Integer idToDelete) {
         if (getLastTaskTimeStamp() + UPDATE_INTERVAL < System.currentTimeMillis()) {
+            XLogger.debug("run loadExecution immediately");
             resetLastTaskTimeStamp();
             try {
                 deleteExecution(idToDelete);
@@ -45,8 +49,10 @@ public abstract class Cache {
             }
         } else {
             if (isTaskScheduled()) return;
+            XLogger.debug("schedule loadExecution");
             setTaskScheduled();
             Scheduler.runTaskLaterAsync(() -> {
+                        XLogger.debug("scheduled loadExecution run");
                         try {
                             resetLastTaskTimeStamp();
                             loadExecution();

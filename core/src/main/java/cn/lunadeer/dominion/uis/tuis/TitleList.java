@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.uis.tuis;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.commands.GroupTitleCommand;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.misc.CommandArguments;
@@ -69,11 +69,12 @@ public class TitleList {
                     .append(MainMenu.button(sender).build())
                     .append(Language.titleListTuiText.button));
 
-            List<GroupDTO> groups = Cache.instance.getPlayerGroupTitleList(player.getUniqueId());
-            GroupDTO using = Cache.instance.getPlayerUsingGroupTitle(player.getUniqueId());
+            List<GroupDTO> groups = CacheManager.instance.getPlayerCache().getPlayerGroupTitleList(player.getUniqueId());
+            Integer usingId = CacheManager.instance.getPlayerCache().getPlayerUsingTitleId(player.getUniqueId());
+            GroupDTO using = CacheManager.instance.getGroup(usingId);
 
             for (GroupDTO group : groups) {
-                DominionDTO dominion = Cache.instance.getDominion(group.getDomID());
+                DominionDTO dominion = CacheManager.instance.getDominion(group.getDomID());
                 if (dominion == null) {
                     continue;
                 }

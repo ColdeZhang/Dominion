@@ -1,9 +1,9 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
@@ -80,7 +80,7 @@ public class MigrationCommand {
                 Notification.error(sender, Language.migrateListText.notEnabled);
                 return;
             }
-            List<ResMigration.ResidenceNode> res_data = Cache.instance.getResidenceData();
+            List<ResMigration.ResidenceNode> res_data = CacheManager.instance.getResidenceCache().getResidenceData();
             if (res_data == null) {
                 throw new DominionException(Language.migrateListText.noData);
             }
@@ -108,7 +108,7 @@ public class MigrationCommand {
      * @throws Exception if an error occurs during migration
      */
     private static void doMigrateCreate(Player player, ResMigration.ResidenceNode node, DominionDTO parent) throws Exception {
-        PlayerDTO ownerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.tryCreate(node.owner, node.ownerName);
+        PlayerDTO ownerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.create(node.owner, node.ownerName);
         if (ownerDTO == null) {
             Notification.error(player, Language.migrationCommandText.createPlayerFailed, node.ownerName);
             return;

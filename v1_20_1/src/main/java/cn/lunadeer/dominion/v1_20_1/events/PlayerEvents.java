@@ -1,10 +1,8 @@
 package cn.lunadeer.dominion.v1_20_1.events;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.cache.CacheManager;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
 import cn.lunadeer.dominion.managers.TeleportManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,19 +27,6 @@ import org.spigotmc.event.entity.EntityMountEvent;
 import static cn.lunadeer.dominion.misc.Others.checkPrivilegeFlag;
 
 public class PlayerEvents implements Listener {
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player bukkitPlayer = event.getPlayer();
-        PlayerDTO player = PlayerDTO.get(bukkitPlayer);
-        player.onJoin(bukkitPlayer.getName()); // update name
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player bukkitPlayer = event.getPlayer();
-        Cache.instance.onPlayerQuit(bukkitPlayer);
-    }
-
     @EventHandler(priority = EventPriority.LOWEST) // anchor
     public void onRespawnAnchor(PlayerRespawnEvent event) {
         Player bukkitPlayer = event.getPlayer();

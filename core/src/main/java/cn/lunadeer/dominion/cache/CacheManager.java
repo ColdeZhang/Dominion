@@ -2,8 +2,12 @@ package cn.lunadeer.dominion.cache;
 
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.cache.server.DominionCache;
 import cn.lunadeer.dominion.cache.server.PlayerCache;
+import cn.lunadeer.dominion.cache.server.ResidenceDataCache;
 import cn.lunadeer.dominion.cache.server.ServerCache;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
@@ -32,6 +36,7 @@ public class CacheManager {
     private final ServerCache thisServerCache;
     private final Map<Integer, ServerCache> otherServerCaches;
     private final PlayerCache playerCache;
+    private final ResidenceDataCache residenceDataCache = new ResidenceDataCache();
 
     private boolean recheckPlayerStatus = false;
     private final Map<UUID, Integer> playerCurrentDominionId = new HashMap<>();
@@ -44,11 +49,18 @@ public class CacheManager {
      * Constructs a CacheManager and initializes the server cache.
      */
     public CacheManager() {
-        this.thisServerCache = new ServerCache(Configuration.multiServer.serverId);
-        this.otherServerCaches = new HashMap<>();
-        this.playerCache = new PlayerCache();
-        Bukkit.getPluginManager().registerEvents(new CacheEventHandler(), Dominion.instance);
         instance = this;
+        this.thisServerCache = new ServerCache(Configuration.multiServer.serverId);
+        this.thisServerCache.getDominionCache().load();
+        this.thisServerCache.getMemberCache().load();
+        this.thisServerCache.getGroupCache().load();
+
+        this.otherServerCaches = new HashMap<>();
+
+        this.playerCache = new PlayerCache();
+        this.playerCache.load();
+
+        Bukkit.getPluginManager().registerEvents(new CacheEventHandler(), Dominion.instance);
     }
 
     /**
@@ -186,8 +198,29 @@ public class CacheManager {
         lightOrNot(player, dominion);
     }
 
-    public String getPlayerName(@NotNull UUID uuid) {
+    public void updatePlayerName(@NotNull Player bukkitPlayer) {
+        PlayerDTO player = playerCache.getPlayer(bukkitPlayer.getUniqueId());
+        if (player != null) {
+            player.updateLastKnownName(bukkitPlayer.getName());
+        } else {
+            cn.lunadeer.dominion.dtos.PlayerDTO.create(bukkitPlayer);
+        }
+    }
+
+    public @Nullable PlayerDTO getPlayer(String name) {
+        return playerCache.getPlayer(name);
+    }
+
+    public @Nullable PlayerDTO getPlayer(@NotNull UUID player) {
+        return playerCache.getPlayer(player);
+    }
+
+    public @NotNull String getPlayerName(@NotNull UUID uuid) {
         return playerCache.getPlayerName(uuid);
+    }
+
+    public PlayerCache getPlayerCache() {
+        return playerCache;
     }
 
     /**
@@ -203,15 +236,18 @@ public class CacheManager {
      * @return a list of dominion names managed by the player
      */
     public List<String> getPlayerManageDominionNames(@NotNull UUID player) {
-        List<String> names = new ArrayList<>(thisServerCache.getDominionCache().getPlayerDominionNames(player));
-        // todo add names player is admin member or admin group
-
+        List<DominionDTO> dominions = new ArrayList<>(thisServerCache.getDominionCache().getPlayerOwnDominionDTOs(player));
+        dominions.addAll(thisServerCache.getDominionCache().getPlayerAdminDominionDTOs(player));
         // add names from other servers
         if (Configuration.multiServer.enable) {
             for (ServerCache serverCache : otherServerCaches.values()) {
-                names.addAll(serverCache.getDominionCache().getPlayerDominionNames(player));
-                // todo add names player is admin member or admin group on other servers
+                dominions.addAll(serverCache.getDominionCache().getPlayerOwnDominionDTOs(player));
+                dominions.addAll(serverCache.getDominionCache().getPlayerAdminDominionDTOs(player));
             }
+        }
+        List<String> names = new ArrayList<>(dominions.size());
+        for (DominionDTO dominion : dominions) {
+            names.add(dominion.getName());
         }
         return names;
     }
@@ -235,6 +271,28 @@ public class CacheManager {
         return names;
     }
 
+    public List<DominionDTO> getAllDominions() {
+        List<DominionDTO> dominions = new ArrayList<>(thisServerCache.getDominionCache().getAllDominions());
+        // add dominions from other servers
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                dominions.addAll(serverCache.getDominionCache().getAllDominions());
+            }
+        }
+        return dominions;
+    }
+
+    public List<DominionDTO> getChildrenDominionOf(DominionDTO parent) {
+        List<DominionDTO> dominions = new ArrayList<>(thisServerCache.getDominionCache().getChildrenOf(parent.getId()));
+        // add dominions from other servers
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                dominions.addAll(serverCache.getDominionCache().getChildrenOf(parent.getId()));
+            }
+        }
+        return dominions;
+    }
+
     /**
      * Retrieves a DominionDTO by its ID.
      * <p>
@@ -245,7 +303,7 @@ public class CacheManager {
      * @return the DominionDTO associated with the given ID
      * @throws DominionException if the dominion ID is not found
      */
-    public @NotNull DominionDTO getDominion(Integer id) {
+    public @Nullable DominionDTO getDominion(Integer id) {
         DominionDTO dominion = thisServerCache.getDominionCache().getDominion(id);
         if (dominion != null) {
             return dominion;
@@ -257,7 +315,7 @@ public class CacheManager {
                 }
             }
         }
-        throw new DominionException(Language.convertsText.unknownDominion, id);
+        return null;
     }
 
     /**
@@ -288,5 +346,106 @@ public class CacheManager {
     public @Nullable DominionDTO getDominion(Location location) {
         return thisServerCache.getDominionCache().getDominion(location);
     }
+
+    public void resetPlayerCurrentDominionId(@NotNull Player player) {
+        playerCurrentDominionId.remove(player.getUniqueId());
+    }
+
+    public @Nullable MemberDTO getMember(@Nullable DominionDTO dominion, @NotNull Player player) {
+        return getMember(dominion, player.getUniqueId());
+    }
+
+    public @Nullable MemberDTO getMember(@Nullable DominionDTO dominion, @NotNull UUID player) {
+        MemberDTO member = thisServerCache.getMemberCache().getMember(dominion, player);
+        if (member != null) {
+            return member;
+        } else if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                member = serverCache.getMemberCache().getMember(dominion, player);
+                if (member != null) {
+                    return member;
+                }
+            }
+        }
+        return null;
+    }
+
+    public @Nullable GroupDTO getGroup(MemberDTO member) {
+        return getGroup(member.getGroupId());
+    }
+
+    public @Nullable GroupDTO getGroup(Integer id) {
+        if (id == null) return null;
+        if (id == -1) return null;
+        GroupDTO group = thisServerCache.getGroupCache().getGroup(id);
+        if (group != null) {
+            return group;
+        } else if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                group = serverCache.getGroupCache().getGroup(id);
+                if (group != null) {
+                    return group;
+                }
+            }
+        }
+        return null;
+    }
+
+    public ResidenceDataCache getResidenceCache() {
+        return residenceDataCache;
+    }
+
+    public List<DominionDTO> getPlayerOwnDominionDTOs(UUID player) {
+        List<DominionDTO> dominions = new ArrayList<>(thisServerCache.getDominionCache().getPlayerOwnDominionDTOs(player));
+        // add dominions from other servers
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                dominions.addAll(serverCache.getDominionCache().getPlayerOwnDominionDTOs(player));
+            }
+        }
+        return dominions;
+    }
+
+    public List<DominionDTO> getPlayerAdminDominionDTOs(UUID player) {
+        List<DominionDTO> dominions = new ArrayList<>(thisServerCache.getDominionCache().getPlayerAdminDominionDTOs(player));
+        // add dominions from other servers
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                dominions.addAll(serverCache.getDominionCache().getPlayerAdminDominionDTOs(player));
+            }
+        }
+        return dominions;
+    }
+
+    public Integer dominionCount() {
+        int count = thisServerCache.getDominionCache().count();
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                count += serverCache.getDominionCache().count();
+            }
+        }
+        return count;
+    }
+
+    public Integer groupCount() {
+        int count = thisServerCache.getGroupCache().count();
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                count += serverCache.getGroupCache().count();
+            }
+        }
+        return count;
+    }
+
+    public Integer memberCount() {
+        int count = thisServerCache.getMemberCache().count();
+        if (Configuration.multiServer.enable) {
+            for (ServerCache serverCache : otherServerCaches.values()) {
+                count += serverCache.getMemberCache().count();
+            }
+        }
+        return count;
+    }
+
 
 }

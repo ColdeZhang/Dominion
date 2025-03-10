@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.misc;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
@@ -176,7 +175,12 @@ public class Converts {
     }
 
     public static @NotNull DominionDTO toDominionDTO(@NotNull Integer id) throws DominionException {
-        return CacheManager.instance.getDominion(id);
+        DominionDTO dominion = CacheManager.instance.getDominion(id);
+        if (dominion == null) {
+            throw new DominionException(Language.convertsText.unknownDominion, id.toString());
+        } else {
+            return dominion;
+        }
     }
 
     /**
@@ -357,7 +361,7 @@ public class Converts {
      * @throws DominionException If the player is not recorded.
      */
     public static PlayerDTO toPlayerDTO(String name) throws DominionException {
-        PlayerDTO playerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.select(name);
+        PlayerDTO playerDTO = CacheManager.instance.getPlayer(name);
         if (playerDTO == null) {
             throw new DominionException(Language.convertsText.unknownPlayer, name);
         } else {
@@ -366,7 +370,7 @@ public class Converts {
     }
 
     public static PlayerDTO toPlayerDTO(UUID uuid) {
-        PlayerDTO playerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.select(uuid);
+        PlayerDTO playerDTO = CacheManager.instance.getPlayer(uuid);
         if (playerDTO == null) {
             throw new DominionException(Language.convertsText.unknownPlayer, uuid.toString());
         } else {
@@ -384,7 +388,7 @@ public class Converts {
      */
     public static @NotNull MemberDTO toMemberDTO(@NotNull DominionDTO dominion, String playerName) {
         PlayerDTO player = toPlayerDTO(playerName);
-        MemberDTO member = Cache.instance.getMember(player.getUuid(), dominion);
+        MemberDTO member = CacheManager.instance.getMember(dominion, player.getUuid());
         if (member != null) {
             return member;
         }
@@ -400,7 +404,7 @@ public class Converts {
     }
 
     public static @NotNull GroupDTO toGroupDTO(@NotNull Integer groupId) {
-        GroupDTO group = Cache.instance.getGroup(groupId);
+        GroupDTO group = CacheManager.instance.getGroup(groupId);
         if (group != null) {
             return group;
         }

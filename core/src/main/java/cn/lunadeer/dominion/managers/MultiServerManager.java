@@ -189,7 +189,6 @@ public class MultiServerManager implements PluginMessageListener {
             serverMap.put(receivedServerId, rcvServerName);
             // prepare cache for the received server
             CacheManager.instance.addServerCache(receivedServerId);
-            CacheManager.instance.reloadServerCache(receivedServerId);
         } catch (Exception e) {
             XLogger.error(e);
         }

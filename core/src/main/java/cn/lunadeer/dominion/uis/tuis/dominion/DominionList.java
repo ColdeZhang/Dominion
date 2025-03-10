@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.uis.tuis.dominion;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.cache.DominionNode;
@@ -79,8 +78,8 @@ public class DominionList {
             List<DominionNode> dominionNodes = CacheManager.instance.getCache().getDominionCache().getPlayerDominionNodes(player.getUniqueId());
             // Show dominions on current server
             view.addLines(BuildTreeLines(sender, dominionNodes, 0));
-            // Show admin dominions
-            List<DominionDTO> admin_dominions = Cache.instance.getPlayerAdminDominions(player.getUniqueId());
+            // Show admin dominions on this server
+            List<DominionDTO> admin_dominions = CacheManager.instance.getCache().getDominionCache().getPlayerAdminDominionDTOs(player.getUniqueId());
             if (!admin_dominions.isEmpty()) {
                 view.add(Line.create().append(""));
                 view.add(Line.create().append(Component.text(Language.dominionListTuiText.adminSection, ViewStyles.main_color)));
@@ -101,6 +100,14 @@ public class DominionList {
                             ))
                     );
                     view.addLines(BuildTreeLines(sender, serverCache.getDominionCache().getPlayerDominionNodes(player.getUniqueId()), 0));
+                    // Show admin dominions on other servers
+                    List<DominionDTO> admin_dominions_others = serverCache.getDominionCache().getPlayerAdminDominionDTOs(player.getUniqueId());
+                    if (!admin_dominions_others.isEmpty()) {
+                        for (DominionDTO dominion : admin_dominions_others) {
+                            TextComponent manage = DominionManage.button(sender, dominion.getName()).build();
+                            view.add(Line.create().append(manage).append(dominion.getName()));
+                        }
+                    }
                 }
             }
             view.showOn(player, page);

@@ -98,6 +98,7 @@ public class GroupDTO implements cn.lunadeer.dominion.api.dtos.GroupDTO {
     @Override
     public List<MemberDTO> getMembers() {
         DominionDTO dominion = CacheManager.instance.getDominion(getDomID());
+        if (dominion == null) return new ArrayList<>();
         List<MemberDTO> members = dominion.getMembers();
         List<MemberDTO> result = new ArrayList<>();
         for (MemberDTO member : members) {

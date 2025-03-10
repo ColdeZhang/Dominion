@@ -1,6 +1,8 @@
 package cn.lunadeer.dominion.cache;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.misc.DominionException;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,11 @@ public class DominionNode {
      * @return the DominionDTO associated with this node
      */
     public @NotNull DominionDTO getDominion() {
-        return CacheManager.instance.getDominion(dominionId);
+        DominionDTO dominion = CacheManager.instance.getDominion(dominionId);
+        if (dominion == null) {
+            throw new DominionException(Language.convertsText.unknownDominion, dominionId);
+        }
+        return dominion;
     }
 
     /**

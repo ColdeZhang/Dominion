@@ -1,6 +1,10 @@
 package cn.lunadeer.dominion.cache.server;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.cache.DominionNode;
 import cn.lunadeer.dominion.cache.DominionNodeSectored;
 import cn.lunadeer.dominion.misc.DominionException;
@@ -10,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +25,7 @@ public class DominionCache extends Cache {
     private ConcurrentHashMap<Integer, DominionDTO> idDominions;            // Dominion ID -> DominionDTO
     private ConcurrentHashMap<Integer, List<Integer>> dominionChildrenMap;  // Dominion ID -> Children Dominion ID
     private ConcurrentHashMap<String, Integer> dominionNameToId;            // Dominion name -> Dominion ID
-    private ConcurrentHashMap<UUID, List<String>> playerOwnDominionNames;          // Player UUID -> Dominion Name
+    private ConcurrentHashMap<UUID, List<Integer>> playerOwnDominions;          // Player UUID -> Dominion ID
     private ConcurrentHashMap<UUID, List<DominionNode>> playerDominionNodes;  // Player UUID -> DominionNode
     private ConcurrentHashMap<Integer, DominionNode> dominionNodeMap;        // Dominion ID -> DominionNode
 
@@ -83,7 +88,7 @@ public class DominionCache extends Cache {
     }
 
     /**
-     * Retrieves the children dominions of a given dominion.
+     * Retrieves the direct children of a dominion by its ID.
      *
      * @param id the ID of the parent dominion
      * @return a list of DominionDTO objects representing the children of the given dominion
@@ -106,13 +111,39 @@ public class DominionCache extends Cache {
     }
 
     /**
-     * Retrieves the names of the dominions owned by a player.
+     * Retrieves the DominionDTOs of the dominions owned by a player.
      *
      * @param player the UUID of the player
-     * @return a list of dominion names owned by the player
+     * @return a list of DominionDTOs owned by the player
      */
-    public List<String> getPlayerDominionNames(UUID player) {
-        return playerOwnDominionNames.getOrDefault(player, new ArrayList<>());
+    public List<DominionDTO> getPlayerOwnDominionDTOs(UUID player) {
+        List<Integer> dominionIds = playerOwnDominions.getOrDefault(player, new ArrayList<>());
+        List<DominionDTO> dominions = new ArrayList<>();
+        for (Integer id : dominionIds) {
+            dominions.add(getDominion(id));
+        }
+        return dominions;
+    }
+
+    public List<DominionDTO> getPlayerAdminDominionDTOs(UUID player) {
+        List<DominionDTO> dominions = new ArrayList<>();
+        List<MemberDTO> playerBelongedDominionMembers = Objects.requireNonNull(CacheManager.instance.getCache(serverId)).getMemberCache().getMemberBelongedDominions(player);
+        for (MemberDTO member : playerBelongedDominionMembers) {
+            if (member.getGroupId() != -1) {
+                GroupDTO group = CacheManager.instance.getGroup(member.getGroupId());
+                if (group == null) {
+                    continue;
+                }
+                if (group.getFlagValue(Flags.ADMIN)) {
+                    dominions.add(getDominion(member.getDomID()));
+                }
+            } else {
+                if (member.getFlagValue(Flags.ADMIN)) {
+                    dominions.add(getDominion(member.getDomID()));
+                }
+            }
+        }
+        return dominions;
     }
 
     public @NotNull List<DominionDTO> getAllDominions() {
@@ -125,7 +156,7 @@ public class DominionCache extends Cache {
         dominionChildrenMap = new ConcurrentHashMap<>();
         dominionNameToId = new ConcurrentHashMap<>();
         playerDominionNodes = new ConcurrentHashMap<>();
-        playerOwnDominionNames = new ConcurrentHashMap<>();
+        playerOwnDominions = new ConcurrentHashMap<>();
         dominionNodeMap = new ConcurrentHashMap<>();
         List<DominionDTO> dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll(serverId));
 
@@ -147,7 +178,7 @@ public class DominionCache extends Cache {
         CompletableFuture<Void> buildCachesFuture = CompletableFuture.runAsync(() -> {
             for (DominionDTO dominion : dominions) {
                 dominionNameToId.put(dominion.getName(), dominion.getId());
-                playerOwnDominionNames.computeIfAbsent(dominion.getOwner(), k -> new ArrayList<>()).add(dominion.getName());
+                playerOwnDominions.computeIfAbsent(dominion.getOwner(), k -> new ArrayList<>()).add(dominion.getId());
                 if (dominion.getParentDomId() != -1) {
                     dominionChildrenMap.computeIfAbsent(dominion.getParentDomId(), k -> new ArrayList<>()).add(dominion.getId());
                 }
@@ -167,11 +198,11 @@ public class DominionCache extends Cache {
         // remove old data
         if (oldData != null) {
             dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(oldData.getId()));
-            playerOwnDominionNames.computeIfAbsent(oldData.getOwner(), k -> new ArrayList<>()).remove(oldData.getName());
+            playerOwnDominions.computeIfAbsent(oldData.getOwner(), k -> new ArrayList<>()).remove(oldData.getName());
         }
         // update data
         dominionNameToId.put(dominion.getName(), dominion.getId());
-        playerOwnDominionNames.computeIfAbsent(dominion.getOwner(), k -> new ArrayList<>()).add(dominion.getName());
+        playerOwnDominions.computeIfAbsent(dominion.getOwner(), k -> new ArrayList<>()).add(dominion.getId());
         // update node tree
         rebuildTreeAsync();
     }
@@ -186,7 +217,7 @@ public class DominionCache extends Cache {
         }
         // remove name map
         dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(idToDelete));
-        playerOwnDominionNames.entrySet().removeIf(entry -> entry.getValue().contains(dominionToDelete.getName()));
+        playerOwnDominions.entrySet().removeIf(entry -> entry.getValue().contains(dominionToDelete.getId()));
         // update node tree
         rebuildTreeAsync();
     }
@@ -200,5 +231,9 @@ public class DominionCache extends Cache {
             }
             dominionNodeSectored.build(nodeTree);
         });
+    }
+
+    public Integer count() {
+        return idDominions.size();
     }
 }

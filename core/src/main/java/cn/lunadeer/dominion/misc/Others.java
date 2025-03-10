@@ -1,6 +1,5 @@
 package cn.lunadeer.dominion.misc;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
@@ -109,13 +108,13 @@ public class Others {
         if (dom == null) {
             return true;
         }
-        MemberDTO member = Cache.instance.getMember(player, dom);
+        MemberDTO member = CacheManager.instance.getMember(dom, player);
         try {
             assertDominionAdmin(player, dom);
             return true;
         } catch (Exception e) {
             if (member != null) {
-                GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+                GroupDTO group = CacheManager.instance.getGroup(member.getGroupId());
                 if (member.getGroupId() != -1 && group != null) {
                     if (group.getFlagValue(flag)) {
                         return true;

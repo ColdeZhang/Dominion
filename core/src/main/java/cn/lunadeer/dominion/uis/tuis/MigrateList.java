@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.uis.tuis;
 
-import cn.lunadeer.dominion.Cache;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.commands.MigrationCommand;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
@@ -74,9 +74,9 @@ public class MigrateList {
             List<ResMigration.ResidenceNode> res_data;
 
             if (player.hasPermission(adminPermission)) {
-                res_data = Cache.instance.getResidenceData();   // get all residence data
+                res_data = CacheManager.instance.getResidenceCache().getResidenceData();   // get all residence data
             } else {
-                res_data = Cache.instance.getResidenceData(player.getUniqueId());   // get player's residence data
+                res_data = CacheManager.instance.getResidenceCache().getResidenceData(player.getUniqueId());   // get player's residence data
             }
 
             if (res_data == null) {
