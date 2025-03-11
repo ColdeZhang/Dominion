@@ -129,7 +129,7 @@ public class TeleportManager implements Listener {
             } else {
                 if (!Configuration.multiServer.enable) return;
                 try {
-                    MultiServerManager.instance.sendActionMessage(dominion.getServerId(), "teleport",
+                    MultiServerManager.instance.sendActionMessage(dominion.getServerId(), MultiServerManager.ACTION.TELEPORT,
                             List.of(
                                     player.getUniqueId().toString(),
                                     dominion.getId().toString()

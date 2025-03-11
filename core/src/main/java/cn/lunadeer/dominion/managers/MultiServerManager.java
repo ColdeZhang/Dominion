@@ -75,18 +75,24 @@ public class MultiServerManager implements PluginMessageListener {
         if (serverId != Configuration.multiServer.serverId && serverId != -1) {
             return;
         }
-        String action = in.readUTF();
+        ACTION action = ACTION.valueOf(in.readUTF());
         switch (action) {
-            case "notice":
+            case NOTICE:
                 handleNotice(in.readUTF(), in.readUTF());
                 break;
-            case "resp_notice":
+            case RESP_NOTICE:
                 handleRespNotice(in.readUTF(), in.readUTF());
                 break;
-            case "teleport":
+            case TELEPORT:
                 handleTeleportBcMsg(in.readUTF(), in.readUTF());
                 break;
         }
+    }
+
+    public enum ACTION {
+        NOTICE,
+        RESP_NOTICE,
+        TELEPORT
     }
 
     /**
@@ -101,7 +107,7 @@ public class MultiServerManager implements PluginMessageListener {
      * @param args     A list of additional arguments to be included in the message.
      * @throws IOException If an I/O error occurs while writing the data.
      */
-    public void sendActionMessage(Integer serverId, String action, List<String> args) throws IOException {
+    public void sendActionMessage(Integer serverId, ACTION action, List<String> args) throws IOException {
         if (!Configuration.multiServer.enable) {
             return;
         }
@@ -112,7 +118,7 @@ public class MultiServerManager implements PluginMessageListener {
         ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
         DataOutputStream msgout = new DataOutputStream(msgbytes);
         msgout.writeInt(serverId);
-        msgout.writeUTF(action);
+        msgout.writeUTF(action.name());
         for (String data : args) {
             msgout.writeUTF(data);
         }
@@ -121,7 +127,7 @@ public class MultiServerManager implements PluginMessageListener {
         plugin.getServer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
     }
 
-    public void sendActionMessageAll(String action, List<String> args) throws IOException {
+    public void sendActionMessageAll(ACTION action, List<String> args) throws IOException {
         sendActionMessage(-1, action, args);
     }
 
@@ -142,7 +148,7 @@ public class MultiServerManager implements PluginMessageListener {
         try {
             String serverId = Configuration.multiServer.serverId + "";
             String serverName = Configuration.multiServer.serverName;
-            sendActionMessageAll("notice",
+            sendActionMessageAll(ACTION.NOTICE,
                     List.of(serverId, serverName)
             );
         } catch (IOException e) {
@@ -163,9 +169,12 @@ public class MultiServerManager implements PluginMessageListener {
         try {
             String thisServerId = Configuration.multiServer.serverId + "";
             String thisServerName = Configuration.multiServer.serverName;
-            XLogger.info(Language.multiServerManagerText.receivedNotice, rcvServerId, rcvServerName, thisServerId, thisServerName);
             int receivedServerId = toIntegrity(rcvServerId);
-            sendActionMessage(receivedServerId, "resp_notice",
+            if (!serverMap.containsKey(receivedServerId)) {
+                serverMap.put(receivedServerId, rcvServerName);
+                XLogger.info(Language.multiServerManagerText.receivedNotice, rcvServerId, rcvServerName, thisServerId, thisServerName);
+            }
+            sendActionMessage(receivedServerId, ACTION.RESP_NOTICE,
                     List.of(thisServerId, thisServerName)
             );
         } catch (Exception e) {
@@ -184,11 +193,13 @@ public class MultiServerManager implements PluginMessageListener {
      */
     private void handleRespNotice(String rcvServerId, String rcvServerName) {
         try {
-            XLogger.info(Language.multiServerManagerText.receiveRespNotice, rcvServerId, rcvServerName);
             int receivedServerId = toIntegrity(rcvServerId);
-            serverMap.put(receivedServerId, rcvServerName);
-            // prepare cache for the received server
-            CacheManager.instance.addServerCache(receivedServerId);
+            if (!serverMap.containsKey(receivedServerId)) {
+                XLogger.info(Language.multiServerManagerText.receivedNotice, rcvServerId, rcvServerName);
+                serverMap.put(receivedServerId, rcvServerName);
+                // prepare cache for the received server
+                CacheManager.instance.addServerCache(receivedServerId);
+            }
         } catch (Exception e) {
             XLogger.error(e);
         }
