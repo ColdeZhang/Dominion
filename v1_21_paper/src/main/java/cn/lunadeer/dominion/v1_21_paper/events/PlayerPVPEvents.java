@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.v1_21_paper.events;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +13,6 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
 import static cn.lunadeer.dominion.misc.Others.checkPrivilegeFlag;
-import static cn.lunadeer.dominion.misc.Others.checkSimplePriFlag;
 
 public class PlayerPVPEvents implements Listener {
 
@@ -32,8 +31,8 @@ public class PlayerPVPEvents implements Listener {
         } else if (damager instanceof TNTPrimed tnt && tnt.getSource() instanceof Player p) {
             attacker = p;
         } else if (damager instanceof Firework) {
-            DominionDTO dom = Cache.instance.getDominionByLoc(damager.getLocation());
-            if (!checkSimplePriFlag(dom, Flags.PVP, damaged)) {
+            DominionDTO dom = CacheManager.instance.getDominion(damager.getLocation());
+            if (!checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
                 event.setCancelled(true);
             }
             return;
@@ -42,8 +41,8 @@ public class PlayerPVPEvents implements Listener {
             return;
         }
 
-        DominionDTO dom = Cache.instance.getDominionByLoc(damaged.getLocation());
-        if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkSimplePriFlag(dom, Flags.PVP, damaged)) {
+        DominionDTO dom = CacheManager.instance.getDominion(damaged.getLocation());
+        if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
             event.setCancelled(true);
         }
     }
@@ -63,8 +62,8 @@ public class PlayerPVPEvents implements Listener {
             return;
         }
 
-        DominionDTO dom = Cache.instance.getDominionByLoc(arrow.getLocation());
-        if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkSimplePriFlag(dom, Flags.PVP, damaged)) {
+        DominionDTO dom = CacheManager.instance.getDominion(arrow.getLocation());
+        if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
             event.setCancelled(true);
         }
     }
@@ -75,13 +74,13 @@ public class PlayerPVPEvents implements Listener {
             return;
         }
 
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getPotion().getLocation());
+        DominionDTO dom = CacheManager.instance.getDominion(event.getPotion().getLocation());
         if (checkPrivilegeFlag(dom, Flags.PVP, attacker, null)) {
             for (LivingEntity entity : event.getAffectedEntities()) {
                 if (!(entity instanceof Player damaged) || damaged == attacker) {
                     continue;
                 }
-                if (!checkSimplePriFlag(dom, Flags.PVP, damaged)) {
+                if (!checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
                     event.setIntensity(damaged, 0);
                 }
             }
@@ -101,13 +100,13 @@ public class PlayerPVPEvents implements Listener {
             return;
         }
 
-        DominionDTO dom = Cache.instance.getDominionByLoc(event.getEntity().getLocation());
+        DominionDTO dom = CacheManager.instance.getDominion(event.getEntity().getLocation());
         if ((checkPrivilegeFlag(dom, Flags.PVP, attacker, null))) {
             event.getAffectedEntities().removeIf(entity -> {
                 if (!(entity instanceof Player damaged) || damaged == attacker) {
                     return false;
                 }
-                return !checkSimplePriFlag(dom, Flags.PVP, damaged);
+                return !checkPrivilegeFlag(dom, Flags.PVP, damaged, null);
             });
         } else {
             event.getAffectedEntities().removeIf(entity -> entity instanceof Player damaged && damaged != attacker);
@@ -124,8 +123,8 @@ public class PlayerPVPEvents implements Listener {
             return;
         }
 
-        DominionDTO dom = Cache.instance.getDominionByLoc(damaged.getLocation());
-        if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkSimplePriFlag(dom, Flags.PVP, damaged)) {
+        DominionDTO dom = CacheManager.instance.getDominion(damaged.getLocation());
+        if (!checkPrivilegeFlag(dom, Flags.PVP, attacker, null) || !checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
             event.getHook().remove();
             event.setCancelled(true);
         }
