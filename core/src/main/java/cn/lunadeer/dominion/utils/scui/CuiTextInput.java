@@ -61,7 +61,6 @@ public class CuiTextInput implements CuiView {
                 .title(CUI_BUTTON);
         btn_2.addLeftClickTask(0, (view, event) -> {
             try {
-                XLogger.debug("inv class: %s", inv.getClass().getName());
                 String input = inv.getRenameText();
                 if (input != null && input.contains(" ")) {
                     Notification.error(audience, CUI_INPUT_INVALID);
@@ -93,7 +92,6 @@ public class CuiTextInput implements CuiView {
 
     @Override
     public void close(InventoryCloseEvent event) {
-        XLogger.debug("CuiTextInput close");
         if (event == null) {
             inv.close();
         }
