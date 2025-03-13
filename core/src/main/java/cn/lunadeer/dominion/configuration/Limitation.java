@@ -64,11 +64,11 @@ public class Limitation extends ConfigurationFile {
     public int amountAllOverTheWorld = 10;
 
     @HandleManually // See comments at loadWorldLimitationSettings() method
-    public Map<String, WorldLimitationSettings> worldLimitations = new HashMap<>();
+    public Map<String, WorldLimitationSetting> worldLimitations = new HashMap<>();
     @HandleManually
     private final String worldLimitationsKey = "world-limitations";
 
-    public static class WorldLimitationSettings extends ConfigurationPart {
+    public static class WorldLimitationSetting extends ConfigurationPart {
         @Comments({
                 "The maximum amount of dominions a player can create in this world.",
                 "Set -1 means no limitation (but still limited by amount-all-over-the-world)."
@@ -125,7 +125,7 @@ public class Limitation extends ConfigurationFile {
 
     @PreProcess
     public void checkWorldLimitationSettings() {
-        worldLimitations.put("default", new WorldLimitationSettings());
+        worldLimitations.put("default", new WorldLimitationSetting());
         if (!getYaml().contains(worldLimitationsKey)) {
             getYaml().createSection(worldLimitationsKey);
             getYaml().setComments(worldLimitationsKey, List.of(
@@ -147,7 +147,7 @@ public class Limitation extends ConfigurationFile {
         for (String key : keys) {
             XLogger.info(Language.limitationText.loadingWorldSetting, key);
             try {
-                WorldLimitationSettings settings = new WorldLimitationSettings();
+                WorldLimitationSetting settings = new WorldLimitationSetting();
                 ConfigurationManager.readConfigurationPart(getYaml(), settings, worldLimitationsKey + "." + key);
                 worldLimitations.put(key, settings);
             } catch (Exception e) {
@@ -169,53 +169,58 @@ public class Limitation extends ConfigurationFile {
             economy.refundRate = 1;
         }
 
-        if (amountAllOverTheWorld < 0 && amountAllOverTheWorld != -1) {
+        if (amountAllOverTheWorld < 0) {
             amountAllOverTheWorld = -1;
         }
 
         if (!worldLimitations.containsKey("default")) {
-            worldLimitations.put("default", new WorldLimitationSettings());
+            worldLimitations.put("default", new WorldLimitationSetting());
         }
 
-        for (WorldLimitationSettings settings : worldLimitations.values()) {
-            if (settings.amount < 0 && settings.amount != -1) {
-                settings.amount = -1;
+        for (WorldLimitationSetting setting : worldLimitations.values()) {
+            if (setting.amount < 0) {
+                setting.amount = -1;
             }
 
-            if (settings.maxSubDominionDepth < 0) {
-                settings.maxSubDominionDepth = -1;
+            if (setting.amount > amountAllOverTheWorld && amountAllOverTheWorld != -1) {
+                setting.amount = amountAllOverTheWorld;
             }
 
-            if (settings.noHigherThan <= settings.noLowerThan) {
-                settings.noHigherThan = settings.noLowerThan + 1;
+            if (setting.maxSubDominionDepth < 0) {
+                setting.maxSubDominionDepth = -1;
             }
 
-            if (settings.sizeMaxX < 0 && settings.sizeMaxX != -1) {
-                settings.sizeMaxX = -1;
+            if (setting.noHigherThan <= setting.noLowerThan) {
+                setting.noHigherThan = setting.noLowerThan + 1;
             }
-            if (settings.sizeMaxY < 0 && settings.sizeMaxY != -1) {
-                settings.sizeMaxY = -1;
+
+            if (setting.sizeMaxX < 0) {
+                setting.sizeMaxX = -1;
             }
-            if (settings.sizeMaxZ < 0 && settings.sizeMaxZ != -1) {
-                settings.sizeMaxZ = -1;
+            if (setting.sizeMaxY < 0) {
+                setting.sizeMaxY = -1;
             }
-            if (settings.sizeMinX <= 0) {
-                settings.sizeMinX = 1;
+            if (setting.sizeMaxZ < 0) {
+                setting.sizeMaxZ = -1;
             }
-            if (settings.sizeMaxX < settings.sizeMinX) {
-                settings.sizeMaxX = settings.sizeMinX + 1;
+
+            if (setting.sizeMinX <= 0) {
+                setting.sizeMinX = 1;
             }
-            if (settings.sizeMinY <= 0) {
-                settings.sizeMinY = 1;
+            if (setting.sizeMaxX < setting.sizeMinX && setting.sizeMaxX != -1) {
+                setting.sizeMaxX = setting.sizeMinX + 1;
             }
-            if (settings.sizeMaxY < settings.sizeMinY) {
-                settings.sizeMaxY = settings.sizeMinY + 1;
+            if (setting.sizeMinY <= 0) {
+                setting.sizeMinY = 1;
             }
-            if (settings.sizeMinZ <= 0) {
-                settings.sizeMinZ = 1;
+            if (setting.sizeMaxY < setting.sizeMinY && setting.sizeMaxY != -1) {
+                setting.sizeMaxY = setting.sizeMinY + 1;
             }
-            if (settings.sizeMaxZ < settings.sizeMinZ) {
-                settings.sizeMaxZ = settings.sizeMinZ + 1;
+            if (setting.sizeMinZ <= 0) {
+                setting.sizeMinZ = 1;
+            }
+            if (setting.sizeMaxZ < setting.sizeMinZ && setting.sizeMaxZ != -1) {
+                setting.sizeMaxZ = setting.sizeMinZ + 1;
             }
 
         }
@@ -223,7 +228,7 @@ public class Limitation extends ConfigurationFile {
 
     @PostProcess(priority = 3)
     public void saveWorldLimitationSettings() {
-        for (Map.Entry<String, WorldLimitationSettings> entry : worldLimitations.entrySet()) {
+        for (Map.Entry<String, WorldLimitationSetting> entry : worldLimitations.entrySet()) {
             try {
                 String prefix = worldLimitationsKey + "." + entry.getKey();
                 ConfigurationManager.writeConfigurationPart(getYaml(), entry.getValue(), prefix, !Objects.equals(entry.getKey(), "default"));
@@ -233,19 +238,15 @@ public class Limitation extends ConfigurationFile {
         }
     }
 
-    public @NotNull WorldLimitationSettings getWorldSettings(@NotNull UUID worldUUID) {
+    public @NotNull Limitation.WorldLimitationSetting getWorldSettings(@NotNull UUID worldUUID) {
         return getWorldSettings(toWorld(worldUUID).getName());
     }
 
-    public @NotNull WorldLimitationSettings getWorldSettings(@NotNull World world) {
+    public @NotNull Limitation.WorldLimitationSetting getWorldSettings(@NotNull World world) {
         return getWorldSettings(world.getName());
     }
 
-    public @NotNull WorldLimitationSettings getWorldSettings(@Nullable String worldName) {
-        if (worldName == null) {
-            worldName = "default";
-        }
-        WorldLimitationSettings settings = worldLimitations.get(worldName);
-        return Objects.requireNonNullElseGet(settings, WorldLimitationSettings::new);
+    public @NotNull Limitation.WorldLimitationSetting getWorldSettings(@Nullable String worldName) {
+        return Objects.requireNonNullElse(worldLimitations.get(worldName), worldLimitations.get("default"));
     }
 }

@@ -1,14 +1,17 @@
 package cn.lunadeer.dominion.managers;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
+import cn.lunadeer.dominion.utils.scheduler.CancellableTask;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +20,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +37,8 @@ public class TeleportManager implements Listener {
     public static class TeleportManagerText extends ConfigurationPart {
         public String coolingDown = "Please wait for {0} seconds before teleporting again.";
         public String disabled = "Teleportation is disabled for your permission group.";
-        public String delay = "Will teleport in {0} seconds...";
+        public String delay = "Will teleport in {0} seconds, don't move...";
         public String unfinishedCancelled = "Cancelled previous unfinished teleportation.";
-        public String doNotMove = "Do not move while teleporting...";
         public String cancelMove = "Cancelled teleportation due to movement.";
     }
 
@@ -47,7 +48,7 @@ public class TeleportManager implements Listener {
 
     public static Map<UUID, Integer> teleportRequestOtherServer = new HashMap<>();
     public static Map<UUID, Integer> teleportCooldown = new HashMap<>();
-    public static Map<UUID, BukkitTask> teleportDelayTasks = new HashMap<>();
+    public static Map<UUID, CancellableTask> teleportDelayTasks = new HashMap<>();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -56,8 +57,9 @@ public class TeleportManager implements Listener {
         }
         Integer dominionId = teleportRequestOtherServer.get(event.getPlayer().getUniqueId());
         teleportRequestOtherServer.remove(event.getPlayer().getUniqueId());
-        DominionDTO dominion = Cache.instance.getDominion(dominionId);
+        DominionDTO dominion = CacheManager.instance.getDominion(dominionId);
         if (dominion == null) {
+            Notification.error(event.getPlayer(), Language.convertsText.unknownDominion, dominionId);
             return;
         }
         if (dominion.getServerId() != Configuration.multiServer.serverId) {
@@ -119,16 +121,15 @@ public class TeleportManager implements Listener {
         }
         if (Configuration.getPlayerLimitation(player).teleportation.cooldown > 0) {
             Notification.info(player, Language.teleportManagerText.delay, Configuration.getPlayerLimitation(player).teleportation.delay);
-            Notification.info(player, Language.teleportManagerText.doNotMove);
         }
         // teleport
-        BukkitTask task = Dominion.instance.getServer().getScheduler().runTaskLaterAsynchronously(Dominion.instance, () -> {
+        CancellableTask task = Scheduler.runTaskLaterAsync(() -> {
             if (dominion.getServerId() == Configuration.multiServer.serverId) {
                 doTeleportSafely(player, dominion.getTpLocation());
             } else {
                 if (!Configuration.multiServer.enable) return;
                 try {
-                    MultiServerManager.instance.sendActionMessage(dominion.getServerId(), "teleport",
+                    MultiServerManager.instance.sendActionMessage(dominion.getServerId(), MultiServerManager.ACTION.TELEPORT,
                             List.of(
                                     player.getUniqueId().toString(),
                                     dominion.getId().toString()
@@ -140,7 +141,7 @@ public class TeleportManager implements Listener {
                 }
             }
         }, Configuration.getPlayerLimitation(player).teleportation.delay * 20L);
-        Dominion.instance.getServer().getScheduler().runTaskLaterAsynchronously(Dominion.instance, () -> {
+        Scheduler.runTaskLaterAsync(() -> {
             teleportDelayTasks.remove(player.getUniqueId());    // remove task from map for cleanup
         }, Configuration.getPlayerLimitation(player).teleportation.delay * 20L + 1);
         teleportDelayTasks.put(player.getUniqueId(), task);
@@ -162,7 +163,7 @@ public class TeleportManager implements Listener {
             Integer id = toIntegrity(dominionId);
             teleportRequestOtherServer.put(uuid, id);
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
     }
 
@@ -182,7 +183,7 @@ public class TeleportManager implements Listener {
         }
         if (!isPaper()) {
             Location loc = findNearestSafeLocation(location);
-            player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            Bukkit.getScheduler().runTask(Dominion.instance, () -> player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN));
         } else {
             location.getWorld().getChunkAtAsyncUrgently(location).thenAccept((chunk) -> {
                 Location loc = findNearestSafeLocation(location);

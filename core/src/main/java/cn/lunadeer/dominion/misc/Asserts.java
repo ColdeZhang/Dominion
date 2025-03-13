@@ -1,11 +1,11 @@
 package cn.lunadeer.dominion.misc;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.configuration.Limitation;
@@ -112,10 +112,9 @@ public class Asserts {
         if (bypassLimit(associatedPlayer)) {
             return;
         }
-        List<DominionDTO> dominions = Cache.instance.getPlayerDominions(associatedPlayer.getUniqueId());
-        dominions.removeIf(dom -> dom.getServerId() != Configuration.multiServer.serverId); // only count dominions in current server
+        List<DominionDTO> dominions = CacheManager.instance.getCache().getDominionCache().getPlayerOwnDominionDTOs(associatedPlayer.getUniqueId());
         int allOverTheWorld = Configuration.getPlayerLimitation(associatedPlayer).amountAllOverTheWorld;
-        if (dominions.size() >= allOverTheWorld) {
+        if (dominions.size() >= allOverTheWorld && allOverTheWorld >= 0) {
             throw new DominionException(Language.assertsText.exceedMaxAmount, associatedPlayer.getName(), allOverTheWorld);
         }
         World associatedWorld = toWorld(associatedWorldUid);
@@ -123,7 +122,8 @@ public class Asserts {
         if (amountOfWorld == 0) {
             throw new DominionException(Language.assertsText.notAllowDomInWorld, associatedPlayer.getName(), associatedWorld.getName());
         }
-        if (dominions.stream().filter(dom -> dom.getWorldUid().equals(associatedWorld.getUID())).count() >= amountOfWorld) {
+        if (dominions.stream().filter(dom -> dom.getWorldUid().equals(associatedWorld.getUID())).count() >= amountOfWorld
+                && amountOfWorld >= 0) {
             throw new DominionException(Language.assertsText.exceedMaxAmountOfWorld, associatedPlayer.getName(), associatedWorld.getName(), amountOfWorld);
         }
     }
@@ -224,11 +224,11 @@ public class Asserts {
         if (dominion.getOwner().equals(associatedPlayer.getUniqueId())) {
             return;
         }
-        MemberDTO member = Cache.instance.getMember(associatedPlayer, dominion);
+        MemberDTO member = CacheManager.instance.getMember(dominion, associatedPlayer);
         if (member == null) {
             throw new DominionException(Language.assertsText.notAdmin, dominion.getName());
         }
-        GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+        GroupDTO group = CacheManager.instance.getGroup(member.getGroupId());
         if (group != null && group.getFlagValue(Flags.ADMIN)) {
             return;
         }
@@ -255,7 +255,7 @@ public class Asserts {
     public static void assertWithinParent(@NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
         // check if parent dominion can contain this dominion
         if (dominion.getParentDomId() != -1) {
-            DominionDTO parent = Cache.instance.getDominion(dominion.getParentDomId());
+            DominionDTO parent = CacheManager.instance.getCache().getDominionCache().getDominion(dominion.getParentDomId());
             if (parent == null) {
                 throw new DominionException(Language.assertsText.missingParentDom, dominion.getName());
             }
@@ -286,13 +286,13 @@ public class Asserts {
         int level = 0;
         DominionDTO parent = dominion;
         while (parent.getParentDomId() != -1) {
-            parent = Cache.instance.getDominion(parent.getParentDomId());
+            parent = CacheManager.instance.getDominion(parent.getParentDomId());
             if (parent == null) {
                 throw new DominionException(Language.assertsText.missingParentDom, dominion.getName());
             }
             level++;
         }
-        if (level >= limitDepth) {
+        if (level > limitDepth) {
             throw new DominionException(Language.assertsText.subDomTooDeep, associatedPlayer.getName(), limitDepth);
         }
     }
@@ -308,7 +308,7 @@ public class Asserts {
      */
     public static void assertContainSubs(@NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
         // check if dominion can contain children
-        List<DominionDTO> children = Cache.instance.getDominionsByParentId(dominion.getId());
+        List<DominionDTO> children = CacheManager.instance.getCache().getDominionCache().getChildrenOf(dominion.getId());
         for (DominionDTO child : children) {
             if (!cuboid.contain(child.getCuboid())) {
                 throw new DominionException(Language.assertsText.cantContainChild, dominion.getName(), child.getName());
@@ -324,7 +324,7 @@ public class Asserts {
      * @throws DominionException if the dominion intersects with another dominion or the spawn protection area
      */
     public static void assertDominionIntersect(@NotNull Player associatedPlayer, @NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
-        List<DominionDTO> dominions = Cache.instance.getDominionsByParentId(dominion.getParentDomId());
+        List<DominionDTO> dominions = CacheManager.instance.getCache().getDominionCache().getChildrenOf(dominion.getParentDomId());
         for (DominionDTO dom : dominions) {
             if (dom.getId().equals(dominion.getId())) {
                 continue;

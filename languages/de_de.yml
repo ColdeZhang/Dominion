@@ -1,0 +1,593 @@
+dominion-text:
+  loading-config: Konfigurationen werden geladen...
+  plugin-enabled: Plugin aktiviert!
+  plugin-version: 'Plugin-Version: {0}'
+multi-server-manager-text:
+  sending-notice: Sende Benachrichtigung an alle Server... ({0}:{1})
+  received-notice: Benachrichtigung von Server {0}:{1} erhalten, antworte... ({2}:{3})
+  receive-resp-notice: Antwortbenachrichtigung von Server {0}:{1} erhalten
+asserts-text:
+  dom-name-should-not-empty: Dominion-Name darf nicht leer sein.
+  dom-name-invalid: Dominion-Name darf keine Leerzeichen oder Punkte enthalten.
+  dom-name-exist: 'Dominion-Name: {0} existiert bereits.'
+  group-name-should-not-empty: Gruppenname darf nicht leer sein.
+  group-name-invalid: Gruppenname darf keine Leerzeichen oder Punkte enthalten.
+  group-name-exist: 'Gruppenname: {0} existiert bereits.'
+  not-allow-dom-in-world: Spieler {0} darf keine Dominions in Welt {1} erstellen.
+  exceed-max-amount: 'Spieler {0} kann keine weiteren Dominions erstellen (max: {1}).'
+  exceed-max-amount-of-world: 'Spieler {0} kann keine weiteren Dominions in Welt {1} erstellen (max: {2}).'
+  x-length-too-short: West-Ost(X) Länge {0} sollte mehr als {1} sein.
+  y-length-too-short: Unten-Oben(Y) Länge {0} sollte mehr als {1} sein.
+  z-length-too-short: Süd-Nord(Z) Länge {0} sollte mehr als {1} sein.
+  x-length-too-long: West-Ost(X) Länge {0} sollte weniger als {1} sein.
+  y-length-too-long: Unten-Oben(Y) Länge {0} sollte weniger als {1} sein.
+  z-length-too-long: Süd-Nord(Z) Länge {0} sollte weniger als {1} sein.
+  y-too-high: Der höchste Punkt des Dominions {0} sollte weniger als {1} sein.
+  y-too-low: Der niedrigste Punkt des Dominions {0} sollte mehr als {1} sein.
+  not-owner: Nur der Besitzer von {0} kann diesen Befehl/diese Operation ausführen.
+  not-admin: Nur der Administrator von {0} kann diesen Befehl/diese Operation ausführen.
+  intersect-with-dom: Dominion {0} überschneidet sich mit Dominion {1}.
+  intersect-with-spawn: Dominion {0} überschneidet sich mit dem Spawn-Schutzbereich.
+  outside-of-parent-dom: Dominion {0} liegt außerhalb seines übergeordneten Dominions {1}.
+  cant-contain-child: Dominion {0} kann sein untergeordnetes Dominion {1} nicht enthalten.
+  missing-parent-dom: Übergeordnetes Dominion von {0} fehlt.
+  sub-dom-too-deep: Spieler {0} kann kein untergeordnetes Dominion mit einer Tiefe von mehr als {1} erstellen.
+  with-draw-money: Erfolgreich {0} für Dominion bezahlt.
+  deposit-money: Erfolgreich {0} vom Dominion zurückerstattet.
+  group-not-belong-dominion: Gruppe {0} gehört nicht zu Dominion {1}.
+converts-text:
+  must-be-player: Muss ein Spieler sein für diesen Befehl/diese Operation.
+  must-be-online: Der Spieler ({0}) muss online sein.
+  world-not-exist: Die Welt ({0}) existiert nicht.
+  unknown-env-flag: 'Unbekannte Umgebungsflagge: {0}.'
+  unknown-pre-flag: 'Unbekannte Berechtigungsflagge: {0}.'
+  unknown-dominion: 'Unbekanntes Dominion: {0}.'
+  invalid-number-format: 'Ungültige Anzahl von Argumenten: {0}.'
+  invalid-boolean-format: 'Ungültiger boolescher Wert der Argumente: {0}, sollte wahr oder falsch sein.'
+  invalid-points: Sie müssen zwei Punkte in derselben Welt auswählen, um ein Dominion zu erstellen.
+  unknown-block-face: 'Unbekannte Richtung: {0}.'
+  unknown-resize-type: 'Unbekannter Größenänderungstyp: {0}.'
+  unknown-message-type: 'Unbekannter Nachrichtentyp: {0}.'
+  invalid-color-format: 'Ungültiger Farbwert der Argumente: {0}, sollte ein Hex-Farbwert sein (0xRRGGBB).'
+  unknown-player: Spieler {0} wurde nicht aufgezeichnet (nach der Installation des Plugins).
+  not-member: Spieler {0} ist kein Mitglied des Dominions {1}.
+  no-group-found: Keine Gruppe mit dem Namen {0} im Dominion {1} gefunden.
+others-text:
+  auto-clean-start: Starte automatische Bereinigung von Spielern, die sich seit {0} Tagen nicht eingeloggt haben.
+  auto-cleaning-player: Daten von {0} bereinigt.
+  auto-clean-end: Automatische Bereinigung abgeschlossen.
+  no-permission-for-flag: Sie haben keine {0}({1}) Berechtigung.
+vault-connect-text:
+  vault-unavailable: Vault nicht verfügbar, bitte installieren Sie Vault oder VaultUnlock, um Wirtschaftsmerkmale zu nutzen.
+  economy-unavailable: Wirtschafts-Plugin nicht gefunden, Sie müssen ein Wirtschafts-Plugin installieren, um Wirtschaftsmerkmale zu nutzen.
+  insufficient-funds: Unzureichende Mittel, benötigen {0} {1}, haben aber nur {2} {1}.
+dominion-event-handler-text:
+  create-success: Dominion {0} erfolgreich erstellt.
+  create-failed: 'Erstellung des Dominions {0} fehlgeschlagen, Grund: {1}'
+  expand-success: Dominion {0} erfolgreich erweitert.
+  expand-failed: 'Erweiterung des Dominions {0} fehlgeschlagen, Grund: {1}'
+  contract-success: Dominion {0} erfolgreich verkleinert.
+  contract-failed: 'Verkleinerung des Dominions {0} fehlgeschlagen, Grund: {1}'
+  delete-success: Dominion {0} erfolgreich gelöscht.
+  delete-failed: 'Löschung des Dominions {0} fehlgeschlagen, Grund: {1}'
+  delete-confirm: Verwenden Sie den Befehl '{0}', um das Dominion {1} und seine Unterdominiums zu löschen. Dieser Vorgang kann nicht rückgängig gemacht werden.
+  list-sub-doms: 'Das Dominion {0} hat Unterdominiums: {1}'
+  rename-failed: 'Umbenennung des Dominions {0} fehlgeschlagen, Grund: {1}'
+  rename-success: Dominion {0} erfolgreich in {1} umbenannt.
+  same-name: Der neue Name ist derselbe wie der alte Name.
+  give-success: Dominion {0} erfolgreich an {1} übergeben.
+  give-failed: 'Übergabe des Dominions {0} an andere fehlgeschlagen, Grund: {1}'
+  give-confirm: Verwenden Sie den Befehl '{0}', um das Dominion {1} an {2} zu übergeben. Dieser Vorgang kann nicht rückgängig gemacht werden.
+  already-belong: Das Dominion {0} gehört bereits zu {1}.
+  cannot-give-sub: Dominion {0} ist ein Unterdominion und kann nicht an andere übergeben werden.
+  tp-location-not-in-dominion: Der Teleportationsort befindet sich nicht im Dominion {0}.
+  tp-location-set-success: Teleportationsort für Dominion {0} erfolgreich festgelegt.
+  tp-location-set-failed: 'Festlegung des Teleportationsorts für Dominion {0} fehlgeschlagen, Grund: {1}'
+  set-enter-message-success: Eintrittsnachricht für Dominion {0} erfolgreich festgelegt.
+  set-enter-message-failed: 'Festlegung der Eintrittsnachricht für Dominion {0} fehlgeschlagen, Grund: {1}'
+  set-leave-message-success: Austrittsnachricht für Dominion {0} erfolgreich festgelegt.
+  set-leave-message-failed: 'Festlegung der Austrittsnachricht für Dominion {0} fehlgeschlagen, Grund: {1}'
+  set-map-color-success: Kartenfarbe für Dominion {0} erfolgreich festgelegt.
+  set-map-color-failed: 'Festlegung der Kartenfarbe für Dominion {0} fehlgeschlagen, Grund: {1}'
+  set-env-flag-success: Umgebungsflagge {0} erfolgreich auf {1} gesetzt.
+  set-env-flag-failed: 'Setzen der Umgebungsflagge {0} auf {1} fehlgeschlagen, Grund: {2}'
+  set-guest-flag-success: Gastflagge {0} erfolgreich auf {1} gesetzt.
+  set-guest-flag-failed: 'Setzen der Gastflagge {0} auf {1} fehlgeschlagen, Grund: {2}'
+member-event-handler-text:
+  set-flag-success: Flagge {0} erfolgreich für {1} in {2} gesetzt.
+  owner-only: Nur der Besitzer kann das Admin-Mitglied verwalten.
+  group-already: Dieses Mitglied gehört zur Gruppe {0}, daher können Sie es nicht separat verwalten.
+  set-flag-failed: 'Flagge konnte nicht gesetzt werden, Grund: {0}'
+  add-member-success: { 0 } erfolgreich zu {1} hinzugefügt.
+  already-member: '{0} ist bereits Mitglied von {1}.'
+  cant-be-owner: Sie können den Dominion-Besitzer nicht als Mitglied hinzufügen.
+  add-member-failed: 'Mitglied konnte nicht hinzugefügt werden, Grund: {0}'
+  remove-member-success: { 0 } erfolgreich von {1} entfernt.
+  remove-member-failed: 'Mitglied konnte nicht entfernt werden, Grund: {0}'
+group-event-handler-text:
+  owner-only: Nur der Besitzer kann die Admin-Gruppe verwalten.
+  set-flag-success: Gruppenflagge {0} erfolgreich auf {1} gesetzt.
+  set-flag-failed: 'Gruppenflagge konnte nicht gesetzt werden, Grund: {3}'
+  create-group-success: Gruppe {0} erfolgreich erstellt.
+  create-group-failed: 'Gruppe konnte nicht erstellt werden, Grund: {0}'
+  delete-group-success: Gruppe {0} erfolgreich gelöscht.
+  delete-group-failed: 'Gruppe konnte nicht gelöscht werden, Grund: {0}'
+  rename-group-success: Gruppe {0} erfolgreich in {1} umbenannt.
+  rename-group-failed: 'Gruppe konnte nicht umbenannt werden, Grund: {0}'
+  add-member-success: Mitglied {0} erfolgreich zur Gruppe {1} hinzugefügt.
+  add-member-failed: 'Mitglied konnte nicht zur Gruppe hinzugefügt werden, Grund: {0}'
+  remove-member-success: Mitglied {0} erfolgreich aus der Gruppe {1} entfernt.
+  remove-member-failed: 'Mitglied konnte nicht aus der Gruppe entfernt werden, Grund: {0}'
+select-point-events-handler-text:
+  first-point: Erster Punkt bei {0}, {1}, {2} ausgewählt.
+  second-point: Zweiter Punkt bei {0}, {1}, {2} ausgewählt.
+  not-same-world: Die beiden Punkte befinden sich nicht in derselben Welt.
+  price: Der Preis des Dominions beträgt {0} {1}.
+  size: 'Größe: {0}x{1}x{2}'
+  square: 'Fläche: {0}'
+  volume: 'Volumen: {0}'
+  no-dominion: Kein Dominion an der Position {0}, {1}, {2} gefunden.
+  found-dominion: Position {0}, {1}, {2} befindet sich im Dominion {3}.
+menu-tui-text:
+  title: Dominion-Menü
+  button: MENÜ
+  admin-only-section: Nur Admins können diesen Abschnitt sehen
+  document-button: DOKUMENT
+  document-description: Öffnen Sie den externen Dokumentationslink.
+  command-help-button: BEFEHLSHILFE
+  command-help-description: Öffnen Sie den externen Befehlshilfelink.
+dominion-list-tui-text:
+  title: Deine Dominions
+  button: DOMINIONS
+  description: Liste all deiner Dominions auf.
+  delete-button: LÖSCHEN
+  admin-section: Deine Admin-Dominions-Sektion.
+  server-section: Server {0} Dominions-Sektion.
+dominion-manage-tui-text:
+  title: Verwalte {0}
+  button: VERWALTEN
+  set-tp-button: TP SETZEN
+  set-tp-description: Setze deinen aktuellen Standort als TP-Standort.
+set-size-tui-text:
+  title: Größe ändern {0}
+  button: GRÖSSE ÄNDERN
+  north: Norden(z-)
+  south: Süden(z+)
+  west: Westen(x-)
+  east: Osten(x+)
+  up: Oben(y+)
+  down: Unten(y-)
+  expand: ERWEITERN
+  contract: VERKLEINERN
+env-setting-tui-text:
+  title: '{0} Umgebungs-Einstellung'
+  button: UMGEBUNG EINST.
+  description: Umgebung des Dominions einstellen.
+guest-setting-tui-text:
+  title: '{0} Gast-Einstellung'
+  button: GAST EINST.
+  description: Gastverhalten des Dominions einstellen.
+size-info-tui-text:
+  title: '{0} Größen-Info'
+  button: GRÖSSEN-INFO
+  description: Zeige Größeninformationen des Dominions an
+  owner-name: Dieses Dominion gehört {0}.
+  info-lwh: 'Größe: {0} x {1} x {2}'
+  info-height: 'Höhe: {0} ~ {1}'
+  square: 'Fläche: {0}'
+  volume: 'Volumen: {0}'
+migrate-list-text:
+  title: Von Residence migrieren
+  description: Residence-Daten zu Dominion migrieren.
+  button: MIGRIEREN
+  not-enabled: Residence-Migration ist nicht aktiviert.
+  no-data: Keine Daten zum Migrieren.
+  cant-migrate: Unter-Residence wird mit dem übergeordneten migriert.
+member-list-tui-text:
+  title: '{0} Mitgliederliste'
+  description: Liste der Mitglieder dieses Dominions.
+  button: MITGLIEDER
+  remove: ENTFERNEN
+  remove-description: Entferne dieses Mitglied aus diesem Dominion.
+  owner-only: Nur der Besitzer kann Admin-Mitglieder verwalten.
+  group-only: Dieses Mitglied gehört zur Gruppe {0}, daher können Sie es nicht separat verwalten.
+  tag-admin: Admin kann Mitglieder und Gruppen dieses Dominions verwalten.
+  tag-normal: Normale Mitglieder.
+  tag-ban: Wer keine MOVE-Berechtigung hat.
+  tag-group: Dieser Spieler gehört zu einer Gruppe, Sie können ihn nicht separat verwalten.
+select-player-tui-text:
+  title: Spieler auswählen
+  button: SPIELER HINZUFÜGEN
+  description: Fügen Sie einen Spieler als Mitglied dieses Dominions hinzu.
+  back: ZURÜCK
+member-setting-tui-text:
+  title: '{0} Mitglieder-Einstellung'
+  description: Setze die Berechtigungen des Mitglieds für das Dominion.
+  button: EINSTELLUNG
+template-list-tui-text:
+  title: Vorlagenliste
+  button: VORLAGEN
+  description: Vorlagen können verwendet werden, um die Berechtigungen eines Mitglieds schnell einzurichten.
+  delete-button: LÖSCHEN
+select-template-tui-text:
+  title: Vorlage auswählen
+  description: Wählen Sie eine Vorlage aus, um sie auf dieses Mitglied anzuwenden.
+  button: VORLAGE AUSWÄHLEN
+  back: ZURÜCK
+  apply: ANWENDEN
+group-list-tui-text:
+  title: '{0} Gruppenliste'
+  description: Liste der Gruppen dieses Dominions.
+  button: GRUPPEN
+  delete-button: LÖSCHEN
+  delete-description: Löschen Sie diese Gruppe, alle Mitglieder werden aus der Gruppe entfernt.
+  remove-member-description: Entfernen Sie {0} aus der Gruppe {1} in die Standardgruppe.
+group-setting-tui-text:
+  title: Gruppe {0} Einstellungen
+  description: Verwalten Sie die Einstellungen der Gruppe {0}.
+  button: EINSTELLUNG
+select-member-tui-text:
+  title: Mitglied auswählen
+  description: Wählen Sie ein Mitglied aus, um es der Gruppe hinzuzufügen.
+  back: ZURÜCK
+title-list-tui-text:
+  title: Gruppen-Titelliste
+  description: Liste der Gruppentitel, die Sie verwenden können.
+  button: TITEL
+  use-button: VERWENDEN
+  disuse-button: NICHT VERWENDEN
+  from-dominion: Vom Dominion {0}
+all-dominion-tui-text:
+  title: Alle Dominions
+  description: Liste aller Dominions.
+  button: ALLE LISTEN
+template-setting-text:
+  title: Vorlageneinstellung
+  button: EINSTELLUNG
+  not-found: Vorlage {0} nicht gefunden.
+resize-dominion-cui-text:
+  title: '{0} {1} mit Richtung {2}'
+  placeholder: Größe eingeben
+edit-enter-message-cui-text:
+  title: Bearbeite {0} Eintrittsnachricht
+  button: EINTRITTSNACHR.
+  description: Nachricht, die beim Betreten des Dominions angezeigt wird.
+edit-leave-message-cui-text:
+  title: Bearbeite {0} Austrittsnachricht
+  button: AUSTRITTSNACHR.
+  description: Nachricht, die angezeigt wird, wenn der Spieler das Dominion verlässt.
+rename-dominion-cui-text:
+  title: Benenne {0} um
+  description: Dominion umbenennen.
+  button: UMBENENNEN
+create-dominion-cui-text:
+  title: Dominion erstellen
+  input: Neuer Dominion-Name
+  description: Erstelle automatisch ein Dominion um dich herum.
+  button: ERSTELLEN
+set-map-color-cui-text:
+  title: Setze {0} Kartenfarbe
+  button: FARBE
+  description: Farbe des Dominions auf der Webkarte.
+search-player-cui-text:
+  title: Spieler suchen
+  input: Exakter Spielername
+  button: SUCHEN
+create-template-cui-text:
+  title: Vorlage erstellen
+  input: Neuen Vorlagennamen eingeben
+  button: ERSTELLEN
+create-group-cui-text:
+  title: Neue Gruppe erstellen
+  input: Neuer Gruppenname
+  description: Erstelle eine neue Berechtigungsgruppe.
+  button: ERSTELLEN
+rename-group-cui-text:
+  title: Gruppe umbenennen
+  button: UMBENENNEN
+  description: Diese Gruppe umbenennen.
+administrator-command-text:
+  reload-cache-button: CACHE NEULADEN
+  reload-cache-description: Den Cache neu laden (nicht häufig tun).
+  reload-config-button: KONFIGURATION NEULADEN
+  reload-config-description: Die Konfiguration neu laden.
+  reloading-dominion-cache: Dominion-Cache wird neu geladen...
+  reloaded-dominion-cache: Dominion-Cache erfolgreich neu geladen!
+  reloading-member-cache: Mitgliederrechte-Cache wird neu geladen...
+  reloaded-member-cache: Mitgliederrechte-Cache erfolgreich neu geladen!
+  reloading-group-cache: Gruppen-Cache wird neu geladen...
+  reloaded-group-cache: Gruppen-Cache erfolgreich neu geladen!
+  reloading-config: Konfiguration wird neu geladen...
+  exporting-mca-list: MCA-Liste wird exportiert...
+  create-mca-folder-failed: Erstellen des MCA-Listenordners fehlgeschlagen.
+  writing-mca-list: Schreibe Liste der Welt {0}...
+  create-mca-file-failed: Erstellen der MCA-Listendatei {0} fehlgeschlagen.
+  export-mcalist-failed: 'Export der MCA-Liste der Welt {0} fehlgeschlagen, Grund: {1}.'
+  exported-mcalist: MCA-Liste erfolgreich nach {0} exportiert.
+  import-hint: Import der Datenbank ist nur für Migration oder Wiederherstellung von Backups, nicht zum Zusammenführen von zwei Datenbanken verwenden.
+  import-info: Wenn die aktuelle Datenbank nicht leer ist, können Fehler auftreten und Datenverlust oder -beschädigung verursachen.
+  import-confirm: Bitte bestätigen Sie den Importvorgang, indem Sie 'confirm' am Ende des Befehls hinzufügen.
+migration-command-text:
+  create-player-failed: Erstellen des Spielercaches für {0} fehlgeschlagen.
+  migrate-success: Residence {0} erfolgreich zu Dominion migriert.
+  migrate-failed: 'Migration der Residence fehlgeschlagen. Grund: {1}'
+  missing-residence: Residence {0} nicht gefunden.
+  not-your-residence: Residence {0} gehört nicht Ihnen.
+template-command-text:
+  name-not-valid: Vorlagenname darf keine Leerzeichen enthalten
+  template-name-exist: Vorlage {0} existiert bereits
+  create-template-fail: 'Erstellen der Vorlage fehlgeschlagen, Grund: {0}'
+  create-template-success: Vorlage {0} erfolgreich erstellt
+  template-not-exist: Vorlage {0} existiert nicht
+  delete-template-success: Vorlage {0} erfolgreich gelöscht
+  delete-template-fail: 'Löschen der Vorlage fehlgeschlagen, Grund: {0}'
+  apply-template-success: Vorlage {0} erfolgreich auf {1} angewendet
+  apply-template-fail: 'Anwenden der Vorlage fehlgeschlagen, Grund: {0}'
+  set-flag-success: Flagge {0} der Vorlage {1} erfolgreich auf {2} gesetzt
+  set-flag-fail: 'Setzen der Flagge fehlgeschlagen, Grund: {0}'
+group-title-command-text:
+  group-not-belonging: Gehört nicht zur Gruppe {0}.
+  using-title-success: Titel {0} erfolgreich verwendet.
+  using-title-fail: 'Verwenden des Titels fehlgeschlagen, Grund: {0}'
+configuration-text:
+  loading-language: Sprache {0} wird geladen...
+  load-language-fail: 'Laden der Sprache {0} fehlgeschlagen, Grund: {1}, verwende Standard en_us.'
+  load-language-success: Sprache {0} erfolgreich geladen.
+  loading-flag: Flaggenkonfiguration wird geladen...
+  load-flag-success: Flaggenkonfiguration erfolgreich geladen.
+  loading-limitations: Einschränkungskonfiguration wird geladen...
+  saving-default-limitation: Da keine Einschränkungsdatei gefunden wurde, wird die Standard-Einschränkungsdatei gespeichert.
+  save-limitation-fail: 'Speichern der Einschränkungsdatei fehlgeschlagen: {0}'
+  loading-limitation: 'Einschränkungsdatei wird geladen: {0}...'
+  load-limitation-fail: 'Laden der Einschränkungsdatei fehlgeschlagen: {0}, Grund: {1}'
+  load-limitations: 'Erfolgreich {0} Einschränkungen geladen: {1}.'
+  load-configuration: Konfiguration erfolgreich geladen.
+  debug-enabled: Debug-Modus aktiviert.
+  prepare-database: Datenbank wird vorbereitet...
+  database-connected: Datenbank erfolgreich verbunden.
+  multi-server-sqlite: Datenbank vom Typ sqlite wird im Multi-Server-Modus nicht unterstützt, Multi-Server-Modus deaktiviert.
+  server-id-invalid: Server-ID muss eine positive Ganzzahl (> 0) sein, Multi-Server-Modus deaktiviert.
+limitation-text:
+  loading-world-settings: Welt-Einstellungen werden geladen...
+  loading-world-setting: Welt-Einstellungen von {0} werden geladen...
+  load-world-setting-failed: 'Laden der Welt-Einstellungen von {0} fehlgeschlagen, Grund: {1}'
+  load-world-settings-success: 'Erfolgreich {0} Welt-Einstellungen geladen: {1}.'
+database-manager-text:
+  exporting-database-tables: Datenbanktabellen werden exportiert...
+  export-table-fail: 'Export der Tabelle fehlgeschlagen, Grund: {0}'
+  export-world-mapping-fail: 'Export der Welt-UID-Zuordnung fehlgeschlagen, Grund: {0}'
+  export-database-success: Datenbank erfolgreich nach {0} exportiert.
+  file-not-found: Datenbanktabellen-Dateipfad {0} nicht gefunden.
+  importing-database: Datenbank wird importiert...
+  file-corrupted: Einige Datenbanktabellendateien fehlen, bitte exportieren Sie die Datenbanktabellen erneut.
+  import-database-fail: 'Import der Datenbank fehlgeschlagen, Grund: {0}'
+  import-database-success: Datenbank erfolgreich importiert.
+teleport-manager-text:
+  cooling-down: Bitte warten Sie {0} Sekunden, bevor Sie erneut teleportieren.
+  disabled: Teleportation ist für Ihre Berechtigungsgruppe deaktiviert.
+  delay: Wird in {0} Sekunden teleportieren, nicht bewegen...
+  unfinished-cancelled: Vorherige unvollständige Teleportation abgebrochen.
+  cancel-move: Teleportation aufgrund von Bewegung abgebrochen.
+blue-map-connect-text:
+  register-fail: Registrierung der BlueMap-API fehlgeschlagen.
+  info-label: '<div>{0}</div><div>Besitzer: {1}</div>'
+dynmap-connect-text:
+  register-success: Registrierung bei Dynmap erfolgreich!
+  register-fail: Registrierung bei Dynmap fehlgeschlagen!
+  info-label: '<div>{0}</div><div>Besitzer: {1}</div>'
+command-exception-text:
+  no-permission: Sie haben keine Berechtigung {0}, um dies zu tun.
+  invalid-arguments: Ungültige Argumente, Verwendung z.B. {0}.
+cui-input-text:
+  cui-not-available: CUI ist auf einem no-paper (fork) Core-Server nicht verfügbar.
+  cui-suggest-command: Sie können stattdessen den Befehl {0} verwenden.
+  cui-button: 'Linksklick: Bestätigen | Rechtsklick: Abbrechen'
+  cui-input-invalid: Eingabe darf keine Leerzeichen enthalten.
+flags:
+  tnt_explode:
+    display-name: TNT-Explosion
+    description: Ob TNT explodieren kann.
+  comparer:
+    display-name: Vergleicher
+    description: Ob mit dem Vergleicher interagiert werden kann.
+  edit_sign:
+    display-name: Schild bearbeiten
+    description: Ob das Schild bearbeitet werden kann.
+  cake:
+    display-name: Kuchen
+    description: Ob Kuchen gegessen werden kann.
+  dragon_egg:
+    display-name: Drachenei
+    description: Ob mit dem Drachenei interagiert werden kann.
+  bed:
+    display-name: Bett
+    description: Ob im Bett geschlafen werden kann (Spawnpunkt setzen).
+  villager_spawn:
+    display-name: Dorfbewohner züchten
+    description: Ob Dorfbewohner gezüchtet werden können (einschließlich Spawn-Ei).
+  trade:
+    display-name: Dorfbewohner handeln
+    description: Ob mit Dorfbewohnern gehandelt werden kann.
+  note_block:
+    display-name: Notenblock
+    description: Ob mit dem Notenblock interagiert werden kann.
+  ignite:
+    display-name: Entzünden
+    description: Ob Feuer entzündet werden kann.
+  wither_spawn:
+    display-name: Wither-Spawn
+    description: Ob Wither gespawnt werden können und Wither-Explosionen.
+  trig_pressure_drop:
+    display-name: Druckplatte (Fallenlassen)
+    description: Ob fallengelassene Gegenstände die Druckplatte auslösen können.
+  animal_spawn:
+    display-name: Tier-Spawn (Zucht)
+    description: Ob Tiere spawnen können (einschließlich Spawn-Ei & Zucht).
+  animal_move:
+    display-name: Tierbewegung
+    description: Ob Tiere sich im Gebiet bewegen können.
+  villager_killing:
+    display-name: Dorfbewohner töten
+    description: Ob Dorfbewohner verletzt werden können.
+  animal_killing:
+    display-name: Tiere töten
+    description: Ob Tiere verletzt werden können.
+  monster_killing:
+    display-name: Monster töten
+    description: Ob Monster verletzt werden können.
+  place:
+    display-name: Block platzieren
+    description: Ob Blöcke platziert werden können (normale Blöcke, Rahmen, Lava, Wasser).
+  fly:
+    display-name: Fliegen
+    description: NICHT Elytra-Fliegen, es ist wie im Kreativmodus fliegen.
+  honey:
+    display-name: Honig
+    description: Ob mit dem Bienenstock interagiert werden kann (um Honig zu bekommen).
+  monster_damage:
+    display-name: Monster tötet Spieler
+    description: Ob Monster Spielern Schaden zufügen können.
+  monster_spawn:
+    display-name: Monster-Spawn
+    description: Ob Monster spawnen können (einschließlich Spawn-Ei).
+  monster_move:
+    display-name: Monsterbewegung
+    description: Ob Monster sich im Gebiet bewegen können.
+  admin:
+    display-name: Administrator
+    description: Mitglieder mit dieser Flagge können normale Mitglieder und Gruppen verwalten.
+  crafter:
+    display-name: Handwerker
+    description: Ob mit dem Handwerker interagiert werden kann (1.21).
+  piston_outside:
+    display-name: Kolben
+    description: Falsch, um zu verhindern, dass Kolben Blöcke über das Gebiet hinaus schieben/ziehen.
+  fire_spread:
+    display-name: Feuerverbreitung
+    description: Verhindert Feuerverbreitung im Gebiet.
+  shear:
+    display-name: Scheren
+    description: Ob Wolle von Schafen geschoren werden kann.
+  teleport:
+    display-name: Teleportation
+    description: Falsch bedeutet, dass nicht in dieses Gebiet teleportiert werden kann.
+  hopper_outside:
+    display-name: Trichter (Außen)
+    description: Falsch, um zu verhindern, dass externe Trichter Container im Gebiet leeren.
+  door:
+    display-name: Tür
+    description: Ob mit der Tür interagiert werden kann (einschließlich Falltür, Zauntor).
+  dragon_break_block:
+    display-name: Enderdrache zerstört Block
+    description: Ob der Enderdrache Blöcke zerstören kann.
+  ender_man:
+    display-name: Enderman
+    description: Falsch, um zu verhindern, dass Enderman Blöcke aufnimmt, spawnt, teleportiert.
+  break:
+    display-name: Block zerstören
+    description: Ob Blöcke zerstört werden können (einschließlich Rahmen, Rüstungsständer).
+  vehicle_destroy:
+    display-name: Fahrzeug zerstören
+    description: Ob Fahrzeuge (Boot, Minecart) zerstört werden können.
+  riding:
+    display-name: Reiten
+    description: Ob Fahrzeuge (Boot, Minecart, Pferd etc.) geritten werden können.
+  dye:
+    display-name: Färben
+    description: Was gefärbt werden kann (Schaf, Hundehalsband, Katzenhalsband).
+  egg:
+    display-name: Ei werfen
+    description: Ob Eier geworfen werden können.
+  vehicle_spawn:
+    display-name: Fahrzeug-Spawn
+    description: Ob Fahrzeuge (Boot, Minecart) gespawnt werden können.
+  trig_pressure_mob:
+    display-name: Druckplatte (Mob)
+    description: Ob Mobs (Spieler nicht eingeschlossen) die Druckplatte auslösen können.
+  creeper_explode:
+    display-name: Entität explodiert
+    description: Creeper/Wither-Schädel/Enderkristall/Feuerball/Bett/Wiederankern.
+  mob_drop_item:
+    display-name: Mob lässt Gegenstand fallen
+    description: Ob Mobs Gegenstände fallen lassen, wenn sie getötet werden.
+  button:
+    display-name: Knopf
+    description: Ob Knöpfe gedrückt werden können.
+  hook:
+    display-name: Haken
+    description: Ob Angelruten verwendet werden können.
+  enchant:
+    display-name: Verzauberungstisch
+    description: Ob der Verzauberungstisch verwendet werden kann.
+  craft:
+    display-name: Werkbank
+    description: Ob die Werkbank verwendet werden kann.
+  lever:
+    display-name: Hebel
+    description: Ob Hebel umgelegt werden können.
+  brew:
+    display-name: Braustand
+    description: Ob der Braustand verwendet werden kann.
+  anvil:
+    display-name: Amboss
+    description: Ob der Amboss verwendet werden kann.
+  harvest:
+    display-name: Ernte
+    description: Ob Spieler Pflanzen ernten können.
+  hopper:
+    display-name: Spezieller Container
+    description: Wie Trichter, Ofen, Werfer, Spender, Schmelzofen, Räucherofen.
+  ender_pearl:
+    display-name: Enderperle
+    description: Ob Enderperlen geworfen werden können.
+  trig_pressure_proj:
+    display-name: Druckplatte (Projektil)
+    description: Wenn Projektile (Pfeil/Schneeball) die Druckplatte auslösen können.
+  item_frame_proj_damage:
+    display-name: Projektil beschädigt Rahmen
+    description: Ob Projektile (Pfeil/Schneeball) Rahmen zerstören können.
+  shoot:
+    display-name: Schießen
+    description: Einschließlich Pfeil/Schneeball/Dreizack/Feuerball/Windladung (1.21).
+  flow_in_protection:
+    display-name: Einfließen
+    description: Verhindert, dass externes Wasser/Lava in das Gebiet fließt.
+  player_damage:
+    display-name: Spieler tötet Spieler
+    description: Ob Spieler anderen Spielern (direkt) Schaden zufügen können.
+  glow:
+    display-name: Leuchten
+    description: Wie der Leuchteffekt eines leuchtenden Pfeils.
+  feed:
+    display-name: Tiere füttern
+    description: Ob Tiere gefüttert werden können.
+  show_border:
+    display-name: Grenze anzeigen
+    description: Zeigt die Gebietsgrenze dem Spieler beim Betreten an.
+  beacon:
+    display-name: Leuchtfeuer
+    description: Ob mit dem Leuchtfeuer interagiert werden kann.
+  pressure:
+    display-name: Druckplatte (Spieler)
+    description: Ob Spieler die Druckplatte auslösen können.
+  container:
+    display-name: Container
+    description: Truhe / Fass / Shulkerbox / Rüstungsständer / Rahmen
+  move:
+    display-name: Spielerbewegung
+    description: Ob Spieler sich im Gebiet bewegen können.
+  gravity_block:
+    display-name: Fallender Block
+    description: Ob Schwerkraftblöcke im Gebiet fallen können (falsch macht sie zu Gegenständen).
+  item_frame_interactive:
+    display-name: Rahmen interaktiv
+    description: Ob mit Rahmen interagiert werden kann (Gegenstand drehen).
+  repeater:
+    display-name: Repeater
+    description: Ob Repeater geändert (interagiert) werden können.
+  anchor:
+    display-name: Wiederankern
+    description: Ob der Wiederanker gesetzt/verwendet werden kann.
+  trample:
+    display-name: Ackerland zertreten
+    description: Ob Ackerland zertreten werden kann (falsch bedeutet Schutz des Ackerlands).

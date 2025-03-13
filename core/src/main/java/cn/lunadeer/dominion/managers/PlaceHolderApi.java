@@ -1,8 +1,8 @@
 package cn.lunadeer.dominion.managers;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -31,14 +31,15 @@ public class PlaceHolderApi extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player bukkitPlayer, @NotNull String params) {
         if (params.equalsIgnoreCase("group_title")) {
-            GroupDTO group = Cache.instance.getPlayerUsingGroupTitle(bukkitPlayer.getUniqueId());
+            Integer usingId = CacheManager.instance.getPlayerCache().getPlayerUsingTitleId(bukkitPlayer.getUniqueId());
+            GroupDTO group = CacheManager.instance.getGroup(usingId);
             if (group == null) {
                 return "";
             }
             return group.getNameColoredBukkit();
         }
         if (params.equalsIgnoreCase("current_dominion")) {
-            DominionDTO dominion = Cache.instance.getDominionByLoc(bukkitPlayer.getLocation());
+            DominionDTO dominion = CacheManager.instance.getDominion(bukkitPlayer.getLocation());
             if (dominion == null) {
                 return "";
             }

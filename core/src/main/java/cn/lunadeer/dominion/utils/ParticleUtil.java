@@ -2,6 +2,7 @@ package cn.lunadeer.dominion.utils;
 
 import cn.lunadeer.dominion.api.dtos.CuboidDTO;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;

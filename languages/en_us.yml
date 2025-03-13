@@ -365,9 +365,8 @@ database-manager-text:
 teleport-manager-text:
   cooling-down: Please wait for {0} seconds before teleporting again.
   disabled: Teleportation is disabled for your permission group.
-  delay: Will teleport in {0} seconds...
+  delay: Will teleport in {0} seconds, don't move...
   unfinished-cancelled: Cancelled previous unfinished teleportation.
-  do-not-move: Do not move while teleporting...
   cancel-move: Cancelled teleportation due to movement.
 blue-map-connect-text:
   register-fail: Failed to register BlueMap API.

@@ -4,11 +4,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Annotation for adding comments to configuration fields.
+ * Annotation for adding comment behind configuration fields.
  * <p>
- * Single line: {@code @Comments("This is a comment")}
- * <br>
- * Multi line: {@code @Comments({"This is a comment", "This is another comment"})}
+ * {@code @Comments("This is a comment")}
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Comment {
