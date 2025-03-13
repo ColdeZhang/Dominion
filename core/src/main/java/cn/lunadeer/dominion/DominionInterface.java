@@ -26,70 +26,100 @@ public class DominionInterface extends DominionAPI {
     }
 
     @Override
+    public @Nullable PlayerDTO getPlayer(String name) {
+        return CacheManager.instance.getPlayer(name);
+    }
+
+    @Override
+    public @Nullable PlayerDTO getPlayer(@NotNull UUID player) {
+        return CacheManager.instance.getPlayer(player);
+    }
+
+    @Override
+    public @NotNull String getPlayerName(@NotNull UUID uuid) {
+        return CacheManager.instance.getPlayerName(uuid);
+    }
+
+    @Override
+    public List<DominionDTO> getAllDominions() {
+        return CacheManager.instance.getAllDominions();
+    }
+
+    @Override
+    public List<DominionDTO> getChildrenDominionOf(DominionDTO parent) {
+        return CacheManager.instance.getChildrenDominionOf(parent);
+    }
+
+    @Override
+    public @Nullable DominionDTO getDominion(Integer id) {
+        return CacheManager.instance.getDominion(id);
+    }
+
+    @Override
+    public @NotNull DominionDTO getDominion(String name) {
+        return CacheManager.instance.getDominion(name);
+    }
+
+    @Override
+    public @Nullable DominionDTO getDominion(Location location) {
+        return CacheManager.instance.getDominion(location);
+    }
+
+    @Override
+    public List<DominionDTO> getPlayerOwnDominionDTOs(UUID player) {
+        return CacheManager.instance.getPlayerOwnDominionDTOs(player);
+    }
+
+    @Override
+    public List<DominionDTO> getPlayerAdminDominionDTOs(UUID player) {
+        return CacheManager.instance.getPlayerAdminDominionDTOs(player);
+    }
+
+    @Override
+    public @Nullable MemberDTO getMember(@Nullable DominionDTO dominion, @NotNull Player player) {
+        return CacheManager.instance.getMember(dominion, player);
+    }
+
+    @Override
+    public @Nullable MemberDTO getMember(@Nullable DominionDTO dominion, @NotNull UUID player) {
+        return CacheManager.instance.getMember(dominion, player);
+    }
+
+    @Override
+    public @Nullable GroupDTO getGroup(MemberDTO member) {
+        return CacheManager.instance.getGroup(member);
+    }
+
+    @Override
+    public @Nullable GroupDTO getGroup(Integer id) {
+        return CacheManager.instance.getGroup(id);
+    }
+
+    @Override
     public DominionDTO getPlayerCurrentDominion(@NotNull Player player) {
         return CacheManager.instance.getPlayerCurrentDominion(player);
     }
 
     @Override
-    public DominionDTO getDominionByLoc(@NotNull Location loc) {
-        return CacheManager.instance.getDominion(loc);
+    public void resetPlayerCurrentDominionId(@NotNull Player player) {
+        CacheManager.instance.resetPlayerCurrentDominionId(player);
     }
 
     @Override
-    public GroupDTO getGroup(@NotNull Integer id) {
-        return CacheManager.instance.getGroup(id);
+    public Integer dominionCount() {
+        return CacheManager.instance.dominionCount();
     }
 
     @Override
-    public MemberDTO getMember(@NotNull Player player, @NotNull DominionDTO dominion) {
-        return getMember(player.getUniqueId(), dominion);
+    public Integer groupCount() {
+        return CacheManager.instance.groupCount();
     }
 
     @Override
-    public MemberDTO getMember(@NotNull UUID player_uuid, @NotNull DominionDTO dominion) {
-        return CacheManager.instance.getMember(dominion, player_uuid);
+    public Integer memberCount() {
+        return CacheManager.instance.memberCount();
     }
 
-    @Override
-    public DominionDTO getDominion(@NotNull Integer id) {
-        return CacheManager.instance.getDominion(id);
-    }
-
-    @Override
-    public DominionDTO getDominion(@NotNull String name) {
-        return CacheManager.instance.getDominion(name);
-    }
-
-    @Override
-    public @NotNull List<DominionDTO> getAllDominions() {
-        return CacheManager.instance.getAllDominions();
-    }
-
-    @Override
-    public @Nullable GroupDTO getPlayerUsingGroupTitle(@NotNull UUID uuid) {
-        Integer usingId = CacheManager.instance.getPlayerCache().getPlayerUsingTitleId(uuid);
-        return CacheManager.instance.getGroup(usingId);
-    }
-
-    @Override
-    public @Nullable PlayerDTO getPlayerDTO(UUID uuid) {
-        return CacheManager.instance.getPlayer(uuid);
-    }
-
-    @Override
-    public @Nullable PlayerDTO getPlayerDTO(String name) {
-        return CacheManager.instance.getPlayer(name);
-    }
-
-    @Override
-    public List<DominionDTO> getDominionsOf(@NotNull UUID playerUid) {
-        return CacheManager.instance.getPlayerAdminDominionDTOs(playerUid);
-    }
-
-    @Override
-    public List<DominionDTO> getChildrenDominionsOf(@NotNull DominionDTO parent) {
-        return CacheManager.instance.getChildrenDominionOf(parent);
-    }
 
     @Override
     public boolean checkPrivilegeFlag(DominionDTO dom, PriFlag flag, Player player) {

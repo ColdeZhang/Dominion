@@ -11,6 +11,8 @@ import org.bukkit.event.server.ServiceRegisterEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import static cn.lunadeer.dominion.utils.Misc.formatString;
+
 public class VaultConnect implements Listener {
 
     public static class VaultConnectText extends ConfigurationPart {
@@ -65,8 +67,7 @@ public class VaultConnect implements Listener {
     public void withdrawPlayer(Player player, double amount) throws Exception {
         assertEconomy();
         if (amount > getBalance(player)) {
-            String str = String.format(Language.vaultConnectText.insufficientFunds, amount, currencyNamePlural(), getBalance(player));
-            throw new Exception(str);
+            throw new Exception(formatString(Language.vaultConnectText.insufficientFunds, amount, currencyNamePlural(), getBalance(player)));
         }
         vaultInstance.withdrawPlayer(player, amount);
     }

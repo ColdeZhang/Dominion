@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static cn.lunadeer.dominion.utils.Misc.formatString;
+import static cn.lunadeer.dominion.utils.XLogger.isDebug;
 
 public class Notification {
     public static Notification instance;
@@ -104,6 +105,13 @@ public class Notification {
 
     public static void error(CommandSender player, Component msg) {
         instance.sender.sendMessage(player, Component.text(instance.prefix, e_style).append(Component.text(" ")).append(msg));
+    }
+
+    public static void error(CommandSender player, Throwable e) {
+        Notification.error(player, e.getMessage());
+        if (isDebug()) {
+            XLogger.error(e);
+        }
     }
 
     public static void all(String msg) {
