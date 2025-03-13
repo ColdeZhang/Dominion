@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.cache.server;
 
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 
@@ -16,6 +17,7 @@ public abstract class Cache {
             resetLastTaskTimeStamp();
             try {
                 loadExecution();
+                CacheManager.instance.recheckPlayerStatus();
             } catch (Exception e) {
                 XLogger.error(e);
             }
@@ -28,6 +30,7 @@ public abstract class Cache {
                         try {
                             resetLastTaskTimeStamp();
                             loadExecution();
+                            CacheManager.instance.recheckPlayerStatus();
                         } catch (Exception e) {
                             XLogger.error(e);
                         } finally {
@@ -44,6 +47,7 @@ public abstract class Cache {
             resetLastTaskTimeStamp();
             try {
                 deleteExecution(idToDelete);
+                CacheManager.instance.recheckPlayerStatus();
             } catch (Exception e) {
                 XLogger.error(e);
             }
@@ -56,6 +60,7 @@ public abstract class Cache {
                         try {
                             resetLastTaskTimeStamp();
                             loadExecution();
+                            CacheManager.instance.recheckPlayerStatus();
                         } catch (Exception e) {
                             XLogger.error(e);
                         } finally {
@@ -71,6 +76,7 @@ public abstract class Cache {
             resetLastTaskTimeStamp();
             try {
                 loadExecution(idToLoad);
+                CacheManager.instance.recheckPlayerStatus();
             } catch (Exception e) {
                 XLogger.error(e);
             }
@@ -81,6 +87,7 @@ public abstract class Cache {
                         try {
                             resetLastTaskTimeStamp();
                             loadExecution();
+                            CacheManager.instance.recheckPlayerStatus();
                         } catch (Exception e) {
                             XLogger.error(e);
                         } finally {
