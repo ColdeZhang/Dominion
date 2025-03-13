@@ -15,6 +15,7 @@ import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
@@ -102,19 +103,6 @@ public class Others {
     }
 
     public static boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player, @Nullable Cancellable event) {
-        if (checkSimplePriFlag(dom, flag, player)) {
-            return true;
-        }
-        String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
-        msg = "&#FF0000" + "&l" + msg;
-        MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
-        if (event != null) {
-            event.setCancelled(true);
-        }
-        return false;
-    }
-
-    public static boolean checkSimplePriFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
         if (!flag.getEnable()) {
             return true;
         }
@@ -129,13 +117,26 @@ public class Others {
             if (member != null) {
                 GroupDTO group = CacheManager.instance.getGroup(member.getGroupId());
                 if (member.getGroupId() != -1 && group != null) {
-                    return group.getFlagValue(flag);
+                    if (group.getFlagValue(flag)) {
+                        return true;
+                    }
                 } else {
-                    return member.getFlagValue(flag);
+                    if (member.getFlagValue(flag)) {
+                        return true;
+                    }
                 }
             } else {
-                return dom.getGuestPrivilegeFlagValue().get(flag);
+                if (dom.getGuestPrivilegeFlagValue().get(flag)) {
+                    return true;
+                }
             }
+            String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
+            msg = "&#FF0000" + "&l" + msg;
+            MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
+            if (event != null) {
+                event.setCancelled(true);
+            }
+            return false;
         }
     }
 
@@ -221,5 +222,24 @@ public class Others {
         } else {
             player.setAllowFlight(dominion.getGuestPrivilegeFlagValue().get(Flags.FLY));
         }
+    }
+
+    public static boolean isCrop(@NotNull Material material) {
+        return material == Material.COCOA ||
+                material == Material.WHEAT ||
+                material == Material.CARROTS ||
+                material == Material.POTATOES ||
+                material == Material.BEETROOTS ||
+                material == Material.NETHER_WART ||
+                material == Material.SWEET_BERRY_BUSH ||
+                material == Material.MELON ||
+                material == Material.PUMPKIN ||
+                material == Material.SUGAR_CANE ||
+                material == Material.BAMBOO ||
+                material == Material.CACTUS ||
+                material == Material.CHORUS_PLANT ||
+                material == Material.CHORUS_FLOWER ||
+                material == Material.KELP ||
+                material == Material.KELP_PLANT;
     }
 }
