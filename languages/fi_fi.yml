@@ -1,0 +1,593 @@
+dominion-text:
+  loading-config: Ladataan asetuksia...
+  plugin-enabled: Liitännäinen käytössä!
+  plugin-version: 'Liitännäisen versio: {0}'
+multi-server-manager-text:
+  sending-notice: Lähetetään ilmoitus kaikille palvelimille... ({0}:{1})
+  received-notice: Vastaanotettu ilmoitus palvelimelta {0}:{1}, vastataan... ({2}:{3})
+  receive-resp-notice: Vastaanotettu vastausilmoitus palvelimelta {0}:{1}
+asserts-text:
+  dom-name-should-not-empty: Dominion nimen ei tulisi olla tyhjä.
+  dom-name-invalid: Dominion nimen ei tulisi sisältää välilyöntiä tai pistettä.
+  dom-name-exist: 'Dominion nimi: {0} on jo olemassa.'
+  group-name-should-not-empty: Ryhmän nimen ei tulisi olla tyhjä.
+  group-name-invalid: Ryhmän nimen ei tulisi sisältää välilyöntiä tai pistettä.
+  group-name-exist: 'Ryhmän nimi: {0} on jo olemassa.'
+  not-allow-dom-in-world: Pelaaja {0} ei saa luoda dominioneja maailmassa {1}.
+  exceed-max-amount: 'Pelaaja {0} ei voi luoda enempää dominioneja (max: {1}).'
+  exceed-max-amount-of-world: 'Pelaaja {0} ei voi luoda enempää dominioneja maailmassa {1} (max: {2}).'
+  x-length-too-short: Länsi-Itä(X) pituuden {0} tulisi olla enemmän kuin {1}.
+  y-length-too-short: Alas-Ylös(Y) pituuden {0} tulisi olla enemmän kuin {1}.
+  z-length-too-short: Etelä-Pohjoinen(Z) pituuden {0} tulisi olla enemmän kuin {1}.
+  x-length-too-long: Länsi-Itä(X) pituuden {0} tulisi olla vähemmän kuin {1}.
+  y-length-too-long: Alas-Ylös(Y) pituuden {0} tulisi olla vähemmän kuin {1}.
+  z-length-too-long: Etelä-Pohjoinen(Z) pituuden {0} tulisi olla vähemmän kuin {1}.
+  y-too-high: Dominionin {0} korkein kohta tulisi olla vähemmän kuin {1}.
+  y-too-low: Dominionin {0} matalin kohta tulisi olla enemmän kuin {1}.
+  not-owner: Vain {0} omistaja voi suorittaa tämän komennon/toiminnon.
+  not-admin: Vain {0} ylläpitäjä voi suorittaa tämän komennon/toiminnon.
+  intersect-with-dom: Dominion {0} leikkaa dominionin {1} kanssa.
+  intersect-with-spawn: Dominion {0} leikkaa spawn-suojelualueen kanssa.
+  outside-of-parent-dom: Dominion {0} on sen vanhemman dominionin {1} ulkopuolella.
+  cant-contain-child: Dominion {0} ei voi sisältää sen lapsi dominionia {1}.
+  missing-parent-dom: Dominionin {0} vanhempi dominion puuttuu.
+  sub-dom-too-deep: Pelaaja {0} ei voi luoda alidominionia, jonka syvyys on enemmän kuin {1}.
+  with-draw-money: Onnistuneesti maksettu {0} dominionista.
+  deposit-money: Onnistuneesti palautettu {0} dominionista.
+  group-not-belong-dominion: Ryhmä {0} ei kuulu dominioniin {1}.
+converts-text:
+  must-be-player: Komennon/toiminnon suorittajan on oltava pelaaja.
+  must-be-online: Pelaajan ({0}) on oltava online-tilassa.
+  world-not-exist: Maailmaa ({0}) ei ole olemassa.
+  unknown-env-flag: 'Tuntematon ympäristömerkki: {0}.'
+  unknown-pre-flag: 'Tuntematon etuoikeusmerkki: {0}.'
+  unknown-dominion: 'Tuntematon dominion: {0}.'
+  invalid-number-format: 'Virheellinen argumenttien määrä: {0}.'
+  invalid-boolean-format: 'Virheellinen argumentin totuusarvo: {0}, pitäisi olla true tai false.'
+  invalid-points: Sinun on valittava kaksi pistettä samasta maailmasta luodaksesi dominionin.
+  unknown-block-face: 'Tuntematon suunta: {0}.'
+  unknown-resize-type: 'Tuntematon koonmuutostyyppi: {0}.'
+  unknown-message-type: 'Tuntematon viestityyppi: {0}.'
+  invalid-color-format: 'Virheellinen värin arvo: {0}, pitäisi olla heksaväriarvo (0xRRGGBB).'
+  unknown-player: Pelaajaa {0} ei ole tallennettu (liitännäisen asentamisen jälkeen).
+  not-member: Pelaaja {0} ei ole dominionin {1} jäsen.
+  no-group-found: Ryhmää nimeltä {0} ei löytynyt dominionista {1}.
+others-text:
+  auto-clean-start: Aloitetaan automaattinen puhdistus pelaajille, jotka eivät ole kirjautuneet {0} päivään.
+  auto-cleaning-player: Puhdistettu {0}:n tiedot.
+  auto-clean-end: Automaattinen puhdistus valmis.
+  no-permission-for-flag: Sinulla ei ole {0}({1}) oikeutta.
+vault-connect-text:
+  vault-unavailable: Vault ei ole saatavilla, asenna Vault tai VaultUnlock käyttääksesi talousominaisuuksia.
+  economy-unavailable: Talousliitännäistä ei löytynyt, sinun on asennettava yksi talousliitännäinen käyttääksesi talousominaisuuksia.
+  insufficient-funds: Riittämättömät varat, tarvitset {0} {1}, mutta sinulla on vain {2} {1}.
+dominion-event-handler-text:
+  create-success: Dominionin {0} luominen onnistui.
+  create-failed: 'Dominionin {0} luominen epäonnistui, syy: {1}'
+  expand-success: Dominionin {0} laajentaminen onnistui.
+  expand-failed: 'Dominionin {0} laajentaminen epäonnistui, syy: {1}'
+  contract-success: Dominionin {0} supistaminen onnistui.
+  contract-failed: 'Dominionin {0} supistaminen epäonnistui, syy: {1}'
+  delete-success: Dominionin {0} poistaminen onnistui.
+  delete-failed: 'Dominionin {0} poistaminen epäonnistui, syy: {1}'
+  delete-confirm: Käytä komentoa '{0}' vahvistaaksesi dominionin {1} ja sen alidominionien poistamisen, tätä toimintoa ei voi peruuttaa.
+  list-sub-doms: 'Dominionilla {0} on alidominioneja: {1}'
+  rename-failed: 'Dominionin {0} uudelleennimeäminen epäonnistui, syy: {1}'
+  rename-success: Dominionin {0} uudelleennimeäminen {1} onnistui.
+  same-name: Uusi nimi on sama kuin vanha nimi.
+  give-success: Dominionin {0} antaminen {1} onnistui.
+  give-failed: 'Dominionin {0} antaminen toiselle epäonnistui, syy: {1}'
+  give-confirm: Käytä komentoa '{0}' vahvistaaksesi dominionin {1} antamisen {2}, tätä toimintoa ei voi peruuttaa.
+  already-belong: Dominion {0} kuuluu jo {1}.
+  cannot-give-sub: Dominion {0} on alidominion, sitä ei voi antaa muille.
+  tp-location-not-in-dominion: Teleportaatio sijainti ei ole dominionissa {0}.
+  tp-location-set-success: Teleportaatio sijainnin asettaminen dominionille {0} onnistui.
+  tp-location-set-failed: 'Teleportaatio sijainnin asettaminen dominionille {0} epäonnistui, syy: {1}'
+  set-enter-message-success: Sisääntuloviestin asettaminen dominionille {0} onnistui.
+  set-enter-message-failed: 'Sisääntuloviestin asettaminen dominionille {0} epäonnistui, syy: {1}'
+  set-leave-message-success: Poistumisviestin asettaminen dominionille {0} onnistui.
+  set-leave-message-failed: 'Poistumisviestin asettaminen dominionille {0} epäonnistui, syy: {1}'
+  set-map-color-success: Kartan värin asettaminen dominionille {0} onnistui.
+  set-map-color-failed: 'Kartan värin asettaminen dominionille {0} epäonnistui, syy: {1}'
+  set-env-flag-success: Ympäristömerkin {0} asettaminen arvoon {1} onnistui.
+  set-env-flag-failed: 'Ympäristömerkin {0} asettaminen arvoon {1} epäonnistui, syy: {2}'
+  set-guest-flag-success: Vierasmerkin {0} asettaminen arvoon {1} onnistui.
+  set-guest-flag-failed: 'Vierasmerkin {0} asettaminen arvoon {1} epäonnistui, syy: {2}'
+member-event-handler-text:
+  set-flag-success: Lipun {0} asettaminen {1} kohteelle {2} onnistui.
+  owner-only: Vain omistaja voi hallita ylläpitäjäjäsentä.
+  group-already: Tämä jäsen kuuluu ryhmään {0}, joten et voi hallita sitä erikseen.
+  set-flag-failed: 'Lipun asettaminen epäonnistui, syy: {0}'
+  add-member-success: Jäsenen {0} lisääminen kohteeseen {1} onnistui.
+  already-member: '{0} on jo jäsen kohteessa {1}.'
+  cant-be-owner: Et voi lisätä dominionin omistajaa jäseneksi.
+  add-member-failed: 'Jäsenen lisääminen epäonnistui, syy: {0}'
+  remove-member-success: Jäsenen {0} poistaminen kohteesta {1} onnistui.
+  remove-member-failed: 'Jäsenen poistaminen epäonnistui, syy: {0}'
+group-event-handler-text:
+  owner-only: Vain omistaja voi hallita ylläpitäjäryhmää.
+  set-flag-success: Asetettu ryhmän {0} lippu {1} arvoon {2} onnistuneesti.
+  set-flag-failed: 'Ryhmän lipun asettaminen epäonnistui, syy: {3}'
+  create-group-success: Ryhmä {0} luotu onnistuneesti.
+  create-group-failed: 'Ryhmä luominen epäonnistui, syy: {0}'
+  delete-group-success: Ryhmä {0} poistettu onnistuneesti.
+  delete-group-failed: 'Ryhmä poistaminen epäonnistui, syy: {0}'
+  rename-group-success: Ryhmä {0} nimetty uudelleen {1} onnistuneesti.
+  rename-group-failed: 'Ryhmän uudelleennimeäminen epäonnistui, syy: {0}'
+  add-member-success: Jäsen {0} lisätty ryhmään {1} onnistuneesti.
+  add-member-failed: 'Jäsenen lisääminen ryhmään epäonnistui, syy: {0}'
+  remove-member-success: Jäsen {0} poistettu ryhmästä {1} onnistuneesti.
+  remove-member-failed: 'Jäsenen poistaminen ryhmästä epäonnistui, syy: {0}'
+select-point-events-handler-text:
+  first-point: Ensimmäinen piste valittu kohdassa {0}, {1}, {2}.
+  second-point: Toinen piste valittu kohdassa {0}, {1}, {2}.
+  not-same-world: Kaksi pistettä eivät ole samassa maailmassa.
+  price: Dominionin hinta on {0} {1}.
+  size: 'Koko: {0}x{1}x{2}'
+  square: 'Neliö: {0}'
+  volume: 'Tilavuus: {0}'
+  no-dominion: Dominionia ei löytynyt sijainnista {0}, {1}, {2}.
+  found-dominion: Sijainti {0}, {1}, {2} on dominionissa {3}.
+menu-tui-text:
+  title: Dominion-valikko
+  button: VALIKKO
+  admin-only-section: Vain ylläpitäjät voivat nähdä tämän osion
+  document-button: DOKUMENTTI
+  document-description: Avaa dokumentaation ulkoinen linkki.
+  command-help-button: KOMENTOJEN OHJE
+  command-help-description: Avaa komentojen ohjeen ulkoinen linkki.
+dominion-list-tui-text:
+  title: Sinun Dominionisi
+  button: DOMINIONIT
+  description: Listaa kaikki dominionisi.
+  delete-button: POISTA
+  admin-section: Ylläpitäjä dominionisi osio.
+  server-section: Palvelimen {0} dominionit osio.
+dominion-manage-tui-text:
+  title: Hallitse {0}
+  button: HALLITSE
+  set-tp-button: ASET TP
+  set-tp-description: Aseta nykyinen sijaintisi tp-sijainniksi.
+set-size-tui-text:
+  title: Muuta kokoa {0}
+  button: MUUTA KOKOA
+  north: Pohjoinen(z-)
+  south: Etelä(z+)
+  west: Länsi(x-)
+  east: Itä(x+)
+  up: Ylös(y+)
+  down: Alas(y-)
+  expand: LAAJENNA
+  contract: SUPISTA
+env-setting-tui-text:
+  title: '{0} Ympäristöasetukset'
+  button: YMPÄRISTÖASETUKSET
+  description: Aseta dominionin ympäristö.
+guest-setting-tui-text:
+  title: '{0} Vierasasetukset'
+  button: VIERASASETUKSET
+  description: Aseta dominionin vieraskäyttäytyminen.
+size-info-tui-text:
+  title: '{0} Koko tiedot'
+  button: KOKO TIEDOT
+  description: Näytä dominionin koko tiedot
+  owner-name: Tämän dominionin omistaa {0}.
+  info-lwh: 'Koko: {0} x {1} x {2}'
+  info-height: 'Korkeus: {0} ~ {1}'
+  square: 'Neliö: {0}'
+  volume: 'Tilavuus: {0}'
+migrate-list-text:
+  title: Siirrä Residence
+  description: Siirrä residence-tiedot dominioniin.
+  button: SIIRRÄ
+  not-enabled: Residence-siirto ei ole käytössä.
+  no-data: Ei siirrettäviä tietoja.
+  cant-migrate: Alaresidenssi siirretään vanhemman kanssa.
+member-list-tui-text:
+  title: '{0} Jäsenlista'
+  description: Lista tämän dominionin jäsenistä.
+  button: JÄSENET
+  remove: POISTA
+  remove-description: Poista tämä jäsen tästä dominionista.
+  owner-only: Vain omistaja voi hallita ylläpitäjäjäsentä.
+  group-only: Tämä jäsen kuuluu ryhmään {0}, joten et voi hallita sitä erikseen.
+  tag-admin: Ylläpitäjä voi hallita tämän dominionin jäseniä ja ryhmiä.
+  tag-normal: Tavalliset jäsenet.
+  tag-ban: Jotka eivät omaa MOVE-oikeutta.
+  tag-group: Tämä pelaaja kuuluu ryhmään, et voi hallita sitä erikseen.
+select-player-tui-text:
+  title: Valitse Pelaaja
+  button: LISÄÄ PELAAJA
+  description: Lisää pelaaja tämän dominionin jäseneksi.
+  back: TAKAISIN
+member-setting-tui-text:
+  title: '{0} Jäsenasetukset'
+  description: Aseta jäsenen oikeudet dominionissa.
+  button: ASETUKSET
+template-list-tui-text:
+  title: Malliluettelo
+  button: MALLIT
+  description: Mallit voidaan käyttää nopeasti asettamaan jäsenen oikeudet.
+  delete-button: POISTA
+select-template-tui-text:
+  title: Valitse Malli
+  description: Valitse malli sovellettavaksi tähän jäseneen.
+  button: VALITSE MALLI
+  back: TAKAISIN
+  apply: SOVELLA
+group-list-tui-text:
+  title: '{0} Ryhmäluettelo'
+  description: Luettelo tämän dominionin ryhmistä.
+  button: RYHMÄT
+  delete-button: POISTA
+  delete-description: Poista tämä ryhmä, kaikki jäsenet siirretään pois tästä ryhmästä.
+  remove-member-description: Poista {0} ryhmästä {1} oletusryhmään.
+group-setting-tui-text:
+  title: Ryhmän {0} Asetukset
+  description: Hallitse ryhmän {0} asetuksia.
+  button: ASETUKSET
+select-member-tui-text:
+  title: Valitse Jäsen
+  description: Valitse jäsen lisättäväksi ryhmään.
+  back: TAKAISIN
+title-list-tui-text:
+  title: Ryhmän Nimikeluettelo
+  description: Luettelo ryhmän nimikkeistä, joita voit käyttää.
+  button: NIMIKKEET
+  use-button: KÄYTÄ
+  disuse-button: ÄLÄ KÄYTÄ
+  from-dominion: Dominionista {0}
+all-dominion-tui-text:
+  title: Kaikki Dominionit
+  description: Listaa kaikki dominionit.
+  button: LISTAA KAIKKI
+template-setting-text:
+  title: Malliasetukset
+  button: ASETUKSET
+  not-found: Mallia {0} ei löytynyt.
+resize-dominion-cui-text:
+  title: '{0} {1} suuntaan {2}'
+  placeholder: syötä koko
+edit-enter-message-cui-text:
+  title: Muokkaa {0} sisääntuloviestiä
+  button: SISÄÄNTULOVIESTI
+  description: Viesti, joka näytetään dominioniin tullessa.
+edit-leave-message-cui-text:
+  title: Muokkaa {0} poistumisviestiä
+  button: POISTUMISVIESTI
+  description: Viesti, joka näytetään dominionista poistuttaessa.
+rename-dominion-cui-text:
+  title: Nimeä uudelleen {0}
+  description: Nimeä dominion uudelleen.
+  button: NIMEÄ UUDELLEEN
+create-dominion-cui-text:
+  title: Luo Dominion
+  input: Uusi dominionin nimi
+  description: Luo automaattisesti dominion ympärillesi.
+  button: LUO
+set-map-color-cui-text:
+  title: Aseta {0} kartan väri
+  button: VÄRI
+  description: Dominionin väri verkkokartalla.
+search-player-cui-text:
+  title: Etsi Pelaaja
+  input: Tarkka pelaajan nimi
+  button: ETSI
+create-template-cui-text:
+  title: Luo Malli
+  input: Syötä uusi mallin nimi
+  button: LUO
+create-group-cui-text:
+  title: Luo Uusi Ryhmä
+  input: Uusi Ryhmän Nimi
+  description: Luo uusi oikeusryhmä.
+  button: LUO
+rename-group-cui-text:
+  title: Nimeä Ryhmä Uudelleen
+  button: NIMEÄ UUDELLEEN
+  description: Nimeä tämä ryhmä uudelleen.
+administrator-command-text:
+  reload-cache-button: PÄIVITÄ VÄLIMUISTI
+  reload-cache-description: Päivitä välimuisti (älä tee tätä usein).
+  reload-config-button: PÄIVITÄ ASETUKSET
+  reload-config-description: Päivitä asetukset.
+  reloading-dominion-cache: Päivitetään dominionin välimuistia...
+  reloaded-dominion-cache: Dominionin välimuistin päivitys onnistui!
+  reloading-member-cache: Päivitetään jäsenoikeuksien välimuistia...
+  reloaded-member-cache: Jäsenoikeuksien välimuistin päivitys onnistui!
+  reloading-group-cache: Päivitetään ryhmän välimuistia...
+  reloaded-group-cache: Ryhmän välimuistin päivitys onnistui!
+  reloading-config: Päivitetään asetuksia...
+  exporting-mca-list: Viedään MCA-listaa...
+  create-mca-folder-failed: MCA-listakansion luominen epäonnistui.
+  writing-mca-list: Kirjoitetaan maailman {0} listaa...
+  create-mca-file-failed: MCA-listatiedoston {0} luominen epäonnistui.
+  export-mcalist-failed: 'MCA-listan vieminen maailmasta {0} epäonnistui, syy: {1}.'
+  exported-mcalist: MCA-listan vieminen kohteeseen {0} onnistui.
+  import-hint: Tietokannan tuonti on tarkoitettu vain siirtoon tai varmuuskopion palautukseen, älä käytä sitä kahden tietokannan yhdistämiseen.
+  import-info: Jos nykyinen tietokanta ei ole tyhjä, se aiheuttaa virheitä ja voi johtaa tietojen menetykseen tai vioittumiseen.
+  import-confirm: Vahvista tuontitoiminto lisäämällä 'confirm' komennon loppuun.
+migration-command-text:
+  create-player-failed: Pelaajan välimuistin luominen epäonnistui {0}.
+  migrate-success: Residence {0} siirrettiin dominioniin onnistuneesti.
+  migrate-failed: 'Residence-siirto epäonnistui. Syy: {1}'
+  missing-residence: Residence {0} ei löytynyt.
+  not-your-residence: Residence {0} ei ole sinun.
+template-command-text:
+  name-not-valid: Mallin nimi ei voi sisältää välilyöntiä
+  template-name-exist: Malli {0} on jo olemassa
+  create-template-fail: 'Mallin luominen epäonnistui, syy: {0}'
+  create-template-success: Malli {0} luotu onnistuneesti
+  template-not-exist: Mallia {0} ei ole olemassa
+  delete-template-success: Malli {0} poistettu onnistuneesti
+  delete-template-fail: 'Mallin poistaminen epäonnistui, syy: {0}'
+  apply-template-success: Malli {0} sovellettu onnistuneesti kohteeseen {1}
+  apply-template-fail: 'Mallin soveltaminen epäonnistui, syy: {0}'
+  set-flag-success: Lipun {0} asettaminen mallille {1} arvoon {2} onnistui
+  set-flag-fail: 'Lipun asettaminen epäonnistui, syy: {0}'
+group-title-command-text:
+  group-not-belonging: Et kuulu ryhmään {0}.
+  using-title-success: Käytetään nimikettä {0} onnistuneesti.
+  using-title-fail: 'Nimikkeen käyttö epäonnistui, syy: {0}'
+configuration-text:
+  loading-language: Ladataan kieltä {0}...
+  load-language-fail: 'Kielen {0} lataaminen epäonnistui, syy: {1}, käytetään oletuskieltä en_us.'
+  load-language-success: Kieli {0} ladattu onnistuneesti.
+  loading-flag: Ladataan lippuasetuksia...
+  load-flag-success: Lippuasetukset ladattu onnistuneesti.
+  loading-limitations: Ladataan rajoitusasetuksia...
+  saving-default-limitation: Koska rajoitustiedostoa ei löytynyt, tallennetaan oletusrajoitustiedosto.
+  save-limitation-fail: 'Rajoitustiedoston tallentaminen epäonnistui: {0}'
+  loading-limitation: 'Ladataan rajoitustiedostoa: {0}...'
+  load-limitation-fail: 'Rajoitustiedoston lataaminen epäonnistui: {0}, syy: {1}'
+  load-limitations: 'Rajoitustiedostoja ladattu onnistuneesti: {0}, määrä: {1}.'
+  load-configuration: Asetukset ladattu onnistuneesti.
+  debug-enabled: Vianetsintätila käytössä.
+  prepare-database: Valmistellaan tietokantaa...
+  database-connected: Tietokantayhteys onnistui.
+  multi-server-sqlite: Tietokantaa, jonka tyyppi on sqlite, ei tueta monipalvelintilassa, monipalvelintila poistettu käytöstä.
+  server-id-invalid: Palvelimen tunnuksen on oltava positiivinen kokonaisluku (> 0), monipalvelintila poistettu käytöstä.
+limitation-text:
+  loading-world-settings: Ladataan maailman asetuksia...
+  loading-world-setting: Ladataan maailman {0} asetuksia...
+  load-world-setting-failed: 'Maailman {0} asetusten lataaminen epäonnistui, syy: {1}'
+  load-world-settings-success: 'Maailman {0} asetusten lataaminen onnistui: {1}.'
+database-manager-text:
+  exporting-database-tables: Viedään tietokantatauluja...
+  export-table-fail: 'Taulun vienti epäonnistui, syy: {0}'
+  export-world-mapping-fail: 'Maailman UID-kartoituksen vienti epäonnistui, syy: {0}'
+  export-database-success: Tietokannan vienti kohteeseen {0} onnistui.
+  file-not-found: Tietokantataulun tiedostopolku {0} ei löytynyt.
+  importing-database: Tuodaan tietokantaa...
+  file-corrupted: Jokin tietokantataulun tiedosto puuttuu, vie tietokantataulut uudelleen.
+  import-database-fail: 'Tietokannan tuonti epäonnistui, syy: {0}'
+  import-database-success: Tietokannan tuonti onnistui.
+teleport-manager-text:
+  cooling-down: Odota {0} sekuntia ennen kuin yrität teleportata uudelleen.
+  disabled: Teleportaatio on poistettu käytöstä sinun oikeusryhmällesi.
+  delay: Teleportataan {0} sekunnin kuluttua, älä liiku...
+  unfinished-cancelled: Edellinen keskeneräinen teleportaatio peruutettu.
+  cancel-move: Teleportaatio peruutettu liikkumisen vuoksi.
+blue-map-connect-text:
+  register-fail: BlueMap API:n rekisteröinti epäonnistui.
+  info-label: '<div>{0}</div><div>Omistaja: {1}</div>'
+dynmap-connect-text:
+  register-success: Rekisteröinti dynmapiin onnistui!
+  register-fail: Rekisteröinti dynmapiin epäonnistui!
+  info-label: '<div>{0}</div><div>Omistaja: {1}</div>'
+command-exception-text:
+  no-permission: Sinulla ei ole oikeutta {0} tehdä tätä.
+  invalid-arguments: Virheelliset argumentit, käyttö esim. {0}.
+cui-input-text:
+  cui-not-available: CUI ei ole käytettävissä no-paper (fork) core -palvelimella.
+  cui-suggest-command: Voit käyttää komentoa {0} sen sijaan.
+  cui-button: 'Vasen klikkaus: Vahvista | Oikea klikkaus: Peruuta'
+  cui-input-invalid: Syöte ei voi sisältää välilyöntiä.
+flags:
+  tnt_explode:
+    display-name: TNT Räjähdys
+    description: Voiko TNT räjähtää.
+  comparer:
+    display-name: Vertailija
+    description: Voiko olla vuorovaikutuksessa vertailijan kanssa.
+  edit_sign:
+    display-name: Muokkaa Kylttiä
+    description: Voiko muokata kylttiä.
+  cake:
+    display-name: Kakku
+    description: Voiko syödä kakkua.
+  dragon_egg:
+    display-name: Lohikäärmeen Muna
+    description: Voiko olla vuorovaikutuksessa lohikäärmeen munan kanssa.
+  bed:
+    display-name: Sänky
+    description: Voiko nukkua sängyssä (asettaa spawn-pisteen).
+  villager_spawn:
+    display-name: Kyläläisten Lisääntyminen
+    description: Voiko kyläläiset lisääntyä (mukaan lukien spawn-muna).
+  trade:
+    display-name: Kyläläisten Kauppa
+    description: Voiko käydä kauppaa kyläläisten kanssa.
+  note_block:
+    display-name: Nuottiblokki
+    description: Voiko olla vuorovaikutuksessa nuottiblokin kanssa.
+  ignite:
+    display-name: Sytyttää
+    description: Voiko sytyttää tulen.
+  wither_spawn:
+    display-name: Witherin Kutsuminen
+    description: Voiko kutsua witherin ja witherin räjähdyksen.
+  trig_pressure_drop:
+    display-name: Painelaatta (Pudotus)
+    description: Voiko pudotetut esineet laukaista painelaatan.
+  animal_spawn:
+    display-name: Eläinten Lisääntyminen
+    description: Voiko eläimet lisääntyä (mukaan lukien spawn-muna ja lisääntyminen).
+  animal_move:
+    display-name: Eläinten Liikkuminen
+    description: Voiko eläimet liikkua dominionissa.
+  villager_killing:
+    display-name: Kyläläisten Tappaminen
+    description: Voiko vahingoittaa kyläläisiä.
+  animal_killing:
+    display-name: Eläinten Tappaminen
+    description: Voiko vahingoittaa eläimiä.
+  monster_killing:
+    display-name: Hirviöiden Tappaminen
+    description: Voiko vahingoittaa hirviöitä.
+  place:
+    display-name: Aseta Blokki
+    description: Voiko asettaa blokkeja (normaalit blokit, esinekehys, laava, vesi).
+  fly:
+    display-name: Lentää
+    description: Ei elytra-lentoa, vaan luovassa tilassa lentämistä.
+  honey:
+    display-name: Hunaja
+    description: Voiko olla vuorovaikutuksessa pesän kanssa (saada hunajaa).
+  monster_damage:
+    display-name: Hirviö Tappaa Pelaajan
+    description: Voiko hirviö vahingoittaa pelaajaa.
+  monster_spawn:
+    display-name: Hirviöiden Kutsuminen
+    description: Voiko hirviöt ilmestyä (mukaan lukien spawn-muna).
+  monster_move:
+    display-name: Hirviöiden Liikkuminen
+    description: Voiko hirviöt liikkua dominionissa.
+  admin:
+    display-name: Ylläpitäjä
+    description: Jäsen, jolla on tämä lippu, voi hallita normaaleja jäseniä ja ryhmiä.
+  crafter:
+    display-name: Askartelija
+    description: Voiko olla vuorovaikutuksessa askartelijan kanssa (1.21).
+  piston_outside:
+    display-name: Männän
+    description: Estää männän työntämästä/vetämästä blokkeja dominionin ulkopuolelle.
+  fire_spread:
+    display-name: Tulen Leviäminen
+    description: Estää tulen leviämisen dominionissa.
+  shear:
+    display-name: Keritä
+    description: Voiko keritä villaa lampaista.
+  teleport:
+    display-name: Teleportaatio
+    description: Estää teleporttauksen tähän dominioniin.
+  hopper_outside:
+    display-name: Suppilo (Ulkopuolella)
+    description: Estää ulkopuolisen suppilon imemästä säiliötä dominionissa.
+  door:
+    display-name: Ovi
+    description: Voiko olla vuorovaikutuksessa oven kanssa (mukaan lukien luukku, aitaovi).
+  dragon_break_block:
+    display-name: Ender Lohikäärme Rikkoo Blokin
+    description: Voiko ender-lohikäärme rikkoa blokkeja.
+  ender_man:
+    display-name: Ender Mies
+    description: Estää ender-miestä poimimasta blokkeja, ilmestymästä, teleporttaamasta.
+  break:
+    display-name: Rikkoa Blokki
+    description: Voiko rikkoa blokkeja (mukaan lukien esinekehys, haarniskateline).
+  vehicle_destroy:
+    display-name: Ajoneuvon Tuhoaminen
+    description: Voiko tuhota ajoneuvon (vene, kaivosvaunu).
+  riding:
+    display-name: Ratsastus
+    description: Voiko ratsastaa ajoneuvolla (vene, kaivosvaunu, hevonen jne.).
+  dye:
+    display-name: Värjätä
+    description: Mitä voi värjätä (lammas, koiran kaulus, kissan kaulus).
+  egg:
+    display-name: Heittää Muna
+    description: Voiko heittää munan.
+  vehicle_spawn:
+    display-name: Ajoneuvon Kutsuminen
+    description: Voiko kutsua ajoneuvon (vene, kaivosvaunu).
+  trig_pressure_mob:
+    display-name: Painelaatta (Hirviö)
+    description: Voiko hirviö (ei pelaaja) laukaista painelaatan.
+  creeper_explode:
+    display-name: Entiteetin Räjähdys
+    description: Creeper/Wither Kallo/Ender Kristalli/Tulipallo/Sänky/Respawn Ankkuri.
+  mob_drop_item:
+    display-name: Hirviö Pudottaa Esineen
+    description: Voiko hirviö pudottaa esineen kuollessaan.
+  button:
+    display-name: Nappi
+    description: Voiko painaa nappia.
+  hook:
+    display-name: Koukkua
+    description: Voiko käyttää onkivapaa.
+  enchant:
+    display-name: Lumouspöytä
+    description: Voiko käyttää lumouspöytää.
+  craft:
+    display-name: Askartelupöytä
+    description: Voiko käyttää askartelupöytää.
+  lever:
+    display-name: Vipua
+    description: Voiko kääntää vipua.
+  brew:
+    display-name: Panosteline
+    description: Voiko käyttää panostelinettä.
+  anvil:
+    display-name: Alasin
+    description: Voiko käyttää alasin.
+  harvest:
+    display-name: Korjata
+    description: Voiko pelaaja korjata satoja.
+  hopper:
+    display-name: Erityinen Säiliö
+    description: Kuten suppilo, uuni, pudotin, annostelija, räjähdysuuni, savustin.
+  ender_pearl:
+    display-name: Ender Helmi
+    description: Voiko heittää ender helmen.
+  trig_pressure_proj:
+    display-name: Painelaatta (Ammus)
+    description: Voiko ammus (nuoli/lumipallo) laukaista painelaatan.
+  item_frame_proj_damage:
+    display-name: Ammus Vahingoittaa Esinekehystä
+    description: Voiko ammus (nuoli/lumipallo) rikkoa esinekehyksen.
+  shoot:
+    display-name: Ampuminen
+    description: Sisältää nuoli/lumipallo/trident/tulipallo/tuuli-lataus(1.21).
+  flow_in_protection:
+    display-name: Virtaus Sisään
+    description: Estää ulkoisen veden/laavan virtauksen dominioniin.
+  player_damage:
+    display-name: Pelaaja Tappaa Pelaajan
+    description: Voiko pelaaja vahingoittaa toista pelaajaa.
+  glow:
+    display-name: Hehku
+    description: Kuten hehkuva nuoliefekti.
+  feed:
+    display-name: Ruokkia Eläin
+    description: Voiko ruokkia eläimiä.
+  show_border:
+    display-name: Näytä Raja
+    description: Näytä dominionin raja pelaajalle kävellessä.
+  beacon:
+    display-name: Majakka
+    description: Voiko olla vuorovaikutuksessa majakan kanssa.
+  pressure:
+    display-name: Painelaatta (Pelaaja)
+    description: Voiko pelaaja laukaista painelaatan.
+  container:
+    display-name: Säiliö
+    description: Arkku / Tynnyri / ShulkerBox / Haarniskateline / Esinekehys
+  move:
+    display-name: Pelaajan Liikkuminen
+    description: Voiko pelaaja liikkua dominionissa.
+  gravity_block:
+    display-name: Putova Blokki
+    description: Voiko painovoimablokki pudota dominionissa (false muuttaa ne esineiksi).
+  item_frame_interactive:
+    display-name: Esinekehys Interaktiivinen
+    description: Voiko olla vuorovaikutuksessa esinekehyksen kanssa (kiertää esinettä).
+  repeater:
+    display-name: Toistin
+    description: Voiko muuttaa (olla vuorovaikutuksessa) toistimen kanssa.
+  anchor:
+    display-name: Respawn Ankkuri
+    description: Voiko asettaa/käyttää respawn-ankkuria.
+  trample:
+    display-name: Tallata Viljelysmaata
+    description: Voiko viljelysmaata tallata (false suojaa viljelysmaata).
