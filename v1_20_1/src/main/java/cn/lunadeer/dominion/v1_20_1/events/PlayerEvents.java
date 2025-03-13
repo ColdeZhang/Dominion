@@ -25,6 +25,7 @@ import org.bukkit.material.Colorable;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 import static cn.lunadeer.dominion.misc.Others.checkPrivilegeFlag;
+import static cn.lunadeer.dominion.misc.Others.isCrop;
 
 public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST) // anchor
@@ -139,6 +140,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST) // break
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        if (isCrop(event.getBlock().getType())) return; // handle crop break in harvest
         if (onBreak(player, event.getBlock().getLocation())) {
             return;
         }
@@ -475,22 +477,7 @@ public class PlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.LOWEST) // harvest
     public void onHarvest(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (block.getType() != Material.COCOA &&
-                block.getType() != Material.WHEAT &&
-                block.getType() != Material.CARROTS &&
-                block.getType() != Material.POTATOES &&
-                block.getType() != Material.BEETROOTS &&
-                block.getType() != Material.NETHER_WART &&
-                block.getType() != Material.SWEET_BERRY_BUSH &&
-                block.getType() != Material.MELON &&
-                block.getType() != Material.PUMPKIN &&
-                block.getType() != Material.SUGAR_CANE &&
-                block.getType() != Material.BAMBOO &&
-                block.getType() != Material.CACTUS &&
-                block.getType() != Material.CHORUS_PLANT &&
-                block.getType() != Material.CHORUS_FLOWER &&
-                block.getType() != Material.KELP &&
-                block.getType() != Material.KELP_PLANT) {
+        if (!isCrop(block.getType())) {
             return;
         }
         Player player = event.getPlayer();
