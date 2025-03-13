@@ -365,9 +365,8 @@ database-manager-text:
 teleport-manager-text:
   cooling-down: 请等待 {0} 秒后再尝试传送。
   disabled: 你所在的权限组禁止使用传送功能，请联系服务器管理员。
-  delay: 将在 {0} 秒后传送...
+  delay: 将在 {0} 秒后传送 请勿移动...
   unfinished-cancelled: 上一个未完成的传送已被取消。
-  do-not-move: 即将传送，请勿移动...
   cancel-move: 传送取消（不要乱动）！
 blue-map-connect-text:
   register-fail: 获取 BlueMap API 失败！

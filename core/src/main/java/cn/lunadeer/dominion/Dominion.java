@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion;
 
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.EventsRegister;
@@ -9,11 +10,15 @@ import cn.lunadeer.dominion.managers.TeleportManager;
 import cn.lunadeer.dominion.misc.InitCommands;
 import cn.lunadeer.dominion.misc.Others;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
-import cn.lunadeer.dominion.utils.*;
+import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
+import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.utils.XVersionManager;
+import cn.lunadeer.dominion.utils.bStatsMetrics;
 import cn.lunadeer.dominion.utils.command.CommandManager;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import cn.lunadeer.dominion.utils.scui.CuiManager;
 import cn.lunadeer.dominion.utils.webMap.DynmapConnect;
 import cn.lunadeer.dominion.utils.webMap.MapRender;
@@ -55,14 +60,14 @@ public final class Dominion extends JavaPlugin {
             XLogger.info(Language.dominionText.loadingConfig);
             Configuration.loadConfigurationAndDatabase(instance.getServer().getConsoleSender());
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
         }
         XVersionManager.VERSION = XVersionManager.GetVersion(this);
 
         new VaultConnect(this);
         new MultiServerManager(this);
         new TeleportManager(this);
-        new Cache();
+        new CacheManager();
         new DominionInterface();
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -77,9 +82,9 @@ public final class Dominion extends JavaPlugin {
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> Configuration.database.type));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> Cache.instance.getDominionCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> Cache.instance.getGroupCounts()));
-        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> Cache.instance.getMemberCounts()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("dominion_count", () -> CacheManager.instance.dominionCount()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("group_count", () -> CacheManager.instance.groupCount()));
+        metrics.addCustomChart(new bStatsMetrics.SingleLineChart("member_count", () -> CacheManager.instance.memberCount()));
 
         // SCUI 初始化
         Bukkit.getPluginManager().registerEvents(new CuiManager(this), this);
@@ -94,7 +99,9 @@ public final class Dominion extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        DatabaseManager.instance.close();
+        if (DatabaseManager.instance != null)
+            DatabaseManager.instance.close();
+        Scheduler.cancelAll();
     }
 
     public static Dominion instance;

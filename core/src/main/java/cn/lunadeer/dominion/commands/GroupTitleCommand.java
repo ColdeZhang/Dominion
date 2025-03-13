@@ -1,10 +1,10 @@
 package cn.lunadeer.dominion.commands;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.misc.DominionException;
@@ -58,7 +58,7 @@ public class GroupTitleCommand {
             try {
                 assertDominionOwner(player, dominion);
             } catch (Exception e) {
-                MemberDTO member = Cache.instance.getMember(player, dominion);
+                MemberDTO member = CacheManager.instance.getMember(dominion, player);
                 if (member == null) {
                     throw new DominionException(Language.groupTitleCommandText.groupNotBelonging, group.getNamePlain());
                 }

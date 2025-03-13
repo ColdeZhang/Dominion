@@ -24,7 +24,7 @@ public class OpenAnvilInventoryXVersion {
                 }
             };
         } catch (Exception e) {
-            XLogger.error(e.getMessage());
+            XLogger.error(e);
             return null;
         }
     }

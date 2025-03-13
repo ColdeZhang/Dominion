@@ -1,11 +1,11 @@
 package cn.lunadeer.dominion.handler;
 
-import cn.lunadeer.dominion.Cache;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.events.member.MemberAddedEvent;
 import cn.lunadeer.dominion.events.member.MemberRemovedEvent;
@@ -17,6 +17,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Objects;
 
 import static cn.lunadeer.dominion.misc.Asserts.*;
 
@@ -54,7 +56,8 @@ public class MemberEventHandler implements Listener {
             assertMemberBelongDominion(event.getMember(), dominion);
             MemberDTO member = event.getMember();
             if (member.getGroupId() != -1) {
-                throw new DominionException(Language.memberEventHandlerText.groupAlready, Cache.instance.getGroup(member.getGroupId()).getNamePlain());
+                GroupDTO group = Objects.requireNonNull(CacheManager.instance.getCache(dominion.getServerId())).getGroupCache().getGroup(member.getGroupId());
+                throw new DominionException(Language.memberEventHandlerText.groupAlready, group.getNamePlain());
             }
             member.setFlagValue(event.getFlag(), event.getNewValue());
             Notification.info(event.getOperator(), Language.memberEventHandlerText.setFlagSuccess, event.getFlag().getFlagName(), member.getPlayer().getLastKnownName(), dominion.getName());
@@ -74,11 +77,10 @@ public class MemberEventHandler implements Listener {
             if (player.getUuid().equals(dominion.getOwner())) {
                 throw new DominionException(Language.memberEventHandlerText.cantBeOwner);
             }
-            MemberDTO member = Cache.instance.getMember(player.getUuid(), dominion);
-            if (member != null) {
+            if (dominion.getMembers().stream().anyMatch(m -> m.getPlayer().getUuid().equals(player.getUuid()))) {
                 throw new DominionException(Language.memberEventHandlerText.alreadyMember, event.getPlayer().getLastKnownName(), dominion.getName());
             }
-            member = cn.lunadeer.dominion.dtos.MemberDTO.insert(new cn.lunadeer.dominion.dtos.MemberDTO(player.getUuid(), dominion));
+            MemberDTO member = cn.lunadeer.dominion.dtos.MemberDTO.insert(new cn.lunadeer.dominion.dtos.MemberDTO(player.getUuid(), dominion));
             event.setMember(member);
             Notification.info(event.getOperator(), Language.memberEventHandlerText.addMemberSuccess, event.getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
@@ -101,7 +103,7 @@ public class MemberEventHandler implements Listener {
                 owner = true;
             } catch (DominionException ignored) {
             }
-            GroupDTO group = Cache.instance.getGroup(member.getGroupId());
+            GroupDTO group = Objects.requireNonNull(CacheManager.instance.getCache(dominion.getServerId())).getGroupCache().getGroup(member.getGroupId());
             if (group != null) {
                 if (group.getFlagValue(Flags.ADMIN) && !owner) {
                     throw new DominionException(Language.groupEventHandlerText.ownerOnly);
@@ -111,7 +113,7 @@ public class MemberEventHandler implements Listener {
                     throw new DominionException(Language.memberEventHandlerText.ownerOnly);
                 }
             }
-            cn.lunadeer.dominion.dtos.MemberDTO.delete(member.getPlayerUUID(), dominion.getId());
+            cn.lunadeer.dominion.dtos.MemberDTO.deleteById(member.getId());
             Notification.info(event.getOperator(), Language.memberEventHandlerText.removeMemberSuccess, event.getMember().getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
             event.setCancelled(true);

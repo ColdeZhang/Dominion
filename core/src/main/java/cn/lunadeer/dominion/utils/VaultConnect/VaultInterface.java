@@ -1,6 +1,6 @@
 package cn.lunadeer.dominion.utils.VaultConnect;
 
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface VaultInterface {
@@ -12,10 +12,10 @@ public interface VaultInterface {
 
     public String currencyNameSingular();
 
-    public void withdrawPlayer(Player player, double amount);
+    public void withdrawPlayer(OfflinePlayer player, double amount);
 
-    public void depositPlayer(Player player, double amount);
+    public void depositPlayer(OfflinePlayer player, double amount);
 
-    public double getBalance(Player player);
+    public double getBalance(OfflinePlayer player);
 
 }

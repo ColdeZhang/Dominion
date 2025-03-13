@@ -115,6 +115,7 @@ public class DominionOperateCommand {
                 TeleportManager.teleportToDominion(player, dominion);
             } catch (Exception e) {
                 Notification.error(sender, e.getMessage());
+                e.printStackTrace();
             }
         }
     }.needPermission(defaultPermission).register();

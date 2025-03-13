@@ -1,5 +1,6 @@
 package cn.lunadeer.dominion.utils;
 
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;

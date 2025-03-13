@@ -69,7 +69,7 @@ public class CuiTextInput implements CuiView {
                 }
                 callback_handle_input.handleData(input);
             } catch (Exception e) {
-                XLogger.error(e.getMessage());
+                XLogger.error(e);
             }
             view.close(null);
         });
