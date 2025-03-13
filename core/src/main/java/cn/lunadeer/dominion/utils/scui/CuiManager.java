@@ -76,9 +76,7 @@ public class CuiManager implements Listener {
         if (currentItem == null) {
             return;
         }
-        XLogger.debug("Item: %s", currentItem.displayName());
         UUID token = getTokenFromHiddenComponent(currentItem.displayName(), ItemStackButton.btnPrefix);
-        XLogger.debug("Token: %s", token);
         if (token == null) {
             return;
         }
@@ -96,7 +94,6 @@ public class CuiManager implements Listener {
      * @return Token
      */
     public static UUID getTokenFromHiddenComponent(Component title, String prefix) {
-        XLogger.debug("Title: %s", title);
         String component_str = title.toString();
         // look for prefix
         int prefixIndex = component_str.indexOf(prefix);
@@ -104,7 +101,6 @@ public class CuiManager implements Listener {
             return null;
         }
         String uuidStr = component_str.substring(prefixIndex + prefix.length(), prefixIndex + prefix.length() + 36);
-        XLogger.debug("Token: %s", uuidStr);
         if (uuidStr.isEmpty()) {
             return null;
         }
