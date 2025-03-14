@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
 import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;
 import static cn.lunadeer.dominion.misc.Converts.toPlayer;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class SetMapColor {
 
@@ -51,7 +52,7 @@ public class SetMapColor {
             DominionDTO dominion = toDominionDTO(dominionName);
             CuiTextInput.InputCallback setMapColorCB = new SetMapColor.setMapColorCB(player, dominionName);
             CuiTextInput view = CuiTextInput.create(setMapColorCB).setText(dominion.getColor())
-                    .title(Language.setMapColorCuiText.title);
+                    .title(formatString(Language.setMapColorCuiText.title, dominionName));
             view.setSuggestCommand(DominionOperateCommand.setMapColor.getUsage());
             view.open(player);
         } catch (Exception e) {

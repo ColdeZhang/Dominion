@@ -92,7 +92,7 @@ public class MemberSetting {
                         public void function() {
                             MemberCommand.setMemberPrivilege(sender, dominion_name, player_name, flag.getFlagName(), "false", String.valueOf(page));
                         }
-                    }.needPermission(defaultPermission).red().build())
+                    }.needPermission(defaultPermission).green().build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription()))
                     );
         } else {
@@ -102,7 +102,7 @@ public class MemberSetting {
                         public void function() {
                             MemberCommand.setMemberPrivilege(sender, dominion_name, player_name, flag.getFlagName(), "true", String.valueOf(page));
                         }
-                    }.needPermission(defaultPermission).green().build())
+                    }.needPermission(defaultPermission).red().build())
                     .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription()))
                     );
         }

@@ -29,6 +29,7 @@ public class CacheEventHandler implements Listener {
                         event.getDominion().getJoinMessage()
                                 .replace("{DOM}", event.getDominion().getName())
                                 .replace("{OWNER}", CacheManager.instance.getPlayerName(event.getDominion().getOwner()))
+                                .replace("{PLAYER}", event.getPlayer().getName())
                 )
         );
         // show border
@@ -47,6 +48,7 @@ public class CacheEventHandler implements Listener {
                         event.getDominion().getLeaveMessage()
                                 .replace("{DOM}", event.getDominion().getName())
                                 .replace("{OWNER}", CacheManager.instance.getPlayerName(event.getDominion().getOwner()))
+                                .replace("{PLAYER}", event.getPlayer().getName())
                 )
         );
         // show border

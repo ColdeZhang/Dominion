@@ -15,7 +15,7 @@ import static cn.lunadeer.dominion.utils.stui.ViewStyles.main_color;
 
 public class View {
     protected TextComponent space = Component.text(" ");
-    protected TextComponent sub_title_decorate = Component.text("-   ", main_color);
+    protected TextComponent sub_title_decorate = Component.text("- ", main_color);
     protected TextComponent line_decorate = Component.text("⌗ ", main_color);
     protected TextComponent action_decorate = Component.text("▸ ", main_color);
     protected TextComponent title = Component.text("       ");

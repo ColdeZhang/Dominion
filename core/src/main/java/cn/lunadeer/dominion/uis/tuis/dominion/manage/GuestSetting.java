@@ -61,7 +61,7 @@ public class GuestSetting {
                                 public void function() {
                                     DominionFlagCommand.setGuest(sender, dominionName, flag.getFlagName(), "false", String.valueOf(page));
                                 }
-                            }.red().build())
+                            }.green().build())
                             .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())))
                     );
                 } else {
@@ -71,7 +71,7 @@ public class GuestSetting {
                                 public void function() {
                                     DominionFlagCommand.setGuest(sender, dominionName, flag.getFlagName(), "true", String.valueOf(page));
                                 }
-                            }.green().build())
+                            }.red().build())
                             .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())))
                     );
                 }

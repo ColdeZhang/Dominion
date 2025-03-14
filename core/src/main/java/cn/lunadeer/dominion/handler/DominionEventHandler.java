@@ -120,7 +120,7 @@ public class DominionEventHandler implements Listener {
             DominionDTO inserted = cn.lunadeer.dominion.dtos.DominionDTO.insert(toBeCreated);
             event.setDominion(inserted);
             ParticleUtil.showBorder(player, inserted);
-            Notification.info(player, Language.dominionEventHandlerText.createSuccess, event.getName());
+            Notification.info(event.getOperator(), Language.dominionEventHandlerText.createSuccess, event.getName());
         } catch (Exception e) {
             event.setCancelled(true);
             Notification.error(event.getOperator(), Language.dominionEventHandlerText.createFailed, event.getName(), e.getMessage());
@@ -157,9 +157,9 @@ public class DominionEventHandler implements Listener {
             event.setDominion(modified);
             ParticleUtil.showBorder(player, modified);
             if (expand) {
-                Notification.info(player, Language.dominionEventHandlerText.expandSuccess, dominion.getName());
+                Notification.info(event.getOperator(), Language.dominionEventHandlerText.expandSuccess, dominion.getName());
             } else {
-                Notification.info(player, Language.dominionEventHandlerText.contractSuccess, dominion.getName());
+                Notification.info(event.getOperator(), Language.dominionEventHandlerText.contractSuccess, dominion.getName());
             }
         } catch (Exception e) {
             event.setCancelled(true);
@@ -191,7 +191,7 @@ public class DominionEventHandler implements Listener {
             if (!event.isForce()) {
                 event.setCancelled(true);
                 if (!sub_dominions.isEmpty()) {
-                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), sub_dominions.stream().map(DominionDTO::getName).toArray());
+                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), String.join(", ", sub_dominions.stream().map(DominionDTO::getName).toList()));
                 }
                 Notification.warn(event.getOperator(), Language.dominionEventHandlerText.deleteConfirm, DominionOperateCommand.delete.getUsage(), dominion.getName());
                 return;
@@ -259,10 +259,10 @@ public class DominionEventHandler implements Listener {
             List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
             if (!event.isForce()) {
                 event.setCancelled(true);
-                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.giveConfirm, DominionOperateCommand.give.getUsage(), dominion.getName(), newOwner.getName());
                 if (!sub_dominions.isEmpty()) {
-                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), sub_dominions.stream().map(DominionDTO::getName).toArray());
+                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), String.join(", ", sub_dominions.stream().map(DominionDTO::getName).toList()));
                 }
+                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.giveConfirm, DominionOperateCommand.give.getUsage(), dominion.getName(), newOwner.getName());
                 return;
             }
             for (DominionDTO sub_dominion : sub_dominions) {

@@ -61,7 +61,7 @@ public class EnvSetting {
                                 public void function() {
                                     DominionFlagCommand.setEnv(sender, dominionName, flag.getFlagName(), "false", pageStr);
                                 }
-                            }.needPermission(defaultPermission).red().build())
+                            }.needPermission(defaultPermission).green().build())
                             .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())))
                     );
                 } else {
@@ -71,7 +71,7 @@ public class EnvSetting {
                                 public void function() {
                                     DominionFlagCommand.setEnv(sender, dominionName, flag.getFlagName(), "true", pageStr);
                                 }
-                            }.needPermission(defaultPermission).green().build())
+                            }.needPermission(defaultPermission).red().build())
                             .append(Component.text(flag.getDisplayName()).hoverEvent(Component.text(flag.getDescription())))
                     );
                 }
