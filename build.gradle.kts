@@ -14,7 +14,7 @@ libraries += "net.kyori:adventure-platform-bukkit:4.3.3"
 
 
 group = "cn.lunadeer"
-version = "4.0.0-alpha.19"
+version = "4.0.0-alpha.20"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))

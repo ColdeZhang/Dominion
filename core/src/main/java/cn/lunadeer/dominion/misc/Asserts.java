@@ -104,11 +104,14 @@ public class Asserts {
     /**
      * Asserts that the player has not exceeded the maximum number of dominions they can create.
      *
-     * @param associatedPlayer   the player to check
+     * @param operator             the command sender (usually a player)
      * @param associatedWorldUid the world in which the dominion is located
      * @throws DominionException if the player has exceeded the maximum number of dominions they can create
      */
-    public static void assertPlayerDominionAmount(@NotNull Player associatedPlayer, @NotNull UUID associatedWorldUid) throws DominionException {
+    public static void assertPlayerDominionAmount(@NotNull CommandSender operator, @NotNull UUID associatedWorldUid) throws DominionException {
+        if (!(operator instanceof Player associatedPlayer)) {
+            return;
+        }
         if (bypassLimit(associatedPlayer)) {
             return;
         }
@@ -131,12 +134,15 @@ public class Asserts {
     /**
      * Asserts that the size of the given dominion is within the allowed limits.
      *
-     * @param associatedPlayer   the player associated with the dominion
+     * @param operator             the command operator (usually a player)
      * @param associatedWorldUid the world in which the dominion is located
      * @param cuboid             the cuboid representing the dominion's size
      * @throws DominionException if the dominion size is outside the allowed limits
      */
-    public static void assertDominionSize(@NotNull Player associatedPlayer, @NotNull UUID associatedWorldUid, CuboidDTO cuboid) throws DominionException {
+    public static void assertDominionSize(@NotNull CommandSender operator, @NotNull UUID associatedWorldUid, CuboidDTO cuboid) throws DominionException {
+        if (!(operator instanceof Player associatedPlayer)) {
+            return;
+        }
         if (bypassLimit(associatedPlayer)) {
             return;
         }
@@ -204,8 +210,8 @@ public class Asserts {
      * @throws DominionException if the sender is a player and is not the owner of the dominion
      */
     public static void assertDominionOwner(@NotNull CommandSender sender, @NotNull DominionDTO dominion) throws DominionException {
-        if (sender instanceof Player) {
-            assertDominionOwner((Player) sender, dominion);
+        if (sender instanceof Player player) {
+            assertDominionOwner(player, dominion);
         }
     }
 
@@ -270,11 +276,14 @@ public class Asserts {
      * This method checks if the recursion depth of sub-dominions is valid
      * based on the player's limitations and the configuration settings.
      *
-     * @param associatedPlayer the player associated with the dominion
-     * @param dominion         the dominion to check
+     * @param operator   the command operator (usually a player)
+     * @param dominion the dominion to check
      * @throws DominionException if the sub-dominion depth exceeds the allowed limit
      */
-    public static void assertSubDepth(@NotNull Player associatedPlayer, @NotNull DominionDTO dominion) throws DominionException {
+    public static void assertSubDepth(@NotNull CommandSender operator, @NotNull DominionDTO dominion) throws DominionException {
+        if (!(operator instanceof Player associatedPlayer)) {
+            return;
+        }
         // check if sub recursion is valid
         if (bypassLimit(associatedPlayer)) {
             return;
@@ -319,11 +328,11 @@ public class Asserts {
     /**
      * Asserts that the specified dominion does not intersect with other dominions or the spawn protection area.
      *
-     * @param associatedPlayer the player associated with the dominion
-     * @param dominion         the dominion to check for intersections
+     * @param operator   the command operator (usually a player)
+     * @param dominion the dominion to check for intersections
      * @throws DominionException if the dominion intersects with another dominion or the spawn protection area
      */
-    public static void assertDominionIntersect(@NotNull Player associatedPlayer, @NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
+    public static void assertDominionIntersect(@NotNull CommandSender operator, @NotNull DominionDTO dominion, @NotNull CuboidDTO cuboid) throws DominionException {
         List<DominionDTO> dominions = CacheManager.instance.getCache().getDominionCache().getChildrenOf(dominion.getParentDomId());
         for (DominionDTO dom : dominions) {
             if (dom.getId().equals(dominion.getId())) {
@@ -332,6 +341,9 @@ public class Asserts {
             if (cuboid.intersectWith(dom.getCuboid())) {
                 throw new DominionException(Language.assertsText.intersectWithDom, dominion.getName(), dom.getName());
             }
+        }
+        if (!(operator instanceof Player associatedPlayer)) {
+            return;
         }
         if (bypassLimit(associatedPlayer)) {
             return;
@@ -358,12 +370,16 @@ public class Asserts {
      * This method checks if the economy feature is enabled, calculates the cost or refund
      * based on the difference between the before and after cuboid sizes, and updates the player's balance accordingly.
      *
-     * @param associatedPlayer the player associated with the dominion
+     * @param operator          the command sender (usually a player)
      * @param before           the cuboid representing the dominion's size before modification
      * @param after            the cuboid representing the dominion's size after modification
      * @throws Exception if there is an error during the economic transaction
      */
-    public static void assertEconomy(@NotNull Player associatedPlayer, CuboidDTO before, CuboidDTO after) throws Exception {
+    public static void assertEconomy(@NotNull CommandSender operator, CuboidDTO before, CuboidDTO after) throws Exception {
+        if (!(operator instanceof Player associatedPlayer)) {
+            // do nothing if command sender is not a player
+            return;
+        }
         Limitation.Economy ecoConf = Configuration.getPlayerLimitation(associatedPlayer).economy;
         if (!ecoConf.enable) {
             return;
