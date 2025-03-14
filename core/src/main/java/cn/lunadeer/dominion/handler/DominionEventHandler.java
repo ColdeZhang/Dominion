@@ -246,7 +246,7 @@ public class DominionEventHandler implements Listener {
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
-            if (dominion.getParentDomId() == -1) {
+            if (dominion.getParentDomId() != -1) {
                 throw new DominionException(Language.dominionEventHandlerText.cannotGiveSub, dominion.getName());
             }
             Player newOwner = toPlayer(event.getNewOwner().getUuid());

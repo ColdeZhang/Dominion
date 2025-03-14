@@ -86,7 +86,7 @@ public class DominionOperateCommand {
 
     public static SecondaryCommand give = new SecondaryCommand("give", List.of(
             new CommandArguments.RequiredDominionArgument(),
-            new CommandArguments.OptionalPageArgument(),
+            new CommandArguments.RequiredPlayerArgument(),
             new Option(List.of("force"), "")
     )) {
         @Override
