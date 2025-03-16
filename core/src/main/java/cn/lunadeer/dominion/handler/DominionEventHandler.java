@@ -11,6 +11,7 @@ import cn.lunadeer.dominion.events.dominion.modify.*;
 import cn.lunadeer.dominion.misc.DominionException;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.ParticleUtil;
+import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -138,6 +139,7 @@ public class DominionEventHandler implements Listener {
         if (event.isCancelled()) return;
         int amount = event.getNewCuboid().minusVolumeWith(event.getOldCuboid());
         if (amount == 0) {
+            XLogger.debug("Dominion size change event cancelled, no size change.");
             return;
         }
         boolean expand = amount > 0;
