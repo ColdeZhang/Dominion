@@ -49,7 +49,7 @@ public class MemberCommand {
             new MemberAddedEvent(sender, dominion, player).call();
             MemberList.show(sender, dominionName, "1");
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -95,7 +95,7 @@ public class MemberCommand {
             new MemberSetFlagEvent(sender, dominion, member, flag, value).call();
             MemberSetting.show(sender, dominionName, playerName, pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -128,7 +128,7 @@ public class MemberCommand {
             new MemberRemovedEvent(sender, dominion, member).call();
             MemberList.show(sender, dominionName, pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 

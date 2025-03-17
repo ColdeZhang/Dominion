@@ -99,7 +99,7 @@ public class DominionOperateCommand {
                 event.setForce(force);
                 event.call();
             } catch (Exception e) {
-                Notification.error(sender, e.getMessage());
+                Notification.error(sender, e);
             }
         }
     }.needPermission(defaultPermission).register();
@@ -114,8 +114,7 @@ public class DominionOperateCommand {
                 DominionDTO dominion = toDominionDTO(getArgumentValue(0));
                 TeleportManager.teleportToDominion(player, dominion);
             } catch (Exception e) {
-                Notification.error(sender, e.getMessage());
-                e.printStackTrace();
+                Notification.error(sender, e);
             }
         }
     }.needPermission(defaultPermission).register();
@@ -143,7 +142,7 @@ public class DominionOperateCommand {
                     size
             ).call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -166,7 +165,7 @@ public class DominionOperateCommand {
                     msg
             ).call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -185,7 +184,7 @@ public class DominionOperateCommand {
             even.setForce(force);
             even.call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -201,7 +200,7 @@ public class DominionOperateCommand {
             DominionDTO dominion = toDominionDTO(dominionName);
             new DominionRenameEvent(sender, dominion, newName).call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -211,7 +210,7 @@ public class DominionOperateCommand {
             Color color = toColor(colorStr);
             new DominionSetMapColorEvent(sender, dominion, color).call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -221,7 +220,7 @@ public class DominionOperateCommand {
             DominionDTO dominion = toDominionDTO(dominionName);
             new DominionSetTpLocationEvent(sender, dominion, player.getLocation()).call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 

@@ -56,7 +56,7 @@ public class DominionFlagCommand {
             new DominionSetEnvFlagEvent(sender, dominion, flag, value).call();
             EnvSetting.show(sender, dominionName, pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -97,7 +97,7 @@ public class DominionFlagCommand {
             new DominionSetGuestFlagEvent(sender, dominion, flag, value).call();
             GuestSetting.show(sender, dominionName, pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 }
