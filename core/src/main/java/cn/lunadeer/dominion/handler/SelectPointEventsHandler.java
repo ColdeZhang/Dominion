@@ -150,6 +150,7 @@ public class SelectPointEventsHandler implements Listener {
             Notification.info(player, Language.selectPointEventsHandlerText.size, cuboid.xLength(), cuboid.yLength(), cuboid.zLength());
             Notification.info(player, Language.selectPointEventsHandlerText.square, cuboid.getSquare());
             Notification.info(player, Language.selectPointEventsHandlerText.volume, cuboid.getVolume());
+            ParticleUtil.showBorder(player, dominion);
         }
     }
 }

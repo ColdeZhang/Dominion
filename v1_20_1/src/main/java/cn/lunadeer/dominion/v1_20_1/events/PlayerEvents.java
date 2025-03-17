@@ -246,7 +246,7 @@ public class PlayerEvents implements Listener {
         }
         if (event.getClickedBlock().getType() != Material.CHEST &&
                 event.getClickedBlock().getType() != Material.BARREL &&
-                event.getClickedBlock().getType() != Material.SHULKER_BOX) {
+                !Tag.SHULKER_BOXES.isTagged(event.getClickedBlock().getType())) {
             return;
         }
         if (hasContainerPermission(event.getPlayer(), event.getClickedBlock().getLocation())) {
