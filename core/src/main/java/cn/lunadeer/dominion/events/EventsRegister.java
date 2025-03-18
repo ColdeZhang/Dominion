@@ -32,12 +32,14 @@ public class EventsRegister {
                         XLogger.debug("Load Spigot special events");
                         registerEvents("cn.lunadeer.dominion.v1_21_spigot.events.PlayerEvents");
                         registerEvents("cn.lunadeer.dominion.v1_21_spigot.events.EnvironmentEvents");
+                        registerEvents("cn.lunadeer.dominion.v1_21_spigot.events.PlayerPVPEvents");
                     }
                     break;
                 case v1_20_1:
                     XLogger.debug("Load API version: 1.20.1");
                     registerEvents("cn.lunadeer.dominion.v1_20_1.events.PlayerEvents");
                     registerEvents("cn.lunadeer.dominion.v1_20_1.events.EnvironmentEvents");
+                    registerEvents("cn.lunadeer.dominion.v1_20_1.events.PlayerPVPEvents");
                     registerEvents("cn.lunadeer.dominion.v1_20_1.scui.CuiEvents");
                     if (isPaper()) {
                         registerEvents("cn.lunadeer.dominion.v1_20_1.events.special.Paper");

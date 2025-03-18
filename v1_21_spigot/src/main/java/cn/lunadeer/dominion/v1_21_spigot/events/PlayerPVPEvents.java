@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.v1_21_paper.events;
+package cn.lunadeer.dominion.v1_21_spigot.events;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;

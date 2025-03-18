@@ -402,19 +402,6 @@ public class EnvironmentEvents implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) // player_damage
-    public void onPlayerDamage(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
-        if (!(damager instanceof Player)) {
-            return;
-        }
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
-        DominionDTO dom = CacheManager.instance.getDominion(event.getEntity().getLocation());
-        checkEnvironmentFlag(dom, Flags.PLAYER_DAMAGE, event);
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onGravityBlockFalling(EntityChangeBlockEvent event) {   // gravity_block
         Entity entity = event.getEntity();

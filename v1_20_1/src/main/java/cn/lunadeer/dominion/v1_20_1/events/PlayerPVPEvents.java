@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.v1_21_paper.events;
+package cn.lunadeer.dominion.v1_20_1.events;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
@@ -24,19 +24,18 @@ public class PlayerPVPEvents implements Listener {
 
         Player attacker = null;
         Entity damager = event.getDamager();
-        switch (damager) {
-            case Player p -> attacker = p;
-            case Projectile proj when proj.getShooter() instanceof Player p -> attacker = p;
-            case TNTPrimed tnt when tnt.getSource() instanceof Player p -> attacker = p;
-            case Firework ignored -> {
-                DominionDTO dom = CacheManager.instance.getDominion(damager.getLocation());
-                if (!checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
-                    event.setCancelled(true);
-                }
-                return;
+        if (damager instanceof Player p) {
+            attacker = p;
+        } else if (damager instanceof Projectile proj && proj.getShooter() instanceof Player p) {
+            attacker = p;
+        } else if (damager instanceof TNTPrimed tnt && tnt.getSource() instanceof Player p) {
+            attacker = p;
+        } else if (damager instanceof Firework) {
+            DominionDTO dom = CacheManager.instance.getDominion(damager.getLocation());
+            if (!checkPrivilegeFlag(dom, Flags.PVP, damaged, null)) {
+                event.setCancelled(true);
             }
-            default -> {
-            }
+            return;
         }
         if (attacker == null || damaged == attacker) {
             return;
