@@ -84,7 +84,6 @@ public class SelectPointEventsHandler implements Listener {
         } else {
             return;
         }
-        Dominion.pointsSelect.put(player.getUniqueId(), points);
 
         if (points.size() == 2) {
             World world = points.get(0).getWorld();
@@ -103,6 +102,8 @@ public class SelectPointEventsHandler implements Listener {
             int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
             int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
             int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
+            points.put(0, new Location(world, minX, minY, minZ));
+            points.put(1, new Location(world, maxX, maxY, maxZ));
             CuboidDTO cuboid = new CuboidDTO(minX, minY, minZ, maxX, maxY, maxZ);
             try {
                 if (Configuration.getPlayerLimitation(player).economy.enable) {
@@ -123,6 +124,7 @@ public class SelectPointEventsHandler implements Listener {
                 Notification.error(player, e.getMessage());
             }
         }
+        Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
