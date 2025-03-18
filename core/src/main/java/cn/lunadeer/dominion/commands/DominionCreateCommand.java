@@ -37,7 +37,7 @@ public class DominionCreateCommand {
                         null
                 ).call();
             } catch (Exception e) {
-                Notification.error(sender, e.getMessage());
+                Notification.error(sender, e);
             }
         }
     }.needPermission(defaultPermission).register();
@@ -61,7 +61,7 @@ public class DominionCreateCommand {
                         toDominionDTO(getArgumentValue(1))
                 ).call();
             } catch (Exception e) {
-                Notification.error(sender, e.getMessage());
+                Notification.error(sender, e);
             }
         }
     }.needPermission(defaultPermission).register();
@@ -89,7 +89,7 @@ public class DominionCreateCommand {
                     null
             ).call();
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -112,7 +112,7 @@ public class DominionCreateCommand {
                         toDominionDTO(getArgumentValue(1))
                 ).call();
             } catch (Exception e) {
-                Notification.error(sender, e.getMessage());
+                Notification.error(sender, e);
             }
         }
     }.needPermission(defaultPermission).register();

@@ -36,7 +36,7 @@ public class GroupCommand {
             new GroupCreateEvent(sender, dominion, groupName).call();
             GroupList.show(sender, dominion.getName(), "1");
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -58,7 +58,7 @@ public class GroupCommand {
             new GroupDeleteEvent(sender, dominion, group).call();
             GroupList.show(sender, dominion.getName(), pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -80,7 +80,7 @@ public class GroupCommand {
             new GroupRenamedEvent(sender, dominion, group, newGroupName).call();
             GroupSetting.show(sender, dominion.getName(), newGroupName, "1");
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -106,7 +106,7 @@ public class GroupCommand {
             new GroupSetFlagEvent(sender, dominion, group, flag, value).call();
             GroupSetting.show(sender, dominionName, groupName, pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -129,7 +129,7 @@ public class GroupCommand {
             new GroupAddMemberEvent(sender, dominion, group, member).call();
             GroupList.show(sender, dominion.getName(), "1");
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 
@@ -153,7 +153,7 @@ public class GroupCommand {
             new GroupRemoveMemberEvent(sender, dominion, group, member).call();
             GroupList.show(sender, dominion.getName(), pageStr);
         } catch (Exception e) {
-            Notification.error(sender, e.getMessage());
+            Notification.error(sender, e);
         }
     }
 

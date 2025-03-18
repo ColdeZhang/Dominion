@@ -155,7 +155,6 @@ public class DominionCache extends Cache {
         idDominions = new ConcurrentHashMap<>();
         dominionChildrenMap = new ConcurrentHashMap<>();
         dominionNameToId = new ConcurrentHashMap<>();
-        playerDominionNodes = new ConcurrentHashMap<>();
         playerOwnDominions = new ConcurrentHashMap<>();
         dominionNodeMap = new ConcurrentHashMap<>();
         List<DominionDTO> dominions = new ArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll(serverId));
@@ -165,14 +164,7 @@ public class DominionCache extends Cache {
         }
 
         // build tree
-        CompletableFuture<Void> buildTreeFuture = CompletableFuture.runAsync(() -> {
-            List<DominionNode> nodeTree = DominionNode.BuildNodeTree(-1, dominions);
-            for (DominionNode node : nodeTree) {
-                dominionNodeMap.put(node.getDominion().getId(), node);
-                playerDominionNodes.computeIfAbsent(node.getDominion().getOwner(), k -> new ArrayList<>()).add(node);
-            }
-            dominionNodeSectored.build(nodeTree);
-        });
+        CompletableFuture<Void> buildTreeFuture = rebuildTreeAsync();
 
         // build other caches
         CompletableFuture<Void> buildCachesFuture = CompletableFuture.runAsync(() -> {
@@ -219,11 +211,13 @@ public class DominionCache extends Cache {
         dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(idToDelete));
         playerOwnDominions.entrySet().removeIf(entry -> entry.getValue().contains(dominionToDelete.getId()));
         // update node tree
+        dominionNodeMap.remove(dominionToDelete.getId());
         rebuildTreeAsync();
     }
 
-    private void rebuildTreeAsync() {
-        CompletableFuture.runAsync(() -> {
+    private CompletableFuture<Void> rebuildTreeAsync() {
+        return CompletableFuture.runAsync(() -> {
+            playerDominionNodes = new ConcurrentHashMap<>();
             List<DominionNode> nodeTree = DominionNode.BuildNodeTree(-1, new ArrayList<>(idDominions.values()));
             for (DominionNode node : nodeTree) {
                 dominionNodeMap.put(node.getDominion().getId(), node);

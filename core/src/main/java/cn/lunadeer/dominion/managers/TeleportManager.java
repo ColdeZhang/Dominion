@@ -73,6 +73,11 @@ public class TeleportManager implements Listener {
         if (!teleportDelayTasks.containsKey(event.getPlayer().getUniqueId())) {
             return;
         }
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (from.getBlockX() == to.getBlockX() && from.getBlockY() == to.getBlockY() && from.getBlockZ() == to.getBlockZ()) {
+            return;
+        }
         teleportDelayTasks.get(event.getPlayer().getUniqueId()).cancel();
         teleportDelayTasks.remove(event.getPlayer().getUniqueId());
         Notification.warn(event.getPlayer(), Language.teleportManagerText.cancelMove);
@@ -98,11 +103,13 @@ public class TeleportManager implements Listener {
         if (!checkPrivilegeFlag(dominion, Flags.TELEPORT, player, null)) {
             return;
         }
-        // cooldown
         boolean needCooldown = Configuration.getPlayerLimitation(player).teleportation.cooldown > 0;
+        int delaySec = Configuration.getPlayerLimitation(player).teleportation.delay;
         if (player.hasPermission(adminPermission) && Configuration.adminBypass) {
             needCooldown = false;
+            delaySec = 0;
         }
+        // cooldown
         if (needCooldown) {
             int currentTs = (int) (System.currentTimeMillis() / 1000);
             if (teleportCooldown.containsKey(player.getUniqueId())) {
@@ -119,8 +126,8 @@ public class TeleportManager implements Listener {
             teleportDelayTasks.remove(player.getUniqueId());
             Notification.warn(player, Language.teleportManagerText.unfinishedCancelled);
         }
-        if (Configuration.getPlayerLimitation(player).teleportation.cooldown > 0) {
-            Notification.info(player, Language.teleportManagerText.delay, Configuration.getPlayerLimitation(player).teleportation.delay);
+        if (delaySec > 0) {
+            Notification.info(player, Language.teleportManagerText.delay, delaySec);
         }
         // teleport
         CancellableTask task = Scheduler.runTaskLaterAsync(() -> {
@@ -140,10 +147,10 @@ public class TeleportManager implements Listener {
                     Notification.error(player, e.getMessage());
                 }
             }
-        }, Configuration.getPlayerLimitation(player).teleportation.delay * 20L);
+        }, delaySec * 20L);
         Scheduler.runTaskLaterAsync(() -> {
             teleportDelayTasks.remove(player.getUniqueId());    // remove task from map for cleanup
-        }, Configuration.getPlayerLimitation(player).teleportation.delay * 20L + 1);
+        }, delaySec * 20L + 1);
         teleportDelayTasks.put(player.getUniqueId(), task);
     }
 

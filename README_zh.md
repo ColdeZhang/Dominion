@@ -48,7 +48,7 @@ Dominion 是一个完全开源、免费，专为高版本开发，面向未来�
 ## 开发者指南
 
 Dominion 提供了一些简单（只是暂时，后续会逐步增强api）的 API 供开发者基于 Dominion
-构建一些更有趣的东西。您可以查看 [开发者指南](docs/zh-cn/developer.md) 了解更多细节。
+构建一些更有趣的东西。您可以查看 [API 参考](https://dominion.lunadeer.cn/notes/api/) 了解更多细节。
 
 ## 整个烂活儿
 

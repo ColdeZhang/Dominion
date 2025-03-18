@@ -11,6 +11,7 @@ import cn.lunadeer.dominion.events.dominion.modify.*;
 import cn.lunadeer.dominion.misc.DominionException;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.ParticleUtil;
+import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -100,27 +101,26 @@ public class DominionEventHandler implements Listener {
                     event.getCuboid(),
                     parent == null ? -1 : parent.getId()
             );
-            Player player = toPlayer(event.getOwner());
             // name check
             assertDominionName(event.getName());
             // amount check
-            assertPlayerDominionAmount(player, world.getUID());
+            assertPlayerDominionAmount(event.getOperator(), world.getUID());
             // size check
-            assertDominionSize(player, world.getUID(), event.getCuboid());
+            assertDominionSize(event.getOperator(), world.getUID(), event.getCuboid());
             // parent check
             assertWithinParent(toBeCreated, event.getCuboid());
-            assertSubDepth(player, toBeCreated);
+            assertSubDepth(event.getOperator(), toBeCreated);
             // intersect check
-            assertDominionIntersect(player, toBeCreated, event.getCuboid());
+            assertDominionIntersect(event.getOperator(), toBeCreated, event.getCuboid());
             // handle economy
             if (!event.isSkipEconomy()) {
-                assertEconomy(player, CuboidDTO.ZERO, toBeCreated.getCuboid());
+                assertEconomy(event.getOperator(), CuboidDTO.ZERO, toBeCreated.getCuboid());
             }
             // do db insert
             DominionDTO inserted = cn.lunadeer.dominion.dtos.DominionDTO.insert(toBeCreated);
             event.setDominion(inserted);
-            ParticleUtil.showBorder(player, inserted);
-            Notification.info(player, Language.dominionEventHandlerText.createSuccess, event.getName());
+            ParticleUtil.showBorder(event.getOperator(), inserted);
+            Notification.info(event.getOperator(), Language.dominionEventHandlerText.createSuccess, event.getName());
         } catch (Exception e) {
             event.setCancelled(true);
             Notification.error(event.getOperator(), Language.dominionEventHandlerText.createFailed, event.getName(), e.getMessage());
@@ -139,27 +139,27 @@ public class DominionEventHandler implements Listener {
         if (event.isCancelled()) return;
         int amount = event.getNewCuboid().minusVolumeWith(event.getOldCuboid());
         if (amount == 0) {
+            XLogger.debug("Dominion size change event cancelled, no size change.");
             return;
         }
         boolean expand = amount > 0;
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
-            Player player = toPlayer(dominion.getOwner());
-            assertDominionSize(player, dominion.getWorldUid(), event.getNewCuboid());
+            assertDominionSize(event.getOperator(), dominion.getWorldUid(), event.getNewCuboid());
             assertWithinParent(dominion, event.getNewCuboid());
             assertContainSubs(dominion, event.getNewCuboid());
-            assertDominionIntersect(player, dominion, event.getNewCuboid());
+            assertDominionIntersect(event.getOperator(), dominion, event.getNewCuboid());
             if (!event.isSkipEconomy()) {
-                assertEconomy(player, event.getOldCuboid(), event.getNewCuboid());
+                assertEconomy(event.getOperator(), event.getOldCuboid(), event.getNewCuboid());
             }
             DominionDTO modified = dominion.setCuboid(event.getNewCuboid());
             event.setDominion(modified);
-            ParticleUtil.showBorder(player, modified);
+            ParticleUtil.showBorder(event.getOperator(), modified);
             if (expand) {
-                Notification.info(player, Language.dominionEventHandlerText.expandSuccess, dominion.getName());
+                Notification.info(event.getOperator(), Language.dominionEventHandlerText.expandSuccess, dominion.getName());
             } else {
-                Notification.info(player, Language.dominionEventHandlerText.contractSuccess, dominion.getName());
+                Notification.info(event.getOperator(), Language.dominionEventHandlerText.contractSuccess, dominion.getName());
             }
         } catch (Exception e) {
             event.setCancelled(true);
@@ -185,13 +185,12 @@ public class DominionEventHandler implements Listener {
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
-            Player player = toPlayer(dominion.getOwner());
             // check subs
             List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
             if (!event.isForce()) {
                 event.setCancelled(true);
                 if (!sub_dominions.isEmpty()) {
-                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), sub_dominions.stream().map(DominionDTO::getName).toArray());
+                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), String.join(", ", sub_dominions.stream().map(DominionDTO::getName).toList()));
                 }
                 Notification.warn(event.getOperator(), Language.dominionEventHandlerText.deleteConfirm, DominionOperateCommand.delete.getUsage(), dominion.getName());
                 return;
@@ -199,11 +198,12 @@ public class DominionEventHandler implements Listener {
             for (DominionDTO sub_dominion : sub_dominions) {
                 cn.lunadeer.dominion.dtos.DominionDTO.deleteById(sub_dominion.getId());
                 Notification.info(event.getOperator(), Language.dominionEventHandlerText.deleteSuccess, sub_dominion.getName());
-                if (!event.isSkipEconomy()) assertEconomy(player, sub_dominion.getCuboid(), CuboidDTO.ZERO);
+                if (!event.isSkipEconomy())
+                    assertEconomy(event.getOperator(), sub_dominion.getCuboid(), CuboidDTO.ZERO);
             }
             cn.lunadeer.dominion.dtos.DominionDTO.deleteById(dominion.getId());
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.deleteSuccess, dominion.getName());
-            if (!event.isSkipEconomy()) assertEconomy(player, dominion.getCuboid(), CuboidDTO.ZERO);
+            if (!event.isSkipEconomy()) assertEconomy(event.getOperator(), dominion.getCuboid(), CuboidDTO.ZERO);
         } catch (Exception e) {
             event.setCancelled(true);
             Notification.error(event.getOperator(), Language.dominionEventHandlerText.deleteFailed, dominion.getName(), e.getMessage());
@@ -248,7 +248,7 @@ public class DominionEventHandler implements Listener {
         DominionDTO dominion = event.getDominion();
         try {
             assertDominionOwner(event.getOperator(), dominion);
-            if (dominion.getParentDomId() == -1) {
+            if (dominion.getParentDomId() != -1) {
                 throw new DominionException(Language.dominionEventHandlerText.cannotGiveSub, dominion.getName());
             }
             Player newOwner = toPlayer(event.getNewOwner().getUuid());
@@ -259,10 +259,10 @@ public class DominionEventHandler implements Listener {
             List<DominionDTO> sub_dominions = getSubDominionsRecursive(dominion);
             if (!event.isForce()) {
                 event.setCancelled(true);
-                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.giveConfirm, DominionOperateCommand.give.getUsage(), dominion.getName(), newOwner.getName());
                 if (!sub_dominions.isEmpty()) {
-                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), sub_dominions.stream().map(DominionDTO::getName).toArray());
+                    Notification.warn(event.getOperator(), Language.dominionEventHandlerText.listSubDoms, dominion.getName(), String.join(", ", sub_dominions.stream().map(DominionDTO::getName).toList()));
                 }
+                Notification.warn(event.getOperator(), Language.dominionEventHandlerText.giveConfirm, DominionOperateCommand.give.getUsage(), dominion.getName(), newOwner.getName());
                 return;
             }
             for (DominionDTO sub_dominion : sub_dominions) {
@@ -291,7 +291,7 @@ public class DominionEventHandler implements Listener {
         try {
             assertDominionOwner(event.getOperator(), dominion);
             DominionDTO d = CacheManager.instance.getCache().getDominionCache().getDominion(event.getNewTpLocation());
-            if (d == null) {
+            if (d == null || !d.getId().equals(dominion.getId())) {
                 throw new DominionException(Language.dominionEventHandlerText.tpLocationNotInDominion, dominion.getName());
             }
             event.setDominion(dominion.setTpLocation(event.getNewTpLocation()));

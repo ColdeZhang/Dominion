@@ -6,10 +6,21 @@ import cn.lunadeer.dominion.utils.scheduler.Scheduler;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ParticleUtil {
+
+    public static void showBorder(CommandSender sender, DominionDTO dominion) {
+        if (!(sender instanceof Player player)) {
+            return;
+        }
+        showBorder(player,
+                dominion.getWorld(),
+                dominion.getCuboid()
+        );
+    }
 
     public static void showBorder(Player player, DominionDTO dominion) {
         showBorder(player,

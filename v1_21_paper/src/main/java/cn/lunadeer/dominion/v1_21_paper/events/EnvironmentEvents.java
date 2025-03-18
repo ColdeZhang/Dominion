@@ -199,7 +199,7 @@ public class EnvironmentEvents implements Listener {
         checkEnvironmentFlag(dom, Flags.TNT_EXPLODE, event);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) // trample
+    @EventHandler(priority = EventPriority.LOWEST) // trample player
     public void onFarmlandTrample(PlayerInteractEvent event) {
         if (event.getAction() != Action.PHYSICAL) {
             return;
@@ -208,6 +208,16 @@ public class EnvironmentEvents implements Listener {
         if (block == null) {
             return;
         }
+        if (block.getType() != FARMLAND) {
+            return;
+        }
+        DominionDTO dom = CacheManager.instance.getDominion(block.getLocation());
+        checkEnvironmentFlag(dom, Flags.TRAMPLE, event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST) // trample mob
+    public void onFarmlandTrample(EntityInteractEvent event) {
+        Block block = event.getBlock();
         if (block.getType() != FARMLAND) {
             return;
         }

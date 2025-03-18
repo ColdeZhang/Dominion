@@ -14,7 +14,7 @@ libraries += "net.kyori:adventure-platform-bukkit:4.3.3"
 
 
 group = "cn.lunadeer"
-version = "PVP-4.0.0-alpha.17"
+version = "PVP-4.0.0-alpha.26"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))

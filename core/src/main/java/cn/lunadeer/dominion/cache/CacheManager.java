@@ -551,6 +551,7 @@ public class CacheManager {
 
             // if last and current dominion are different, trigger player cross dominion border event
             new PlayerCrossDominionBorderEvent(player, last_dominion, current_dominion).call();
+            recheckPlayerStatus();
             checkPlayerStates(player, current_dominion);   // check player states
 
             // if last dominion is not null, trigger player move out dominion event
