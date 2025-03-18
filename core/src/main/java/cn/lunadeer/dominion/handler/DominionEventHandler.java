@@ -291,7 +291,7 @@ public class DominionEventHandler implements Listener {
         try {
             assertDominionOwner(event.getOperator(), dominion);
             DominionDTO d = CacheManager.instance.getCache().getDominionCache().getDominion(event.getNewTpLocation());
-            if (d == null) {
+            if (d == null || !d.getId().equals(dominion.getId())) {
                 throw new DominionException(Language.dominionEventHandlerText.tpLocationNotInDominion, dominion.getName());
             }
             event.setDominion(dominion.setTpLocation(event.getNewTpLocation()));
