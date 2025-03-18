@@ -16,6 +16,8 @@ import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
@@ -241,5 +243,14 @@ public class Others {
                 material == Material.CHORUS_FLOWER ||
                 material == Material.KELP ||
                 material == Material.KELP_PLANT;
+    }
+
+    public static boolean isExplodeEntity(@NotNull Entity entity) {
+        return entity.getType() == EntityType.CREEPER
+                || entity.getType() == EntityType.WITHER_SKULL
+                || entity.getType() == EntityType.FIREBALL
+                || entity.getType() == EntityType.ENDER_CRYSTAL
+                || entity.getType() == EntityType.SMALL_FIREBALL
+                || entity.getType() == EntityType.DRAGON_FIREBALL;
     }
 }

@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static cn.lunadeer.dominion.misc.Others.checkEnvironmentFlag;
+import static cn.lunadeer.dominion.misc.Others.isExplodeEntity;
 import static org.bukkit.Material.FARMLAND;
 
 public class EnvironmentEvents implements Listener {
@@ -34,7 +35,7 @@ public class EnvironmentEvents implements Listener {
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity entity = event.getEntity();
         XLogger.debug("EntityExplodeEvent: " + entity.getType());
-        if (isNotExplodeEntity(entity)) {
+        if (!isExplodeEntity(entity)) {
             return;
         }
         XLogger.debug("blockList" + event.blockList().size());
@@ -84,7 +85,7 @@ public class EnvironmentEvents implements Listener {
         if (entity.getType() != EntityType.ARMOR_STAND) {
             return;
         }
-        if (isNotExplodeEntity(event.getDamager())) {
+        if (isExplodeEntity(event.getDamager())) {
             return;
         }
         DominionDTO dom = CacheManager.instance.getDominion(entity.getLocation());
@@ -106,15 +107,6 @@ public class EnvironmentEvents implements Listener {
         }
         DominionDTO dom = CacheManager.instance.getDominion(event.getEntity().getLocation());
         checkEnvironmentFlag(dom, Flags.ITEM_FRAME_PROJ_DAMAGE, event);
-    }
-
-    private static boolean isNotExplodeEntity(Entity damager) {
-        return damager.getType() != EntityType.CREEPER
-                && damager.getType() != EntityType.WITHER_SKULL
-                && damager.getType() != EntityType.FIREBALL
-                && damager.getType() != EntityType.END_CRYSTAL
-                && damager.getType() != EntityType.SMALL_FIREBALL
-                && damager.getType() != EntityType.DRAGON_FIREBALL;
     }
 
     @EventHandler(priority = EventPriority.LOWEST) // dragon_break_block
