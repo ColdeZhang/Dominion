@@ -36,6 +36,7 @@ public class SelectPointEventsHandler implements Listener {
         public String secondPoint = "Second point selected at {0}, {1}, {2}.";
         public String notSameWorld = "The two points are not in the same world.";
         public String price = "The price of the dominion is {0} {1}.";
+        public String owner = "Owner: {0}";
         public String size = "Size: {0}x{1}x{2}";
         public String square = "Square: {0}";
         public String volume = "Volume: {0}";
@@ -142,6 +143,7 @@ public class SelectPointEventsHandler implements Listener {
         } else {
             Notification.info(player, Language.selectPointEventsHandlerText.foundDominion, block.getX(), block.getY(), block.getZ(), dominion.getName());
             CuboidDTO cuboid = dominion.getCuboid();
+            Notification.info(player, Language.selectPointEventsHandlerText.owner, CacheManager.instance.getPlayerName(dominion.getOwner()));
             Notification.info(player, Language.selectPointEventsHandlerText.size, cuboid.xLength(), cuboid.yLength(), cuboid.zLength());
             Notification.info(player, Language.selectPointEventsHandlerText.square, cuboid.getSquare());
             Notification.info(player, Language.selectPointEventsHandlerText.volume, cuboid.getVolume());
