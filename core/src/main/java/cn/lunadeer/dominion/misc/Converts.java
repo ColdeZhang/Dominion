@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 
+import static cn.lunadeer.dominion.misc.Others.sortLocations;
+
 public class Converts {
 
     public static class ConvertsText extends ConfigurationPart {
@@ -245,7 +247,7 @@ public class Converts {
         if (!points.get(0).getWorld().getUID().equals(points.get(1).getWorld().getUID())) {
             throw new DominionException(Language.convertsText.invalidPoints);
         }
-        return new Location[]{points.get(0), points.get(1)};
+        return sortLocations(points.get(0), points.get(1));
     }
 
     /**

@@ -289,4 +289,17 @@ public class Others {
                 || entity.getType() == EntityType.SMALL_FIREBALL
                 || entity.getType() == EntityType.DRAGON_FIREBALL;
     }
+
+    public static Location[] sortLocations(@NotNull Location location1, @NotNull Location location2) {
+        int minX = Math.min(location1.getBlockX(), location2.getBlockX());
+        int minY = Math.min(location1.getBlockY(), location2.getBlockY());
+        int minZ = Math.min(location1.getBlockZ(), location2.getBlockZ());
+        int maxX = Math.max(location1.getBlockX(), location2.getBlockX()) + 1;
+        int maxY = Math.max(location1.getBlockY(), location2.getBlockY()) + 1;
+        int maxZ = Math.max(location1.getBlockZ(), location2.getBlockZ()) + 1;
+        return new Location[]{
+                new Location(location1.getWorld(), minX, minY, minZ),
+                new Location(location1.getWorld(), maxX, maxY, maxZ)
+        };
+    }
 }

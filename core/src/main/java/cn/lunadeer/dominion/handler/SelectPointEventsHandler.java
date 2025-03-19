@@ -26,6 +26,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cn.lunadeer.dominion.misc.Others.sortLocations;
+
 
 public class SelectPointEventsHandler implements Listener {
 
@@ -84,6 +86,7 @@ public class SelectPointEventsHandler implements Listener {
         } else {
             return;
         }
+        Dominion.pointsSelect.put(player.getUniqueId(), points);
 
         if (points.size() == 2) {
             World world = points.get(0).getWorld();
@@ -94,17 +97,8 @@ public class SelectPointEventsHandler implements Listener {
                 Notification.warn(player, Language.selectPointEventsHandlerText.notSameWorld);
                 return;
             }
-            Location loc1 = points.get(0);
-            Location loc2 = points.get(1);
-            int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
-            int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
-            int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-            int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX()) + 1;
-            int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY()) + 1;
-            int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ()) + 1;
-            points.put(0, new Location(world, minX, minY, minZ));
-            points.put(1, new Location(world, maxX, maxY, maxZ));
-            CuboidDTO cuboid = new CuboidDTO(minX, minY, minZ, maxX, maxY, maxZ);
+            Location[] locs = sortLocations(points.get(0), points.get(1));
+            CuboidDTO cuboid = new CuboidDTO(locs[0], locs[1]);
             try {
                 if (Configuration.getPlayerLimitation(player).economy.enable) {
                     int amount;
@@ -116,7 +110,7 @@ public class SelectPointEventsHandler implements Listener {
                     double price = amount * Configuration.getPlayerLimitation(player).economy.pricePerBlock;
                     Notification.info(player, Language.selectPointEventsHandlerText.price, price, VaultConnect.instance.currencyNamePlural());
                 }
-                ParticleUtil.showBorder(player, loc1.getWorld(), cuboid);
+                ParticleUtil.showBorder(player, points.get(0).getWorld(), cuboid);
                 Notification.info(player, Language.selectPointEventsHandlerText.size, cuboid.xLength(), cuboid.yLength(), cuboid.zLength());
                 Notification.info(player, Language.selectPointEventsHandlerText.square, cuboid.getSquare());
                 Notification.info(player, Language.selectPointEventsHandlerText.volume, cuboid.getVolume());
@@ -124,7 +118,6 @@ public class SelectPointEventsHandler implements Listener {
                 Notification.error(player, e.getMessage());
             }
         }
-        Dominion.pointsSelect.put(player.getUniqueId(), points);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
