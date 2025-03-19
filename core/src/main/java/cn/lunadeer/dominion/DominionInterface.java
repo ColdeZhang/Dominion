@@ -122,8 +122,13 @@ public class DominionInterface extends DominionAPI {
 
 
     @Override
-    public boolean checkPrivilegeFlag(DominionDTO dom, PriFlag flag, Player player) {
+    public boolean checkPrivilegeFlag(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
         return Others.checkPrivilegeFlag(dom, flag, player, null);
+    }
+
+    @Override
+    public boolean checkPrivilegeFlagSilence(@Nullable DominionDTO dom, @NotNull PriFlag flag, @NotNull Player player) {
+        return Others.checkPrivilegeFlagSilence(dom, flag, player, null);
     }
 
     @Override
