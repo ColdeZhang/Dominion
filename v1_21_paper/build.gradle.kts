@@ -14,5 +14,6 @@ tasks.withType<JavaCompile> {
 dependencies {
     compileOnly(project(":api"))
     compileOnly(project(":core"))
+    compileOnly(project(":v1_21_spigot"))
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
 }
