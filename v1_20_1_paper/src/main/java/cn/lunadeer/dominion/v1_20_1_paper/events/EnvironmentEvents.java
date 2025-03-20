@@ -1,14 +1,14 @@
-package cn.lunadeer.dominion.v1_20_1.events;
+package cn.lunadeer.dominion.v1_20_1_paper.events;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.utils.XLogger;
+import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,10 +47,6 @@ public class EnvironmentEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST) // creeper_explode - bed anchor
     public void onBedAnchorExplosion(BlockExplodeEvent event) {
-        BlockState block = event.getExplodedBlockState();
-        if (block == null) {
-            return;
-        }
         event.blockList().removeIf(blockState -> {
             DominionDTO dom = CacheManager.instance.getDominion(blockState.getLocation());
             return !checkEnvironmentFlag(dom, Flags.CREEPER_EXPLODE, null);
@@ -321,19 +317,6 @@ public class EnvironmentEvents implements Listener {
         checkEnvironmentFlag(dom, Flags.MONSTER_SPAWN, event);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) // monster_damage
-    public void onMonsterDamageToPlayer(EntityDamageByEntityEvent event) {
-        Entity damager = event.getDamager();
-        if (!(damager instanceof Enemy)) {
-            return;
-        }
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
-        DominionDTO dom = CacheManager.instance.getDominion(damager.getLocation());
-        checkEnvironmentFlag(dom, Flags.MONSTER_DAMAGE, event);
-    }
-
     @EventHandler(priority = EventPriority.LOWEST) // animal_spawn
     public void onAnimalSpawn(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
@@ -353,6 +336,7 @@ public class EnvironmentEvents implements Listener {
         DominionDTO dom = CacheManager.instance.getDominion(entity.getLocation());
         checkEnvironmentFlag(dom, Flags.VILLAGER_SPAWN, event);
     }
+
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onHopper(InventoryMoveItemEvent event) {    // hopper_outside
@@ -388,7 +372,7 @@ public class EnvironmentEvents implements Listener {
         }
         if (pistonDom != null && endBlockDom != null) {
             if (!pistonDom.getId().equals(endBlockDom.getId())) {
-                if (!endBlockDom.getEnvFlagValue(Flags.PISTON_OUTSIDE) || !pistonDom.getEnvFlagValue(Flags.PISTON_OUTSIDE)) {
+                if (!endBlockDom.getEnvironmentFlagValue().get(Flags.PISTON_OUTSIDE) || !pistonDom.getEnvironmentFlagValue().get(Flags.PISTON_OUTSIDE)) {
                     event.setCancelled(true);
                 }
             }
@@ -425,6 +409,39 @@ public class EnvironmentEvents implements Listener {
                 entity.remove();
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST) // monster_move
+    public void onMonsterPathfinding(EntityPathfindEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Monster)) {
+            return;
+        }
+        DominionDTO dom = CacheManager.instance.getDominion(event.getLoc());
+        checkEnvironmentFlag(dom, Flags.MONSTER_MOVE, event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST) // monster_damage
+    public void onMonsterDamageToPlayer(EntityDamageByEntityEvent event) {
+        Entity damager = event.getDamager();
+        if (!(damager instanceof Enemy)) {
+            return;
+        }
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        DominionDTO dom = CacheManager.instance.getDominion(damager.getLocation());
+        checkEnvironmentFlag(dom, Flags.MONSTER_DAMAGE, event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST) // animal_move
+    public void onAnimalPathfinding(EntityPathfindEvent event) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof Animals)) {
+            return;
+        }
+        DominionDTO dom = CacheManager.instance.getDominion(event.getLoc());
+        checkEnvironmentFlag(dom, Flags.ANIMAL_MOVE, event);
     }
 
     private static final Map<UUID, Location> fallingBlockMap = new java.util.HashMap<>();
