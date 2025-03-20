@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.v1_20_1.scui;
+package cn.lunadeer.dominion.v1_20_1_paper.scui;
 
 import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.entity.Player;

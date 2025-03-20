@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.v1_20_1.events;
+package cn.lunadeer.dominion.v1_20_1_paper.events;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
