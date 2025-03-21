@@ -3,7 +3,7 @@ package cn.lunadeer.dominion.v1_21.events.environment.TNTExplode;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.cache.CacheManager;
-import cn.lunadeer.dominion.events.HighestVersion;
+import cn.lunadeer.dominion.events.LowestVersion;
 import cn.lunadeer.dominion.utils.XVersionManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -14,7 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import static cn.lunadeer.dominion.misc.Others.checkEnvironmentFlag;
 
-@HighestVersion(XVersionManager.ImplementationVersion.v1_21)
+@LowestVersion(XVersionManager.ImplementationVersion.v1_21)
 public class EntityExploded implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void handler(EntityDamageByEntityEvent event) {
