@@ -23,7 +23,42 @@ public class XVersionManager {
 
     public enum ImplementationVersion {
         v1_21,
-        v1_20_1
+        v1_20_1;
+
+        private final int[] value;
+
+        ImplementationVersion() {
+            // v1_21 -> [1, 21]
+            // v1_20_1 -> [1, 20, 1]
+            String[] parts = this.name().replace("v", "").split("_");
+            value = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                value[i] = Integer.parseInt(parts[i]);
+            }
+        }
+
+        /**
+         * Compares this implementation version with another implementation version.
+         * <p>
+         * This method compares the current implementation version with another implementation version by comparing their
+         * respective version number arrays. It returns a negative integer, zero, or a positive integer if this version
+         * is less than, equal to, or greater than the specified version, respectively.
+         *
+         * @param other the other ImplementationVersion to compare with
+         * @return negative integer => this version is less than the other version
+         * <br>
+         * zero => this version is equal to the other version
+         * <br>
+         * positive integer => this version is greater than the other version
+         */
+        public int compareWith(ImplementationVersion other) {
+            for (int i = 0; i < Math.min(this.value.length, other.value.length); i++) {
+                if (this.value[i] != other.value[i]) {
+                    return this.value[i] - other.value[i];
+                }
+            }
+            return this.value.length - other.value.length;
+        }
     }
 
 }
