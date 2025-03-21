@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GroupCache extends Cache {
 
     private final Integer serverId;
     private ConcurrentHashMap<Integer, GroupDTO> idGroups;            // Group ID -> GroupDTO
-    private ConcurrentHashMap<Integer, List<Integer>> dominionGroupsMap;  // Dominion ID -> Groups ID
+    private ConcurrentHashMap<Integer, CopyOnWriteArrayList<Integer>> dominionGroupsMap;  // Dominion ID -> Groups ID
 
     public GroupCache(Integer serverId) {
         this.serverId = serverId;
@@ -52,7 +53,7 @@ public class GroupCache extends Cache {
             CompletableFuture.runAsync(() -> {
                 for (GroupDTO group : groups) {
                     idGroups.put(group.getId(), group);
-                    dominionGroupsMap.computeIfAbsent(dominion.getId(), k -> new ArrayList<>())
+                    dominionGroupsMap.computeIfAbsent(dominion.getId(), k -> new CopyOnWriteArrayList<>())
                             .add(group.getId());
                 }
             }).exceptionally(e -> {
@@ -70,7 +71,7 @@ public class GroupCache extends Cache {
         if (old != null) {
             dominionGroupsMap.get(old.getDomID()).remove(old.getId());
         }
-        dominionGroupsMap.computeIfAbsent(group.getDomID(), k -> new ArrayList<>())
+        dominionGroupsMap.computeIfAbsent(group.getDomID(), k -> new CopyOnWriteArrayList<>())
                 .add(group.getId());
     }
 

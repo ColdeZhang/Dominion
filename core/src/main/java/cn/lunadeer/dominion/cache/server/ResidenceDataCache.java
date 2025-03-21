@@ -4,11 +4,15 @@ import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.utils.ResMigration;
 import cn.lunadeer.dominion.utils.XLogger;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ResidenceDataCache {
 
-    private Map<UUID, List<ResMigration.ResidenceNode>> residence_data = null;
+    private Map<UUID, CopyOnWriteArrayList<ResMigration.ResidenceNode>> residence_data = null;
 
     private void updateResidenceData() {
         if (residence_data == null) {
@@ -20,7 +24,7 @@ public class ResidenceDataCache {
                 }
                 if (!residence_data.containsKey(node.owner)) {
                     XLogger.debug("residence_data put {0}", node.owner);
-                    residence_data.put(node.owner, new ArrayList<>());
+                    residence_data.put(node.owner, new CopyOnWriteArrayList<>());
                 }
                 residence_data.get(node.owner).add(node);
             }
@@ -30,7 +34,7 @@ public class ResidenceDataCache {
 
     public List<ResMigration.ResidenceNode> getResidenceData() {
         updateResidenceData();
-        return residence_data.values().stream().reduce(new ArrayList<>(), (a, b) -> {
+        return residence_data.values().stream().reduce(new CopyOnWriteArrayList<>(), (a, b) -> {
             a.addAll(b);
             return a;
         });

@@ -6,7 +6,9 @@ import cn.lunadeer.dominion.misc.DominionException;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static cn.lunadeer.dominion.misc.Others.isInDominion;
 
@@ -17,7 +19,7 @@ import static cn.lunadeer.dominion.misc.Others.isInDominion;
  */
 public class DominionNode {
     private final Integer dominionId;
-    private List<DominionNode> children = new ArrayList<>();
+    private CopyOnWriteArrayList<DominionNode> children = new CopyOnWriteArrayList<>();
 
     public DominionNode(Integer dominionId) {
         this.dominionId = dominionId;
@@ -43,7 +45,7 @@ public class DominionNode {
      *
      * @return the list of child nodes
      */
-    public List<DominionNode> getChildren() {
+    public CopyOnWriteArrayList<DominionNode> getChildren() {
         return children;
     }
 
@@ -54,12 +56,12 @@ public class DominionNode {
      * @param dominions the list of DominionDTOs to build the tree from
      * @return the list of root DominionNodes
      */
-    public static List<DominionNode> BuildNodeTree(Integer rootId, List<DominionDTO> dominions) {
+    public static CopyOnWriteArrayList<DominionNode> BuildNodeTree(Integer rootId, CopyOnWriteArrayList<DominionDTO> dominions) {
         // Map parent node ID to its list of child nodes
-        Map<Integer, List<DominionDTO>> parentToChildrenMap = new HashMap<>();
+        ConcurrentHashMap<Integer, CopyOnWriteArrayList<DominionDTO>> parentToChildrenMap = new ConcurrentHashMap<>();
         for (DominionDTO dominion : dominions) {
             parentToChildrenMap
-                    .computeIfAbsent(dominion.getParentDomId(), k -> new ArrayList<>())
+                    .computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>())
                     .add(dominion);
         }
 
@@ -74,9 +76,9 @@ public class DominionNode {
      * @param parentToChildrenMap the map of parent node IDs to their child nodes
      * @return the list of root DominionNodes
      */
-    private static List<DominionNode> buildTree(Integer rootId, Map<Integer, List<DominionDTO>> parentToChildrenMap) {
-        List<DominionNode> dominionTree = new ArrayList<>();
-        List<DominionDTO> children = parentToChildrenMap.get(rootId);
+    private static CopyOnWriteArrayList<DominionNode> buildTree(Integer rootId, ConcurrentHashMap<Integer, CopyOnWriteArrayList<DominionDTO>> parentToChildrenMap) {
+        CopyOnWriteArrayList<DominionNode> dominionTree = new CopyOnWriteArrayList<>();
+        CopyOnWriteArrayList<DominionDTO> children = parentToChildrenMap.get(rootId);
 
         if (children != null) {
             for (DominionDTO dominion : children) {
@@ -96,7 +98,7 @@ public class DominionNode {
      * @param loc   the location to check
      * @return the DominionNode that contains the location, or null if not found
      */
-    public static DominionNode getDominionNodeByLocation(@NotNull List<DominionNode> nodes, @NotNull Location loc) {
+    public static DominionNode getDominionNodeByLocation(@NotNull CopyOnWriteArrayList<DominionNode> nodes, @NotNull Location loc) {
         for (DominionNode node : nodes) {
             if (isInDominion(node.getDominion(), loc)) {
                 if (node.children.isEmpty()) {
