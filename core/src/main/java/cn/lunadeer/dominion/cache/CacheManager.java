@@ -24,8 +24,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.lunadeer.dominion.misc.Others.*;
 
@@ -34,12 +38,12 @@ import static cn.lunadeer.dominion.misc.Others.*;
  */
 public class CacheManager {
     private final ServerCache thisServerCache;
-    private final Map<Integer, ServerCache> otherServerCaches;
+    private final ConcurrentHashMap<Integer, ServerCache> otherServerCaches;
     private final PlayerCache playerCache;
     private final ResidenceDataCache residenceDataCache = new ResidenceDataCache();
 
     private boolean recheckPlayerStatus = false;
-    private final Map<UUID, Integer> playerCurrentDominionId = new HashMap<>();
+    private final ConcurrentHashMap<UUID, Integer> playerCurrentDominionId = new ConcurrentHashMap<>();
 
     public static CacheManager instance;
 
@@ -55,7 +59,7 @@ public class CacheManager {
         this.thisServerCache.getMemberCache().load();
         this.thisServerCache.getGroupCache().load();
 
-        this.otherServerCaches = new HashMap<>();
+        this.otherServerCaches = new ConcurrentHashMap<>();
 
         this.playerCache = new PlayerCache();
         this.playerCache.load();

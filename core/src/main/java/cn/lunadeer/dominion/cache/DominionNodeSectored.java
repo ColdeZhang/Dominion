@@ -8,10 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static cn.lunadeer.dominion.cache.DominionNode.getDominionNodeByLocation;
 
@@ -25,10 +24,10 @@ public class DominionNodeSectored {
         B | A
      */
 
-    private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_a; // x >= 0, z >= 0
-    private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_b; // x <= 0, z >= 0
-    private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_c; // x >= 0, z <= 0
-    private ConcurrentHashMap<UUID, List<DominionNode>> world_dominion_tree_sector_d; // x <= 0, z <= 0
+    private ConcurrentHashMap<UUID, CopyOnWriteArrayList<DominionNode>> world_dominion_tree_sector_a; // x >= 0, z >= 0
+    private ConcurrentHashMap<UUID, CopyOnWriteArrayList<DominionNode>> world_dominion_tree_sector_b; // x <= 0, z >= 0
+    private ConcurrentHashMap<UUID, CopyOnWriteArrayList<DominionNode>> world_dominion_tree_sector_c; // x >= 0, z <= 0
+    private ConcurrentHashMap<UUID, CopyOnWriteArrayList<DominionNode>> world_dominion_tree_sector_d; // x <= 0, z <= 0
     private Integer section_origin_x = 0;
     private Integer section_origin_z = 0;
 
@@ -40,7 +39,7 @@ public class DominionNodeSectored {
      */
     public DominionDTO getDominionByLocation(@NotNull Location loc) {
         try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
-            List<DominionNode> nodes = getNodes(loc);
+            CopyOnWriteArrayList<DominionNode> nodes = getNodes(loc);
             if (nodes == null) return null;
             if (nodes.isEmpty()) return null;
             DominionNode dominionNode = getDominionNodeByLocation(nodes, loc);
@@ -54,7 +53,7 @@ public class DominionNodeSectored {
      * @param loc the location to check
      * @return the list of DominionNodes
      */
-    public List<DominionNode> getNodes(@NotNull Location loc) {
+    public CopyOnWriteArrayList<DominionNode> getNodes(@NotNull Location loc) {
         return getNodes(loc.getWorld().getUID(), loc.getBlockX(), loc.getBlockZ());
     }
 
@@ -66,7 +65,7 @@ public class DominionNodeSectored {
      * @param z     the z-coordinate
      * @return the list of DominionNodes
      */
-    public List<DominionNode> getNodes(World world, int x, int z) {
+    public CopyOnWriteArrayList<DominionNode> getNodes(World world, int x, int z) {
         return getNodes(world.getUID(), x, z);
     }
 
@@ -78,7 +77,7 @@ public class DominionNodeSectored {
      * @param z     the z-coordinate
      * @return the list of DominionNodes
      */
-    public List<DominionNode> getNodes(UUID world, int x, int z) {
+    public CopyOnWriteArrayList<DominionNode> getNodes(UUID world, int x, int z) {
         if (x >= section_origin_x && z >= section_origin_z) {
             if (world_dominion_tree_sector_a == null) return null;
             return world_dominion_tree_sector_a.get(world);
@@ -100,7 +99,7 @@ public class DominionNodeSectored {
      *
      * @param nodes the list of DominionDTOs to initialize
      */
-    public void build(List<DominionNode> nodes) {
+    public void build(CopyOnWriteArrayList<DominionNode> nodes) {
         try (AutoTimer ignored = new AutoTimer(Configuration.timer)) {
             world_dominion_tree_sector_a = new ConcurrentHashMap<>();
             world_dominion_tree_sector_b = new ConcurrentHashMap<>();
@@ -123,10 +122,10 @@ public class DominionNodeSectored {
                         !world_dominion_tree_sector_b.containsKey(d.getWorldUid()) ||
                         !world_dominion_tree_sector_c.containsKey(d.getWorldUid()) ||
                         !world_dominion_tree_sector_d.containsKey(d.getWorldUid())) {
-                    world_dominion_tree_sector_a.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominion_tree_sector_b.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominion_tree_sector_c.put(d.getWorldUid(), new ArrayList<>());
-                    world_dominion_tree_sector_d.put(d.getWorldUid(), new ArrayList<>());
+                    world_dominion_tree_sector_a.put(d.getWorldUid(), new CopyOnWriteArrayList<>());
+                    world_dominion_tree_sector_b.put(d.getWorldUid(), new CopyOnWriteArrayList<>());
+                    world_dominion_tree_sector_c.put(d.getWorldUid(), new CopyOnWriteArrayList<>());
+                    world_dominion_tree_sector_d.put(d.getWorldUid(), new CopyOnWriteArrayList<>());
                 }
                 if (d.getCuboid().x1() >= section_origin_x && d.getCuboid().z1() >= section_origin_z) {
                     world_dominion_tree_sector_a.get(d.getWorldUid()).add(n);

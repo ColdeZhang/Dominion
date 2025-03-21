@@ -12,14 +12,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MemberCache extends Cache {
     private final Integer serverId;
 
     private ConcurrentHashMap<Integer, MemberDTO> idMembers;            // Member ID -> MemberDTO
-    private ConcurrentHashMap<Integer, List<Integer>> dominionMembersMap;  // Dominion ID -> Members ID
+    private ConcurrentHashMap<Integer, CopyOnWriteArrayList<Integer>> dominionMembersMap;  // Dominion ID -> Members ID
     private ConcurrentHashMap<UUID, Map<Integer, Integer>> playerDominionMemberMap;  // Player UUID -> (Dominion ID -> Member ID)
-    private ConcurrentHashMap<Integer, List<Integer>> groupMembersMap;  // Group ID -> Members ID
+    private ConcurrentHashMap<Integer, CopyOnWriteArrayList<Integer>> groupMembersMap;  // Group ID -> Members ID
 
     public MemberCache(Integer serverId) {
         this.serverId = serverId;
@@ -78,12 +79,12 @@ public class MemberCache extends Cache {
             CompletableFuture.runAsync(() -> {  // asynchronously load members for each dominion
                 for (MemberDTO member : members) {
                     idMembers.put(member.getId(), member);
-                    dominionMembersMap.computeIfAbsent(dominion.getId(), k -> new ArrayList<>())
+                    dominionMembersMap.computeIfAbsent(dominion.getId(), k -> new CopyOnWriteArrayList<>())
                             .add(member.getId());
                     playerDominionMemberMap.computeIfAbsent(member.getPlayerUUID(), k -> new HashMap<>())
                             .put(dominion.getId(), member.getId());
                     if (member.getGroupId() != -1)
-                        groupMembersMap.computeIfAbsent(member.getGroupId(), k -> new ArrayList<>())
+                        groupMembersMap.computeIfAbsent(member.getGroupId(), k -> new CopyOnWriteArrayList<>())
                                 .add(member.getId());
                 }
             }).exceptionally(e -> {
@@ -104,12 +105,12 @@ public class MemberCache extends Cache {
             if (old.getGroupId() != -1)
                 groupMembersMap.get(old.getGroupId()).remove(old.getId());
         }
-        dominionMembersMap.computeIfAbsent(member.getDomID(), k -> new ArrayList<>())
+        dominionMembersMap.computeIfAbsent(member.getDomID(), k -> new CopyOnWriteArrayList<>())
                 .add(member.getId());
         playerDominionMemberMap.computeIfAbsent(member.getPlayerUUID(), k -> new HashMap<>())
                 .put(member.getDomID(), member.getId());
         if (member.getGroupId() != -1)
-            groupMembersMap.computeIfAbsent(member.getGroupId(), k -> new ArrayList<>())
+            groupMembersMap.computeIfAbsent(member.getGroupId(), k -> new CopyOnWriteArrayList<>())
                     .add(member.getId());
     }
 
