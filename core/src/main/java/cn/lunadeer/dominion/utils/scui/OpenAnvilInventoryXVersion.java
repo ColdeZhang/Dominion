@@ -14,11 +14,11 @@ public class OpenAnvilInventoryXVersion {
         try {
             return switch (XVersionManager.VERSION) {
                 case v1_21 -> {
-                    Class<?> clazz = Class.forName("cn.lunadeer.dominion.v1_21_paper.scui.OpenAnvilInventory");
+                    Class<?> clazz = Class.forName("cn.lunadeer.dominion.v1_21.scui.OpenAnvilInventory");
                     yield (AnvilInventory) clazz.getMethod("open", Player.class, String.class).invoke(null, audience, title);
                 }
                 case v1_20_1 -> {
-                    Class<?> clazz = Class.forName("cn.lunadeer.dominion.v1_20_1_paper.scui.OpenAnvilInventory");
+                    Class<?> clazz = Class.forName("cn.lunadeer.dominion.v1_20_1.scui.OpenAnvilInventory");
                     yield (AnvilInventory) clazz.getMethod("open", Player.class, String.class).invoke(null, audience, title);
                 }
                 default -> {

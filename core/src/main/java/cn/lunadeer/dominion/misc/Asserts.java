@@ -9,6 +9,7 @@ import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
 import cn.lunadeer.dominion.configuration.Limitation;
+import cn.lunadeer.dominion.doos.DominionDOO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
@@ -84,7 +85,7 @@ public class Asserts {
         if (dominionName.contains(" ") || dominionName.contains(".")) {
             throw new DominionException(Language.assertsText.domNameInvalid);
         }
-        if (cn.lunadeer.dominion.dtos.DominionDTO.select(dominionName) != null) {
+        if (DominionDOO.select(dominionName) != null) {
             throw new DominionException(Language.assertsText.domNameExist, dominionName);
         }
     }

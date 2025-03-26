@@ -1,7 +1,7 @@
 package cn.lunadeer.dominion.uis.tuis.template;
 
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.doos.TemplateDOO;
 import cn.lunadeer.dominion.uis.cuis.CreateTemplate;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.utils.Notification;
@@ -42,7 +42,7 @@ public class TemplateList {
         try {
             Player player = toPlayer(sender);
             int page = toIntegrity(pageStr, 1);
-            List<TemplateDTO> templates = TemplateDTO.selectAll(player.getUniqueId());
+            List<TemplateDOO> templates = TemplateDOO.selectAll(player.getUniqueId());
 
             ListView view = ListView.create(10, button(sender));
             view.title(Language.templateListTuiText.title);
@@ -52,7 +52,7 @@ public class TemplateList {
 
             view.add(Line.create().append(CreateTemplate.button(sender).build()));
 
-            for (TemplateDTO template : templates) {
+            for (TemplateDOO template : templates) {
                 Button setting = TemplateSetting.button(sender, template.getName()).green();
                 Button delete = new ListViewButton(Language.templateListTuiText.deleteButton) {
                     @Override

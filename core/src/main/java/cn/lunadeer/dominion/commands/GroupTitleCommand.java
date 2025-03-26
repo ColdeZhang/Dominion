@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.PlayerDOO;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.misc.DominionException;
 import cn.lunadeer.dominion.uis.tuis.TitleList;
@@ -66,7 +67,7 @@ public class GroupTitleCommand {
                     throw new DominionException(Language.groupTitleCommandText.groupNotBelonging, group.getNamePlain());
                 }
             }
-            ((cn.lunadeer.dominion.dtos.PlayerDTO) playerDto).setUsingGroupTitleID(group.getId());
+            ((PlayerDOO) playerDto).setUsingGroupTitleID(group.getId());
 
             Notification.info(sender, Language.groupTitleCommandText.usingTitleSuccess, groupTitleIdStr);
             TitleList.show(sender, pageStr);

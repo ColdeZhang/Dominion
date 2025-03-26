@@ -82,7 +82,11 @@ public class CacheEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        CacheManager.instance.updatePlayerName(event.getPlayer());
+        try {
+            CacheManager.instance.updatePlayerName(event.getPlayer());
+        } catch (Exception e) {
+            XLogger.error(e);
+        }
     }
 
     @EventHandler

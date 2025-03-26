@@ -5,7 +5,8 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.doos.MemberDOO;
+import cn.lunadeer.dominion.doos.TemplateDOO;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.misc.DominionException;
 import cn.lunadeer.dominion.uis.tuis.template.TemplateList;
@@ -75,11 +76,11 @@ public class TemplateCommand {
             if (templateName.contains(" ")) {
                 throw new DominionException(Language.templateCommandText.nameNotValid);
             }
-            List<TemplateDTO> templates = TemplateDTO.selectAll(player.getUniqueId());
+            List<TemplateDOO> templates = TemplateDOO.selectAll(player.getUniqueId());
             if (templates.stream().anyMatch(t -> t.getName().equals(templateName))) {
                 throw new DominionException(Language.templateCommandText.templateNameExist, templateName);
             }
-            TemplateDTO.create(player.getUniqueId(), templateName);
+            TemplateDOO.create(player.getUniqueId(), templateName);
             Notification.info(sender, Language.templateCommandText.createTemplateSuccess, templateName);
             TemplateList.show(sender, "1");
         } catch (Exception e) {
@@ -116,11 +117,11 @@ public class TemplateCommand {
     public static void deleteTemplate(CommandSender sender, String templateName, String pageStr) {
         try {
             Player player = toPlayer(sender);
-            TemplateDTO template = TemplateDTO.select(player.getUniqueId(), templateName);
+            TemplateDOO template = TemplateDOO.select(player.getUniqueId(), templateName);
             if (template == null) {
                 throw new DominionException(Language.templateCommandText.templateNotExist, templateName);
             }
-            TemplateDTO.delete(player.getUniqueId(), templateName);
+            TemplateDOO.delete(player.getUniqueId(), templateName);
             Notification.info(sender, Language.templateCommandText.deleteTemplateSuccess, templateName);
             TemplateList.show(sender, pageStr);
         } catch (Exception e) {
@@ -145,7 +146,7 @@ public class TemplateCommand {
             Player player = toPlayer(sender);
             boolean value = toBoolean(valueStr);
             PriFlag flag = toPriFlag(flagName);
-            TemplateDTO template = TemplateDTO.select(player.getUniqueId(), templateName);
+            TemplateDOO template = TemplateDOO.select(player.getUniqueId(), templateName);
             if (template == null) {
                 throw new DominionException(Language.templateCommandText.templateNotExist, templateName);
             }
@@ -171,7 +172,7 @@ public class TemplateCommand {
     public static void memberApplyTemplate(CommandSender sender, String dominionName, String playerName, String templateName) {
         try {
             Player player = toPlayer(sender);
-            TemplateDTO template = TemplateDTO.select(player.getUniqueId(), templateName);
+            TemplateDOO template = TemplateDOO.select(player.getUniqueId(), templateName);
             if (template == null) {
                 throw new DominionException(Language.templateCommandText.templateNotExist, templateName);
             }
@@ -182,7 +183,7 @@ public class TemplateCommand {
                 assertDominionAdmin(player, dominion);
             }
             MemberDTO member = toMemberDTO(dominion, playerName);
-            ((cn.lunadeer.dominion.dtos.MemberDTO) member).applyTemplate(template);
+            ((MemberDOO) member).applyTemplate(template);
             Notification.info(sender, Language.templateCommandText.applyTemplateSuccess, templateName, playerName);
         } catch (Exception e) {
             Notification.error(sender, Language.templateCommandText.applyTemplateFail, e.getMessage());

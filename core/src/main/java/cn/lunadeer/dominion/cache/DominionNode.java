@@ -59,11 +59,9 @@ public class DominionNode {
     public static CopyOnWriteArrayList<DominionNode> BuildNodeTree(Integer rootId, CopyOnWriteArrayList<DominionDTO> dominions) {
         // Map parent node ID to its list of child nodes
         ConcurrentHashMap<Integer, CopyOnWriteArrayList<DominionDTO>> parentToChildrenMap = new ConcurrentHashMap<>();
-        for (DominionDTO dominion : dominions) {
-            parentToChildrenMap
-                    .computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>())
-                    .add(dominion);
-        }
+        dominions.forEach(dominion -> parentToChildrenMap
+                .computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>())
+                .add(dominion));
 
         // Recursively build the node tree
         return buildTree(rootId, parentToChildrenMap);

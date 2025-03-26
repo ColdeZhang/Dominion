@@ -4,7 +4,7 @@ import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.commands.TemplateCommand;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.doos.TemplateDOO;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
@@ -40,7 +40,7 @@ public class TemplateSetting {
     public static void show(CommandSender sender, String templateName, String pageStr) {
         try {
             Player player = toPlayer(sender);
-            TemplateDTO template = TemplateDTO.select(player.getUniqueId(), templateName);
+            TemplateDOO template = TemplateDOO.select(player.getUniqueId(), templateName);
             if (template == null) {
                 Notification.error(sender, Language.templateSettingText.notFound, templateName);
                 return;

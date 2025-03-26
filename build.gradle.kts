@@ -11,10 +11,11 @@ var libraries = listOf<String>()
 libraries += "org.postgresql:postgresql:42.7.2"
 libraries += "mysql:mysql-connector-java:8.0.33"
 libraries += "net.kyori:adventure-platform-bukkit:4.3.3"
+libraries += "com.zaxxer:HikariCP:6.2.1"
 
 
 group = "cn.lunadeer"
-version = "4.0.0-alpha.32"
+version = "4.0.0-alpha.33"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
