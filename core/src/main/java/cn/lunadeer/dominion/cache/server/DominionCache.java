@@ -7,7 +7,9 @@ import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.cache.DominionNode;
 import cn.lunadeer.dominion.cache.DominionNodeSectored;
+import cn.lunadeer.dominion.doos.DominionDOO;
 import cn.lunadeer.dominion.misc.DominionException;
+import cn.lunadeer.dominion.utils.XLogger;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -158,36 +160,38 @@ public class DominionCache extends Cache {
         dominionNameToId = new ConcurrentHashMap<>();
         playerOwnDominions = new ConcurrentHashMap<>();
         dominionNodeMap = new ConcurrentHashMap<>();
-        CopyOnWriteArrayList<DominionDTO> dominions = new CopyOnWriteArrayList<>(cn.lunadeer.dominion.dtos.DominionDTO.selectAll(serverId));
+        CopyOnWriteArrayList<DominionDTO> dominions = new CopyOnWriteArrayList<>(DominionDOO.selectAll(serverId));
 
-        for (DominionDTO dominion : dominions) {
-            idDominions.put(dominion.getId(), dominion);
-        }
+        dominions.forEach(dominion -> idDominions.put(dominion.getId(), dominion));
 
         // build tree
         CompletableFuture<Void> buildTreeFuture = rebuildTreeAsync();
 
         // build other caches
         CompletableFuture<Void> buildCachesFuture = CompletableFuture.runAsync(() -> {
-            for (DominionDTO dominion : dominions) {
+            dominions.forEach(dominion -> {
                 dominionNameToId.put(dominion.getName(), dominion.getId());
                 playerOwnDominions.computeIfAbsent(dominion.getOwner(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
                 if (dominion.getParentDomId() != -1) {
                     dominionChildrenMap.computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
                 }
-            }
+            });
         });
 
-        CompletableFuture.allOf(buildTreeFuture, buildCachesFuture).join();
+        CompletableFuture.allOf(buildTreeFuture, buildCachesFuture)
+                .exceptionally(ex -> {
+                    XLogger.error(ex);
+                    return null;
+                }).join();
     }
 
     @Override
     void loadExecution(Integer idToLoad) throws Exception {
-        DominionDTO dominion = cn.lunadeer.dominion.dtos.DominionDTO.select(idToLoad);
+        DominionDTO dominion = DominionDOO.select(idToLoad);
         if (dominion == null) {
             return;
         }
-        DominionDTO oldData = idDominions.putIfAbsent(dominion.getId(), dominion);
+        DominionDTO oldData = idDominions.put(dominion.getId(), dominion);
         // remove old data
         if (oldData != null) {
             dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(oldData.getId()));
@@ -220,10 +224,10 @@ public class DominionCache extends Cache {
         return CompletableFuture.runAsync(() -> {
             playerDominionNodes = new ConcurrentHashMap<>();
             CopyOnWriteArrayList<DominionNode> nodeTree = DominionNode.BuildNodeTree(-1, new CopyOnWriteArrayList<>(idDominions.values()));
-            for (DominionNode node : nodeTree) {
+            nodeTree.forEach(node -> {
                 dominionNodeMap.put(node.getDominion().getId(), node);
                 playerDominionNodes.computeIfAbsent(node.getDominion().getOwner(), k -> new CopyOnWriteArrayList<>()).add(node);
-            }
+            });
             dominionNodeSectored.build(nodeTree);
         });
     }

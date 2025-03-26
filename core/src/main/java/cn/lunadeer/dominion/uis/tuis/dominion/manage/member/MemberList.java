@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
-import static cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId;
+import static cn.lunadeer.dominion.doos.MemberDOO.selectByDominionId;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionOwner;
 import static cn.lunadeer.dominion.misc.Converts.toDominionDTO;

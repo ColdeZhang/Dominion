@@ -5,6 +5,8 @@ import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.GroupDOO;
+import cn.lunadeer.dominion.doos.MemberDOO;
 import cn.lunadeer.dominion.events.group.*;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
@@ -70,7 +72,7 @@ public class GroupEventHandler implements Listener {
         try {
             assertDominionOwner(event.getOperator(), event.getDominion());
             assertGroupName(event.getDominion(), event.getGroupNamePlain());
-            GroupDTO group = cn.lunadeer.dominion.dtos.GroupDTO.create(event.getGroupNameColored(), event.getDominion());
+            GroupDTO group = GroupDOO.create(event.getGroupNameColored(), event.getDominion());
             event.setGroup(group);
             Notification.info(event.getOperator(), Language.groupEventHandlerText.createGroupSuccess, event.getGroupNamePlain());
         } catch (Exception e) {
@@ -85,7 +87,7 @@ public class GroupEventHandler implements Listener {
         try {
             assertDominionOwner(event.getOperator(), event.getDominion());
             assertGroupBelongDominion(event.getGroup(), event.getDominion());
-            cn.lunadeer.dominion.dtos.GroupDTO.deleteById(event.getGroup().getId());
+            GroupDOO.deleteById(event.getGroup().getId());
             Notification.info(event.getOperator(), Language.groupEventHandlerText.deleteGroupSuccess, event.getGroup().getNamePlain());
         } catch (Exception e) {
             event.setCancelled(true);
@@ -120,7 +122,7 @@ public class GroupEventHandler implements Listener {
             }
             assertMemberBelongDominion(event.getMember(), event.getDominion());
             assertGroupBelongDominion(event.getGroup(), event.getDominion());
-            MemberDTO member = ((cn.lunadeer.dominion.dtos.MemberDTO) event.getMember()).setGroupId(event.getGroup().getId());
+            MemberDTO member = ((MemberDOO) event.getMember()).setGroupId(event.getGroup().getId());
             event.setMember(member);
             Notification.info(event.getOperator(), Language.groupEventHandlerText.addMemberSuccess, event.getMember().getPlayer().getLastKnownName(), event.getGroup().getNamePlain());
         } catch (Exception e) {
@@ -140,7 +142,7 @@ public class GroupEventHandler implements Listener {
             }
             assertGroupBelongDominion(event.getGroup(), event.getDominion());
             assertMemberBelongDominion(event.getMember(), event.getDominion());
-            MemberDTO member = ((cn.lunadeer.dominion.dtos.MemberDTO) event.getMember()).setGroupId(-1);
+            MemberDTO member = ((MemberDOO) event.getMember()).setGroupId(-1);
             event.setMember(member);
             Notification.info(event.getOperator(), Language.groupEventHandlerText.removeMemberSuccess, event.getMember().getPlayer().getLastKnownName(), event.getGroup().getNamePlain());
         } catch (Exception e) {

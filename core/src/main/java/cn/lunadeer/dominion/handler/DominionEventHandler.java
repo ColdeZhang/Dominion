@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.commands.DominionOperateCommand;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.DominionDOO;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.events.dominion.DominionDeleteEvent;
 import cn.lunadeer.dominion.events.dominion.modify.*;
@@ -94,7 +95,7 @@ public class DominionEventHandler implements Listener {
         try {
             World world = event.getWorld();
             DominionDTO parent = event.getParent();
-            cn.lunadeer.dominion.dtos.DominionDTO toBeCreated = new cn.lunadeer.dominion.dtos.DominionDTO(
+            DominionDOO toBeCreated = new DominionDOO(
                     event.getOwner(),
                     event.getName(),
                     world.getUID(),
@@ -117,7 +118,7 @@ public class DominionEventHandler implements Listener {
                 assertEconomy(event.getOperator(), CuboidDTO.ZERO, toBeCreated.getCuboid());
             }
             // do db insert
-            DominionDTO inserted = cn.lunadeer.dominion.dtos.DominionDTO.insert(toBeCreated);
+            DominionDTO inserted = DominionDOO.insert(toBeCreated);
             event.setDominion(inserted);
             ParticleUtil.showBorder(event.getOperator(), inserted);
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.createSuccess, event.getName());
@@ -196,12 +197,12 @@ public class DominionEventHandler implements Listener {
                 return;
             }
             for (DominionDTO sub_dominion : sub_dominions) {
-                cn.lunadeer.dominion.dtos.DominionDTO.deleteById(sub_dominion.getId());
+                DominionDOO.deleteById(sub_dominion.getId());
                 Notification.info(event.getOperator(), Language.dominionEventHandlerText.deleteSuccess, sub_dominion.getName());
                 if (!event.isSkipEconomy())
                     assertEconomy(event.getOperator(), sub_dominion.getCuboid(), CuboidDTO.ZERO);
             }
-            cn.lunadeer.dominion.dtos.DominionDTO.deleteById(dominion.getId());
+            DominionDOO.deleteById(dominion.getId());
             Notification.info(event.getOperator(), Language.dominionEventHandlerText.deleteSuccess, dominion.getName());
             if (!event.isSkipEconomy()) assertEconomy(event.getOperator(), dominion.getCuboid(), CuboidDTO.ZERO);
         } catch (Exception e) {

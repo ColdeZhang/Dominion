@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.doos.PlayerDOO;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class PlayerCache extends Cache {
         playerUsingTitleId = new ConcurrentHashMap<>();
         playerCache = new ConcurrentHashMap<>();
 
-        List<PlayerDTO> players = cn.lunadeer.dominion.dtos.PlayerDTO.all();
+        List<PlayerDTO> players = PlayerDOO.all();
         for (PlayerDTO player : players) {
             playerIdCache.put(player.getUuid(), player.getId());
             playerNameToId.put(player.getLastKnownName(), player.getId());
@@ -51,7 +52,7 @@ public class PlayerCache extends Cache {
             playerUsingTitleId.remove(player.getUuid());
             playerNameToId.remove(player.getLastKnownName());
         }
-        player = cn.lunadeer.dominion.dtos.PlayerDTO.selectById(idToLoad);
+        player = PlayerDOO.selectById(idToLoad);
         if (player == null) {
             return;
         }
@@ -95,6 +96,10 @@ public class PlayerCache extends Cache {
         } else {
             return "Unknown Player: %s".formatted(uuid);
         }
+    }
+
+    public List<String> getPlayerNames() {
+        return new ArrayList<>(playerNameCache.values());
     }
 
     public Integer getPlayerUsingTitleId(UUID uuid) {

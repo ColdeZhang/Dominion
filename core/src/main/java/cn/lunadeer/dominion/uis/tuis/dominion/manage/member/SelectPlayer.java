@@ -4,6 +4,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.commands.MemberCommand;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.PlayerDOO;
 import cn.lunadeer.dominion.uis.cuis.SearchPlayer;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
@@ -49,7 +50,7 @@ public class SelectPlayer {
                     .append(SearchPlayer.button(sender, dominionName).build())
                     .append(MemberList.button(sender, dominionName).setText(Language.selectPlayerTuiText.back).build());
             view.title(Language.selectPlayerTuiText.title).subtitle(sub);
-            List<PlayerDTO> players = cn.lunadeer.dominion.dtos.PlayerDTO.all();
+            List<PlayerDTO> players = PlayerDOO.all();
             for (PlayerDTO p : players) {
                 view.add(Line.create().
                         append(new FunctionalButton(p.getLastKnownName()) {

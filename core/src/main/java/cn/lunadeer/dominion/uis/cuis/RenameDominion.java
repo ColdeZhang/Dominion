@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import static cn.lunadeer.dominion.Dominion.defaultPermission;
 import static cn.lunadeer.dominion.misc.Converts.toPlayer;
+import static cn.lunadeer.dominion.utils.Misc.formatString;
 
 public class RenameDominion {
     public static class RenameDominionCuiText extends ConfigurationPart {
@@ -47,7 +48,7 @@ public class RenameDominion {
             Player player = toPlayer(sender);
             CuiTextInput.InputCallback renameDominionCB = new renameDominionCB(player, dominionName);
             CuiTextInput view = CuiTextInput.create(renameDominionCB).setText(dominionName).title(
-                    String.format(Language.renameDominionCuiText.title, dominionName)
+                    formatString(Language.renameDominionCuiText.title, dominionName)
             );
             view.setSuggestCommand(DominionOperateCommand.rename.getUsage());
             view.open(player);

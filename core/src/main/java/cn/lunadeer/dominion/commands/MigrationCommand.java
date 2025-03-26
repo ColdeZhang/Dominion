@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.PlayerDOO;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.misc.DominionException;
@@ -108,7 +109,7 @@ public class MigrationCommand {
      * @throws Exception if an error occurs during migration
      */
     private static void doMigrateCreate(Player player, ResMigration.ResidenceNode node, DominionDTO parent) throws Exception {
-        PlayerDTO ownerDTO = cn.lunadeer.dominion.dtos.PlayerDTO.create(node.owner, node.ownerName);
+        PlayerDTO ownerDTO = PlayerDOO.create(node.owner, node.ownerName);
         if (ownerDTO == null) {
             Notification.error(player, Language.migrationCommandText.createPlayerFailed, node.ownerName);
             return;

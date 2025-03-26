@@ -3,13 +3,14 @@ package cn.lunadeer.dominion.misc;
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
+import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.EnvFlag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.api.dtos.flag.PriFlag;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.PlayerDTO;
+import cn.lunadeer.dominion.doos.PlayerDOO;
 import cn.lunadeer.dominion.utils.MessageDisplay;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
@@ -94,12 +95,20 @@ public class Others {
         }
         XLogger.info(Language.othersText.autoCleanStart, Configuration.autoCleanAfterDays);
         int auto_clean_after_days = Configuration.autoCleanAfterDays;
-        List<cn.lunadeer.dominion.api.dtos.PlayerDTO> players = PlayerDTO.all();
-        for (cn.lunadeer.dominion.api.dtos.PlayerDTO p : players) {
-            if (((PlayerDTO) p).getLastJoinAt() + (long) auto_clean_after_days * 24 * 60 * 60 * 1000 < System.currentTimeMillis()) {
-                PlayerDTO.delete((PlayerDTO) p);
-                XLogger.info(Language.othersText.autoCleaningPlayer, p.getLastKnownName());
+        try {
+            List<PlayerDTO> players = PlayerDOO.all();
+            for (PlayerDTO p : players) {
+                if (((PlayerDOO) p).getLastJoinAt() + (long) auto_clean_after_days * 24 * 60 * 60 * 1000 < System.currentTimeMillis()) {
+                    try {
+                        PlayerDOO.delete((PlayerDOO) p);
+                    } catch (Exception e) {
+                        XLogger.error(e);
+                    }
+                    XLogger.info(Language.othersText.autoCleaningPlayer, p.getLastKnownName());
+                }
             }
+        } catch (Exception e) {
+            XLogger.error(e);
         }
         XLogger.info(Language.othersText.autoCleanEnd);
     }

@@ -11,6 +11,7 @@ import cn.lunadeer.dominion.cache.server.ResidenceDataCache;
 import cn.lunadeer.dominion.cache.server.ServerCache;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.PlayerDOO;
 import cn.lunadeer.dominion.events.PlayerCrossDominionBorderEvent;
 import cn.lunadeer.dominion.events.PlayerMoveInDominionEvent;
 import cn.lunadeer.dominion.events.PlayerMoveOutDominionEvent;
@@ -24,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -175,12 +177,12 @@ public class CacheManager {
      *
      * @param bukkitPlayer the Player object representing the player
      */
-    public void updatePlayerName(@NotNull Player bukkitPlayer) {
+    public void updatePlayerName(@NotNull Player bukkitPlayer) throws SQLException {
         PlayerDTO player = playerCache.getPlayer(bukkitPlayer.getUniqueId());
         if (player != null) {
             player.updateLastKnownName(bukkitPlayer.getName());
         } else {
-            cn.lunadeer.dominion.dtos.PlayerDTO.create(bukkitPlayer);
+            PlayerDOO.create(bukkitPlayer);
         }
     }
 
@@ -212,6 +214,10 @@ public class CacheManager {
      */
     public @NotNull String getPlayerName(@NotNull UUID uuid) {
         return playerCache.getPlayerName(uuid);
+    }
+
+    public @NotNull List<String> getPlayerNames() {
+        return playerCache.getPlayerNames();
     }
 
     // ******************************************************************************************************************

@@ -7,6 +7,7 @@ import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.MemberDOO;
 import cn.lunadeer.dominion.events.member.MemberAddedEvent;
 import cn.lunadeer.dominion.events.member.MemberRemovedEvent;
 import cn.lunadeer.dominion.events.member.MemberSetFlagEvent;
@@ -80,7 +81,7 @@ public class MemberEventHandler implements Listener {
             if (dominion.getMembers().stream().anyMatch(m -> m.getPlayer().getUuid().equals(player.getUuid()))) {
                 throw new DominionException(Language.memberEventHandlerText.alreadyMember, event.getPlayer().getLastKnownName(), dominion.getName());
             }
-            MemberDTO member = cn.lunadeer.dominion.dtos.MemberDTO.insert(new cn.lunadeer.dominion.dtos.MemberDTO(player.getUuid(), dominion));
+            MemberDTO member = MemberDOO.insert(new MemberDOO(player.getUuid(), dominion));
             event.setMember(member);
             Notification.info(event.getOperator(), Language.memberEventHandlerText.addMemberSuccess, event.getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
@@ -113,7 +114,7 @@ public class MemberEventHandler implements Listener {
                     throw new DominionException(Language.memberEventHandlerText.ownerOnly);
                 }
             }
-            cn.lunadeer.dominion.dtos.MemberDTO.deleteById(member.getId());
+            MemberDOO.deleteById(member.getId());
             Notification.info(event.getOperator(), Language.memberEventHandlerText.removeMemberSuccess, event.getMember().getPlayer().getLastKnownName(), dominion.getName());
         } catch (Exception e) {
             event.setCancelled(true);

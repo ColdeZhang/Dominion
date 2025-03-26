@@ -2,11 +2,10 @@ package cn.lunadeer.dominion.misc;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
-import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
 import cn.lunadeer.dominion.cache.CacheManager;
-import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.doos.TemplateDOO;
 import cn.lunadeer.dominion.utils.XLogger;
 import cn.lunadeer.dominion.utils.command.Argument;
 import cn.lunadeer.dominion.utils.command.ConditionalArgument;
@@ -54,7 +53,7 @@ public class CommandArguments {
      */
     public static class RequiredPlayerArgument extends Argument {
         public RequiredPlayerArgument() {
-            super("player_name", true, (commandSender) -> cn.lunadeer.dominion.dtos.PlayerDTO.all().stream().map(PlayerDTO::getLastKnownName).toList());
+            super("player_name", true, (commandSender) -> CacheManager.instance.getPlayerNames());
         }
     }
 
@@ -106,7 +105,7 @@ public class CommandArguments {
             super("template_name", true, (commandSender) -> {
                 if (commandSender instanceof Player player) {
                     try {
-                        return TemplateDTO.selectAll(player.getUniqueId()).stream().map(TemplateDTO::getName).toList();
+                        return TemplateDOO.selectAll(player.getUniqueId()).stream().map(TemplateDOO::getName).toList();
                     } catch (Exception e) {
                         XLogger.error(e);
                         return List.of();

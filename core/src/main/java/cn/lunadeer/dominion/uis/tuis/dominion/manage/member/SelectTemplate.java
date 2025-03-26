@@ -2,7 +2,7 @@ package cn.lunadeer.dominion.uis.tuis.dominion.manage.member;
 
 import cn.lunadeer.dominion.commands.TemplateCommand;
 import cn.lunadeer.dominion.configuration.Language;
-import cn.lunadeer.dominion.dtos.TemplateDTO;
+import cn.lunadeer.dominion.doos.TemplateDOO;
 import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.stui.ListView;
@@ -42,7 +42,7 @@ public class SelectTemplate {
         try {
             Player player = toPlayer(sender);
             int page = toIntegrity(pageStr);
-            List<TemplateDTO> templates = TemplateDTO.selectAll(player.getUniqueId());
+            List<TemplateDOO> templates = TemplateDOO.selectAll(player.getUniqueId());
 
             ListView view = ListView.create(10, button(sender, dominionName, playerName));
             view.title(Language.selectTemplateTuiText.title);
@@ -50,7 +50,7 @@ public class SelectTemplate {
                     .append(MemberSetting.button(sender, dominionName, playerName).setText(Language.selectTemplateTuiText.back).build());
             view.subtitle(sub);
 
-            for (TemplateDTO template : templates) {
+            for (TemplateDOO template : templates) {
                 view.add(Line.create()
                         .append(new FunctionalButton(Language.selectTemplateTuiText.apply) {
                             @Override

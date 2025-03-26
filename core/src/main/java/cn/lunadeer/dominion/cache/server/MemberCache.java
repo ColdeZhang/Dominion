@@ -4,13 +4,12 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.api.dtos.GroupDTO;
 import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
-import cn.lunadeer.dominion.utils.XLogger;
+import cn.lunadeer.dominion.doos.MemberDOO;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -73,30 +72,25 @@ public class MemberCache extends Cache {
         playerDominionMemberMap = new ConcurrentHashMap<>();
         groupMembersMap = new ConcurrentHashMap<>();
 
-        List<DominionDTO> thisServerDominions = Objects.requireNonNull(CacheManager.instance.getCache(serverId)).getDominionCache().getAllDominions();
-        for (DominionDTO dominion : thisServerDominions) {
-            List<MemberDTO> members = new ArrayList<>(cn.lunadeer.dominion.dtos.MemberDTO.selectByDominionId(dominion.getId()));
-            CompletableFuture.runAsync(() -> {  // asynchronously load members for each dominion
-                for (MemberDTO member : members) {
-                    idMembers.put(member.getId(), member);
-                    dominionMembersMap.computeIfAbsent(dominion.getId(), k -> new CopyOnWriteArrayList<>())
-                            .add(member.getId());
-                    playerDominionMemberMap.computeIfAbsent(member.getPlayerUUID(), k -> new HashMap<>())
-                            .put(dominion.getId(), member.getId());
-                    if (member.getGroupId() != -1)
-                        groupMembersMap.computeIfAbsent(member.getGroupId(), k -> new CopyOnWriteArrayList<>())
-                                .add(member.getId());
-                }
-            }).exceptionally(e -> {
-                XLogger.error(e);
-                return null;
-            });
+        List<MemberDOO> allMembers = MemberDOO.select();
+        for (MemberDOO member : allMembers) {
+            DominionDTO dominion = CacheManager.instance.getDominion(member.getDomID());
+            if (dominion == null || !Objects.equals(dominion.getServerId(), serverId)) continue;
+            idMembers.put(member.getId(), member);
+            dominionMembersMap.computeIfAbsent(member.getDomID(), k -> new CopyOnWriteArrayList<>())
+                    .add(member.getId());
+            playerDominionMemberMap.computeIfAbsent(member.getPlayerUUID(), k -> new HashMap<>())
+                    .put(member.getDomID(), member.getId());
+            if (member.getGroupId() != -1) {
+                groupMembersMap.computeIfAbsent(member.getGroupId(), k -> new CopyOnWriteArrayList<>())
+                        .add(member.getId());
+            }
         }
     }
 
     @Override
     void loadExecution(Integer idToLoad) throws Exception {
-        MemberDTO member = cn.lunadeer.dominion.dtos.MemberDTO.select(idToLoad);
+        MemberDTO member = MemberDOO.select(idToLoad);
         if (member == null) return;
         MemberDTO old = idMembers.put(member.getId(), member);
         if (old != null) {
