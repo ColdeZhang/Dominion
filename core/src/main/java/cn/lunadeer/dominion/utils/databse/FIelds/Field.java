@@ -19,7 +19,7 @@ public abstract class Field<T> {
         this.name = name;
     }
 
-    public static Field<?> fieldOf(String name, String typeString) {
+    public static Field<?> fieldOfSqlType(String name, String typeString) {
         if (FieldBoolean.getTypeStrings().stream().anyMatch(s -> s.equalsIgnoreCase(typeString))) {
             return new FieldBoolean(name);
         }

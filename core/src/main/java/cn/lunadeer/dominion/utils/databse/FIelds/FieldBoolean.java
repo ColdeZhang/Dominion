@@ -41,7 +41,7 @@ public class FieldBoolean extends Field<Boolean> {
     public static List<String> getTypeStrings() {
         return switch (DatabaseManager.instance.getType()) {
             case MYSQL -> List.of("TINYINT(1)", "TINYINT");
-            case SQLITE -> List.of("BOOLEAN", "INTEGER");
+            case SQLITE -> List.of("BOOLEAN");
             case PGSQL -> List.of("BOOLEAN");
             default ->
                     throw new UnsupportedOperationException("Database type: " + DatabaseManager.instance.getType() + " not supported FieldString");

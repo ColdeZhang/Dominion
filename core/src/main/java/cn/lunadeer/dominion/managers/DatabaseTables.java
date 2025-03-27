@@ -3,7 +3,10 @@ package cn.lunadeer.dominion.managers;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
+import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
+import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.utils.Notification;
 import cn.lunadeer.dominion.utils.configuration.ConfigurationPart;
 import cn.lunadeer.dominion.utils.databse.DatabaseManager;
 import cn.lunadeer.dominion.utils.databse.FIelds.*;
@@ -12,18 +15,27 @@ import cn.lunadeer.dominion.utils.databse.syntax.Insert;
 import cn.lunadeer.dominion.utils.databse.syntax.Show.Show;
 import cn.lunadeer.dominion.utils.databse.syntax.Table.Column;
 import cn.lunadeer.dominion.utils.databse.syntax.Table.Create;
+import cn.lunadeer.dominion.utils.scheduler.Scheduler;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.Map;
+
+import static cn.lunadeer.dominion.utils.databse.Backup.exportCsv;
+import static cn.lunadeer.dominion.utils.databse.Backup.importCsv;
 
 public class DatabaseTables {
     public static void migrate() throws Exception {
         // player name
-        Column player_name_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique().defaultSqlVal("0");
+        Column player_name_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique();
         Column player_name_uuid = Column.of(new FieldString("uuid")).notNull().unique();
         Column player_name_last_known_name = Column.of(new FieldString("last_known_name")).notNull().defaultSqlVal("'unknown'");
-        Column player_name_last_join_at = Column.of(new FieldTimestamp("last_join_at")).notNull().defaultSqlVal("0");
+        Column player_name_last_join_at = Column.of(new FieldTimestamp("last_join_at")).notNull().defaultSqlVal("'1970-01-01 00:00:00'");
         Create.create().table("player_name")
                 .column(player_name_id)
                 .column(player_name_uuid)
@@ -33,7 +45,7 @@ public class DatabaseTables {
 
 
         // dominion table
-        Column dominion_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique().defaultSqlVal("0");
+        Column dominion_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique();
         Column dominion_owner = Column.of(new FieldString("owner")).notNull().foreign("player_name", new FieldString("uuid"));
         Column dominion_name = Column.of(new FieldString("name")).notNull().defaultSqlVal("'Unnamed'");
         Column dominion_world = Column.of(new FieldString("world")).notNull().defaultSqlVal("'world'");
@@ -70,7 +82,7 @@ public class DatabaseTables {
 
         // player privilege
         if (!Show.show().tables().execute().contains("dominion_member")) {
-            Column player_privilege_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique().defaultSqlVal("0");
+            Column player_privilege_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique();
             Column player_privilege_player_uuid = Column.of(new FieldString("player_uuid")).notNull().foreign("player_name", new FieldString("uuid"));
             Column player_privilege_dom_id = Column.of(new FieldInteger("dom_id")).notNull().foreign("dominion", new FieldInteger("id"));
             Column player_privilege_admin = Column.of(new FieldBoolean("admin")).notNull().defaultSqlVal("false");
@@ -94,7 +106,7 @@ public class DatabaseTables {
                 .values(server_player_name_id_field,
                         server_player_name_uuid_field,
                         server_player_name_last_known_name_field)
-                .onConflict(server_player_name_id_field).doNothing().execute();
+                .onConflict(server_player_name_id_field.getName()).doNothing().execute();
 
         // server root dominion
         FieldInteger server_dom_id_field = new FieldInteger("id", -1);
@@ -127,14 +139,14 @@ public class DatabaseTables {
                         server_dom_parent_dom_id_field,
                         server_dom_join_message_field,
                         server_dom_leave_message_field)
-                .onConflict(server_dom_id_field).doNothing().execute();
+                .onConflict(server_dom_id_field.getName()).doNothing().execute();
 
         // 1.18.0   dominion add tp_location
         Column dominion_tp_location = Column.of(new FieldString("tp_location")).notNull().defaultSqlVal("'default'");
         Alter.alter().table("dominion").add().column(dominion_tp_location).execute();
 
         // 1.31.0   add privilege_template
-        Column privilege_template_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique().defaultSqlVal("0");
+        Column privilege_template_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique();
         Column privilege_template_creator = Column.of(new FieldString("creator")).notNull().foreign("player_name", new FieldString("uuid"));
         Column privilege_template_name = Column.of(new FieldString("name")).notNull().defaultSqlVal("'Unnamed'");
         Column privilege_template_admin = Column.of(new FieldBoolean("admin")).notNull().defaultSqlVal("false");
@@ -161,7 +173,7 @@ public class DatabaseTables {
             Alter.alter().table("player_privilege").add().column(player_privilege_group_id).execute();
         }
 
-        Column dominion_group_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique().defaultSqlVal("0");
+        Column dominion_group_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique();
         Column dominion_group_dom_id = Column.of(new FieldInteger("dom_id")).notNull().foreign("dominion", new FieldInteger("id"));
         Column dominion_group_name = Column.of(new FieldString("name")).notNull().defaultSqlVal("'Unnamed'");
         Column dominion_group_admin = Column.of(new FieldBoolean("admin")).notNull().defaultSqlVal("false");
@@ -178,7 +190,7 @@ public class DatabaseTables {
         }
 
         // 1.35.0 migrate player_privilege -> dominion_member
-        Column dominion_member_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique().defaultSqlVal("0");
+        Column dominion_member_id = Column.of(new FieldInteger("id")).primary().serial().notNull().unique();
         Column dominion_member_player_uuid = Column.of(new FieldString("player_uuid")).notNull().foreign("player_name", new FieldString("uuid"));
         Column dominion_member_dom_id = Column.of(new FieldInteger("dom_id")).notNull().foreign("dominion", new FieldInteger("id"));
         Column dominion_member_admin = Column.of(new FieldBoolean("admin")).notNull().defaultSqlVal("false");
@@ -200,14 +212,15 @@ public class DatabaseTables {
             try (Connection conn = DatabaseManager.instance.getConnection()) {
                 ResultSet rs = conn.createStatement().executeQuery(sql);
                 while (rs.next()) {
-                    Field<?>[] fields = new Field<?>[Flags.getAllPriFlags().size() + 3];
+                    Field<?>[] fields = new Field<?>[Flags.getAllPriFlags().size() + 4];
                     fields[0] = (new FieldString("player_uuid", rs.getString("player_uuid")));
                     fields[1] = (new FieldInteger("dom_id", rs.getInt("dom_id")));
                     fields[2] = (new FieldInteger("group_id", rs.getInt("group_id")));
+                    fields[4] = (new FieldInteger("id", rs.getInt("id")));
                     for (int i = 0; i < Flags.getAllPriFlags().size(); i++) {
-                        fields[i + 3] = new FieldBoolean(Flags.getAllPriFlags().get(i).getFlagName(), rs.getBoolean(Flags.getAllPriFlags().get(i).getFlagName()));
+                        fields[i + 4] = new FieldBoolean(Flags.getAllPriFlags().get(i).getFlagName(), rs.getBoolean(Flags.getAllPriFlags().get(i).getFlagName()));
                     }
-                    Insert.insert().into("dominion_member").values(fields).onConflict().doNothing().execute();
+                    Insert.insert().into("dominion_member").values(fields).onConflict("id").doNothing().execute();
                 }
                 sql = "DROP TABLE player_privilege;";
                 conn.createStatement().execute(sql);
@@ -260,6 +273,14 @@ public class DatabaseTables {
             } catch (Exception ignored) {
             }
         }
+
+        // 4.0.0-alpha remove player_damage because of impl pvp
+        if (Show.show().columns().from("dominion").execute().containsKey("player_damage")) {
+            Alter.alter().table("dominion").drop().column(new FieldString("player_damage")).execute();
+            Alter.alter().table("dominion_member").drop().column(new FieldString("player_damage")).execute();
+            Alter.alter().table("dominion_group").drop().column(new FieldString("player_damage")).execute();
+            Alter.alter().table("privilege_template").drop().column(new FieldString("player_damage")).execute();
+        }
     }
 
     public static class DatabaseManagerText extends ConfigurationPart {
@@ -275,83 +296,83 @@ public class DatabaseTables {
         public String importDatabaseSuccess = "Import database successfully.";
     }
 
-    private static final File export_path = new File(Dominion.instance.getDataFolder(), "ExportedDatabaseTables");
+    private static final File export_path = new File(Dominion.instance.getDataFolder(), "backup");
 
-//    public static void Export(CommandSender sender) {
-//        Scheduler.runTaskAsync(() -> {
-//            Notification.info(sender, Language.databaseManagerText.exportingDatabaseTables);
-//            if (!export_path.exists()) {
-//                boolean re = export_path.mkdirs();
-//            }
-//            try {
-//                exportCSV("player_name", new File(export_path, "player_name.csv"));
-//                exportCSV("privilege_template", new File(export_path, "privilege_template.csv"));
-//                exportCSV("dominion", new File(export_path, "dominion.csv"));
-//                exportCSV("dominion_group", new File(export_path, "dominion_group.csv"));
-//                exportCSV("dominion_member", new File(export_path, "dominion_member.csv"));
-//            } catch (Exception e) {
-//                Notification.error(sender, Language.databaseManagerText.exportTableFail, e.getMessage());
-//                return;
-//            }
-//            try {
-//                Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
-//                YamlConfiguration world_uid = new YamlConfiguration();
-//                for (Map.Entry<String, String> entry : world_uid_map.entrySet()) {
-//                    world_uid.set(entry.getKey(), entry.getValue());
-//                }
-//                world_uid.save(new File(export_path, "world_uid_mapping.yml"));
-//            } catch (Exception e) {
-//                Notification.error(sender, Language.databaseManagerText.exportWorldMappingFail, e.getMessage());
-//                return;
-//            }
-//            Notification.info(sender, Language.databaseManagerText.exportDatabaseSuccess, export_path.getAbsolutePath());
-//        });
-//    }
-//
-//    public static void Import(CommandSender sender) {
-//        Scheduler.runTaskAsync(() -> {
-//            if (!export_path.exists()) {
-//                Notification.error(sender, Language.databaseManagerText.fileNotFound, export_path.getAbsolutePath());
-//                return;
-//            }
-//            Notification.info(sender, Language.databaseManagerText.importingDatabase);
-//            Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
-//            File player_name_csv = new File(export_path, "player_name.csv");
-//            File privilege_template_csv = new File(export_path, "privilege_template.csv");
-//            File dominion_csv = new File(export_path, "dominion.csv");
-//            File world_uid_mapping = new File(export_path, "world_uid_mapping.yml");
-//            File dominion_group_csv = new File(export_path, "dominion_group.csv");
-//            File dominion_member_csv = new File(export_path, "dominion_member.csv");
-//            if (!player_name_csv.exists() || !privilege_template_csv.exists() || !dominion_csv.exists() || !world_uid_mapping.exists() || !dominion_group_csv.exists() || !dominion_member_csv.exists()) {
-//                Notification.error(sender, Language.databaseManagerText.fileCorrupted);
-//                return;
-//            }
-//            try {
-//                String dominion_file_str = Files.readString(dominion_csv.toPath());
-//                YamlConfiguration world_uid = YamlConfiguration.loadConfiguration(world_uid_mapping);
-//                for (String key : world_uid.getKeys(false)) {
-//                    if (world_uid_map.containsKey(key)) {
-//                        String old_uid = world_uid.getString(key);
-//                        String new_uid = world_uid_map.get(key);
-//                        if (old_uid == null || new_uid == null) {
-//                            continue;
-//                        }
-//                        dominion_file_str = dominion_file_str.replace(old_uid, world_uid_map.get(key));
-//                    }
-//                }
-//                Files.writeString(dominion_csv.toPath(), dominion_file_str);
-//
-//                importCSV("player_name", "id", player_name_csv);
-//                importCSV("privilege_template", "id", privilege_template_csv);
-//                importCSV("dominion", "id", dominion_csv);
-//                importCSV("dominion_group", "id", dominion_group_csv);
-//                importCSV("dominion_member", "id", dominion_member_csv);
-//            } catch (Exception e) {
-//                Notification.error(sender, Language.databaseManagerText.importDatabaseFail, e.getMessage());
-//                return;
-//            }
-//            Notification.info(sender, Language.databaseManagerText.importDatabaseSuccess);
-//            AdministratorCommand.reloadCache(sender);
-//        });
-//    }
+    public static void exportTables(CommandSender sender) {
+        Scheduler.runTaskAsync(() -> {
+            Notification.info(sender, Language.databaseManagerText.exportingDatabaseTables);
+            if (!export_path.exists()) {
+                boolean re = export_path.mkdirs();
+            }
+            try {
+                exportCsv("player_name", new File(export_path, "player_name.csv"), "id");
+                exportCsv("privilege_template", new File(export_path, "privilege_template.csv"), "id");
+                exportCsv("dominion", new File(export_path, "dominion.csv"), "id");
+                exportCsv("dominion_group", new File(export_path, "dominion_group.csv"), "id");
+                exportCsv("dominion_member", new File(export_path, "dominion_member.csv"), "id");
+            } catch (Exception e) {
+                Notification.error(sender, Language.databaseManagerText.exportTableFail, e.getMessage());
+                return;
+            }
+            try {
+                Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
+                YamlConfiguration world_uid = new YamlConfiguration();
+                for (Map.Entry<String, String> entry : world_uid_map.entrySet()) {
+                    world_uid.set(entry.getKey(), entry.getValue());
+                }
+                world_uid.save(new File(export_path, "world_uid_mapping.yml"));
+            } catch (Exception e) {
+                Notification.error(sender, Language.databaseManagerText.exportWorldMappingFail, e.getMessage());
+                return;
+            }
+            Notification.info(sender, Language.databaseManagerText.exportDatabaseSuccess, export_path.getAbsolutePath());
+        });
+    }
+
+    public static void importTables(CommandSender sender) {
+        Scheduler.runTaskAsync(() -> {
+            if (!export_path.exists()) {
+                Notification.error(sender, Language.databaseManagerText.fileNotFound, export_path.getAbsolutePath());
+                return;
+            }
+            Notification.info(sender, Language.databaseManagerText.importingDatabase);
+            Map<String, String> world_uid_map = Dominion.instance.getServer().getWorlds().stream().collect(HashMap::new, (m, w) -> m.put(w.getName(), w.getUID().toString()), HashMap::putAll);
+            File player_name_csv = new File(export_path, "player_name.csv");
+            File privilege_template_csv = new File(export_path, "privilege_template.csv");
+            File dominion_csv = new File(export_path, "dominion.csv");
+            File world_uid_mapping = new File(export_path, "world_uid_mapping.yml");
+            File dominion_group_csv = new File(export_path, "dominion_group.csv");
+            File dominion_member_csv = new File(export_path, "dominion_member.csv");
+            if (!player_name_csv.exists() || !privilege_template_csv.exists() || !dominion_csv.exists() || !world_uid_mapping.exists() || !dominion_group_csv.exists() || !dominion_member_csv.exists()) {
+                Notification.error(sender, Language.databaseManagerText.fileCorrupted);
+                return;
+            }
+            try {
+                String dominion_file_str = Files.readString(dominion_csv.toPath());
+                YamlConfiguration world_uid = YamlConfiguration.loadConfiguration(world_uid_mapping);
+                for (String key : world_uid.getKeys(false)) {
+                    if (world_uid_map.containsKey(key)) {
+                        String old_uid = world_uid.getString(key);
+                        String new_uid = world_uid_map.get(key);
+                        if (old_uid == null || new_uid == null) {
+                            continue;
+                        }
+                        dominion_file_str = dominion_file_str.replace(old_uid, world_uid_map.get(key));
+                    }
+                }
+                Files.writeString(dominion_csv.toPath(), dominion_file_str);
+
+                importCsv("player_name", player_name_csv, "id");
+                importCsv("privilege_template", privilege_template_csv, "id");
+                importCsv("dominion", dominion_csv, "id");
+                importCsv("dominion_group", dominion_group_csv, "id");
+                importCsv("dominion_member", dominion_member_csv, "id");
+            } catch (Exception e) {
+                Notification.error(sender, Language.databaseManagerText.importDatabaseFail, e.getMessage());
+                return;
+            }
+            Notification.info(sender, Language.databaseManagerText.importDatabaseSuccess);
+            CacheManager.instance.reloadCache();
+        });
+    }
 }

@@ -159,21 +159,23 @@ public abstract class Column implements Syntax {
         @Override
         public String getSql() {
             StringBuilder sql = new StringBuilder();
-            sql.append(column.getName()).append(" ").append(column.getSqlTypeStr());
-            if (primary) {
-                sql.append(" PRIMARY KEY");
-            }
+            sql.append(column.getName()).append(" ");
             if (serial) {
                 sql.append(" SERIAL");
+            } else {
+                sql.append(column.getSqlTypeStr());
+                if (notNull) {
+                    sql.append(" NOT NULL");
+                }
+                if (unique) {
+                    sql.append(" UNIQUE");
+                }
+                if (defaultValue != null) {
+                    sql.append(" DEFAULT ").append(defaultValue);
+                }
             }
-            if (notNull) {
-                sql.append(" NOT NULL");
-            }
-            if (unique) {
-                sql.append(" UNIQUE");
-            }
-            if (defaultValue != null) {
-                sql.append(" DEFAULT ").append(defaultValue);
+            if (primary) {
+                sql.append(" PRIMARY KEY");
             }
             if (joinUnique != null) {
                 sql.append(" UNIQUE (");

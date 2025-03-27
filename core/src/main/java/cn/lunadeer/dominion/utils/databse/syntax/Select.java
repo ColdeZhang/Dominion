@@ -21,6 +21,8 @@ public abstract class Select implements Syntax {
     protected String tableName;
     protected String where;
     protected Object[] whereArgs;
+    protected String ascendingColumn;
+    protected String descendingColumn;
 
     /**
      * Creates a new Select instance based on the database type.
@@ -71,9 +73,25 @@ public abstract class Select implements Syntax {
         return this;
     }
 
+    public Select ascend(String column) {
+        this.ascendingColumn = column;
+        return this;
+    }
+
+    public Select descend(String column) {
+        this.descendingColumn = column;
+        return this;
+    }
+
     public List<Map<String, Field<?>>> execute() throws SQLException {
         try (Connection conn = DatabaseManager.instance.getConnection()) {
             String sql = getSql();
+            if (ascendingColumn != null) {
+                sql += " ORDER BY " + ascendingColumn + " ASC";
+            }
+            if (descendingColumn != null) {
+                sql += " ORDER BY " + descendingColumn + " DESC";
+            }
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             if (whereArgs != null) {
                 for (int i = 0; i < whereArgs.length; i++) {
