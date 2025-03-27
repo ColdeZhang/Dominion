@@ -81,7 +81,7 @@ public class PlayerDOO implements PlayerDTO {
         Map<String, Field<?>> res = Insert.insert().into("player_name")
                 .values(uuid, lastKnownName, lastJoinAt)
                 .returning(fields())
-                .onConflict(uuid).doUpdate()
+                .onConflict(uuid.getName()).doUpdate()
                 .execute();
         if (res.isEmpty()) {
             throw new SQLException("Create player failed");

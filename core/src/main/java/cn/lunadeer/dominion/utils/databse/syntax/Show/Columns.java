@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import static cn.lunadeer.dominion.utils.databse.FIelds.Field.fieldOf;
+import static cn.lunadeer.dominion.utils.databse.FIelds.Field.fieldOfSqlType;
 
 public abstract class Columns extends Show {
 
@@ -56,7 +56,7 @@ public abstract class Columns extends Show {
                 while (rs.next()) {
                     String columnName = rs.getString("name");
                     String columnType = rs.getString("type");
-                    columns.put(columnName, fieldOf(columnName, columnType));
+                    columns.put(columnName, fieldOfSqlType(columnName, columnType));
                 }
                 return columns;
             } catch (SQLException e) {
@@ -83,7 +83,7 @@ public abstract class Columns extends Show {
                 while (rs.next()) {
                     String columnName = rs.getString("Field");
                     String columnType = rs.getString("Type");
-                    columns.put(columnName, fieldOf(columnName, columnType));
+                    columns.put(columnName, fieldOfSqlType(columnName, columnType));
                 }
                 return columns;
             } catch (SQLException e) {
@@ -110,7 +110,7 @@ public abstract class Columns extends Show {
                 while (rs.next()) {
                     String columnName = rs.getString("column_name");
                     String columnType = rs.getString("data_type");
-                    columns.put(columnName, fieldOf(columnName, columnType));
+                    columns.put(columnName, fieldOfSqlType(columnName, columnType));
                 }
                 return columns;
             } catch (SQLException e) {

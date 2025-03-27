@@ -17,7 +17,7 @@ public abstract class Insert implements Syntax {
     protected String tableName;
     protected Field<?>[] fields;
     protected Field<?>[] returnFields;
-    protected Field<?>[] onConflictFields;
+    protected String[] onConflictFields;
     protected boolean onConflictDoUpdate = false;
 
     public static Insert insert() {
@@ -43,7 +43,7 @@ public abstract class Insert implements Syntax {
         return this;
     }
 
-    public Insert onConflict(Field<?>... fields) {
+    public Insert onConflict(String... fields) {
         this.onConflictFields = fields;
         return this;
     }
@@ -130,7 +130,7 @@ public abstract class Insert implements Syntax {
                     sql.append(" ON DUPLICATE KEY UPDATE ");
                     for (int i = 0; i < fields.length; i++) {
                         String fieldName = fields[i].getName();
-                        if (Arrays.stream(onConflictFields).map(Field::getName).anyMatch(fieldName::equals)) {
+                        if (Arrays.asList(onConflictFields).contains(fieldName)) {
                             continue;
                         }
                         sql.append(fieldName).append(" = VALUES(").append(fieldName).append(")");
@@ -183,7 +183,7 @@ public abstract class Insert implements Syntax {
             if (onConflictFields != null && onConflictFields.length > 0) {
                 sql.append(" ON CONFLICT (");
                 for (int i = 0; i < onConflictFields.length; i++) {
-                    sql.append(onConflictFields[i].getName());
+                    sql.append(onConflictFields[i]);
                     if (i < onConflictFields.length - 1) {
                         sql.append(", ");
                     }
@@ -193,7 +193,7 @@ public abstract class Insert implements Syntax {
                     sql.append("UPDATE SET ");
                     for (int i = 0; i < fields.length; i++) {
                         String fieldName = fields[i].getName();
-                        if (Arrays.stream(onConflictFields).map(Field::getName).anyMatch(fieldName::equals)) {
+                        if (Arrays.asList(onConflictFields).contains(fieldName)) {
                             continue;
                         }
                         sql.append(fieldName).append(" = EXCLUDED.").append(fieldName);

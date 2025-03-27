@@ -5,6 +5,7 @@ import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.managers.DatabaseTables;
 import cn.lunadeer.dominion.misc.DominionException;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
 import cn.lunadeer.dominion.utils.Notification;
@@ -143,7 +144,7 @@ public class AdministratorCommand {
             if (getArgumentValue(0).toUpperCase().startsWith("M")) {
                 exportMCA(sender);
             } else {
-                // DatabaseTables.Export(sender);
+                DatabaseTables.exportTables(sender);
             }
         }
     }.needPermission(adminPermission).register();
@@ -218,7 +219,7 @@ public class AdministratorCommand {
                 Notification.warn(sender, Language.administratorCommandText.importInfo);
                 Notification.warn(sender, Language.administratorCommandText.importConfirm);
             }
-            // DatabaseTables.Import(sender);
+            DatabaseTables.importTables(sender);
         }
     }.needPermission(adminPermission).register();
 

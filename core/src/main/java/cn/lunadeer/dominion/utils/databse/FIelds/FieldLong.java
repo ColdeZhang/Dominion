@@ -41,7 +41,7 @@ public class FieldLong extends Field<Long> {
     public static List<String> getTypeStrings() {
         return switch (DatabaseManager.instance.getType()) {
             case MYSQL -> List.of("BIGINT");
-            case SQLITE -> List.of("BIGINT", "INTEGER");
+            case SQLITE -> List.of("BIGINT");
             case PGSQL -> List.of("BIGINT");
             default ->
                     throw new UnsupportedOperationException("Database type: " + DatabaseManager.instance.getType() + " not supported FieldString");
