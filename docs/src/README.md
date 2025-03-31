@@ -14,9 +14,9 @@ config:
         -
           theme: brand
           text: 立即下载 💾
-          link: https://github.com/ColdeZhang/Dominion/releases/latest
+          link: https://github.com/LunaDeerMC/Dominion/releases/latest
         -
           theme: alt
           text: 阅读源码 🔗
-          link: https://github.com/ColdeZhang/Dominion
+          link: https://github.com/LunaDeerMC/Dominion
 ---

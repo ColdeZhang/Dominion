@@ -3,11 +3,11 @@
 <img src="logos/logo3.png" alt="" width="30%">
 
 [![Documentation](https://img.shields.io/badge/在线文档-点击跳转-70f3ff?logo=readthedocs)](https://dominion.lunadeer.cn/)
-[![GitHub Repository](https://img.shields.io/badge/开源地址-GitHub-blue?logo=github)](https://github.com/ColdeZhang/Dominion)
+[![GitHub Repository](https://img.shields.io/badge/开源地址-GitHub-blue?logo=github)](https://github.com/LunaDeerMC/Dominion)
 [![bStats](https://img.shields.io/badge/bStats-Statistics-eacd76?logo=google-analytics)](https://bstats.org/plugin/bukkit/Dominion/21445)
 
-[![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E6%9C%80%E6%96%B0%E6%9E%84%E5%BB%BA%E4%B8%8B%E8%BD%BD&logo=github&color=0aa344)](https://github.com/ColdeZhang/Dominion/releases/latest)
-[![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=%E5%A4%87%E7%94%A8%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80&logo=gitea&color=0aa344)](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
+[![Latest Build](https://img.shields.io/github/v/release/LunaDeerMC/Dominion?label=%E6%9C%80%E6%96%B0%E6%9E%84%E5%BB%BA%E4%B8%8B%E8%BD%BD&logo=github&color=0aa344)](https://github.com/LunaDeerMC/Dominion/releases/latest)
+[![Latest Build](https://img.shields.io/github/v/release/LunaDeerMC/Dominion?label=%E5%A4%87%E7%94%A8%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80&logo=gitea&color=0aa344)](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
 
 [![Hangar](https://img.shields.io/badge/To-Hangar-004ee9)](https://hangar.papermc.io/zhangyuheng/Dominion)
 [![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/zhangyuheng-dominion)
@@ -33,7 +33,8 @@ Dominion 是一个完全开源、免费，专为高版本开发，面向未来�
 
 ## 帮助我们不断改进
 
-如果您在使用过程中遇到任何问题，或者有任何建议，欢迎在 [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues) 提交您的问题或想法。
+如果您在使用过程中遇到任何问题，或者有任何建议，欢迎在 [GitHub ISSUE](https://github.com/LunaDeerMC/Dominion/issues)
+提交您的问题或想法。
 
 详细的参与贡献指南请查看 [CONTRIBUTING](CONTRIBUTING.md)。
 
@@ -41,8 +42,8 @@ Dominion 是一个完全开源、免费，专为高版本开发，面向未来�
 
 ### 贡献者
 
-<a href="https://github.com/ColdeZhang/Dominion/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ColdeZhang/Dominion" />
+<a href="https://github.com/LunaDeerMC/Dominion/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LunaDeerMC/Dominion" />
 </a>
 
 ## 开发者指南
