@@ -3,10 +3,10 @@
 <img src="logos/logo3.png" alt="" width="30%">
 
 [![Documentation](https://img.shields.io/badge/Document-Online-70f3ff?logo=readthedocs)](https://dominion.lunadeer.cn/)
-[![GitHub Repository](https://img.shields.io/badge/SourceCode-GitHub-blue?logo=github)](https://github.com/ColdeZhang/Dominion)
+[![GitHub Repository](https://img.shields.io/badge/SourceCode-GitHub-blue?logo=github)](https://github.com/LunaDeerMC/Dominion)
 [![bStats](https://img.shields.io/badge/bStats-Statistics-eacd76?logo=google-analytics)](https://bstats.org/plugin/bukkit/Dominion/21445)
 
-[![Latest Build](https://img.shields.io/github/v/release/ColdeZhang/Dominion?label=LatestBuild&logo=github&color=0aa344)](https://github.com/ColdeZhang/Dominion/releases/latest)
+[![Latest Build](https://img.shields.io/github/v/release/LunaDeerMC/Dominion?label=LatestBuild&logo=github&color=0aa344)](https://github.com/LunaDeerMC/Dominion/releases/latest)
 
 [![Hangar](https://img.shields.io/badge/To-Hangar-004ee9)](https://hangar.papermc.io/zhangyuheng/Dominion)
 [![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/zhangyuheng-dominion)
@@ -41,7 +41,7 @@ take a look at [API Reference](https://dominion.lunadeer.cn/en/notes/api/) for m
 ## Help us improve
 
 If you encounter any problems during use or have any suggestions, please feel free to open
-a [GitHub ISSUE](https://github.com/ColdeZhang/Dominion/issues) about your questions or ideas.
+a [GitHub ISSUE](https://github.com/LunaDeerMC/Dominion/issues) about your questions or ideas.
 
 For detailed contribution guidelines (such as **translation** etc.), please see [CONTRIBUTING](CONTRIBUTING.md)。
 
@@ -51,8 +51,8 @@ For detailed contribution guidelines (such as **translation** etc.), please see 
 
 ### Contributors
 
-<a href="https://github.com/ColdeZhang/Dominion/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ColdeZhang/Dominion" />
+<a href="https://github.com/LunaDeerMC/Dominion/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LunaDeerMC/Dominion" />
 </a>
 
 ## bStats Statics
