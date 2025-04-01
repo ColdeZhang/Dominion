@@ -574,7 +574,7 @@ public class CacheManager {
             }
             // update player current dominion id
             if (current_dominion == null) {
-                playerCurrentDominionId.put(player.getUniqueId(), null);
+                playerCurrentDominionId.remove(player.getUniqueId());
                 return null;
             } else {
                 playerCurrentDominionId.put(player.getUniqueId(), current_dominion.getId());
