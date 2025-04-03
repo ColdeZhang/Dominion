@@ -55,6 +55,12 @@ public class CommandManager implements TabExecutor, Listener {
         this.rootCommandConsumer = rootCommandConsumer;
     }
 
+    public void printUsages() {
+        for (String cmd : commandsUsable.keySet()) {
+            XLogger.debug("{0}", commands.get(cmd).getUsage());
+        }
+    }
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (plugin.getServer().getOnlinePlayers().isEmpty()) {

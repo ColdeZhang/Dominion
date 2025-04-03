@@ -76,9 +76,10 @@ public final class Dominion extends JavaPlugin {
 
         new EventsRegister(this);
         new InitCommands();
-        new CommandManager(this, "dominion", (sender) -> {
+        CommandManager commandManager = new CommandManager(this, "dominion", (sender) -> {
             MainMenu.show(sender, "1");
         });
+        if (Configuration.debug) commandManager.printUsages();
 
         bStatsMetrics metrics = new bStatsMetrics(this, 21445);
         metrics.addCustomChart(new bStatsMetrics.SimplePie("database", () -> Configuration.database.type));
