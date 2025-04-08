@@ -103,7 +103,7 @@ public class ConfigurationManager {
                     yaml.setComments(newKey, List.of(field.getAnnotation(Comments.class).value()));
                 }
                 if (field.isAnnotationPresent(Comment.class)) {
-                    yaml.setInlineComments(newKey, List.of(field.getAnnotation(Comments.class).value()));
+                    yaml.setInlineComments(newKey, List.of(field.getAnnotation(Comment.class).value()));
                 }
             }
         }
