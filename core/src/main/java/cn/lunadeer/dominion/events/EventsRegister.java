@@ -10,13 +10,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import static cn.lunadeer.dominion.utils.Misc.isPaper;
+import static cn.lunadeer.dominion.utils.Misc.listClassOfPackage;
 
 public class EventsRegister {
 
@@ -80,33 +78,7 @@ public class EventsRegister {
     }
 
     public void registerPackageEvents(String packageName) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-        List<String> classesInPackage = new ArrayList<>();
-        // list all classes in the packageName package
-        String path = packageName.replace('.', '/');
-        URL packageDir = plugin.getClass().getClassLoader().getResource(path);
-        if (packageDir == null) {
-            return;
-        }
-        String packageDirPath = packageDir.getPath();
-        // if the package is in a jar file, unpack it and list the classes
-        packageDirPath = packageDirPath.substring(0, packageDirPath.indexOf("jar!") + 4);
-        packageDirPath = packageDirPath.replace("file:", "");
-        packageDirPath = packageDirPath.replace("!", "");
-        // unpack the jar file
-        XLogger.debug("Registering events in jar: {0}", packageDirPath);
-        File jarFile = new File(packageDirPath);
-        if (!jarFile.exists() || !jarFile.isFile()) {
-            XLogger.debug("Skipping {0} because it is not a jar file", packageDirPath);
-            return;
-        }
-        // list the classes in the jar file
-        try (java.util.jar.JarFile jar = new java.util.jar.JarFile(jarFile)) {
-            jar.stream().filter(entry -> entry.getName().endsWith(".class") && entry.getName().startsWith(path))
-                    .forEach(entry -> classesInPackage.add(entry.getName().replace('/', '.').substring(0, entry.getName().length() - 6)));
-        } catch (Exception e) {
-            XLogger.debug("Failed to list classes in jar: {0}", e.getMessage());
-            return;
-        }
+        List<String> classesInPackage = listClassOfPackage(plugin, packageName);
 
         for (String className : classesInPackage) {
             XLogger.debug("Registering event: {0}", className);
