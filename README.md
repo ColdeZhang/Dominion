@@ -9,7 +9,7 @@
 [![Latest Build](https://img.shields.io/github/v/release/LunaDeerMC/Dominion?label=LatestBuild&logo=github&color=0aa344)](https://github.com/LunaDeerMC/Dominion/releases/latest)
 
 [![Hangar](https://img.shields.io/badge/To-Hangar-004ee9)](https://hangar.papermc.io/zhangyuheng/Dominion)
-[![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/zhangyuheng-dominion)
+[![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/lunadeer-dominion)
 [![Spigot](https://img.shields.io/badge/To-Spigot-ed8106)](https://www.spigotmc.org/resources/dominion.119514/)
 
 </div>

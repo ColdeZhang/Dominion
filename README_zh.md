@@ -10,7 +10,7 @@
 [![Latest Build](https://img.shields.io/github/v/release/LunaDeerMC/Dominion?label=%E5%A4%87%E7%94%A8%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80&logo=gitea&color=0aa344)](https://ssl.lunadeer.cn:14446/mirror/Dominion/releases)
 
 [![Hangar](https://img.shields.io/badge/To-Hangar-004ee9)](https://hangar.papermc.io/zhangyuheng/Dominion)
-[![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/zhangyuheng-dominion)
+[![Modrinth](https://img.shields.io/badge/To-Modrinth-1bd96a)](https://modrinth.com/plugin/lunadeer-dominion)
 [![Spigot](https://img.shields.io/badge/To-Spigot-ed8106)](https://www.spigotmc.org/resources/dominion.119514/)
 
 </div>
