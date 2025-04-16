@@ -41,7 +41,7 @@ public class FieldString extends Field<String> {
     public static List<String> getTypeStrings() {
         return switch (DatabaseManager.instance.getType()) {
             case MYSQL -> List.of("VARCHAR(255)", "VARCHAR", "TEXT");
-            case SQLITE -> List.of("TEXT", "VARCHAR");
+            case SQLITE -> List.of("TEXT", "VARCHAR", "VARCHAR(36)");
             case PGSQL -> List.of("TEXT", "VARCHAR", "CHARACTER VARYING");
             default ->
                     throw new UnsupportedOperationException("Database type: " + DatabaseManager.instance.getType() + " not supported FieldString");
