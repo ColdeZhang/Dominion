@@ -7,6 +7,11 @@
 
 # IntelliJ
 out/
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
 
 # Compiled class file
 *.class
@@ -95,7 +100,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-target/
+.gradle
+build/
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -111,5 +117,7 @@ buildNumber.properties
 
 # Common working directory
 run/
-/docs/_book/
+runs/
 
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
