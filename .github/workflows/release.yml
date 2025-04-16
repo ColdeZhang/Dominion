@@ -22,6 +22,7 @@ jobs:
           cache: gradle
       - name: "Build with Gradle"
         run: |
+          chmod +x gradlew
           ./gradlew clean
           ./gradlew shadowJar -PBuildFull=false
           ./gradlew shadowJar -PBuildFull=true
