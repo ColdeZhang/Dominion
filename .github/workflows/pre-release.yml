@@ -1,4 +1,4 @@
-name: Java CI-CD with Gradle
+name: Build Pre-Release
 
 on:
   push:
