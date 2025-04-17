@@ -38,10 +38,13 @@ public class Misc {
             return classesInPackage;
         }
         String packageDirPath = packageDir.getPath();
+        XLogger.debug("packageDirPath raw: {0}", packageDirPath);
         // if the package is in a jar file, unpack it and list the classes
         packageDirPath = packageDirPath.substring(0, packageDirPath.indexOf("jar!") + 4);
         packageDirPath = packageDirPath.replace("file:", "");
         packageDirPath = packageDirPath.replace("!", "");
+        packageDirPath = java.net.URLDecoder.decode(packageDirPath, java.nio.charset.StandardCharsets.UTF_8);
+        XLogger.debug("packageDirPath processed: {0}", packageDirPath);
         // unpack the jar file
         XLogger.debug("Unpacking class in jar: {0}", packageDirPath);
         File jarFile = new File(packageDirPath);

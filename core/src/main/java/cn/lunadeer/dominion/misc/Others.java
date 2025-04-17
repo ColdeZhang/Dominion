@@ -130,7 +130,7 @@ public class Others {
             return true;
         } else {
             String msg = formatString(Language.othersText.noPermissionForFlag, flag.getDisplayName(), flag.getDescription());
-            msg = "&#FF0000" + "&l" + msg;
+            msg = "&4" + "&l" + msg;
             MessageDisplay.show(player, MessageDisplay.Place.valueOf(Configuration.pluginMessage.noPermissionDisplayPlace.toUpperCase()), msg);
             if (event != null) {
                 event.setCancelled(true);
