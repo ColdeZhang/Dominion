@@ -35,7 +35,7 @@ public class MigrationCommand {
     public static class MigrationCommandText extends ConfigurationPart {
         public String createPlayerFailed = "Failed to create player cache for {0}.";
         public String migrateSuccess = "Migrated residence {0} to dominion successfully.";
-        public String migrateFailed = "Failed to migrate residence. Reason: {1}";
+        public String migrateFailed = "Failed to migrate residence. Reason: {0}";
         public String missingResidence = "Residence {0} not found.";
         public String notYourResidence = "Residence {0} is not yours.";
     }

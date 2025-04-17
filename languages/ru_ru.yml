@@ -310,7 +310,7 @@ administrator-command-text:
 migration-command-text:
   create-player-failed: Не удалось создать кэш игрока для {0}.
   migrate-success: Резиденция {0} успешно мигрирована в доминион.
-  migrate-failed: 'Не удалось мигрировать резиденцию. Причина: {1}'
+  migrate-failed: 'Не удалось мигрировать резиденцию. Причина: {0}'
   missing-residence: Резиденция {0} не найдена.
   not-your-residence: Резиденция {0} не принадлежит вам.
 template-command-text:

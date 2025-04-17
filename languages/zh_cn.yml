@@ -310,7 +310,7 @@ administrator-command-text:
 migration-command-text:
   create-player-failed: 创建玩家记录 {0} 失败
   migrate-success: 成功从 Residence 迁移领地 {0} 到 Dominion
-  migrate-failed: 从 Residence 迁移领地到 Dominion 失败，原因：{1}
+  migrate-failed: 从 Residence 迁移领地到 Dominion 失败，原因：{0}
   missing-residence: 没有找到 residence {0} 领地
   not-your-residence: 你不是 residence {0} 领地的所有者
 template-command-text:

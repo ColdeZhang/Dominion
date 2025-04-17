@@ -310,7 +310,7 @@ administrator-command-text:
 migration-command-text:
   create-player-failed: プレイヤーキャッシュの作成に失敗しました {0}。
   migrate-success: レジデンス {0} をドミニオンに正常に移行しました。
-  migrate-failed: 'レジデンスの移行に失敗しました。理由: {1}'
+  migrate-failed: 'レジデンスの移行に失敗しました。理由: {0}'
   missing-residence: レジデンス {0} が見つかりません。
   not-your-residence: レジデンス {0} はあなたのものではありません。
 template-command-text:

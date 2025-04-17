@@ -310,7 +310,7 @@ administrator-command-text:
 migration-command-text:
   create-player-failed: Pelaajan välimuistin luominen epäonnistui {0}.
   migrate-success: Residence {0} siirrettiin dominioniin onnistuneesti.
-  migrate-failed: 'Residence-siirto epäonnistui. Syy: {1}'
+  migrate-failed: 'Residence-siirto epäonnistui. Syy: {0}'
   missing-residence: Residence {0} ei löytynyt.
   not-your-residence: Residence {0} ei ole sinun.
 template-command-text:

@@ -310,7 +310,7 @@ administrator-command-text:
 migration-command-text:
   create-player-failed: Failed to create player cache for {0}.
   migrate-success: Migrated residence {0} to dominion successfully.
-  migrate-failed: 'Failed to migrate residence. Reason: {1}'
+  migrate-failed: 'Failed to migrate residence. Reason: {0}'
   missing-residence: Residence {0} not found.
   not-your-residence: Residence {0} is not yours.
 template-command-text:

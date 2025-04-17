@@ -310,7 +310,7 @@ administrator-command-text:
 migration-command-text:
   create-player-failed: Erstellen des Spielercaches für {0} fehlgeschlagen.
   migrate-success: Residence {0} erfolgreich zu Dominion migriert.
-  migrate-failed: 'Migration der Residence fehlgeschlagen. Grund: {1}'
+  migrate-failed: 'Migration der Residence fehlgeschlagen. Grund: {0}'
   missing-residence: Residence {0} nicht gefunden.
   not-your-residence: Residence {0} gehört nicht Ihnen.
 template-command-text:
