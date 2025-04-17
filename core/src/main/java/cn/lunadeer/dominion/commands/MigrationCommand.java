@@ -118,12 +118,12 @@ public class MigrationCommand {
         CuboidDTO cuboidDTO = new CuboidDTO(node.loc1, node.loc2);
         World world = toWorld(node.world.getUID());
         int renameNumber = 0;
-        String newName = node.name;
-        while (DominionDOO.select(node.name) != null) {
+        while (DominionDOO.select(renameNumber == 0 ? node.name : node.name + "_" + renameNumber) != null) {
             renameNumber++;
-            newName = node.name + "_" + renameNumber;
         }
-        DominionCreateEvent event = new DominionCreateEvent(player, newName, ownerDTO.getUuid(), world, cuboidDTO, parent);
+        DominionCreateEvent event = new DominionCreateEvent(player,
+                renameNumber == 0 ? node.name : node.name + "_" + renameNumber,
+                ownerDTO.getUuid(), world, cuboidDTO, parent);
         event.setSkipEconomy(true);
         event.callEvent();
         if (!event.isCancelled()) {

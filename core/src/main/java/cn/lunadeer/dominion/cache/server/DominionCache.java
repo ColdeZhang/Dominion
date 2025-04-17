@@ -172,9 +172,7 @@ public class DominionCache extends Cache {
             dominions.forEach(dominion -> {
                 dominionNameToId.put(dominion.getName(), dominion.getId());
                 playerOwnDominions.computeIfAbsent(dominion.getOwner(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
-                if (dominion.getParentDomId() != -1) {
-                    dominionChildrenMap.computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
-                }
+                dominionChildrenMap.computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
             });
         });
 
@@ -195,11 +193,13 @@ public class DominionCache extends Cache {
         // remove old data
         if (oldData != null) {
             dominionNameToId.entrySet().removeIf(entry -> entry.getValue().equals(oldData.getId()));
-            playerOwnDominions.computeIfAbsent(oldData.getOwner(), k -> new CopyOnWriteArrayList<>()).remove(oldData.getName());
+            playerOwnDominions.computeIfAbsent(oldData.getOwner(), k -> new CopyOnWriteArrayList<>()).remove(oldData.getId());
+            dominionChildrenMap.computeIfAbsent(oldData.getParentDomId(), k -> new CopyOnWriteArrayList<>()).remove(oldData.getId());
         }
         // update data
         dominionNameToId.put(dominion.getName(), dominion.getId());
         playerOwnDominions.computeIfAbsent(dominion.getOwner(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
+        dominionChildrenMap.computeIfAbsent(dominion.getParentDomId(), k -> new CopyOnWriteArrayList<>()).add(dominion.getId());
         // update node tree
         rebuildTreeAsync();
     }
