@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
 import cn.lunadeer.dominion.configuration.Configuration;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.DominionDOO;
 import cn.lunadeer.dominion.doos.PlayerDOO;
 import cn.lunadeer.dominion.events.dominion.DominionCreateEvent;
 import cn.lunadeer.dominion.misc.CommandArguments;
@@ -116,6 +117,12 @@ public class MigrationCommand {
         }
         CuboidDTO cuboidDTO = new CuboidDTO(node.loc1, node.loc2);
         World world = toWorld(node.world.getUID());
+        int renameNumber = 0;
+        String rawName = node.name;
+        while (DominionDOO.select(node.name) != null) {
+            renameNumber++;
+            node.name = rawName + "_" + renameNumber;
+        }
         DominionCreateEvent event = new DominionCreateEvent(player, node.name, ownerDTO.getUuid(), world, cuboidDTO, parent);
         event.setSkipEconomy(true);
         event.callEvent();
