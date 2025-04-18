@@ -594,13 +594,13 @@ flags:
 env-copy-tui-text:
   title: 选择要复制领地
   button: 环境权限
-  description: 从另一个复制环境配置
+  description: 从另一个领地复制环境配置
   back: 返回
   copy: 复制
 guest-copy-tui-text:
   title: 选择要复制领地
   button: 访客权限
-  description: 从另一个复制访客配置
+  description: 从另一个领地复制访客配置
   back: 返回
   copy: 复制
 member-copy-tui-text:
