@@ -15,7 +15,7 @@ libraries += "com.zaxxer:HikariCP:6.2.1"
 
 
 group = "cn.lunadeer"
-version = "4.1.3-copy-command.1"
+version = "4.1.3-copy-command.2"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))

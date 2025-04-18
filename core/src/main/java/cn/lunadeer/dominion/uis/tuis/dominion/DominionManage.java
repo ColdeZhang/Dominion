@@ -10,6 +10,7 @@ import cn.lunadeer.dominion.uis.cuis.EditLeaveMessage;
 import cn.lunadeer.dominion.uis.cuis.RenameDominion;
 import cn.lunadeer.dominion.uis.cuis.SetMapColor;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
+import cn.lunadeer.dominion.uis.tuis.dominion.copy.CopyMenu;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.Info;
@@ -106,6 +107,9 @@ public class DominionManage {
                     .append(Component.text(Language.setMapColorCuiText.description)
                             .append(Component.text(dominion.getColor(),
                                     TextColor.color(dominion.getColorR(), dominion.getColorG(), dominion.getColorB()))));
+            Line copy_menu = Line.create()
+                    .append(CopyMenu.button(sender, dominionName).build())
+                    .append(Language.copyMenuTuiText.description);
             ListView view = ListView.create(10, button(sender, dominion.getName()));
             view.title(formatString(Language.dominionManageTuiText.title, dominion.getName()))
                     .navigator(Line.create()
@@ -124,6 +128,7 @@ public class DominionManage {
             if (Configuration.webMapRenderer.blueMap || Configuration.webMapRenderer.dynmap) {
                 view.add(map_color);
             }
+            view.add(copy_menu);
             view.showOn(player, page);
         } catch (Exception e) {
             Notification.error(sender, e.getMessage());

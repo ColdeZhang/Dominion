@@ -1,4 +1,4 @@
-package cn.lunadeer.dominion.uis.tuis.dominion.manage.group;
+package cn.lunadeer.dominion.uis.tuis.dominion.copy;
 
 import cn.lunadeer.dominion.api.dtos.DominionDTO;
 import cn.lunadeer.dominion.cache.CacheManager;
@@ -20,22 +20,23 @@ import static cn.lunadeer.dominion.Dominion.defaultPermission;
 import static cn.lunadeer.dominion.misc.Asserts.assertDominionAdmin;
 import static cn.lunadeer.dominion.misc.Converts.*;
 
-public class GroupCopy {
+public class MemberCopy {
 
-    public static class GroupCopyTuiText extends ConfigurationPart {
+    public static class MemberCopyTuiText extends ConfigurationPart {
         public String title = "Select Dominion to Copy From";
-        public String button = "COPY FROM";
-        public String description = "Copy Group & Settings From Other Dominion.";
+        public String button = "MEMBERS";
+        public String copy = "COPY FROM";
+        public String description = "Copy Member & Settings From Other Dominion.";
         public String back = "BACK";
     }
 
     public static ListViewButton button(CommandSender sender, String toDominionName) {
-        return (ListViewButton) new ListViewButton(Language.groupCopyTuiText.button) {
+        return (ListViewButton) new ListViewButton(Language.memberCopyTuiText.button) {
             @Override
             public void function(String pageStr) {
                 show(sender, toDominionName, pageStr);
             }
-        }.needPermission(defaultPermission).setHoverText(Language.groupCopyTuiText.description);
+        }.needPermission(defaultPermission);
     }
 
     public static void show(CommandSender sender, String toDominionName, String pageStr) {
@@ -46,16 +47,16 @@ public class GroupCopy {
             int page = toIntegrity(pageStr);
 
             ListView view = ListView.create(10, button(sender, toDominionName));
-            view.title(Language.groupCopyTuiText.title).navigator(Line.create()
-                    .append(GroupList.button(sender, toDominionName).setText(Language.groupCopyTuiText.back).build()));
+            view.title(Language.memberCopyTuiText.title).navigator(Line.create()
+                    .append(CopyMenu.button(sender, toDominionName).setText(Language.memberCopyTuiText.back).build()));
             List<DominionDTO> dominions = CacheManager.instance.getPlayerOwnDominionDTOs(player.getUniqueId());
             for (DominionDTO fromDominion : dominions) {
                 if (fromDominion.getId().equals(dominion.getId())) continue;
                 view.add(Line.create()
-                        .append(new FunctionalButton(Language.groupCopyTuiText.button) {
+                        .append(new FunctionalButton(Language.memberCopyTuiText.copy) {
                             @Override
                             public void function() {
-                                CopyCommand.copyGroup(sender, fromDominion.getName(), toDominionName);
+                                CopyCommand.copyMember(sender, fromDominion.getName(), toDominionName);
                             }
                         }.needPermission(defaultPermission).build())
                         .append(Component.text(fromDominion.getName()))

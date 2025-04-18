@@ -91,7 +91,6 @@ public class MemberList {
             );
             view.add(Line.create()
                     .append(SelectPlayer.button(sender, dominionName).build())
-                    .append(MemberCopy.button(sender, dominionName).build())
             );
 
             // get data from database directly because cache update may not be in time

@@ -593,26 +593,34 @@ flags:
     description: 是否可以践踏作物（关闭意味着保护耕地）
 env-copy-tui-text:
   title: 选择要复制领地
-  button: 复制
-  description: 从另一个领地复制环境配置
+  button: 环境权限
+  description: 从另一个复制环境配置
   back: 返回
+  copy: 复制
 guest-copy-tui-text:
   title: 选择要复制领地
-  button: 复制
+  button: 访客权限
   description: 从另一个复制访客配置
   back: 返回
+  copy: 复制
 member-copy-tui-text:
   title: 选择要复制领地
-  button: 复制
+  button: 成员
   description: 从另一个领地复制成员与成员配置
   back: 返回
+  copy: 复制
 group-copy-tui-text:
   title: 选择要复制领地
-  button: 复制
+  button: 权限组
   description: 从另一个领地复制权限组与权限组配置
   back: 返回
+  copy: 复制
 copy-command-text:
   copy-env-success: 成功将 {0} 的环境配置复制到 {1}。
   copy-guest-success: 成功将  {0} 的访客权限配置复制到 {1}。
   copy-member-success: 成功将 {0} 的成员复制到 {1}。
   copy-group-success: 成功将 {0} 的权限组复制到 {1}。
+copy-menu-tui-text:
+  button: 权限拷贝
+  description: 从其他领地复制权限配置。
+  title: 选择分类

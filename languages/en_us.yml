@@ -591,24 +591,32 @@ flags:
   trample:
     display-name: Trample Farmland
     description: Whether farmland can be trampled (false means protect farmland).
+copy-menu-tui-text:
+  button: COPY
+  description: Copy Privilege Settings From Other Dominion.
+  title: Select Copy Type
 env-copy-tui-text:
   title: Select Dominion to Copy From
-  button: COPY FROM
+  button: ENV
+  copy: COPY FROM
   description: Copy Env Settings From Other Dominion.
   back: BACK
 guest-copy-tui-text:
   title: Select Dominion to Copy From
-  button: COPY FROM
+  button: GUEST
+  copy: COPY FROM
   description: Copy Guest Settings From Other Dominion.
   back: BACK
 member-copy-tui-text:
   title: Select Dominion to Copy From
-  button: COPY FROM
+  button: MEMBERS
+  copy: COPY FROM
   description: Copy Member & Settings From Other Dominion.
   back: BACK
 group-copy-tui-text:
   title: Select Dominion to Copy From
-  button: COPY FROM
+  button: GROUPS
+  copy: COPY FROM
   description: Copy Group & Settings From Other Dominion.
   back: BACK
 copy-command-text:

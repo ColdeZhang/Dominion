@@ -53,7 +53,6 @@ public class EnvSetting {
                             .append(DominionList.button(sender).build())
                             .append(DominionManage.button(sender, dominionName).build())
                             .append(Language.envSettingTuiText.button));
-            view.add(Line.create().append(EnvCopy.button(sender, dominionName).build()));
             for (EnvFlag flag : Flags.getAllEnvFlagsEnable()) {
                 if (dominion.getEnvFlagValue(flag)) {
                     view.add(Line.create()

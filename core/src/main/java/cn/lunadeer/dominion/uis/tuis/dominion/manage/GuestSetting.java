@@ -52,7 +52,6 @@ public class GuestSetting {
                             .append(DominionList.button(sender).build())
                             .append(DominionManage.button(sender, dominionName).build())
                             .append(Language.guestSettingTuiText.button));
-            view.add(Line.create().append(GuestCopy.button(sender, dominionName).build()));
             for (PriFlag flag : Flags.getAllPriFlagsEnable()) {
                 if (flag.equals(Flags.ADMIN)) continue; // Skip admin flag this only for group or member
                 if (dominion.getGuestFlagValue(flag)) {

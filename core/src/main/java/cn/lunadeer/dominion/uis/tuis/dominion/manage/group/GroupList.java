@@ -81,7 +81,6 @@ public class GroupList {
             );
             view.add(new Line()
                     .append(CreateGroup.button(sender, dominionName).build())
-                    .append(GroupCopy.button(sender, dominionName).build())
             );
 
             // get data from database directly because cache update may not be in time
