@@ -409,13 +409,13 @@ public class Asserts {
     }
 
     public static void assertGroupBelongDominion(@NotNull GroupDTO group, @NotNull DominionDTO dominion) throws DominionException {
-        if (dominion.getGroups().stream().noneMatch(g -> g.getId().equals(group.getId()))) {
+        if (!group.getDomID().equals(dominion.getId())) {
             throw new DominionException(Language.assertsText.groupNotBelongDominion, group.getNamePlain(), dominion.getName());
         }
     }
 
     public static void assertMemberBelongDominion(@NotNull MemberDTO member, @NotNull DominionDTO dominion) throws DominionException {
-        if (dominion.getMembers().stream().noneMatch(m -> m.getId().equals(member.getId()))) {
+        if (!member.getDomID().equals(dominion.getId())) {
             throw new DominionException(Language.assertsText.groupNotBelongDominion, member.getPlayer().getLastKnownName(), dominion.getName());
         }
     }

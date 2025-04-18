@@ -3,10 +3,7 @@ package cn.lunadeer.dominion.configuration;
 import cn.lunadeer.dominion.Dominion;
 import cn.lunadeer.dominion.api.dtos.flag.Flag;
 import cn.lunadeer.dominion.api.dtos.flag.Flags;
-import cn.lunadeer.dominion.commands.AdministratorCommand;
-import cn.lunadeer.dominion.commands.GroupTitleCommand;
-import cn.lunadeer.dominion.commands.MigrationCommand;
-import cn.lunadeer.dominion.commands.TemplateCommand;
+import cn.lunadeer.dominion.commands.*;
 import cn.lunadeer.dominion.handler.DominionEventHandler;
 import cn.lunadeer.dominion.handler.GroupEventHandler;
 import cn.lunadeer.dominion.handler.MemberEventHandler;
@@ -24,17 +21,12 @@ import cn.lunadeer.dominion.uis.tuis.MigrateList;
 import cn.lunadeer.dominion.uis.tuis.TitleList;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionList;
 import cn.lunadeer.dominion.uis.tuis.dominion.DominionManage;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.EnvSetting;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.GuestSetting;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.Info;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.SetSize;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.*;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupCopy;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupList;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.GroupSetting;
 import cn.lunadeer.dominion.uis.tuis.dominion.manage.group.SelectMember;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberList;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.MemberSetting;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.SelectPlayer;
-import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.SelectTemplate;
+import cn.lunadeer.dominion.uis.tuis.dominion.manage.member.*;
 import cn.lunadeer.dominion.uis.tuis.template.TemplateList;
 import cn.lunadeer.dominion.uis.tuis.template.TemplateSetting;
 import cn.lunadeer.dominion.utils.VaultConnect.VaultConnect;
@@ -54,6 +46,8 @@ public class Language extends ConfigurationFile {
         zh_cn,
         ja_jp,
         ru_ru,
+        de_de,
+        fi_fi,
     }
 
     public static Dominion.DominionText dominionText = new Dominion.DominionText();
@@ -92,6 +86,10 @@ public class Language extends ConfigurationFile {
     public static TitleList.TitleListTuiText titleListTuiText = new TitleList.TitleListTuiText();
     public static AllDominion.AllDominionTuiText allDominionTuiText = new AllDominion.AllDominionTuiText();
     public static TemplateSetting.TemplateSettingText templateSettingText = new TemplateSetting.TemplateSettingText();
+    public static EnvCopy.EnvCopyTuiText envCopyTuiText = new EnvCopy.EnvCopyTuiText();
+    public static GuestCopy.GuestCopyTuiText guestCopyTuiText = new GuestCopy.GuestCopyTuiText();
+    public static MemberCopy.MemberCopyTuiText memberCopyTuiText = new MemberCopy.MemberCopyTuiText();
+    public static GroupCopy.GroupCopyTuiText groupCopyTuiText = new GroupCopy.GroupCopyTuiText();
 
     // CUI
     public static ResizeDominion.ResizeDominionCuiText resizeDominionCuiText = new ResizeDominion.ResizeDominionCuiText();
@@ -110,6 +108,7 @@ public class Language extends ConfigurationFile {
     public static MigrationCommand.MigrationCommandText migrationCommandText = new MigrationCommand.MigrationCommandText();
     public static TemplateCommand.TemplateCommandText templateCommandText = new TemplateCommand.TemplateCommandText();
     public static GroupTitleCommand.GroupTitleCommandText groupTitleCommandText = new GroupTitleCommand.GroupTitleCommandText();
+    public static CopyCommand.CopyCommandText copyCommandText = new CopyCommand.CopyCommandText();
 
 
     public static Configuration.ConfigurationText configurationText = new Configuration.ConfigurationText();

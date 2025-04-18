@@ -6,6 +6,7 @@ import cn.lunadeer.dominion.api.dtos.MemberDTO;
 import cn.lunadeer.dominion.api.dtos.PlayerDTO;
 import cn.lunadeer.dominion.commands.GroupCommand;
 import cn.lunadeer.dominion.configuration.Language;
+import cn.lunadeer.dominion.doos.GroupDOO;
 import cn.lunadeer.dominion.misc.CommandArguments;
 import cn.lunadeer.dominion.uis.cuis.CreateGroup;
 import cn.lunadeer.dominion.uis.tuis.MainMenu;
@@ -67,7 +68,7 @@ public class GroupList {
             assertDominionAdmin(sender, dominion);
             int page = toIntegrity(pageStr);
 
-            List<GroupDTO> groups = dominion.getGroups();
+            List<GroupDOO> groups = GroupDOO.selectByDominionId(dominion.getId());
 
             ListView view = ListView.create(10, button(sender, dominionName));
             view.title(formatString(Language.groupListTuiText.title, dominion.getName()));
@@ -78,7 +79,10 @@ public class GroupList {
                             .append(DominionManage.button(sender, dominionName).build())
                             .append(Language.groupListTuiText.button)
             );
-            view.add(new Line().append(CreateGroup.button(sender, dominionName).build()));
+            view.add(new Line()
+                    .append(CreateGroup.button(sender, dominionName).build())
+                    .append(GroupCopy.button(sender, dominionName).build())
+            );
 
             // get data from database directly because cache update may not be in time
             List<MemberDTO> members = new ArrayList<>(selectByDominionId(dominion.getId()));

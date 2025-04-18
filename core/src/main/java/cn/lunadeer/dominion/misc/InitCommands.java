@@ -15,6 +15,7 @@ public class InitCommands {
         new MemberCommand();
         new MigrationCommand();
         new TemplateCommand();
+        new CopyCommand();
         //
         new MainMenu();
     }

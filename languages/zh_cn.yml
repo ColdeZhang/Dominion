@@ -591,3 +591,28 @@ flags:
   trample:
     display-name: 作物践踏
     description: 是否可以践踏作物（关闭意味着保护耕地）
+env-copy-tui-text:
+  title: 选择要复制领地
+  button: 复制
+  description: 从另一个领地复制环境配置
+  back: 返回
+guest-copy-tui-text:
+  title: 选择要复制领地
+  button: 复制
+  description: 从另一个复制访客配置
+  back: 返回
+member-copy-tui-text:
+  title: 选择要复制领地
+  button: 复制
+  description: 从另一个领地复制成员与成员配置
+  back: 返回
+group-copy-tui-text:
+  title: 选择要复制领地
+  button: 复制
+  description: 从另一个领地复制权限组与权限组配置
+  back: 返回
+copy-command-text:
+  copy-env-success: 成功将 {0} 的环境配置复制到 {1}。
+  copy-guest-success: 成功将  {0} 的访客权限配置复制到 {1}。
+  copy-member-success: 成功将 {0} 的成员复制到 {1}。
+  copy-group-success: 成功将 {0} 的权限组复制到 {1}。
